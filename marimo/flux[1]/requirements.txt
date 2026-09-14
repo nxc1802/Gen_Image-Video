@@ -1,0 +1,20 @@
+# Core FLUX.1 & Diffusers dependencies
+torch>=2.4.0
+diffusers>=0.30.0
+transformers>=4.43.3
+accelerate>=0.33.0
+sentencepiece>=0.2.0
+protobuf
+pillow
+
+# Marimo Reactive UI Framework
+marimo>=0.10.0
+
+# OpenAI-Compatible API Server dependencies
+fastapi>=0.115.0
+uvicorn>=0.30.0
+pydantic>=2.8.0
+
+# Optional low-memory optimizations
+bitsandbytes>=0.43.0
+
