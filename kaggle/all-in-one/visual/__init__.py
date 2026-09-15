@@ -1,5 +1,11 @@
 """Visual generation package: FLUX.1 Image and Wan2.1 Video."""
-from .flux_image import FluxImageEngine, get_flux_engine
-from .wan_video import WanVideoEngine, get_wan_engine
 
-__all__ = ["FluxImageEngine", "get_flux_engine", "WanVideoEngine", "get_wan_engine"]
+def get_flux_engine(*args, **kwargs):
+    from .flux_image import get_flux_engine as _get
+    return _get(*args, **kwargs)
+
+def get_wan_engine(*args, **kwargs):
+    from .wan_video import get_wan_engine as _get
+    return _get(*args, **kwargs)
+
+__all__ = ["get_flux_engine", "get_wan_engine"]

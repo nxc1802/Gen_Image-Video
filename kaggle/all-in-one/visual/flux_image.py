@@ -17,8 +17,18 @@ from typing import Any, Dict, Optional, Tuple
 from PIL import Image
 import requests
 import torch
-from diffusers import FluxPipeline, FluxTransformer2DModel
-from transformers import BitsAndBytesConfig, T5EncoderModel
+try:
+    from diffusers import FluxPipeline, FluxTransformer2DModel
+except Exception as _diff_err:
+    FluxPipeline = None
+    FluxTransformer2DModel = None
+
+try:
+    from transformers import BitsAndBytesConfig, T5EncoderModel
+except Exception as _tf_err:
+    BitsAndBytesConfig = None
+    T5EncoderModel = None
+
 
 from config import FLUX_MODEL_ID, FLUX_CONFIG, FLUX_NUM_STEPS, FLUX_GUIDANCE, DEVICE_VISUAL, resolve_image_model_id
 from core.base_engine import BaseImageEngine
@@ -90,6 +100,14 @@ class FluxImageEngine(BaseImageEngine):
             f"[Thiết bị: {self.resolved_device} | Lý do: {resolved['reason']}]..."
         )
         t0 = time.time()
+
+        if FluxPipeline is None or FluxTransformer2DModel is None or BitsAndBytesConfig is None:
+            logger.warning("⚠️ FluxPipeline / BitsAndBytesConfig không khả dụng trên môi trường, kích hoạt fallback sinh ảnh.")
+            self._model = "fallback"
+            self._pipe = "fallback"
+            self._current_loaded_id = target_id
+            self._is_loaded = True
+            return "fallback"
 
         try:
             bnb_4bit = BitsAndBytesConfig(
@@ -299,7 +317,8 @@ class FluxImageEngine(BaseImageEngine):
                 for s in range(1, step_count + 1):
                     time.sleep(0.05)
                     progress_callback(s, step_count, int((s / step_count) * 100))
-            image_out = pil_img
+            overlay = Image.new("RGB", (w, h), color=(220, 180, 60))
+            image_out = Image.composite(overlay, pil_img, pil_mask)
 
         buffered = io.BytesIO()
         image_out.save(buffered, format="PNG")

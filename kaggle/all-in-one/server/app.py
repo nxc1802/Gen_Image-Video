@@ -273,27 +273,31 @@ def create_app() -> FastAPI:
         # Text-to-Image tiêu chuẩn
         if req.stream:
             def sse_image_stream():
-                for ev in flux.generate_stream(
-                    prompt=req.prompt,
-                    size=req.size or "1024x1024",
-                    steps=req.steps,
-                    guidance=req.guidance,
-                    seed=req.seed,
-                    model_variant=req.model,
-                ):
-                    if ev["type"] == "progress":
-                        yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
-                    elif ev["type"] == "complete":
-                        res_payload = {
-                            "created": int(time.time()),
-                            "data": [{"b64_json": ev["b64_json"], "revised_prompt": req.prompt}],
-                            "x_inference_time_seconds": ev["elapsed"],
-                        }
-                        yield f"event: complete\ndata: {json.dumps(res_payload)}\n\n"
-                        yield "data: [DONE]\n\n"
-                    elif ev["type"] == "error":
-                        yield f"event: error\ndata: {json.dumps(ev)}\n\n"
-                        yield "data: [DONE]\n\n"
+                try:
+                    for ev in flux.generate_stream(
+                        prompt=req.prompt,
+                        size=req.size or "1024x1024",
+                        steps=req.steps,
+                        guidance=req.guidance,
+                        seed=req.seed,
+                        model_variant=req.model,
+                    ):
+                        if ev["type"] == "progress":
+                            yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
+                        elif ev["type"] == "complete":
+                            res_payload = {
+                                "created": int(time.time()),
+                                "data": [{"b64_json": ev["b64_json"], "revised_prompt": req.prompt}],
+                                "x_inference_time_seconds": ev["elapsed"],
+                            }
+                            yield f"event: complete\ndata: {json.dumps(res_payload)}\n\n"
+                            yield "data: [DONE]\n\n"
+                        elif ev["type"] == "error":
+                            yield f"event: error\ndata: {json.dumps(ev)}\n\n"
+                            yield "data: [DONE]\n\n"
+                except Exception as e:
+                    yield f"event: error\ndata: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+                    yield "data: [DONE]\n\n"
 
             return StreamingResponse(sse_image_stream(), media_type="text/event-stream")
 
@@ -327,29 +331,33 @@ def create_app() -> FastAPI:
 
         if req.stream:
             def sse_edit_stream():
-                for ev in flux.inpaint_stream(
-                    prompt=req.prompt,
-                    image=req.image,
-                    mask_image=mask_val,
-                    size=req.size or "1024x1024",
-                    steps=req.steps,
-                    guidance=req.guidance,
-                    seed=req.seed,
-                    model_variant=req.model,
-                ):
-                    if ev["type"] == "progress":
-                        yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
-                    elif ev["type"] == "complete":
-                        res_payload = {
-                            "created": int(time.time()),
-                            "data": [{"b64_json": ev["b64_json"], "revised_prompt": req.prompt}],
-                            "x_inference_time_seconds": ev["elapsed"],
-                        }
-                        yield f"event: complete\ndata: {json.dumps(res_payload)}\n\n"
-                        yield "data: [DONE]\n\n"
-                    elif ev["type"] == "error":
-                        yield f"event: error\ndata: {json.dumps(ev)}\n\n"
-                        yield "data: [DONE]\n\n"
+                try:
+                    for ev in flux.inpaint_stream(
+                        prompt=req.prompt,
+                        image=req.image,
+                        mask_image=mask_val,
+                        size=req.size or "1024x1024",
+                        steps=req.steps,
+                        guidance=req.guidance,
+                        seed=req.seed,
+                        model_variant=req.model,
+                    ):
+                        if ev["type"] == "progress":
+                            yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
+                        elif ev["type"] == "complete":
+                            res_payload = {
+                                "created": int(time.time()),
+                                "data": [{"b64_json": ev["b64_json"], "revised_prompt": req.prompt}],
+                                "x_inference_time_seconds": ev["elapsed"],
+                            }
+                            yield f"event: complete\ndata: {json.dumps(res_payload)}\n\n"
+                            yield "data: [DONE]\n\n"
+                        elif ev["type"] == "error":
+                            yield f"event: error\ndata: {json.dumps(ev)}\n\n"
+                            yield "data: [DONE]\n\n"
+                except Exception as e:
+                    yield f"event: error\ndata: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+                    yield "data: [DONE]\n\n"
 
             return StreamingResponse(sse_edit_stream(), media_type="text/event-stream")
 
@@ -382,29 +390,33 @@ def create_app() -> FastAPI:
         if req.image:
             if req.stream:
                 def sse_i2v_stream():
-                    for ev in wan.generate_i2v_stream(
-                        prompt=req.prompt,
-                        image=req.image,
-                        num_frames=req.num_frames or 25,
-                        width=req.width or 768,
-                        height=req.height or 512,
-                        seed=req.seed,
-                        model_variant=req.model,
-                    ):
-                        if ev["type"] == "progress":
-                            yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
-                        elif ev["type"] == "complete":
-                            b64_vid = base64.b64encode(ev["video_bytes"]).decode("utf-8")
-                            res_payload = {
-                                "created": int(time.time()),
-                                "data": [{"b64_json": b64_vid, "mime_type": "video/mp4", "revised_prompt": req.prompt}],
-                                "x_inference_time_seconds": ev["elapsed"],
-                            }
-                            yield f"event: complete\ndata: {json.dumps(res_payload)}\n\n"
-                            yield "data: [DONE]\n\n"
-                        elif ev["type"] == "error":
-                            yield f"event: error\ndata: {json.dumps(ev)}\n\n"
-                            yield "data: [DONE]\n\n"
+                    try:
+                        for ev in wan.generate_i2v_stream(
+                            prompt=req.prompt,
+                            image=req.image,
+                            num_frames=req.num_frames or 25,
+                            width=req.width or 768,
+                            height=req.height or 512,
+                            seed=req.seed,
+                            model_variant=req.model,
+                        ):
+                            if ev["type"] == "progress":
+                                yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
+                            elif ev["type"] == "complete":
+                                b64_vid = base64.b64encode(ev["video_bytes"]).decode("utf-8")
+                                res_payload = {
+                                    "created": int(time.time()),
+                                    "data": [{"b64_json": b64_vid, "mime_type": "video/mp4", "revised_prompt": req.prompt}],
+                                    "x_inference_time_seconds": ev["elapsed"],
+                                }
+                                yield f"event: complete\ndata: {json.dumps(res_payload)}\n\n"
+                                yield "data: [DONE]\n\n"
+                            elif ev["type"] == "error":
+                                yield f"event: error\ndata: {json.dumps(ev)}\n\n"
+                                yield "data: [DONE]\n\n"
+                    except Exception as e:
+                        yield f"event: error\ndata: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+                        yield "data: [DONE]\n\n"
 
                 return StreamingResponse(sse_i2v_stream(), media_type="text/event-stream")
 
@@ -427,28 +439,32 @@ def create_app() -> FastAPI:
         # Text-to-Video (T2V)
         if req.stream:
             def sse_t2v_stream():
-                for ev in wan.generate_stream(
-                    prompt=req.prompt,
-                    num_frames=req.num_frames or 25,
-                    width=req.width or 768,
-                    height=req.height or 512,
-                    seed=req.seed,
-                    model_variant=req.model,
-                ):
-                    if ev["type"] == "progress":
-                        yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
-                    elif ev["type"] == "complete":
-                        b64_vid = base64.b64encode(ev["video_bytes"]).decode("utf-8")
-                        res_payload = {
-                            "created": int(time.time()),
-                            "data": [{"b64_json": b64_vid, "mime_type": "video/mp4", "revised_prompt": req.prompt}],
-                            "x_inference_time_seconds": ev["elapsed"],
-                        }
-                        yield f"event: complete\ndata: {json.dumps(res_payload)}\n\n"
-                        yield "data: [DONE]\n\n"
-                    elif ev["type"] == "error":
-                        yield f"event: error\ndata: {json.dumps(ev)}\n\n"
-                        yield "data: [DONE]\n\n"
+                try:
+                    for ev in wan.generate_stream(
+                        prompt=req.prompt,
+                        num_frames=req.num_frames or 25,
+                        width=req.width or 768,
+                        height=req.height or 512,
+                        seed=req.seed,
+                        model_variant=req.model,
+                    ):
+                        if ev["type"] == "progress":
+                            yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
+                        elif ev["type"] == "complete":
+                            b64_vid = base64.b64encode(ev["video_bytes"]).decode("utf-8")
+                            res_payload = {
+                                "created": int(time.time()),
+                                "data": [{"b64_json": b64_vid, "mime_type": "video/mp4", "revised_prompt": req.prompt}],
+                                "x_inference_time_seconds": ev["elapsed"],
+                            }
+                            yield f"event: complete\ndata: {json.dumps(res_payload)}\n\n"
+                            yield "data: [DONE]\n\n"
+                        elif ev["type"] == "error":
+                            yield f"event: error\ndata: {json.dumps(ev)}\n\n"
+                            yield "data: [DONE]\n\n"
+                except Exception as e:
+                    yield f"event: error\ndata: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+                    yield "data: [DONE]\n\n"
 
             return StreamingResponse(sse_t2v_stream(), media_type="text/event-stream")
 

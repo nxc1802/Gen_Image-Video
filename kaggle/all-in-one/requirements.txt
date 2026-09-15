@@ -2,6 +2,7 @@
 fastapi>=0.115.0
 uvicorn>=0.32.0
 pydantic>=2.10.0
+torchao>=0.8.0
 transformers>=4.48.0
 accelerate>=1.2.0
 git+https://github.com/huggingface/diffusers.git
@@ -14,4 +15,6 @@ scipy>=1.14.0
 kokoro>=0.8.4
 openai-whisper>=20240930
 requests>=2.32.0
+imageio[ffmpeg]>=2.35.0
+
 
