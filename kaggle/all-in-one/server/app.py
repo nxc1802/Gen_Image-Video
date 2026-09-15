@@ -16,13 +16,9 @@ from typing import Optional
 from fastapi import FastAPI, File, Form, Header, HTTPException, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from config import API_KEY, STT_MODEL_ID, TTS_MODEL_ID, VLM_MODEL_ID, FLUX_MODEL_ID, VIDEO_MODEL_ID
+from config import API_KEY
 from core.memory_manager import get_memory_manager
-from audio.stt import get_stt_engine
-from audio.tts import get_tts_engine
-from vlm.qwen import get_vlm_engine
-from visual.flux_image import get_flux_engine
-from visual.wan_video import get_wan_engine
+from core.model_registry import get_model_registry
 from server.schemas import (
     ChatCompletionRequest,
     ImageGenerationRequest,
@@ -47,6 +43,8 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    registry = get_model_registry()
+
     def verify_auth(authorization: Optional[str] = Header(None)):
         if API_KEY:
             expected = f"Bearer {API_KEY}"
@@ -62,23 +60,25 @@ def create_app() -> FastAPI:
         return {
             "status": "online",
             "service": "Kaggle All-in-One Studio",
+            "catalog": registry.get_catalog(),
             "vram_status": mem.report_vram(),
         }
 
     @app.get("/v1/models")
     def list_models(authorization: Optional[str] = Header(None)):
         verify_auth(authorization)
-        return {
-            "object": "list",
-            "data": [
-                {"id": "qwen-26b", "object": "model", "owned_by": "qwen", "type": "vlm"},
-                {"id": "whisper-large-v3-turbo", "object": "model", "owned_by": "openai", "type": "stt"},
-                {"id": "kokoro-82m", "object": "model", "owned_by": "hexgrad", "type": "tts"},
-                {"id": "flux-1-schnell", "object": "model", "owned_by": "black-forest-labs", "type": "image"},
-                {"id": "dall-e-3", "object": "model", "owned_by": "alias-flux", "type": "image"},
-                {"id": "wan-2.1", "object": "model", "owned_by": "alibaba", "type": "video"},
-            ],
-        }
+        catalog = registry.get_catalog()
+        model_items = []
+        for task, info in catalog.items():
+            model_items.append({
+                "id": info.get("model_id"),
+                "object": "model",
+                "owned_by": "studio",
+                "type": task,
+                "device_strategy": info.get("device_strategy"),
+                "quantization": info.get("quantization"),
+            })
+        return {"object": "list", "data": model_items}
 
     @app.get("/v1/memory")
     def get_memory_info():
@@ -86,14 +86,14 @@ def create_app() -> FastAPI:
         return mem.report_vram()
 
     # ==========================================================================
-    # 1. 👁️ CHAT & VLM (QWEN 26B)
+    # 1. 👁️ CHAT & VLM (Qwen / Llama-Vision...)
     # ==========================================================================
     @app.post("/v1/chat/completions")
     def chat_completions(req: ChatCompletionRequest, authorization: Optional[str] = Header(None)):
         verify_auth(authorization)
-        vlm = get_vlm_engine()
+        vlm = registry.get_vlm()
 
-        res = vlm.chat_completion(
+        res = vlm.chat(
             messages=req.messages,
             max_tokens=req.max_tokens or 512,
             temperature=req.temperature or 0.7,
@@ -105,7 +105,7 @@ def create_app() -> FastAPI:
             "id": req_id,
             "object": "chat.completion",
             "created": int(time.time()),
-            "model": req.model or "qwen-26b",
+            "model": req.model or vlm.model_id,
             "choices": [
                 {
                     "index": 0,
@@ -127,13 +127,13 @@ def create_app() -> FastAPI:
     @app.post("/v1/audio/transcriptions")
     async def audio_transcriptions(
         file: UploadFile = File(...),
-        model: Optional[str] = Form("whisper-large-v3-turbo"),
+        model: Optional[str] = Form(None),
         language: Optional[str] = Form(None),
         prompt: Optional[str] = Form(None),
         authorization: Optional[str] = Header(None),
     ):
         verify_auth(authorization)
-        stt = get_stt_engine()
+        stt = registry.get_stt()
         audio_content = await file.read()
         res = stt.transcribe(audio_content, language=language, prompt=prompt)
         return {
@@ -148,7 +148,7 @@ def create_app() -> FastAPI:
     @app.post("/v1/audio/speech")
     def audio_speech(req: SpeechRequest, authorization: Optional[str] = Header(None)):
         verify_auth(authorization)
-        tts = get_tts_engine()
+        tts = registry.get_tts()
         audio_bytes = tts.synthesize(
             text=req.input,
             voice=req.voice,
@@ -163,7 +163,7 @@ def create_app() -> FastAPI:
     @app.post("/v1/images/generations")
     def images_generations(req: ImageGenerationRequest, authorization: Optional[str] = Header(None)):
         verify_auth(authorization)
-        flux = get_flux_engine()
+        flux = registry.get_image()
 
         b64_str, elapsed = flux.generate(
             prompt=req.prompt,
@@ -186,12 +186,12 @@ def create_app() -> FastAPI:
         }
 
     # ==========================================================================
-    # 5. 🎬 VIDEO GENERATION (WAN2.1-1.3B)
+    # 5. 🎬 VIDEO GENERATION (WAN2.1-14B / 1.3B)
     # ==========================================================================
     @app.post("/v1/videos/generations")
     def videos_generations(req: VideoGenerationRequest, authorization: Optional[str] = Header(None)):
         verify_auth(authorization)
-        wan = get_wan_engine()
+        wan = registry.get_video()
 
         video_bytes, elapsed = wan.generate(
             prompt=req.prompt,
