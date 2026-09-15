@@ -13,6 +13,7 @@ def _():
     import gc
     import io
     import os
+    import subprocess
     import sys
     import threading
     import time
@@ -23,15 +24,25 @@ def _():
     import torch
     from PIL import Image
 
-    try:
-        from diffusers import FluxPipeline
-    except ImportError:
-        FluxPipeline = None
-
+    # Tự động cài đặt supabase nếu môi trường mới chưa có
     try:
         from supabase import create_client
     except ImportError:
-        create_client = None
+        subprocess.run([sys.executable, "-m", "pip", "install", "-q", "supabase"])
+        try:
+            from supabase import create_client
+        except ImportError:
+            create_client = None
+
+    # Tự động cài đặt diffusers nếu môi trường mới chưa có
+    try:
+        from diffusers import FluxPipeline
+    except ImportError:
+        subprocess.run([sys.executable, "-m", "pip", "install", "-q", "diffusers", "transformers", "accelerate", "sentencepiece", "protobuf"])
+        try:
+            from diffusers import FluxPipeline
+        except ImportError:
+            FluxPipeline = None
 
     # Biến trạng thái worker toàn cục dùng chung trong notebook
     worker_state = {"running": False, "thread": None}
