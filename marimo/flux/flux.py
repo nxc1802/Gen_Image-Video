@@ -1,38 +1,10 @@
-import argparse
-import base64
-import gc
-import io
-import json
-import os
-import sys
-import threading
-import time
-import uuid
-from typing import Optional
+import marimo
 
-# ==============================================================================
-# 1. CẤU HÌNH MẶC ĐỊNH SUPABASE
-# ==============================================================================
-DEFAULT_SUPABASE_URL = "https://fxepzlszglckfsscport.supabase.co"
-DEFAULT_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4ZXB6bHN6Z2xja2Zzc2Nwb3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NDEzMzksImV4cCI6MjEwNTAxNzMzOX0.28rS1waBYB8xvGgHR7utoek9PqBc3ev6HPOG9yo9RdQ"
-worker_state = {"running": False, "thread": None}
-
-
-
-try:
-    import marimo
-    app = marimo.App(
-        width="full",
-        app_title="⚡ FLUX.1 Studio + Supabase AI Bridge",
-    )
-except ImportError:
-    marimo = None
-    class _DummyApp:
-        def cell(self, *args, **kwargs):
-            return lambda fn: fn
-        def run(self):
-            print("❌ Marimo chưa được cài đặt trên môi trường này. Cài đặt bằng: pip install marimo")
-    app = _DummyApp()
+__generated_with = "0.11.0"
+app = marimo.App(
+    width="full",
+    app_title="⚡ FLUX.1 Studio + Supabase AI Bridge",
+)
 
 
 @app.cell
@@ -61,6 +33,9 @@ def _():
     except ImportError:
         create_client = None
 
+    # Biến trạng thái worker toàn cục dùng chung trong notebook
+    worker_state = {"running": False, "thread": None}
+
     return (
         FluxPipeline,
         Image,
@@ -76,6 +51,7 @@ def _():
         threading,
         time,
         torch,
+        worker_state,
     )
 
 
@@ -83,14 +59,14 @@ def _():
 def _(mo, torch):
     def detect_gpu():
         if torch.cuda.is_available():
-            dev = torch.cuda.get_device_name(0)
-            tot = torch.cuda.get_device_properties(0).total_memory / (1024**3)
-            alloc = torch.cuda.memory_allocated(0) / (1024**3)
+            dev_name = torch.cuda.get_device_name(0)
+            total_vram = torch.cuda.get_device_properties(0).total_memory / (1024**3)
+            alloc_vram = torch.cuda.memory_allocated(0) / (1024**3)
             return {
                 "type": "cuda",
-                "name": dev,
-                "vram": f"{tot:.1f} GB",
-                "free_vram": f"{tot - alloc:.1f} GB",
+                "name": dev_name,
+                "vram": f"{total_vram:.1f} GB",
+                "free_vram": f"{total_vram - alloc_vram:.1f} GB",
                 "bf16": torch.cuda.is_bf16_supported(),
                 "status": "🟢 GPU Online",
             }
@@ -108,7 +84,7 @@ def _(mo, torch):
     header = mo.md(
         f"""
         # ⚡ FLUX.1 Studio + Supabase AI Bridge
-        > **Kiến trúc All-In-One:** 12B Flow Matching Transformer + Supabase Database Broker (Miễn nhiễm ngắt kết nối 100%)
+        > **Kiến trúc:** 12B Flow Matching Transformer + Supabase Database Broker (Miễn nhiễm ngắt kết nối 100%)
 
         | Phần cứng | Thiết bị | VRAM | bfloat16 | Trạng thái |
         | :--- | :--- | :--- | :--- | :--- |
@@ -188,30 +164,30 @@ def _(
             pipeline = None
             status_banner = mo.callout("❌ Thiếu thư viện diffusers. Hãy cài đặt: `pip install diffusers transformers accelerate`", kind="danger")
         else:
-            sel_model = model_choice.value
-            tok = hf_token.value.strip() or os.environ.get("HF_TOKEN") or None
+            _sel_model = model_choice.value
+            _tok = hf_token.value.strip() or os.environ.get("HF_TOKEN") or None
 
             gc.collect()
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
 
-            dtype = torch.bfloat16 if gpu_info.get("bf16", False) else torch.float32
+            _dtype = torch.bfloat16 if gpu_info.get("bf16", False) else torch.float32
 
             try:
-                with mo.status.spinner(title=f"Đang nạp {sel_model} vào VRAM ({dtype})..."):
-                    pipe = FluxPipeline.from_pretrained(sel_model, torch_dtype=dtype, token=tok)
+                with mo.status.spinner(title=f"Đang nạp {_sel_model} vào VRAM ({_dtype})..."):
+                    _pipe = FluxPipeline.from_pretrained(_sel_model, torch_dtype=_dtype, token=_tok)
                     if vram_mode.value == "full_gpu" and gpu_info["type"] == "cuda":
-                        pipe.to("cuda")
-                        desc = f"100% trên {gpu_info['name']} (Tối đa tốc độ)"
+                        _pipe.to("cuda")
+                        _desc = f"100% trên {gpu_info['name']} (Tối đa tốc độ)"
                     elif vram_mode.value == "cpu_offload":
-                        pipe.enable_model_cpu_offload()
-                        desc = "Model CPU Offload kích hoạt"
+                        _pipe.enable_model_cpu_offload()
+                        _desc = "Model CPU Offload kích hoạt"
                     else:
-                        pipe.to("cpu")
-                        desc = "Chạy CPU"
+                        _pipe.to("cpu")
+                        _desc = "Chạy CPU"
 
-                    pipeline = pipe
-                    status_banner = mo.callout(f"✅ Đã nạp `{sel_model}` ({dtype}). {desc}", kind="success")
+                    pipeline = _pipe
+                    status_banner = mo.callout(f"✅ Đã nạp `{_sel_model}` ({_dtype}). {_desc}", kind="success")
             except Exception as e:
                 pipeline = _current_pipe
                 status_banner = mo.callout(f"❌ Lỗi nạp mô hình: {e}", kind="danger")
@@ -220,16 +196,7 @@ def _(
         status_banner = mo.callout("✅ Mô hình đã sẵn sàng trong VRAM.", kind="success")
 
     status_banner
-    return (
-        desc,
-        dtype,
-        pipe,
-        pipeline,
-        sel_model,
-        should_load,
-        status_banner,
-        tok,
-    )
+    return (pipeline, status_banner)
 
 
 @app.cell
@@ -298,36 +265,36 @@ def _(
         if pipeline is None:
             gen_result_view = mo.callout("⚠️ Vui lòng nạp mô hình vào VRAM trước!", kind="warn")
         else:
-            p_text = prompt_input.value.strip()
-            w, h = [int(x) for x in resolution_choice.value.split("x")]
-            s_val = int(seed_input.value)
-            cur_seed = s_val if s_val >= 0 else int(time.time() * 1000) % 2147483647
-            st = int(steps_slider.value)
-            gd = float(guidance_slider.value)
+            _p_text = prompt_input.value.strip()
+            _w, _h = [int(x) for x in resolution_choice.value.split("x")]
+            _s_val = int(seed_input.value)
+            _cur_seed = _s_val if _s_val >= 0 else int(time.time() * 1000) % 2147483647
+            _st = int(steps_slider.value)
+            _gd = float(guidance_slider.value)
 
-            dev = gpu_info["type"]
-            gen = torch.Generator(device=dev).manual_seed(cur_seed)
+            _dev = gpu_info["type"]
+            _gen = torch.Generator(device=_dev).manual_seed(_cur_seed)
 
-            t0 = time.time()
-            with mo.status.spinner(title=f"Đang sinh ảnh FLUX.1 ({st} steps, {w}x{h})..."):
+            _t0 = time.time()
+            with mo.status.spinner(title=f"Đang sinh ảnh FLUX.1 ({_st} steps, {_w}x{_h})..."):
                 try:
-                    res = pipeline(
-                        prompt=p_text,
-                        width=w,
-                        height=h,
-                        num_inference_steps=st,
-                        guidance_scale=gd,
-                        generator=gen,
-                        max_sequence_length=256 if st <= 4 else 512,
+                    _pipe_res = pipeline(
+                        prompt=_p_text,
+                        width=_w,
+                        height=_h,
+                        num_inference_steps=_st,
+                        guidance_scale=_gd,
+                        generator=_gen,
+                        max_sequence_length=256 if _st <= 4 else 512,
                     )
-                    gen_img = res.images[0]
-                    elapsed = time.time() - t0
-                    gen_img.save(f"flux_{cur_seed}.png")
+                    _gen_img = _pipe_res.images[0]
+                    _elapsed = time.time() - _t0
+                    _gen_img.save(f"flux_{_cur_seed}.png")
 
                     gen_result_view = mo.vstack(
                         [
-                            mo.md(f"### ✨ Hoàn tất trong `{elapsed:.2f}s` | Kích thước: `{w}x{h}` | Seed: `{cur_seed}`"),
-                            mo.image(gen_img),
+                            mo.md(f"### ✨ Hoàn tất trong `{_elapsed:.2f}s` | Kích thước: `{_w}x{_h}` | Seed: `{_cur_seed}`"),
+                            mo.image(_gen_img),
                         ],
                         gap=1,
                     )
@@ -335,21 +302,7 @@ def _(
                     gen_result_view = mo.callout(f"❌ Lỗi sinh ảnh: {err}", kind="danger")
 
     gen_result_view
-    return (
-        cur_seed,
-        dev,
-        elapsed,
-        gen,
-        gen_img,
-        gen_result_view,
-        h,
-        p_text,
-        res,
-        s_val,
-        st,
-        t0,
-        w,
-    )
+    return (gen_result_view,)
 
 
 @app.cell
@@ -370,7 +323,6 @@ def _(mo, os):
         value=True,
         label="Kích hoạt Background Queue Worker (Lắng nghe Supabase)",
     )
-
 
     worker_ui_panel = mo.vstack(
         [
@@ -398,24 +350,22 @@ def _(
     pipeline,
     sb_key_ui,
     sb_url_ui,
+    sys,
     threading,
     time,
     torch,
+    worker_state,
     worker_toggle,
 ):
-    import sys
-
-    worker_state = sys.modules.setdefault("_flux_worker_state", {"running": False, "thread": None})
     worker_status_ui = mo.md("*Gạt công tắc ở trên để bắt đầu lắng nghe hàng đợi Supabase.*")
 
-
     if worker_toggle.value:
-        url_val = sb_url_ui.value.strip()
-        key_val = sb_key_ui.value.strip()
+        _url_val = sb_url_ui.value.strip()
+        _key_val = sb_key_ui.value.strip()
 
         if not create_client:
             worker_status_ui = mo.callout("❌ Thiếu `supabase` package (`pip install supabase`).", kind="danger")
-        elif not key_val:
+        elif not _key_val:
             worker_status_ui = mo.callout("⚠️ Vui lòng nhập Supabase API Key!", kind="warn")
         elif pipeline is None:
             worker_status_ui = mo.callout("⚠️ Vui lòng nạp mô hình ở Mục 1 trước khi bật Worker!", kind="warn")
@@ -425,7 +375,7 @@ def _(
 
                 def _run_worker_loop():
                     try:
-                        sb = create_client(url_val, key_val)
+                        _sb = create_client(_url_val, _key_val)
                         print("[WORKER] Đã kết nối Supabase thành công!")
                     except Exception as ce:
                         print(f"[WORKER] Lỗi kết nối Supabase: {ce}")
@@ -433,379 +383,72 @@ def _(
 
                     while worker_state["running"]:
                         try:
-                            res = sb.table("image_jobs").select("*").eq("status", "pending").order("created_at").limit(1).execute()
-                            if res.data and len(res.data) > 0:
-                                job = res.data[0]
-                                jid = job["id"]
-                                lock = sb.table("image_jobs").update({"status": "processing"}).eq("id", jid).eq("status", "pending").execute()
-                                if lock.data:
-                                    prompt_t = job.get("prompt", "")
-                                    size_t = job.get("size", "1024x1024")
+                            _query_res = _sb.table("image_jobs").select("*").eq("status", "pending").order("created_at").limit(1).execute()
+                            if _query_res.data and len(_query_res.data) > 0:
+                                _job = _query_res.data[0]
+                                _jid = _job["id"]
+                                _lock_res = _sb.table("image_jobs").update({"status": "processing"}).eq("id", _jid).eq("status", "pending").execute()
+                                if _lock_res.data:
+                                    _prompt_t = _job.get("prompt", "")
+                                    _size_t = _job.get("size", "1024x1024")
                                     try:
-                                        pw, ph = [int(x) for x in size_t.split("x")]
+                                        _pw, _ph = [int(x) for x in _size_t.split("x")]
                                     except Exception:
-                                        pw, ph = 1024, 1024
-                                    steps_t = job.get("steps") or 28
-                                    guidance_t = job.get("guidance") or 3.5
-                                    seed_t = job.get("seed") or (int(time.time() * 1000) % 2147483647)
+                                        _pw, _ph = 1024, 1024
+                                    _steps_t = _job.get("steps") or 28
+                                    _guidance_t = _job.get("guidance") or 3.5
+                                    _seed_t = _job.get("seed") or (int(time.time() * 1000) % 2147483647)
 
-                                    dev_t = gpu_info.get("type", "cuda")
-                                    g_t = torch.Generator(device=dev_t).manual_seed(seed_t)
-                                    start_inf = time.time()
+                                    _dev_t = gpu_info.get("type", "cuda")
+                                    _g_t = torch.Generator(device=_dev_t).manual_seed(_seed_t)
+                                    _start_inf = time.time()
                                     try:
-                                        img_res = pipeline(
-                                            prompt=prompt_t,
-                                            width=pw,
-                                            height=ph,
-                                            num_inference_steps=steps_t,
-                                            guidance_scale=guidance_t,
-                                            generator=g_t,
-                                            max_sequence_length=256 if steps_t <= 4 else 512,
+                                        _img_res = pipeline(
+                                            prompt=_prompt_t,
+                                            width=_pw,
+                                            height=_ph,
+                                            num_inference_steps=_steps_t,
+                                            guidance_scale=_guidance_t,
+                                            generator=_g_t,
+                                            max_sequence_length=256 if _steps_t <= 4 else 512,
                                         ).images[0]
-                                        inf_dt = time.time() - start_inf
-                                        buf = io.BytesIO()
-                                        img_res.save(buf, format="PNG")
-                                        b64_str = base64.b64encode(buf.getvalue()).decode("ascii")
+                                        _inf_dt = time.time() - _start_inf
+                                        _buf = io.BytesIO()
+                                        _img_res.save(_buf, format="PNG")
+                                        _b64_str = base64.b64encode(_buf.getvalue()).decode("ascii")
 
-                                        sb.table("image_jobs").update({
+                                        _sb.table("image_jobs").update({
                                             "status": "completed",
-                                            "result_b64": b64_str,
-                                            "inference_time_sec": round(inf_dt, 2),
+                                            "result_b64": _b64_str,
+                                            "inference_time_sec": round(_inf_dt, 2),
                                             "device_name": gpu_info.get("name", "GPU"),
-                                        }).eq("id", jid).execute()
-                                        print(f"[WORKER] Xong Job #{jid} trong {inf_dt:.2f}s")
+                                        }).eq("id", _jid).execute()
+                                        print(f"[WORKER] Xong Job #{_jid} trong {_inf_dt:.2f}s")
                                     except Exception as ge:
-                                        sb.table("image_jobs").update({
+                                        _sb.table("image_jobs").update({
                                             "status": "failed",
                                             "error_message": str(ge),
-                                        }).eq("id", jid).execute()
-                                        print(f"[WORKER] Lỗi Job #{jid}: {ge}")
+                                        }).eq("id", _jid).execute()
+                                        print(f"[WORKER] Lỗi Job #{_jid}: {ge}")
                         except Exception as loop_e:
                             print(f"[WORKER ERROR] {loop_e}")
                         time.sleep(1.0)
 
-                th = threading.Thread(target=_run_worker_loop, daemon=True)
-                worker_state["thread"] = th
-                th.start()
+                _th = threading.Thread(target=_run_worker_loop, daemon=True)
+                worker_state["thread"] = _th
+                _th.start()
 
             worker_status_ui = mo.vstack([
                 mo.callout("🟢 Worker ĐANG LẮNG NGHE HÀNG ĐỢI SUPABASE!", kind="success"),
-                mo.md(f"- Endpoint: `{url_val}` | Bảng: `image_jobs` | Thiết bị: `{gpu_info.get('name')}`"),
+                mo.md(f"- Endpoint: `{_url_val}` | Bảng: `image_jobs` | Thiết bị: `{gpu_info.get('name')}`"),
             ])
     else:
         worker_state["running"] = False
         worker_status_ui = mo.callout("⚪ Worker đang dừng.", kind="neutral")
 
     worker_status_ui
-    return (
-        key_val,
-        url_val,
-        worker_status_ui,
-    )
+    return (worker_status_ui,)
 
 
-# ==============================================================================
-# 3. CLI MODES (Bridge API, Worker CLI, Test Client, Heartbeat, SQL)
-# ==============================================================================
-
-def run_sql_schema():
-    """In ra mã SQL Supabase để người dùng copy-paste vào Supabase Dashboard."""
-    schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "schema.sql")
-    if os.path.exists(schema_path):
-        with open(schema_path, "r", encoding="utf-8") as f:
-            sql = f.read()
-    else:
-        sql = "-- Vui lòng kiểm tra file schema.sql tại thư mục dự án"
-    print("=" * 70)
-    print("📋 SUPABASE DATABASE QUEUE SCHEMA (File: schema.sql)")
-    print("=" * 70)
-    print(sql)
-    print("=" * 70)
-
-
-
-def run_bridge_server(supabase_url: str, supabase_key: str, host: str = "0.0.0.0", port: int = 8000, timeout_sec: int = 180):
-    """Chạy Local FastAPI Server chuẩn OpenAI DALL-E 3, đồng bộ qua Supabase."""
-    try:
-        from fastapi import FastAPI, HTTPException, Request, Header
-        from fastapi.responses import JSONResponse
-        from pydantic import BaseModel, Field
-        from supabase import create_client
-        import uvicorn
-    except ImportError as e:
-        print(f"❌ Thiếu thư viện: {e}")
-        print("Cài đặt nhanh: pip install fastapi uvicorn supabase pydantic")
-        sys.exit(1)
-
-    print("=" * 70)
-    print("🚀 KHỞI ĐỘNG LOCAL SUPABASE BRIDGE SERVER (OPENAI DALL-E COMPATIBLE)")
-    print(f"   Supabase URL : {supabase_url}")
-    print(f"   Local Endpoint: http://{host}:{port}/v1")
-    print("=" * 70)
-
-    sb = create_client(supabase_url, supabase_key)
-    api_app = FastAPI(title="FLUX.1 Supabase Bridge API", version="2.0.0")
-
-    class ImageGenRequest(BaseModel):
-        prompt: str
-        model: Optional[str] = "flux-1-dev"
-        n: Optional[int] = 1
-        size: Optional[str] = "1024x1024"
-        response_format: Optional[str] = "b64_json"
-        seed: Optional[int] = None
-        steps: Optional[int] = None
-        guidance: Optional[float] = None
-
-    @api_app.get("/health")
-    def health():
-        return {"status": "ok", "service": "FLUX.1 Supabase Bridge", "supabase": supabase_url}
-
-    @api_app.get("/v1/models")
-    def list_models():
-        return {
-            "object": "list",
-            "data": [
-                {"id": "flux-1-dev", "object": "model", "owned_by": "black-forest-labs"},
-                {"id": "flux-1-schnell", "object": "model", "owned_by": "black-forest-labs"},
-                {"id": "dall-e-3", "object": "model", "owned_by": "openai-alias"},
-            ],
-        }
-
-    @api_app.post("/v1/images/generations")
-    async def generate_images(req: ImageGenRequest, authorization: Optional[str] = Header(None)):
-        job_id = str(uuid.uuid4())
-        insert_payload = {
-            "id": job_id,
-            "prompt": req.prompt,
-            "model": req.model,
-            "size": req.size or "1024x1024",
-            "seed": req.seed,
-            "steps": req.steps or (4 if "schnell" in (req.model or "").lower() else 28),
-            "guidance": req.guidance or (0.0 if "schnell" in (req.model or "").lower() else 3.5),
-            "response_format": req.response_format or "b64_json",
-            "status": "pending",
-        }
-
-        print(f"[BRIDGE] 📤 Gửi Job #{job_id}: '{req.prompt[:50]}...' ({insert_payload['size']})")
-        res = sb.table("image_jobs").insert(insert_payload).execute()
-        if not res.data:
-            raise HTTPException(status_code=500, detail="Không thể tạo job trong Supabase")
-
-        start_wait = time.time()
-        poll_count = 0
-        while time.time() - start_wait < timeout_sec:
-            time.sleep(1.0)
-            poll_count += 1
-            check = sb.table("image_jobs").select("*").eq("id", job_id).execute()
-            if check.data and len(check.data) > 0:
-                cur = check.data[0]
-                status = cur.get("status")
-                if status == "completed":
-                    elapsed = cur.get("inference_time_sec") or (time.time() - start_wait)
-                    b64 = cur.get("result_b64")
-                    print(f"[BRIDGE] ✨ Job #{job_id} hoàn tất sau {elapsed:.1f}s!")
-                    if req.response_format == "url":
-                        return {
-                            "created": int(time.time()),
-                            "data": [{"url": f"data:image/png;base64,{b64}", "revised_prompt": req.prompt}],
-                        }
-                    return {
-                        "created": int(time.time()),
-                        "data": [{"b64_json": b64, "revised_prompt": req.prompt}],
-                    }
-                elif status == "failed":
-                    err = cur.get("error_message") or "Worker GPU báo lỗi sinh ảnh"
-                    print(f"[BRIDGE] ❌ Job #{job_id} thất bại: {err}")
-                    raise HTTPException(status_code=500, detail=f"GPU Worker Error: {err}")
-            if poll_count % 5 == 0:
-                print(f"[BRIDGE] ⏳ Đang đợi GPU xử lý Job #{job_id}... ({int(time.time() - start_wait)}s)")
-
-        raise HTTPException(status_code=504, detail=f"Timeout sau {timeout_sec}s chờ GPU Worker")
-
-    uvicorn.run(api_app, host=host, port=port)
-
-
-def run_test_client(base_url: str = "http://localhost:8000/v1", prompt: str = "A cute little baby astronaut floating in a colorful space nebula, photorealistic, 8k", output: str = "flux_result.png"):
-    """Gửi test request tới Local Bridge hoặc OpenAI API."""
-    import urllib.request
-    import urllib.error
-
-    url = f"{base_url.rstrip('/')}/images/generations"
-    payload = {
-        "model": "flux-1-dev",
-        "prompt": prompt,
-        "size": "1024x1024",
-        "response_format": "b64_json",
-    }
-    data = json.dumps(payload).encode("utf-8")
-    req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
-
-    print("=" * 70)
-    print(f"🧪 GỬI TEST REQUEST TỚI: {url}")
-    print(f"📝 Prompt: {prompt}")
-    print("=" * 70)
-
-    t0 = time.time()
-    try:
-        with urllib.request.urlopen(req, timeout=300) as response:
-            res_json = json.loads(response.read().decode("utf-8"))
-            elapsed = time.time() - t0
-            b64 = res_json["data"][0].get("b64_json")
-            if b64:
-                with open(output, "wb") as f:
-                    f.write(base64.b64decode(b64))
-                print(f"✅ SINH ẢNH THÀNH CÔNG trong {elapsed:.2f}s!")
-                print(f"💾 File ảnh lưu tại: {os.path.abspath(output)}")
-            else:
-                print("⚠️ Kết quả không chứa b64_json:", res_json)
-    except urllib.error.URLError as e:
-        print(f"❌ Lỗi kết nối: {e}")
-        sys.exit(1)
-
-
-def run_heartbeat(url: str, token: str, interval: int = 15):
-    """Duy trì kết nối Marimo Molab liên tục để không bị timeout."""
-    import urllib.request
-    clean_url = url.rstrip("/")
-    if not clean_url.endswith("/api/kernel/ping"):
-        ping_url = f"{clean_url}/api/kernel/ping"
-    else:
-        ping_url = clean_url
-
-    print(f"🚀 Bắt đầu Heartbeat tới {clean_url} (Mỗi {interval}s)...")
-    headers = {"Authorization": f"Bearer {token}", "User-Agent": "MarimoHeartbeat/2.0"}
-    count = 0
-    while True:
-        count += 1
-        try:
-            req = urllib.request.Request(ping_url, headers=headers)
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                print(f"[{time.strftime('%H:%M:%S')}] [Nhịp #{count}] Heartbeat OK (HTTP {resp.status})")
-        except Exception as e:
-            try:
-                req = urllib.request.Request(clean_url, headers=headers)
-                with urllib.request.urlopen(req, timeout=10) as resp:
-                    print(f"[{time.strftime('%H:%M:%S')}] [Nhịp #{count}] Fallback Ping OK (HTTP {resp.status})")
-            except Exception as fe:
-                print(f"[{time.strftime('%H:%M:%S')}] [Nhịp #{count}] Ping lỗi: {fe}")
-        time.sleep(interval)
-
-
-def run_worker_cli(supabase_url: str, supabase_key: str, model_id: str = "black-forest-labs/FLUX.1-dev"):
-    """Chạy standalone worker trong terminal (không cần mở web Marimo)."""
-    import torch
-    from diffusers import FluxPipeline
-    from supabase import create_client
-
-    print("=" * 70)
-    print("🚀 FLUX.1 STANDALONE GPU WORKER")
-    print(f"   Model: {model_id} | Supabase: {supabase_url}")
-    print("=" * 70)
-
-    dev = "cuda" if torch.cuda.is_available() else "cpu"
-    dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float32
-    pipe = FluxPipeline.from_pretrained(model_id, torch_dtype=dtype, token=os.environ.get("HF_TOKEN"))
-    if dev == "cuda":
-        pipe.to("cuda")
-
-    sb = create_client(supabase_url, supabase_key)
-    print("✅ Đã nạp xong mô hình vào GPU! Đang lắng nghe Supabase...")
-
-    while True:
-        try:
-            res = sb.table("image_jobs").select("*").eq("status", "pending").order("created_at").limit(1).execute()
-            if res.data:
-                j = res.data[0]
-                jid = j["id"]
-                lock = sb.table("image_jobs").update({"status": "processing"}).eq("id", jid).eq("status", "pending").execute()
-                if lock.data:
-                    p = j.get("prompt", "")
-                    sz = j.get("size", "1024x1024")
-                    try:
-                        pw, ph = [int(x) for x in sz.split("x")]
-                    except Exception:
-                        pw, ph = 1024, 1024
-                    st = j.get("steps") or 28
-                    gd = j.get("guidance") or 3.5
-                    sd = j.get("seed") or int(time.time() * 1000) % 2147483647
-                    g = torch.Generator(device=dev).manual_seed(sd)
-
-                    t0 = time.time()
-                    try:
-                        img = pipe(prompt=p, width=pw, height=ph, num_inference_steps=st, guidance_scale=gd, generator=g).images[0]
-                        dt = time.time() - t0
-                        buf = io.BytesIO()
-                        img.save(buf, format="PNG")
-                        b64 = base64.b64encode(buf.getvalue()).decode("ascii")
-                        sb.table("image_jobs").update({"status": "completed", "result_b64": b64, "inference_time_sec": round(dt, 2)}).eq("id", jid).execute()
-                        print(f"✨ Xong Job #{jid} trong {dt:.2f}s")
-                    except Exception as ge:
-                        sb.table("image_jobs").update({"status": "failed", "error_message": str(ge)}).eq("id", jid).execute()
-        except Exception as e:
-            print(f"Error: {e}")
-        time.sleep(1.0)
-
-
-# ==============================================================================
-# 4. ENTRYPOINT DISPATCHER
-# ==============================================================================
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="⚡ FLUX.1 All-In-One: Marimo Studio, Supabase Bridge & Worker", add_help=False)
-    parser.add_argument("--mode", choices=["app", "bridge", "worker", "test", "heartbeat", "sql"], default=None, help="Chế độ chạy")
-    parser.add_argument("--bridge", action="store_true", help="Chạy Local Bridge API Server")
-    parser.add_argument("--worker", action="store_true", help="Chạy Standalone GPU Worker")
-    parser.add_argument("--test", action="store_true", help="Gửi test request sinh ảnh")
-    parser.add_argument("--heartbeat", action="store_true", help="Duy trì heartbeat tới Marimo session")
-    parser.add_argument("--sql", action="store_true", help="In ra mã SQL khởi tạo Supabase")
-
-    # Arguments bổ trợ
-    parser.add_argument("--supabase-url", default=os.environ.get("SUPABASE_URL", DEFAULT_SUPABASE_URL))
-    parser.add_argument("--supabase-key", default=os.environ.get("SUPABASE_KEY", DEFAULT_SUPABASE_KEY))
-
-    parser.add_argument("--host", default="0.0.0.0")
-    parser.add_argument("--port", type=int, default=8000)
-    parser.add_argument("--base-url", default="http://localhost:8000/v1")
-    parser.add_argument("--prompt", default="A cute baby astronaut floating in deep space, hyper-detailed 8k, Unreal Engine 5")
-    parser.add_argument("--output", default="flux_result.png")
-    parser.add_argument("--url", help="URL session Marimo cho heartbeat")
-    parser.add_argument("--token", help="Auth token cho heartbeat")
-    parser.add_argument("--interval", type=int, default=15)
-    parser.add_argument("-h", "--help", action="help", help="Hiển thị hướng dẫn này")
-
-    args, unknown = parser.parse_known_args()
-
-    # Xác định mode
-    active_mode = args.mode
-    if args.bridge:
-        active_mode = "bridge"
-    elif args.worker:
-        active_mode = "worker"
-    elif args.test:
-        active_mode = "test"
-    elif args.heartbeat:
-        active_mode = "heartbeat"
-    elif args.sql:
-        active_mode = "sql"
-
-    if active_mode == "sql":
-        run_sql_schema()
-    elif active_mode == "bridge":
-        if not args.supabase_key:
-            print("❌ Lỗi: Cần cung cấp --supabase-key hoặc biến môi trường SUPABASE_KEY!")
-            sys.exit(1)
-        run_bridge_server(args.supabase_url, args.supabase_key, host=args.host, port=args.port)
-    elif active_mode == "test":
-        run_test_client(base_url=args.base_url, prompt=args.prompt, output=args.output)
-    elif active_mode == "worker":
-        if not args.supabase_key:
-            print("❌ Lỗi: Cần cung cấp --supabase-key hoặc biến môi trường SUPABASE_KEY!")
-            sys.exit(1)
-        run_worker_cli(args.supabase_url, args.supabase_key)
-    elif active_mode == "heartbeat":
-        if not args.url or not args.token:
-            print("❌ Lỗi: Cần cung cấp --url và --token cho chế độ heartbeat!")
-            sys.exit(1)
-        run_heartbeat(args.url, args.token, interval=args.interval)
-    else:
-        # Mặc định: Chạy Marimo App
-        app.run()
+    app.run()
