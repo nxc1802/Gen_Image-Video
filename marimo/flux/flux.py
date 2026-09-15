@@ -403,7 +403,11 @@ def _(
     torch,
     worker_toggle,
 ):
+    import sys
+
+    worker_state = sys.modules.setdefault("_flux_worker_state", {"running": False, "thread": None})
     worker_status_ui = mo.md("*Gạt công tắc ở trên để bắt đầu lắng nghe hàng đợi Supabase.*")
+
 
     if worker_toggle.value:
         url_val = sb_url_ui.value.strip()
