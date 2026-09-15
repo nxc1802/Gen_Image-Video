@@ -38,15 +38,15 @@ def test_chat(base_url: str, prompt: str = "Xin chào! Bạn là ai và có th�
         headers={"Content-Type": "application/json"},
     )
     try:
-        with urllib.request.urlopen(req, timeout=120) as resp:
+        with urllib.request.urlopen(req, timeout=300) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             elapsed = time.time() - t0
             reply = data["choices"][0]["message"]["content"]
-            print(f"✅ VLM Phản hồi trong {elapsed:.2f}s:")
-            print(f"👉 {reply.strip()}")
+            print(f"✅ VLM Phản hồi trong {elapsed:.2f}s:", flush=True)
+            print(f"👉 {reply.strip()}", flush=True)
             return True
     except Exception as e:
-        print(f"❌ Lỗi gọi Chat: {e}")
+        print(f"❌ Lỗi gọi Chat: {e}", flush=True)
         return False
 
 
@@ -103,7 +103,7 @@ def test_image(base_url: str, prompt: str = "A majestic mechanical tiger with gl
         headers={"Content-Type": "application/json"},
     )
     try:
-        with urllib.request.urlopen(req, timeout=180) as resp:
+        with urllib.request.urlopen(req, timeout=360) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             elapsed = time.time() - t0
             b64 = data["data"][0].get("b64_json")
@@ -111,14 +111,14 @@ def test_image(base_url: str, prompt: str = "A majestic mechanical tiger with gl
                 out_file = "test_kaggle_image.png"
                 with open(out_file, "wb") as f:
                     f.write(base64.b64decode(b64))
-                print(f"✅ Sinh ảnh FLUX.1 thành công trong {elapsed:.2f}s!")
-                print(f"💾 File ảnh lưu tại: {os.path.abspath(out_file)}")
+                print(f"✅ Sinh ảnh FLUX.1 thành công trong {elapsed:.2f}s!", flush=True)
+                print(f"💾 File ảnh lưu tại: {os.path.abspath(out_file)}", flush=True)
                 return True
             else:
-                print(f"⚠️ Không nhận được base64: {data}")
+                print(f"⚠️ Không nhận được base64: {data}", flush=True)
                 return False
     except Exception as e:
-        print(f"❌ Lỗi gọi Image: {e}")
+        print(f"❌ Lỗi gọi Image: {e}", flush=True)
         return False
 
 
