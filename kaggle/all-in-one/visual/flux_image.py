@@ -12,8 +12,8 @@ import time
 from typing import Optional, Tuple
 from PIL import Image
 import torch
-from diffusers import FluxPipeline
-from transformers import BitsAndBytesConfig
+from diffusers import FluxPipeline, FluxTransformer2DModel
+from transformers import BitsAndBytesConfig, T5EncoderModel
 
 from config import FLUX_MODEL_ID, DEVICE_VISUAL, FLUX_NUM_STEPS, FLUX_GUIDANCE
 from core.memory_manager import get_memory_manager
@@ -35,16 +35,46 @@ class FluxImageEngine:
         t0 = time.time()
 
         try:
-            # Nạp pipeline FLUX ở định dạng 4-bit tiết kiệm VRAM
+            bnb_4bit = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.float16,
+            )
+
+            logger.info("🖼️ Đang nạp Transformer 4-bit NF4...")
+            transformer = FluxTransformer2DModel.from_pretrained(
+                FLUX_MODEL_ID,
+                subfolder="transformer",
+                quantization_config=bnb_4bit,
+                torch_dtype=torch.float16,
+                low_cpu_mem_usage=True,
+            )
+
+            logger.info("🖼️ Đang nạp T5 text_encoder_2 4-bit...")
+            text_encoder_2 = T5EncoderModel.from_pretrained(
+                FLUX_MODEL_ID,
+                subfolder="text_encoder_2",
+                quantization_config=bnb_4bit,
+                torch_dtype=torch.float16,
+                low_cpu_mem_usage=True,
+            )
+
+            logger.info("🖼️ Đang kết hợp vào FluxPipeline...")
             pipe = FluxPipeline.from_pretrained(
                 FLUX_MODEL_ID,
+                transformer=transformer,
+                text_encoder_2=text_encoder_2,
                 torch_dtype=torch.float16,
+                low_cpu_mem_usage=True,
             )
-            # Áp dụng CPU offload nếu chạy trên 1 GPU hoặc đưa thẳng vào GPU 1
+
             if DEVICE_VISUAL.startswith("cuda"):
                 pipe.enable_model_cpu_offload(device=torch.device(DEVICE_VISUAL))
             else:
                 pipe.to("cpu")
+
+            pipe.vae.enable_slicing()
+            pipe.vae.enable_tiling()
 
             elapsed = time.time() - t0
             logger.info(f"✅ FLUX.1 nạp thành công vào VRAM trong {elapsed:.2f}s!")
