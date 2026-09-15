@@ -12,7 +12,15 @@ from typing import Any, Dict, List, Optional
 from PIL import Image
 import requests
 import torch
-from transformers import AutoProcessor, AutoModelForVision2Seq, BitsAndBytesConfig
+from transformers import AutoProcessor, BitsAndBytesConfig
+
+try:
+    from transformers import AutoModelForImageTextToText as AutoVLMModel
+except ImportError:
+    try:
+        from transformers import Qwen2_5_VLForConditionalGeneration as AutoVLMModel
+    except ImportError:
+        from transformers import AutoModelForCausalLM as AutoVLMModel
 
 from config import VLM_MODEL_ID, GPU_COUNT
 
@@ -52,7 +60,7 @@ class VLMEngine:
                 VLM_MODEL_ID,
                 trust_remote_code=True,
             )
-            self._model = AutoModelForVision2Seq.from_pretrained(
+            self._model = AutoVLMModel.from_pretrained(
                 VLM_MODEL_ID,
                 quantization_config=bnb_config if torch.cuda.is_available() else None,
                 device_map=device_map,
