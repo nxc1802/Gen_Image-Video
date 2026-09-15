@@ -403,7 +403,14 @@ def _(mo, os):
 
 
 @app.cell
+def _():
+    _worker_state = {"running": False, "thread": None}
+    return (_worker_state,)
+
+
+@app.cell
 def _(
+    _worker_state,
     base64,
     io,
     mo,
@@ -434,14 +441,18 @@ def _(
         elif pipeline is None:
             worker_banner = mo.callout("⚠️ Vui lòng nạp mô hình FLUX.1 vào VRAM ở Mục 1 trước khi bật Worker!", kind="warn")
         else:
-            if "gpu_worker_running" not in globals() or not gpu_worker_running:
-                gpu_worker_running = True
+            if not _worker_state["running"]:
+                _worker_state["running"] = True
 
                 def _background_queue_worker():
-                    sb = create_client(sb_url, sb_key)
-                    print("[MARIMO WORKER] Worker Supabase đã khởi động ngầm thành công!")
+                    try:
+                        sb = create_client(sb_url, sb_key)
+                        print("[MARIMO WORKER] Worker Supabase đã khởi động ngầm thành công!")
+                    except Exception as conn_err:
+                        print(f"[MARIMO WORKER] Không thể kết nối Supabase: {conn_err}")
+                        return
 
-                    while gpu_worker_running:
+                    while _worker_state["running"]:
                         try:
                             # Lấy 1 pending job
                             res = sb.table("image_jobs").select("*").eq("status", "pending").order("created_at").limit(1).execute()
@@ -456,7 +467,7 @@ def _(
                                     sz = j.get("size", "1024x1024")
                                     try:
                                         pw, ph = [int(x) for x in sz.split("x")]
-                                    except:
+                                    except Exception:
                                         pw, ph = 1024, 1024
                                     st = j.get("steps") or 28
                                     gd = j.get("guidance") or 3.5
@@ -466,33 +477,41 @@ def _(
                                     g_gen = torch.Generator(device=dev_w).manual_seed(sd)
 
                                     t0 = time.time()
-                                    r_img = pipeline(
-                                        prompt=p,
-                                        width=pw,
-                                        height=ph,
-                                        num_inference_steps=st,
-                                        guidance_scale=gd,
-                                        generator=g_gen,
-                                        max_sequence_length=256 if st <= 4 else 512,
-                                    ).images[0]
-                                    dt = time.time() - t0
+                                    try:
+                                        r_img = pipeline(
+                                            prompt=p,
+                                            width=pw,
+                                            height=ph,
+                                            num_inference_steps=st,
+                                            guidance_scale=gd,
+                                            generator=g_gen,
+                                            max_sequence_length=256 if st <= 4 else 512,
+                                        ).images[0]
+                                        dt = time.time() - t0
 
-                                    buf = io.BytesIO()
-                                    r_img.save(buf, format="PNG")
-                                    b64 = base64.b64encode(buf.getvalue()).decode("ascii")
+                                        buf = io.BytesIO()
+                                        r_img.save(buf, format="PNG")
+                                        b64 = base64.b64encode(buf.getvalue()).decode("ascii")
 
-                                    sb.table("image_jobs").update({
-                                        "status": "completed",
-                                        "result_b64": b64,
-                                        "inference_time_sec": round(dt, 2),
-                                        "device_name": system_info.get("device_name", "GPU"),
-                                    }).eq("id", j_id).execute()
-                                    print(f"[MARIMO WORKER] Hoàn tất Job #{j_id} trong {dt:.2f}s!")
+                                        sb.table("image_jobs").update({
+                                            "status": "completed",
+                                            "result_b64": b64,
+                                            "inference_time_sec": round(dt, 2),
+                                            "device_name": system_info.get("device_name", "GPU"),
+                                        }).eq("id", j_id).execute()
+                                        print(f"[MARIMO WORKER] Hoàn tất Job #{j_id} trong {dt:.2f}s!")
+                                    except Exception as gen_err:
+                                        sb.table("image_jobs").update({
+                                            "status": "failed",
+                                            "error_message": str(gen_err),
+                                        }).eq("id", j_id).execute()
+                                        print(f"[MARIMO WORKER] Lỗi sinh ảnh Job #{j_id}: {gen_err}")
                         except Exception as w_err:
                             print(f"[MARIMO WORKER ERROR] {w_err}")
                         time.sleep(1.0)
 
                 worker_thread = threading.Thread(target=_background_queue_worker, daemon=True)
+                _worker_state["thread"] = worker_thread
                 worker_thread.start()
 
             worker_banner = mo.vstack([
@@ -505,18 +524,15 @@ def _(
                 """)
             ])
     else:
-        if "gpu_worker_running" in globals():
-            gpu_worker_running = False
+        _worker_state["running"] = False
         worker_banner = mo.callout("⚪ Worker đang dừng. Gạt công tắc ở trên để bắt đầu lắng nghe Supabase.", kind="neutral")
 
     worker_banner
     return (
         create_client,
-        gpu_worker_running,
         sb_key,
         sb_url,
         worker_banner,
-        worker_thread,
     )
 
 
