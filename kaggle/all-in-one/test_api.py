@@ -118,9 +118,50 @@ def test_image(base_url: str, prompt: str = "A majestic mechanical dragon with g
         return False
 
 
+def resolve_target_url(specified_url: str) -> str:
+    """Tự động tìm endpoint Cloudflare mới nhất từ Supabase nếu không truyền URL."""
+    if specified_url and specified_url != "auto" and "localhost" not in specified_url:
+        return specified_url
+
+    # Thử kết nối localhost trước
+    try:
+        req = urllib.request.Request(f"{specified_url.rstrip('/')}/models")
+        with urllib.request.urlopen(req, timeout=1.5) as resp:
+            if resp.status == 200:
+                print(f"📡 Đang kết nối tới Local Endpoint: {specified_url}")
+                return specified_url
+    except Exception:
+        pass
+
+    # Tự động truy vấn Supabase tìm URL Cloudflare của Kaggle
+    SUPABASE_URL = "https://fxepzlszglckfsscport.supabase.co"
+    SUPABASE_KEY = (
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+        "eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4ZXB6bHN6Z2xja2Zzc2Nwb3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NDEzMzksImV4cCI6MjEwNTAxNzMzOX0."
+        "28rS1waBYB8xvGgHR7utoek9PqBc3ev6HPOG9yo9RdQ"
+    )
+    try:
+        q_url = f"{SUPABASE_URL}/rest/v1/image_jobs?prompt=eq.__system_announcement__&order=created_at.desc&limit=1"
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}",
+        }
+        req = urllib.request.Request(q_url, headers=headers)
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            rows = json.loads(resp.read().decode("utf-8"))
+            if rows and rows[0].get("image_url"):
+                found_url = rows[0]["image_url"]
+                print(f"📡 Tự động phát hiện Kaggle Endpoint từ Supabase: {found_url}")
+                return found_url
+    except Exception as e:
+        print(f"⚠️ Không thể lấy URL từ Supabase: {e}")
+
+    return specified_url
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Test Client cho Kaggle Studio API")
-    parser.add_argument("--url", default="http://localhost:8000/v1", help="Base URL của API (/v1)")
+    parser.add_argument("--url", default="auto", help="Base URL của API (/v1) hoặc 'auto' để tự phát hiện")
     parser.add_argument("--all", action="store_true", help="Chạy toàn bộ các test")
     parser.add_argument("--chat", action="store_true", help="Chỉ test Chat VLM")
     parser.add_argument("--tts", action="store_true", help="Chỉ test TTS")
@@ -128,16 +169,18 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print(f"🎯 Target Base URL: {args.url}")
+    target_url = resolve_target_url(args.url if args.url != "auto" else "http://localhost:8000/v1")
+    print(f"🎯 Target Base URL: {target_url}")
 
     if args.all or (not args.chat and not args.tts and not args.image):
-        test_chat(args.url)
-        test_tts(args.url)
-        test_image(args.url)
+        test_chat(target_url)
+        test_tts(target_url)
+        test_image(target_url)
     else:
         if args.chat:
-            test_chat(args.url)
+            test_chat(target_url)
         if args.tts:
-            test_tts(args.url)
+            test_tts(target_url)
         if args.image:
-            test_image(args.url)
+            test_image(target_url)
+
