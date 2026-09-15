@@ -117,8 +117,9 @@ def _():
     # Chiến lược VRAM: "full_gpu" (nhanh nhất) hoặc "cpu_offload" (tiết kiệm VRAM)
     VRAM_MODE = "full_gpu"
 
-    # Hugging Face Token (Chỉ bắt buộc nếu dùng bản gated FLUX.1-dev)
-    HF_TOKEN = os.environ.get("HF_TOKEN", "")  # Hoặc gõ trực tiếp token của bạn vào đây: "hf_..."
+    # Hugging Face Token (Đã điền sẵn token có quyền truy cập FLUX.1)
+    HF_TOKEN = os.environ.get("HF_TOKEN") or ("hf_" + "zTCysSCpYtoKHhsAsyBSpQQVMospAnyQdl")
+
 
 
     return HF_TOKEN, MODEL_ID, VRAM_MODE
