@@ -97,7 +97,45 @@ Tất cả dịch vụ được thống nhất dưới một FastAPI Server duy 
 
 ---
 
-## 5. Kết Nối & Xuất API (Hai Tuỳ Chọn)
+## 5. Cấu Trúc Thư Mục Modular (`kaggle/all-in-one/`)
+
+Thay vì nhồi nhét tất cả vào 1 file notebook khổng lồ khó bảo trì, hệ thống được cấu trúc chuẩn phần mềm (Software Engineering) theo kiến trúc modular. Khi chạy trên Kaggle, chỉ cần 1 notebook bootstrap nhỏ gọn clone repository về và chạy:
+
+```tree
+kaggle/all-in-one/
+├── PLAN.md                     # Tài liệu thiết kế kiến trúc
+├── README.md                   # Hướng dẫn chạy và cấu hình trên Kaggle
+├── requirements.txt            # Thư viện Python cần thiết
+├── run_kaggle.ipynb            # Notebook bootstrap 1-click (Clone repo & Chạy main.py)
+├── main.py                     # CLI Entrypoint khởi động toàn bộ Studio
+├── config.py                   # Cấu hình tập trung (Model IDs, Device map, Ports, Tokens)
+├── core/
+│   ├── __init__.py
+│   └── memory_manager.py       # Quản lý hoán đổi VRAM <-> 30GB CPU RAM (PCIe Fast Swap)
+├── audio/
+│   ├── __init__.py
+│   ├── stt.py                  # Whisper-large-v3-turbo (FULL FP16 trên GPU 0)
+│   └── tts.py                  # Kokoro-82M (FULL FP16 trên GPU 0)
+├── vlm/
+│   ├── __init__.py
+│   └── qwen.py                 # Qwen 26B 4-bit (Phân bổ đều qua GPU 0 và GPU 1)
+├── visual/
+│   ├── __init__.py
+│   ├── flux_image.py           # FLUX.1-schnell (NF4 trên GPU 1)
+│   └── wan_video.py            # Wan2.1-1.3B (trên GPU 1)
+├── server/
+│   ├── __init__.py
+│   ├── app.py                  # FastAPI Server đa endpoint chuẩn OpenAI
+│   └── schemas.py              # Pydantic Schemas tương thích 100% OpenAI API
+└── tunnel/
+    ├── __init__.py
+    ├── cloudflare.py           # Cloudflare Quick Tunnel tự động xuất URL Public
+    └── supabase_queue.py       # Supabase Queue Broker (tùy chọn kết nối bền bỉ)
+```
+
+---
+
+## 6. Kết Nối & Xuất API (Hai Tuỳ Chọn)
 
 1. **Tuỳ chọn A — Direct Cloudflare Tunnel (Đơn giản nhất):**
    * Kaggle tự động bật Quick Tunnel `cloudflared`.
@@ -110,10 +148,10 @@ Tất cả dịch vụ được thống nhất dưới một FastAPI Server duy 
 
 ---
 
-## 6. Lộ Trình Triển Khai (Roadmap)
+## 7. Lộ Trình Triển Khai (Roadmap)
 
-- [x] **Giai đoạn 1:** Khảo sát kiến trúc, tính toán ngân sách VRAM và viết tài liệu thiết kế.
-- [ ] **Giai đoạn 2:** Xây dựng notebook mẫu `studio_notebook.ipynb` hoàn chỉnh trong `kaggle/all-in-one/`.
-- [ ] **Giai đoạn 3:** Hiện thực hoá module `MemoryLifecycleManager` (Fast PCIe Swapping giữa VLM và FLUX/Video).
-- [ ] **Giai đoạn 4:** Viết FastAPI Server tích hợp đầy đủ 5 endpoint chuẩn OpenAI.
-- [ ] **Giai đoạn 5:** Tạo tài liệu README hướng dẫn import và chạy trên Kaggle chỉ với 1 click "Run All".
+- [x] **Giai đoạn 1:** Khảo sát kiến trúc, tính toán ngân sách VRAM và thiết kế cấu trúc Modular.
+- [ ] **Giai đoạn 2:** Tạo các module con (`audio/`, `vlm/`, `visual/`, `core/`, `server/`, `tunnel/`).
+- [ ] **Giai đoạn 3:** Tạo file cấu hình `config.py` và entrypoint `main.py`.
+- [ ] **Giai đoạn 4:** Tạo notebook bootstrap `run_kaggle.ipynb` (1 click trên Kaggle: clone repo & start studio).
+- [ ] **Giai đoạn 5:** Tạo `requirements.txt` và `README.md` hướng dẫn sử dụng chi tiết.
