@@ -1,9 +1,9 @@
 import marimo
 
-__generated_with = "0.11.0"
+__generated_with = "0.24.0"
 app = marimo.App(
     width="full",
-    app_title="FLUX.1 Studio — Marimo Lab",
+    app_title="FLUX.1 Studio + Supabase AI Bridge — Marimo Lab",
 )
 
 
@@ -25,25 +25,12 @@ def _():
     import torch
     from PIL import Image
     from diffusers import FluxPipeline
-    import uvicorn
-    from fastapi import FastAPI, Header, HTTPException, Request
-    from fastapi.middleware.cors import CORSMiddleware
-    from fastapi.staticfiles import StaticFiles
-    from pydantic import BaseModel, Field
 
     return (
-        BaseModel,
-        CORSMiddleware,
-        FastAPI,
-        Field,
         FluxPipeline,
-        Header,
-        HTTPException,
         Image,
         Optional,
         Path,
-        Request,
-        StaticFiles,
         base64,
         gc,
         io,
@@ -55,18 +42,15 @@ def _():
         time,
         torch,
         uuid,
-        uvicorn,
     )
 
 
 @app.cell
-def _(torch):
+def _(mo, torch):
     def detect_device_info():
         if torch.cuda.is_available():
             device_name = torch.cuda.get_device_name(0)
-            total_vram_gb = (
-                torch.cuda.get_device_properties(0).total_memory / (1024**3)
-            )
+            total_vram_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
             allocated_gb = torch.cuda.memory_allocated(0) / (1024**3)
             free_vram_gb = total_vram_gb - allocated_gb
             bf16_ok = torch.cuda.is_bf16_supported()
@@ -81,21 +65,10 @@ def _(torch):
                 "bf16_supported": bf16_ok,
                 "status_badge": "🟢 GPU Online",
             }
-        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-            return {
-                "device_type": "mps",
-                "device_name": "Apple Silicon (MPS)",
-                "total_vram": "Unified Memory",
-                "free_vram": "Dynamic",
-                "total_vram_num": 16.0,
-                "cuda_version": "MPS Metal",
-                "bf16_supported": True,
-                "status_badge": "🍏 Apple Silicon",
-            }
         else:
             return {
                 "device_type": "cpu",
-                "device_name": "CPU Only (Not recommended for Flux)",
+                "device_name": "CPU Fallback",
                 "total_vram": "System RAM",
                 "free_vram": "N/A",
                 "total_vram_num": 0.0,
@@ -105,73 +78,65 @@ def _(torch):
             }
 
     system_info = detect_device_info()
-    return detect_device_info, system_info
 
-
-@app.cell
-def _(mo, system_info):
     header = mo.md(
         f"""
-        # ⚡ FLUX.1 Generation Studio on Marimo Lab
-        > **Kiến trúc:** Flow Matching + 12B Multimodal Diffusion Transformer (MMDiT) + T5-XXL / CLIP-L + VAE
-        
-        | Phần cứng | Thiết bị | Tổng VRAM khả dụng | Độ chuẩn bfloat16 | Trạng thái |
+        # ⚡ FLUX.1 Studio + Supabase AI Bridge on Marimo Lab
+        > **Kiến trúc:** 12B Flow Matching Transformer + Supabase Database-as-a-Broker (Chống Ngắt Kết Nối 100%)
+
+        | Phần cứng | Thiết bị | Tổng VRAM khả dụng | bfloat16 | Trạng thái |
         | :--- | :--- | :--- | :--- | :--- |
-        | `{system_info["device_type"].upper()}` | **{system_info["device_name"]}** | **{system_info["total_vram"]}** | `{"Có hỗ trợ (Khuyên dùng)" if system_info["bf16_supported"] else "Không"}` | {system_info["status_badge"]} |
+        | `{system_info["device_type"].upper()}` | **{system_info["device_name"]}** | **{system_info["total_vram"]}** | `{"Có hỗ trợ (Tối ưu)" if system_info["bf16_supported"] else "Không"}` | {system_info["status_badge"]} |
         """
     )
-    return (header,)
+    header
+    return detect_device_info, header, system_info
 
 
 @app.cell
 def _(mo, os):
-    # UI controls for model loading and VRAM offloading
     model_choice = mo.ui.dropdown(
         options={
-            "FLUX.1-dev (28-Step Guidance, Chi tiết cao, Cần HF Token)": "black-forest-labs/FLUX.1-dev",
+            "FLUX.1-dev (28-Step Guidance, Chi tiết cực cao, Cần HF Token)": "black-forest-labs/FLUX.1-dev",
             "FLUX.1-schnell (4-Step Distilled, Apache 2.0, Nhanh, Không cần HF Token)": "black-forest-labs/FLUX.1-schnell",
         },
-        value="black-forest-labs/FLUX.1-dev",
+        value="FLUX.1-dev (28-Step Guidance, Chi tiết cực cao, Cần HF Token)",
         label="Chọn biến thể mô hình FLUX.1:",
     )
 
     vram_mode = mo.ui.dropdown(
         options={
-            "Auto (Tự động theo VRAM)": "auto",
-            "Full GPU (Tốc độ tối đa, yêu cầu VRAM >= 28GB)": "full_gpu",
-            "Model CPU Offload (Khuyên dùng cho VRAM 12GB - 24GB)": "cpu_offload",
-            "Sequential CPU Offload (Tiết kiệm VRAM tối đa, ~8GB - 10GB)": "sequential_offload",
+            "Full GPU (Tốc độ tối đa, yêu cầu VRAM >= 24GB)": "full_gpu",
+            "Model CPU Offload (Tiết kiệm VRAM, 12GB - 24GB)": "cpu_offload",
         },
-        value="auto",
+        value="Full GPU (Tốc độ tối đa, yêu cầu VRAM >= 24GB)",
         label="Chiến lược tối ưu VRAM:",
     )
 
+    default_hf_token = os.environ.get("HF_TOKEN", "")
+
     hf_token = mo.ui.text(
-        value=os.environ.get("HF_TOKEN", ""),
-        placeholder="hf_xxxxxxxx (Tự động nhận diện từ biến môi trường)",
-        label="Hugging Face Token (Gated Access):",
+        value=default_hf_token,
+        placeholder="hf_xxxxxxxx (Gated access token)",
+        label="Hugging Face Token (FLUX.1-dev):",
         kind="password",
     )
 
     load_btn = mo.ui.run_button(
-        label="📥 Tải / Nạp Mô Hình Vào Bộ Nhớ",
+        label="📥 Tải / Nạp Mô Hình Vào VRAM",
         kind="success",
     )
 
-    return hf_token, load_btn, model_choice, vram_mode
-
-
-@app.cell
-def _(hf_token, load_btn, mo, model_choice, vram_mode):
     model_settings_ui = mo.vstack(
         [
-            mo.md("### ⚙️ 1. Cấu Hình & Tải Mô Hình"),
+            mo.md("### ⚙️ 1. Cấu Hình & Nạp Mô Hình"),
             mo.hstack([model_choice, vram_mode], gap=2, justify="start"),
             mo.hstack([hf_token, load_btn], gap=2, justify="start", align="end"),
         ],
         gap=1,
     )
-    return (model_settings_ui,)
+    model_settings_ui
+    return default_hf_token, hf_token, load_btn, model_choice, model_settings_ui, vram_mode
 
 
 @app.cell
@@ -187,29 +152,22 @@ def _(
     torch,
     vram_mode,
 ):
-    # Model Loading Logic with auto-detection and persistence
-    pipeline = None
-    load_status = {
-        "ok": False,
-        "msg": "Mô hình chưa được nạp. Vui lòng bấm nút 'Tải / Nạp Mô Hình Vào Bộ Nhớ' để bắt đầu.",
-    }
+    try:
+        _current_pipe = pipeline
+    except NameError:
+        _current_pipe = None
 
-    if load_btn.value:
+    should_load = load_btn.value or (_current_pipe is None)
+
+    if should_load:
         selected_model = model_choice.value
         token_val = hf_token.value.strip() or os.environ.get("HF_TOKEN") or None
 
-        # Dọn dẹp cache VRAM trước khi nạp
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
-        # Chọn kiểu dữ liệu tối ưu: bfloat16 là chuẩn tốt nhất cho FLUX
-        if system_info["device_type"] == "cuda":
-            dtype = torch.bfloat16 if system_info["bf16_supported"] else torch.float16
-        elif system_info["device_type"] == "mps":
-            dtype = torch.bfloat16
-        else:
-            dtype = torch.float32
+        dtype = torch.bfloat16 if system_info.get("bf16_supported", False) else torch.float32
 
         try:
             with mo.status.spinner(title=f"Đang nạp {selected_model} vào VRAM ({dtype})..."):
@@ -220,34 +178,12 @@ def _(
                 )
 
                 strategy = vram_mode.value
-                total_vram_num = system_info.get("total_vram_num", 0.0)
-
-                if strategy == "auto":
-                    if system_info["device_type"] == "cuda":
-                        if total_vram_num >= 28.0:
-                            strategy = "full_gpu"
-                        elif total_vram_num >= 14.0:
-                            strategy = "cpu_offload"
-                        else:
-                            strategy = "sequential_offload"
-                    elif system_info["device_type"] == "mps":
-                        strategy = "full_gpu"
-                    else:
-                        strategy = "cpu_offload"
-
-                # Áp dụng chiến lược phân bổ bộ nhớ
                 if strategy == "full_gpu" and system_info["device_type"] == "cuda":
                     pipe.to("cuda")
-                    mode_desc = "Toàn bộ mô hình chạy trực tiếp trên GPU (Max Throughput)."
-                elif strategy == "full_gpu" and system_info["device_type"] == "mps":
-                    pipe.to("mps")
-                    mode_desc = "Chạy trên Apple Silicon MPS."
+                    mode_desc = f"Chạy trực tiếp 100% trên GPU {system_info['device_name']} (Tốc độ tối đa)."
                 elif strategy == "cpu_offload":
                     pipe.enable_model_cpu_offload()
-                    mode_desc = "Đã kích hoạt Model CPU Offload (Tiết kiệm VRAM, phù hợp GPU 12GB - 24GB)."
-                elif strategy == "sequential_offload":
-                    pipe.enable_sequential_cpu_offload()
-                    mode_desc = "Đã kích hoạt Sequential CPU Offload (Tiết kiệm VRAM tối đa, phù hợp GPU 8GB - 12GB)."
+                    mode_desc = "Đã kích hoạt Model CPU Offload."
                 else:
                     pipe.to("cpu")
                     mode_desc = "Chạy trên CPU."
@@ -258,438 +194,330 @@ def _(
                     "msg": f"✅ Tải thành công `{selected_model}` ({dtype}). {mode_desc}",
                 }
         except Exception as e:
+            pipeline = _current_pipe
             load_status = {
                 "ok": False,
-                "msg": f"❌ Lỗi khi tải mô hình: {type(e).__name__} - {e}",
+                "msg": f"❌ Lỗi khi nạp mô hình: {type(e).__name__} - {e}",
             }
+    else:
+        pipeline = _current_pipe
+        load_status = {
+            "ok": True,
+            "msg": "✅ Mô hình đã nạp sẵn trong VRAM.",
+        }
 
-    return load_status, pipeline
-
-
-@app.cell
-def _(load_status, mo):
     if load_status["ok"]:
         status_banner = mo.callout(load_status["msg"], kind="success")
-    elif "Lỗi" in load_status["msg"] or "Thiếu" in load_status["msg"]:
+    elif "Lỗi" in load_status["msg"]:
         status_banner = mo.callout(load_status["msg"], kind="danger")
     else:
         status_banner = mo.callout(load_status["msg"], kind="info")
-    return (status_banner,)
+    status_banner
+    return dtype, load_status, mode_desc, pipe, pipeline, selected_model, should_load, status_banner, strategy, token_val
 
 
 @app.cell
-def _(mo, model_choice):
-    # Dynamic defaults depending on model
-    is_schnell_selected = "schnell" in model_choice.value
-
-    prompt = mo.ui.text_area(
-        value="A cinematic wide shot of a futuristic cyberpunk laboratory in Neo-Tokyo, neon reflections in rainwater, an advanced humanoid robot holding a glowing glass sphere with a miniature galaxy inside, 8k resolution, photorealistic, intricate mechanical details, text 'FLUX MARIMO' laser-engraved on the robotic chest plate",
-        label="Nhập Prompt sinh ảnh (English mang lại chất lượng tốt nhất):",
+def _(mo):
+    prompt_input = mo.ui.text_area(
+        value="A futuristic golden cyber dragon soaring through storm clouds, neon electric arcs, hyper-detailed 8k resolution, photorealistic, Unreal Engine 5 render",
+        label="Nội dung Prompt mô tả ảnh:",
         rows=3,
-        full_width=True,
     )
 
-    resolution = mo.ui.dropdown(
+    resolution_choice = mo.ui.dropdown(
         options={
-            "Vuông chuẩn (1024 x 1024) [Khuyên dùng]": (1024, 1024),
-            "Khổ dọc điện thoại (768 x 1360)": (768, 1360),
-            "Khổ ngang màn hình (1360 x 768)": (1360, 768),
-            "Chân dung nghệ thuật (896 x 1152)": (896, 1152),
-            "Phong cảnh rộng Cinematic (1280 x 720)": (1280, 720),
+            "1024x1024 (Vuông 1:1)": "1024x1024",
+            "768x1360 (Dọc 9:16)": "768x1360",
+            "1360x768 (Ngang 16:9)": "1360x768",
+            "1280x720 (Cinematic HD)": "1280x720",
         },
-        value="Vuông chuẩn (1024 x 1024) [Khuyên dùng]",
-        label="Kích thước ảnh (Width x Height):",
+        value="1024x1024 (Vuông 1:1)",
+        label="Tỷ lệ kích thước:",
     )
 
-    steps = mo.ui.slider(
-        start=1,
-        stop=50,
-        step=1,
-        value=4 if is_schnell_selected else 28,
-        label=f"Số bước khử nhiễu (Steps): {'[Schnell khuyên dùng: 4 bước]' if is_schnell_selected else '[Dev khuyên dùng: 28 bước]'}",
-    )
-
-    guidance = mo.ui.slider(
-        start=0.0,
-        stop=10.0,
-        step=0.2,
-        value=0.0 if is_schnell_selected else 3.5,
-        label=f"Guidance Scale: {'[Schnell: 0.0 (guidance distilled)]' if is_schnell_selected else '[Dev: 3.5 (CFG scale)]'}",
-    )
-
-    seed = mo.ui.number(
+    seed_input = mo.ui.number(
+        value=-1,
         start=-1,
         stop=2147483647,
-        value=-1,
         step=1,
-        label="Seed (-1 để ngẫu nhiên mỗi lần):",
+        label="Seed (-1 để ngẫu nhiên):",
+    )
+
+    steps_slider = mo.ui.slider(
+        start=1,
+        stop=50,
+        value=28,
+        step=1,
+        label="Số bước suy luận (Steps):",
+    )
+
+    guidance_slider = mo.ui.slider(
+        start=0.0,
+        stop=10.0,
+        value=3.5,
+        step=0.1,
+        label="Guidance Scale:",
     )
 
     generate_btn = mo.ui.run_button(
-        label="🎨 BẮT ĐẦU TẠO ẢNH",
+        label="✨ Sinh Ảnh Ngay Trực Tiếp Trên Web",
         kind="warn",
     )
 
-    return generate_btn, guidance, is_schnell_selected, prompt, resolution, seed, steps
-
-
-@app.cell
-def _(generate_btn, guidance, mo, prompt, resolution, seed, steps):
-    prompt_settings_ui = mo.vstack(
+    generation_panel = mo.vstack(
         [
-            mo.md("### 🎨 2. Prompt & Tham Số Sinh Ảnh"),
-            prompt,
-            mo.hstack([resolution, steps, guidance, seed], gap=2, justify="start"),
-            mo.hstack([generate_btn], justify="start"),
+            mo.md("### 🎨 2. Sinh Ảnh Trực Tiếp Trên Giao Diện Marimo"),
+            prompt_input,
+            mo.hstack([resolution_choice, seed_input], gap=2),
+            mo.hstack([steps_slider, guidance_slider], gap=2),
+            generate_btn,
         ],
         gap=1,
     )
-    return (prompt_settings_ui,)
+    generation_panel
+    return (
+        generate_btn,
+        generation_panel,
+        guidance_slider,
+        prompt_input,
+        resolution_choice,
+        seed_input,
+        steps_slider,
+    )
 
 
 @app.cell
 def _(
     generate_btn,
-    guidance,
+    guidance_slider,
     mo,
     pipeline,
-    prompt,
-    resolution,
-    seed,
-    steps,
+    prompt_input,
+    resolution_choice,
+    seed_input,
+    steps_slider,
     system_info,
     time,
     torch,
 ):
-    output_view = mo.md("*Chờ cấu hình. Sau khi nạp mô hình, bấm 'BẮT ĐẦU TẠO ẢNH' để render.*")
+    output_view = mo.md("*Bấm nút sinh ảnh ở trên để bắt đầu tạo ảnh...*")
 
     if generate_btn.value:
         if pipeline is None:
             output_view = mo.callout(
-                "⚠️ Vui lòng nạp mô hình trước bằng nút 'Tải / Nạp Mô Hình Vào Bộ Nhớ' ở mục 1.",
+                "⚠️ Vui lòng nạp mô hình vào VRAM trước khi sinh ảnh!",
                 kind="warn",
             )
         else:
-            width, height = resolution.value
-            prompt_text = prompt.value.strip()
-            num_steps = steps.value
-            guidance_scale = guidance.value
+            prompt_text = prompt_input.value.strip()
+            res_str = resolution_choice.value
+            w, h = [int(x) for x in res_str.split("x")]
 
-            # Xử lý Seed
-            if seed.value != -1:
-                active_seed = int(seed.value)
-            else:
-                active_seed = int(time.time() * 1000) % 2147483647
+            s_val = int(seed_input.value)
+            active_seed = (
+                s_val
+                if s_val >= 0
+                else int(time.time() * 1000) % 2147483647
+            )
 
-            # Thiết lập generator seed theo device
-            dev_type = system_info["device_type"]
-            gen_device = "cuda" if dev_type == "cuda" else "cpu"
-            generator = torch.Generator(device=gen_device).manual_seed(active_seed)
+            num_steps = int(steps_slider.value)
+            guidance_scale = float(guidance_slider.value)
 
-            # FLUX.1 max sequence length (256 cho schnell, 512 cho dev)
+            dev = system_info["device_type"]
+            generator = torch.Generator(device=dev).manual_seed(active_seed)
             max_seq_len = 256 if num_steps <= 4 else 512
 
             start_time = time.time()
-            with mo.status.spinner(title=f"Đang sinh ảnh FLUX.1 ({num_steps} steps, {width}x{height})..."):
+            with mo.status.spinner(title=f"Đang sinh ảnh FLUX.1 ({num_steps} steps, {w}x{h})..."):
                 try:
                     result = pipeline(
                         prompt=prompt_text,
-                        width=width,
-                        height=height,
+                        width=w,
+                        height=h,
                         num_inference_steps=num_steps,
                         guidance_scale=guidance_scale,
                         generator=generator,
                         max_sequence_length=max_seq_len,
                     )
-                    generated_img = result.images[0]
+                    img = result.images[0]
                     inference_time = time.time() - start_time
 
-                    # Lưu ảnh ra đĩa
-                    filename = f"flux_{active_seed}_{width}x{height}.png"
-                    generated_img.save(filename)
+                    fname = f"flux_{active_seed}.png"
+                    img.save(fname)
 
                     output_view = mo.vstack(
                         [
                             mo.md(
                                 f"""
-                                ### ✨ Kết Quả Sinh Ảnh Hoàn Thành!
+                                ### ✨ Sinh Ảnh Thành Công!
                                 - **Thời gian suy luận:** `{inference_time:.2f}s` (`{inference_time / num_steps:.2f}s` / step)
-                                - **Kích thước:** `{width} x {height}` px
-                                - **Seed:** `{active_seed}` | **Số bước:** `{num_steps}` | **Guidance Scale:** `{guidance_scale}`
-                                - **File đã lưu tại server:** `{filename}`
+                                - **Kích thước:** `{w} x {h}` px | **Seed:** `{active_seed}`
                                 """
                             ),
-                            mo.image(generated_img),
+                            mo.image(img),
                         ],
                         gap=1,
                     )
                 except Exception as ex:
-                    output_view = mo.callout(
-                        f"❌ Lỗi trong quá trình suy luận: {type(ex).__name__} - {ex}",
-                        kind="danger",
-                    )
+                    output_view = mo.callout(f"❌ Lỗi: {ex}", kind="danger")
 
-    return (output_view,)
+    output_view
+    return active_seed, dev, fname, generator, img, inference_time, max_seq_len, num_steps, output_view, prompt_text, res_str, s_val, start_time, w
 
 
 @app.cell
-def _(mo):
-    # UI controls for OpenAI DALL-E Compatible Server
-    api_port = mo.ui.number(
-        value=8000,
-        start=1000,
-        stop=65535,
-        step=1,
-        label="Cổng Server API (Port):",
+def _(mo, os):
+    supabase_url_ui = mo.ui.text(
+        value=os.environ.get("SUPABASE_URL", "https://fxepzlszglckfsscport.supabase.co"),
+        label="Supabase Project URL:",
     )
 
-    enable_tunnel = mo.ui.checkbox(
-        value=True,
-        label="Mở kết nối ra Internet qua Cloudflare Tunnel (HTTPS miễn phí)",
+    supabase_key_ui = mo.ui.text(
+        value=os.environ.get("SUPABASE_KEY", ""),
+        placeholder="sbp_... hoặc eyJhbGciOi...",
+        label="Supabase API Key (Anon hoặc Service Role):",
+        kind="password",
     )
 
-    start_api_btn = mo.ui.run_button(
-        label="🚀 Khởi Chạy / Restart OpenAI DALL-E Server",
-        kind="success",
+    worker_toggle = mo.ui.switch(
+        value=False,
+        label="Kích hoạt Background Queue Worker (Lắng nghe Supabase)",
     )
 
-    api_controls_card = mo.vstack(
+    supabase_panel = mo.vstack(
         [
+            mo.md("### 🌉 3. Supabase GPU Queue Worker (Bridge Cho API OpenAI)"),
             mo.md(
                 """
-                ### 🌐 3. OpenAI DALL-E Compatible API Server
-                > Cho phép bất kỳ ứng dụng nào hỗ trợ OpenAI API (OpenWebUI, LangChain, Cursor, Python SDK) gọi trực tiếp endpoint `POST /v1/images/generations` để sinh ảnh qua FLUX.1.
+                > **Cơ chế an toàn 100%:** Worker chỉ gửi request **Outbound HTTPS (Port 443)** đến Supabase.
+                > Không mở port, không dùng Cloudflare/SSH tunnel, không bao giờ bị bot Molab quét hay ngắt kết nối!
                 """
             ),
-            mo.hstack([api_port, enable_tunnel, start_api_btn], gap=2, align="end"),
+            mo.hstack([supabase_url_ui, supabase_key_ui], gap=2),
+            worker_toggle,
         ],
         gap=1,
     )
-    return api_controls_card, api_port, enable_tunnel, start_api_btn
+    supabase_panel
+    return supabase_key_ui, supabase_panel, supabase_url_ui, worker_toggle
 
 
 @app.cell
 def _(
-    BaseModel,
-    CORSMiddleware,
-    FastAPI,
-    Field,
-    Header,
-    HTTPException,
-    Optional,
-    Path,
-    Request,
-    StaticFiles,
-    api_port,
     base64,
-    enable_tunnel,
     io,
     mo,
-    os,
     pipeline,
-    re,
-    start_api_btn,
-    subprocess,
+    supabase_key_ui,
+    supabase_url_ui,
+    system_info,
     threading,
     time,
     torch,
-    uuid,
-    uvicorn,
+    worker_toggle,
 ):
-    api_view = mo.md("*Bấm 'Khởi Chạy OpenAI DALL-E Server' để kích hoạt API.*")
+    try:
+        from supabase import create_client
+    except ImportError:
+        create_client = None
 
-    if start_api_btn.value:
-        port = int(api_port.value)
-        images_dir = Path("/tmp/flux_api_images")
-        images_dir.mkdir(parents=True, exist_ok=True)
+    worker_banner = mo.md("*Gạt công tắc ở trên để bắt đầu lắng nghe hàng đợi Supabase.*")
 
-        api_key = os.environ.get("FLUX_API_KEY")
-        if not api_key:
-            api_key = "flux-" + base64.urlsafe_b64encode(os.urandom(24)).decode().rstrip("=")
-            os.environ["FLUX_API_KEY"] = api_key
+    if worker_toggle.value:
+        sb_url = supabase_url_ui.value.strip()
+        sb_key = supabase_key_ui.value.strip()
 
-        api_fastapi = FastAPI(title="FLUX.1 OpenAI DALL-E API", version="1.0.0")
-        api_fastapi.add_middleware(
-            CORSMiddleware,
-            allow_origins=["*"],
-            allow_credentials=True,
-            allow_methods=["*"],
-            allow_headers=["*"],
-        )
-        api_fastapi.mount("/images", StaticFiles(directory=str(images_dir)), name="images")
+        if not create_client:
+            worker_banner = mo.callout("❌ Thiếu thư viện supabase-py. Cài đặt bằng: `pip install supabase`", kind="danger")
+        elif not sb_key:
+            worker_banner = mo.callout("⚠️ Vui lòng nhập Supabase API Key để kích hoạt worker!", kind="warn")
+        elif pipeline is None:
+            worker_banner = mo.callout("⚠️ Vui lòng nạp mô hình FLUX.1 vào VRAM ở Mục 1 trước khi bật Worker!", kind="warn")
+        else:
+            if "gpu_worker_running" not in globals() or not gpu_worker_running:
+                gpu_worker_running = True
 
-        class ImgGenReq(BaseModel):
-            prompt: str
-            model: Optional[str] = "flux-1-dev"
-            n: Optional[int] = 1
-            size: Optional[str] = "1024x1024"
-            response_format: Optional[str] = "b64_json"
-            quality: Optional[str] = "standard"
-            style: Optional[str] = None
-            seed: Optional[int] = None
-            steps: Optional[int] = None
-            guidance: Optional[float] = None
+                def _background_queue_worker():
+                    sb = create_client(sb_url, sb_key)
+                    print("[MARIMO WORKER] Worker Supabase đã khởi động ngầm thành công!")
 
-        def auth_check(auth: Optional[str]):
-            if auth != f"Bearer {api_key}":
-                raise HTTPException(status_code=401, detail={"error": {"message": "Invalid API key.", "type": "invalid_request_error"}})
+                    while gpu_worker_running:
+                        try:
+                            # Lấy 1 pending job
+                            res = sb.table("image_jobs").select("*").eq("status", "pending").order("created_at").limit(1).execute()
+                            if res.data and len(res.data) > 0:
+                                j = res.data[0]
+                                j_id = j["id"]
 
-        @api_fastapi.get("/health")
-        def health_ep():
-            return {
-                "status": "healthy",
-                "model_loaded": pipeline is not None,
-                "device": "cuda" if torch.cuda.is_available() else "cpu",
-                "vram_gb": round(torch.cuda.memory_allocated(0)/(1024**3), 2) if torch.cuda.is_available() else 0.0,
-            }
+                                # Khóa job
+                                lock = sb.table("image_jobs").update({"status": "processing"}).eq("id", j_id).eq("status", "pending").execute()
+                                if lock.data:
+                                    p = j.get("prompt", "")
+                                    sz = j.get("size", "1024x1024")
+                                    try:
+                                        pw, ph = [int(x) for x in sz.split("x")]
+                                    except:
+                                        pw, ph = 1024, 1024
+                                    st = j.get("steps") or 28
+                                    gd = j.get("guidance") or 3.5
+                                    sd = j.get("seed") or (int(time.time() * 1000) % 2147483647)
 
-        @api_fastapi.get("/v1/models")
-        def models_ep(authorization: Optional[str] = Header(default=None)):
-            auth_check(authorization)
-            return {
-                "object": "list",
-                "data": [
-                    {"id": "flux-1-dev", "object": "model", "created": int(time.time()), "owned_by": "black-forest-labs"},
-                    {"id": "flux-1-schnell", "object": "model", "created": int(time.time()), "owned_by": "black-forest-labs"},
-                    {"id": "dall-e-3", "object": "model", "created": int(time.time()), "owned_by": "openai"},
-                ],
-            }
+                                    dev_w = system_info.get("device_type", "cuda")
+                                    g_gen = torch.Generator(device=dev_w).manual_seed(sd)
 
-        @api_fastapi.post("/v1/images/generations")
-        def gen_ep(req: ImgGenReq, req_http: Request, authorization: Optional[str] = Header(default=None)):
-            auth_check(authorization)
-            if pipeline is None:
-                raise HTTPException(status_code=503, detail={"error": {"message": "Model pipeline is not loaded on GPU yet."}})
+                                    t0 = time.time()
+                                    r_img = pipeline(
+                                        prompt=p,
+                                        width=pw,
+                                        height=ph,
+                                        num_inference_steps=st,
+                                        guidance_scale=gd,
+                                        generator=g_gen,
+                                        max_sequence_length=256 if st <= 4 else 512,
+                                    ).images[0]
+                                    dt = time.time() - t0
 
-            parts = (req.size or "1024x1024").lower().replace(" ", "").split("x")
-            try:
-                w, h = (int(parts[0]) // 16) * 16, (int(parts[1]) // 16) * 16
-            except:
-                w, h = 1024, 1024
+                                    buf = io.BytesIO()
+                                    r_img.save(buf, format="PNG")
+                                    b64 = base64.b64encode(buf.getvalue()).decode("ascii")
 
-            num_imgs = req.n or 1
-            is_sch = "schnell" in (req.model or "").lower()
-            stps = req.steps if req.steps is not None else (4 if is_sch else (35 if req.quality == "hd" else 28))
-            gd = req.guidance if req.guidance is not None else (0.0 if is_sch else 3.5)
+                                    sb.table("image_jobs").update({
+                                        "status": "completed",
+                                        "result_b64": b64,
+                                        "inference_time_sec": round(dt, 2),
+                                        "device_name": system_info.get("device_name", "GPU"),
+                                    }).eq("id", j_id).execute()
+                                    print(f"[MARIMO WORKER] Hoàn tất Job #{j_id} trong {dt:.2f}s!")
+                        except Exception as w_err:
+                            print(f"[MARIMO WORKER ERROR] {w_err}")
+                        time.sleep(1.0)
 
-            data_list = []
-            for i in range(num_imgs):
-                s = (req.seed + i) if req.seed is not None else int(time.time()*1000 + i*997) % 2147483647
-                dev = "cuda" if torch.cuda.is_available() else "cpu"
-                gen = torch.Generator(device=dev).manual_seed(s)
+                worker_thread = threading.Thread(target=_background_queue_worker, daemon=True)
+                worker_thread.start()
 
-                res = pipeline(
-                    prompt=req.prompt,
-                    width=w,
-                    height=h,
-                    num_inference_steps=stps,
-                    guidance_scale=gd,
-                    generator=gen,
-                    max_sequence_length=256 if stps <= 4 else 512,
-                )
-                img = res.images[0]
-                item = {"revised_prompt": req.prompt}
+            worker_banner = mo.vstack([
+                mo.callout("🟢 Worker Supabase ĐANG CHẠY NGẦM & LẮNG NGHE HÀNG ĐỢI!", kind="success"),
+                mo.md(f"""
+                - **Supabase Endpoint:** `{sb_url}`
+                - **Hàng đợi bảng:** `image_jobs`
+                - **Thiết bị xử lý:** `{system_info.get('device_name', 'GPU')}`
+                - **Sẵn sàng nhận lệnh từ Local Bridge Server!**
+                """)
+            ])
+    else:
+        if "gpu_worker_running" in globals():
+            gpu_worker_running = False
+        worker_banner = mo.callout("⚪ Worker đang dừng. Gạt công tắc ở trên để bắt đầu lắng nghe Supabase.", kind="neutral")
 
-                if req.response_format == "url":
-                    fname = f"flux_{uuid.uuid4().hex}.png"
-                    img.save(images_dir / fname)
-                    base_u = str(req_http.base_url).rstrip("/")
-                    item["url"] = f"{base_u}/images/{fname}"
-                else:
-                    buf = io.BytesIO()
-                    img.save(buf, format="PNG")
-                    item["b64_json"] = base64.b64encode(buf.getvalue()).decode("ascii")
-
-                data_list.append(item)
-
-            return {"created": int(time.time()), "data": data_list}
-
-        def run_uvicorn():
-            uvicorn.run(api_fastapi, host="0.0.0.0", port=port, log_level="warning")
-
-        th = threading.Thread(target=run_uvicorn, daemon=True)
-        th.start()
-        time.sleep(2)
-
-        # Tunnel handling
-        public_url = f"http://127.0.0.1:{port}"
-        if enable_tunnel.value:
-            c_bin = "/tmp/cloudflared" if os.path.exists("/tmp/cloudflared") else "cloudflared"
-            try:
-                proc = subprocess.Popen(
-                    [c_bin, "tunnel", "--url", f"http://127.0.0.1:{port}", "--no-autoupdate"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
-                    text=True,
-                    bufsize=1,
-                )
-                deadline = time.time() + 20
-                while time.time() < deadline:
-                    l = proc.stdout.readline()
-                    if not l: break
-                    m = re.search(r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com", l)
-                    if m:
-                        public_url = m.group(0)
-                        break
-            except Exception as e:
-                pass
-
-        api_view = mo.vstack(
-            [
-                mo.callout("✅ OpenAI DALL-E API Server Đang Chạy!", kind="success"),
-                mo.md(
-                    f"""
-                    #### 📡 Thông Tin Kết Nối API:
-                    - **OpenAI Base URL:** `{public_url}/v1`
-                    - **DALL-E Endpoint:** `{public_url}/v1/images/generations`
-                    - **API Key:** `{api_key}`
-                    
-                    ```python
-                    from openai import OpenAI
-
-                    client = OpenAI(
-                        base_url="{public_url}/v1",
-                        api_key="{api_key}",
-                    )
-
-                    response = client.images.generate(
-                        model="flux-1-dev",  # hoặc "dall-e-3", "flux-1-schnell"
-                        prompt="A majestic lion made of golden clockwork gears, photorealistic 8k",
-                        size="1024x1024",
-                        response_format="b64_json",  # hoặc "url"
-                    )
-                    image_b64 = response.data[0].b64_json
-                    ```
-                    """
-                ),
-            ],
-            gap=1,
-        )
-
-    return (api_view,)
-
-
-@app.cell
-def _(
-    api_controls_card,
-    api_view,
-    header,
-    model_settings_ui,
-    output_view,
-    prompt_settings_ui,
-    status_banner,
-):
-    # Ghép layout hoàn chỉnh hiển thị trên Marimo Lab
-    [
-        header,
-        model_settings_ui,
-        status_banner,
-        prompt_settings_ui,
-        output_view,
-        api_controls_card,
-        api_view,
-    ]
-    return
+    worker_banner
+    return (
+        create_client,
+        gpu_worker_running,
+        sb_key,
+        sb_url,
+        worker_banner,
+        worker_thread,
+    )
 
 
 if __name__ == "__main__":
