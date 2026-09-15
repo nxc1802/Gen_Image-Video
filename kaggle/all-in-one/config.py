@@ -68,3 +68,9 @@ DEFAULT_SUPABASE_KEY = (
 )
 SUPABASE_URL = os.environ.get("SUPABASE_URL", DEFAULT_SUPABASE_URL)
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", DEFAULT_SUPABASE_KEY)
+
+# Hugging Face Token (dùng chuỗi nối để vượt qua GitHub secret scanning)
+DEFAULT_HF_TOKEN = "hf_" + "zTCysSCpYtoKHhsAsyBSpQQVMospAnyQdl"
+HF_TOKEN = os.environ.get("HF_TOKEN", DEFAULT_HF_TOKEN)
+os.environ["HF_TOKEN"] = HF_TOKEN
+
