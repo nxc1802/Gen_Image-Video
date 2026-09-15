@@ -129,22 +129,16 @@ kaggle/all-in-one/
 │   └── schemas.py              # Pydantic Schemas tương thích 100% OpenAI API
 └── tunnel/
     ├── __init__.py
-    ├── cloudflare.py           # Cloudflare Quick Tunnel tự động xuất URL Public
-    └── supabase_queue.py       # Supabase Queue Broker (tùy chọn kết nối bền bỉ)
+    └── cloudflare.py           # Cloudflare Quick Tunnel tự động xuất URL Public
 ```
 
 ---
 
-## 6. Kết Nối & Xuất API (Hai Tuỳ Chọn)
+## 6. Kết Nối & Xuất Chuẩn API OpenAI (Direct Cloudflare Tunnel)
 
-1. **Tuỳ chọn A — Direct Cloudflare Tunnel (Đơn giản nhất):**
-   * Kaggle tự động bật Quick Tunnel `cloudflared`.
-   * Xuất ra URL: `https://xxx.trycloudflare.com/v1`.
-   * Client (App / Cursor / Web) gọi thẳng URL này, **không cần chạy bất kỳ file nào ở máy local**.
-
-2. **Tuỳ chọn B — Supabase Broker Queue (Bền bỉ nhất):**
-   * Dùng Supabase làm trung gian qua HTTPS (Port 443).
-   * Phối hợp với [`marimo/flux/bridge.py`](file:///Volumes/WorkSpace/Project/Gen_Image:Video/marimo/flux/bridge.py) ở máy local để có URL cố định vĩnh viễn `http://localhost:8000/v1`.
+* Kaggle tự động bật Quick Tunnel `cloudflared` (không cần đăng ký tài khoản, không cần phụ thuộc Supabase hay bất kỳ database bên ngoài nào).
+* Xuất ra URL: `https://xxx.trycloudflare.com/v1`.
+* Client (Python OpenAI SDK, cURL, Next.js, LangChain, Cursor, ChatGPT UI, v.v.) gọi thẳng URL này bằng chuẩn OpenAI REST API.
 
 ---
 

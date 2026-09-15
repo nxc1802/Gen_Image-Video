@@ -58,19 +58,9 @@ API_KEY = os.environ.get("STUDIO_API_KEY", "")
 # Tự động bật Cloudflare Quick Tunnel
 ENABLE_CLOUDFLARE = os.environ.get("ENABLE_CLOUDFLARE", "true").lower() == "true"
 
-# Tự động kết nối hàng đợi Supabase Broker
-ENABLE_SUPABASE = os.environ.get("ENABLE_SUPABASE", "true").lower() == "true"
-DEFAULT_SUPABASE_URL = "https://fxepzlszglckfsscport.supabase.co"
-DEFAULT_SUPABASE_KEY = (
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
-    "eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4ZXB6bHN6Z2xja2Zzc2Nwb3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NDEzMzksImV4cCI6MjEwNTAxNzMzOX0."
-    "28rS1waBYB8xvGgHR7utoek9PqBc3ev6HPOG9yo9RdQ"
-)
-SUPABASE_URL = os.environ.get("SUPABASE_URL", DEFAULT_SUPABASE_URL)
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY", DEFAULT_SUPABASE_KEY)
-
 # Hugging Face Token (dùng chuỗi nối để vượt qua GitHub secret scanning)
 DEFAULT_HF_TOKEN = "hf_" + "zTCysSCpYtoKHhsAsyBSpQQVMospAnyQdl"
 HF_TOKEN = os.environ.get("HF_TOKEN", DEFAULT_HF_TOKEN)
 os.environ["HF_TOKEN"] = HF_TOKEN
+
 

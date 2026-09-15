@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-🧪 Test Client cho Kaggle All-in-One AI Studio
-Kiểm thử toàn diện end-to-end các dịch vụ qua endpoint API chuẩn OpenAI:
-1. Chat & VLM (Qwen 26B)
-2. TTS (Kokoro-82M Full FP16)
-3. STT (Whisper-large-v3-turbo Full FP16)
-4. GenImage (FLUX.1-schnell NF4)
+🧪 Test Client chuẩn OpenAI REST API cho Kaggle All-in-One AI Studio
+Không phụ thuộc bất kỳ database nào (Zero Supabase).
+Gọi trực tiếp tới Endpoint Cloudflare Public URL xuất ra từ Kaggle:
+- POST /v1/chat/completions      (Qwen 26B VLM)
+- POST /v1/audio/speech          (Kokoro-82M Full FP16 TTS)
+- POST /v1/audio/transcriptions  (Whisper-large-v3-turbo Full FP16 STT)
+- POST /v1/images/generations    (FLUX.1-schnell NF4)
 """
 
 import argparse
@@ -21,6 +22,7 @@ import urllib.error
 def test_chat(base_url: str, prompt: str = "Xin chào! Bạn là ai và có thể làm được gì?"):
     print("\n" + "=" * 65)
     print("🧪 1. TEST CHAT / VLM (Qwen 26B)")
+    print(f"   URL: {base_url.rstrip('/')}/chat/completions")
     print("=" * 65)
     url = f"{base_url.rstrip('/')}/chat/completions"
     payload = {
@@ -51,6 +53,7 @@ def test_chat(base_url: str, prompt: str = "Xin chào! Bạn là ai và có th�
 def test_tts(base_url: str, text: str = "Xin chào, tôi là trợ lý âm thanh thế hệ mới."):
     print("\n" + "=" * 65)
     print("🧪 2. TEST TEXT-TO-SPEECH (Kokoro-82M Full FP16)")
+    print(f"   URL: {base_url.rstrip('/')}/audio/speech")
     print("=" * 65)
     url = f"{base_url.rstrip('/')}/audio/speech"
     payload = {
@@ -80,9 +83,10 @@ def test_tts(base_url: str, text: str = "Xin chào, tôi là trợ lý âm thanh
         return False
 
 
-def test_image(base_url: str, prompt: str = "A majestic mechanical dragon with glowing neon wings, cyberpunk Tokyo rooftop, 8k render"):
+def test_image(base_url: str, prompt: str = "A majestic mechanical tiger with glowing neon circuitry, cyberpunk Tokyo rooftop, 8k render"):
     print("\n" + "=" * 65)
     print("🧪 3. TEST GEN IMAGE (FLUX.1-schnell NF4)")
+    print(f"   URL: {base_url.rstrip('/')}/images/generations")
     print("=" * 65)
     url = f"{base_url.rstrip('/')}/images/generations"
     payload = {
@@ -118,50 +122,25 @@ def test_image(base_url: str, prompt: str = "A majestic mechanical dragon with g
         return False
 
 
-def resolve_target_url(specified_url: str) -> str:
-    """Tự động tìm endpoint Cloudflare mới nhất từ Supabase nếu không truyền URL."""
-    if specified_url and specified_url != "auto" and "localhost" not in specified_url:
-        return specified_url
+def detect_base_url(arg_url: str) -> str:
+    if arg_url and arg_url != "auto":
+        return arg_url.rstrip("/")
 
-    # Thử kết nối localhost trước
-    try:
-        req = urllib.request.Request(f"{specified_url.rstrip('/')}/models")
-        with urllib.request.urlopen(req, timeout=1.5) as resp:
-            if resp.status == 200:
-                print(f"📡 Đang kết nối tới Local Endpoint: {specified_url}")
-                return specified_url
-    except Exception:
-        pass
+    # Kiểm tra file public_url.txt
+    for path in ["public_url.txt", "/kaggle/working/public_url.txt", "kaggle/all-in-one/public_url.txt"]:
+        if os.path.exists(path):
+            with open(path) as f:
+                line = f.read().strip()
+                if line.startswith("http"):
+                    print(f"📂 Đọc được URL từ {path}: {line}")
+                    return line.rstrip("/")
 
-    # Tự động truy vấn Supabase tìm URL Cloudflare của Kaggle
-    SUPABASE_URL = "https://fxepzlszglckfsscport.supabase.co"
-    SUPABASE_KEY = (
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
-        "eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4ZXB6bHN6Z2xja2Zzc2Nwb3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NDEzMzksImV4cCI6MjEwNTAxNzMzOX0."
-        "28rS1waBYB8xvGgHR7utoek9PqBc3ev6HPOG9yo9RdQ"
-    )
-    try:
-        q_url = f"{SUPABASE_URL}/rest/v1/image_jobs?prompt=eq.__system_announcement__&order=created_at.desc&limit=1"
-        headers = {
-            "apikey": SUPABASE_KEY,
-            "Authorization": f"Bearer {SUPABASE_KEY}",
-        }
-        req = urllib.request.Request(q_url, headers=headers)
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            rows = json.loads(resp.read().decode("utf-8"))
-            if rows and rows[0].get("image_url"):
-                found_url = rows[0]["image_url"]
-                print(f"📡 Tự động phát hiện Kaggle Endpoint từ Supabase: {found_url}")
-                return found_url
-    except Exception as e:
-        print(f"⚠️ Không thể lấy URL từ Supabase: {e}")
-
-    return specified_url
+    return "http://localhost:8000/v1"
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Test Client cho Kaggle Studio API")
-    parser.add_argument("--url", default="auto", help="Base URL của API (/v1) hoặc 'auto' để tự phát hiện")
+    parser = argparse.ArgumentParser(description="Test Client chuẩn OpenAI REST API")
+    parser.add_argument("--url", default="auto", help="Base URL của API (Ví dụ: https://xxx.trycloudflare.com/v1)")
     parser.add_argument("--all", action="store_true", help="Chạy toàn bộ các test")
     parser.add_argument("--chat", action="store_true", help="Chỉ test Chat VLM")
     parser.add_argument("--tts", action="store_true", help="Chỉ test TTS")
@@ -169,8 +148,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    target_url = resolve_target_url(args.url if args.url != "auto" else "http://localhost:8000/v1")
-    print(f"🎯 Target Base URL: {target_url}")
+    target_url = detect_base_url(args.url)
+    print(f"🎯 Target Endpoint: {target_url}")
 
     if args.all or (not args.chat and not args.tts and not args.image):
         test_chat(target_url)
@@ -183,4 +162,3 @@ if __name__ == "__main__":
             test_tts(target_url)
         if args.image:
             test_image(target_url)
-

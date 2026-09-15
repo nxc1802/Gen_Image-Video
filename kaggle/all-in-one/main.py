@@ -2,9 +2,8 @@
 🚀 Kaggle All-in-One Studio: Main Entrypoint
 Điều phối khởi động hệ sinh thái AI:
 1. Pre-warm Audio Core (Whisper Full FP16 + Kokoro Full FP16 trên GPU 0).
-2. Khởi động Supabase Queue Worker daemon.
-3. Kích hoạt Cloudflare Quick Tunnel (xuất Public URL).
-4. Khởi chạy FastAPI Server chuẩn OpenAI.
+2. Kích hoạt Cloudflare Quick Tunnel (xuất Public HTTPS URL).
+3. Khởi chạy FastAPI Server chuẩn OpenAI REST API.
 """
 
 import argparse
@@ -14,11 +13,10 @@ import threading
 import time
 import uvicorn
 
-from config import HOST, PORT, ENABLE_CLOUDFLARE, ENABLE_SUPABASE
+from config import HOST, PORT, ENABLE_CLOUDFLARE
 from core.memory_manager import get_memory_manager
 from server.app import create_app
 from tunnel.cloudflare import start_cloudflare_tunnel
-from tunnel.supabase_queue import start_supabase_worker
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,7 +31,6 @@ def main():
     parser.add_argument("--host", default=HOST, help="Host để bind server")
     parser.add_argument("--port", type=int, default=PORT, help="Port cho FastAPI")
     parser.add_argument("--no-tunnel", action="store_true", help="Tắt Cloudflare Quick Tunnel")
-    parser.add_argument("--no-supabase", action="store_true", help="Tắt Supabase Queue worker")
     parser.add_argument("--skip-warmup", action="store_true", help="Bỏ qua bước pre-load weights")
 
     args = parser.parse_args()
@@ -50,11 +47,7 @@ def main():
     mem = get_memory_manager()
     logger.info(f"📊 Trạng thái VRAM ban đầu: {mem.report_vram()}")
 
-    # 1. Khởi động Supabase Queue Worker (nếu bật)
-    if ENABLE_SUPABASE and not args.no_supabase:
-        start_supabase_worker()
-
-    # 2. Khởi động Cloudflare Tunnel trong luồng riêng để không chặn server
+    # 1. Khởi động Cloudflare Tunnel trong luồng riêng để không chặn server
     if ENABLE_CLOUDFLARE and not args.no_tunnel:
         def tunnel_thread():
             time.sleep(2.0)  # Đợi Uvicorn bind port
@@ -62,6 +55,7 @@ def main():
 
         t = threading.Thread(target=tunnel_thread, daemon=True)
         t.start()
+
 
     # 3. Tạo FastAPI App
     app = create_app()

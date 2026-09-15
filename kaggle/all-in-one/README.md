@@ -42,8 +42,7 @@ kaggle/all-in-one/
 │   └── schemas.py              # Pydantic Schemas
 └── tunnel/
     ├── __init__.py
-    ├── cloudflare.py           # Cloudflare Quick Tunnel tự động mở URL Public
-    └── supabase_queue.py       # Supabase Message Broker (kết nối bền bỉ vĩnh viễn)
+    └── cloudflare.py           # Cloudflare Quick Tunnel tự động mở Public URL
 ```
 
 ---

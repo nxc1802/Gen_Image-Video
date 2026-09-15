@@ -84,30 +84,24 @@ def start_cloudflare_tunnel(port: int = 8000, timeout_sec: int = 35) -> Optional
             break
 
     if public_url:
-        logger.info("=" * 70)
-        logger.info("🎉 CLOUDFLARE QUICK TUNNEL ĐÃ KÍCH HOẠT THÀNH CÔNG!")
-        logger.info(f"👉 Public Base URL : {public_url}/v1")
-        logger.info(f"👉 OpenAI SDK     : client = OpenAI(base_url='{public_url}/v1', api_key='...')")
-        logger.info("=" * 70)
+        print("\n" + "=" * 70, flush=True)
+        print("🎉 CLOUDFLARE QUICK TUNNEL ĐÃ KÍCH HOẠT THÀNH CÔNG!", flush=True)
+        print(f"👉 Public Base URL : {public_url}/v1", flush=True)
+        print(f"👉 OpenAI SDK     : client = OpenAI(base_url='{public_url}/v1', api_key='dummy')", flush=True)
+        print("=" * 70 + "\n", flush=True)
 
-        # Tự động đồng bộ URL lên Supabase để máy Local phát hiện tự động
+        # Lưu URL vào file để các script khác đọc nếu cần
         try:
-            from supabase import create_client
-            from config import SUPABASE_URL, SUPABASE_KEY
-            if SUPABASE_URL and SUPABASE_KEY:
-                sb = create_client(SUPABASE_URL, SUPABASE_KEY)
-                sb.table("image_jobs").insert({
-                    "prompt": "__system_announcement__",
-                    "model": "system",
-                    "image_url": f"{public_url}/v1",
-                    "device_name": "Kaggle 2x Tesla T4",
-                    "status": "online"
-                }).execute()
-                logger.info("📡 Đã đồng bộ URL Public lên Supabase cho Client nhận diện tự động!")
-        except Exception as e:
-            logger.warning(f"Không thể đồng bộ URL lên Supabase: {e}")
+            with open("public_url.txt", "w") as f:
+                f.write(f"{public_url}/v1\n")
+            if os.path.exists("/kaggle/working"):
+                with open("/kaggle/working/public_url.txt", "w") as f:
+                    f.write(f"{public_url}/v1\n")
+        except Exception:
+            pass
     else:
         logger.warning("⚠️ Không thể tự động phát hiện URL Cloudflare trong thời gian chờ.")
 
     return public_url
+
 
