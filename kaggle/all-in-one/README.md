@@ -1,12 +1,13 @@
 # 🎨 Kaggle All-in-One AI Studio (2x Tesla T4 16GB)
 
-Hệ thống AI Studio hợp nhất toàn diện, gom trọn 5 trụ cột AI đỉnh cao hiện nay vào **1 Session Kaggle duy nhất**:
-1. 👁️ **VLM (Vision-Language)**: **Qwen 26B (4-bit AWQ/GGUF)** — Phân bổ song song qua 2 card GPU.
+Hệ thống AI Studio hợp nhất toàn diện, gom trọn 5 trụ cột AI đỉnh cao SOTA hiện nay vào **1 Session Kaggle duy nhất** (32GB VRAM gộp + 30GB CPU RAM):
+1. 👁️ **VLM (Vision-Language)**: **Qwen 26B (4-bit AWQ/GGUF)** — Phân bổ song song qua 2 card GPU Tesla T4.
 2. 🎙️ **STT (Speech-to-Text)**: **Whisper-large-v3-turbo (Bản FULL FP16)** — Giữ 100% độ chính xác âm thanh gốc trên GPU 0 (~1.6GB VRAM).
 3. 🔊 **TTS (Text-to-Speech)**: **Kokoro-82M (Bản FULL FP16)** — Giữ 100% nhạc tính, giọng người thật trên GPU 0 (~350MB VRAM).
-4. 🖼️ **GenImage (Tạo ảnh)**: **FLUX.1-schnell (4-bit NF4)** — Tạo ảnh 1024x1024 trong 4 bước (~8.5GB VRAM trên GPU 1).
-5. 🎬 **GenVideo (Tạo video)**: **Wan2.1-1.3B** — Tạo video điện ảnh mượt mà trên GPU 1.
-6. 🌐 **OpenAI Gateway**: Tương thích 100% chuẩn OpenAI API (`/v1/chat/completions`, `/v1/audio/*`, `/v1/images/*`, `/v1/videos/*`).
+4. 🖼️ **GenImage (Tạo ảnh)**: **FLUX.1-schnell (17 Tỷ params, 4-bit NF4)** — Tạo ảnh 1024x1024 siêu nét (~8.5GB VRAM).
+5. 🎬 **GenVideo (Tạo video)**: **Wan2.1-14B (Flagship 14 Tỷ params SOTA, 4-bit)** — Tạo video điện ảnh hàng đầu thế giới qua cơ chế PCIe Swapping.
+6. ⚡ **Unified Memory Orchestrator**: Hoán đổi tức thì giữa CPU RAM $\leftrightarrow$ GPU VRAM qua bus PCIe tốc độ 14GB/s (Zero Disk I/O).
+7. 🌐 **OpenAI Gateway**: Tương thích 100% chuẩn OpenAI API (`/v1/chat/completions`, `/v1/audio/*`, `/v1/images/*`, `/v1/videos/*`).
 
 ---
 

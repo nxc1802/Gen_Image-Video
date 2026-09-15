@@ -43,8 +43,10 @@ FLUX_MODEL_ID = os.environ.get("FLUX_MODEL_ID", "black-forest-labs/FLUX.1-schnel
 FLUX_NUM_STEPS = 4
 FLUX_GUIDANCE = 0.0
 
-# --- 🎬 GenVideo: Wan2.1-1.3B ---
-VIDEO_MODEL_ID = os.environ.get("VIDEO_MODEL_ID", "Wan-AI/Wan2.1-T2V-1.3B-Diffusers")
+# --- 🎬 GenVideo: Wan2.1-14B (Flagship SOTA) kèm fallback 1.3B ---
+VIDEO_MODEL_ID = os.environ.get("VIDEO_MODEL_ID", "Wan-AI/Wan2.1-T2V-14B-Diffusers")
+VIDEO_FALLBACK_ID = os.environ.get("VIDEO_FALLBACK_ID", "Wan-AI/Wan2.1-T2V-1.3B-Diffusers")
+VIDEO_LOAD_IN_4BIT = os.environ.get("VIDEO_LOAD_IN_4BIT", "true").lower() == "true"
 
 # ==============================================================================
 # 3. FASTAPI SERVER & NETWORK GATEWAY

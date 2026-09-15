@@ -154,12 +154,12 @@ def test_image(base_url: str, prompt: str = "A majestic mechanical tiger with gl
 
 def test_video(base_url: str, prompt: str = "A futuristic cyberpunk car driving on a rainy neon highway, cinematic lighting, 4k"):
     print("\n" + "=" * 65)
-    print("🧪 4. TEST GEN VIDEO (Wan2.1-1.3B / LTX-Video)")
+    print("🧪 4. TEST GEN VIDEO (Wan2.1-14B SOTA / WanPipeline)")
     print(f"   URL: {base_url.rstrip('/')}/videos/generations")
     print("=" * 65)
     url = f"{base_url.rstrip('/')}/videos/generations"
     payload = {
-        "model": "wan-2.1",
+        "model": "wan-2.1-14b",
         "prompt": prompt,
         "num_frames": 25,
         "width": 768,
@@ -172,7 +172,7 @@ def test_video(base_url: str, prompt: str = "A futuristic cyberpunk car driving 
         headers={"Content-Type": "application/json"},
     )
     try:
-        with urllib.request.urlopen(req, timeout=360) as resp:
+        with urllib.request.urlopen(req, timeout=600) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             elapsed = time.time() - t0
             b64 = data["data"][0].get("b64_json")
