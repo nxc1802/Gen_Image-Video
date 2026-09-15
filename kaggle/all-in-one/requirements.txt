@@ -1,0 +1,17 @@
+# Kaggle All-in-One AI Studio Requirements
+fastapi>=0.115.0
+uvicorn>=0.32.0
+pydantic>=2.10.0
+transformers>=4.48.0
+accelerate>=1.2.0
+diffusers>=0.32.0
+bitsandbytes>=0.45.0
+sentencepiece>=0.2.0
+protobuf>=5.29.0
+pillow>=10.4.0
+soundfile>=0.13.0
+scipy>=1.14.0
+kokoro>=0.8.4
+openai-whisper>=20240930
+supabase>=2.13.0
+requests>=2.32.0
