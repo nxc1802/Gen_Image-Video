@@ -50,20 +50,33 @@ def push_kernel(user: str, key: str, notebook_path: str = "run_kaggle.ipynb", me
     if isinstance(is_private, str):
         is_private = is_private.lower() == "true"
 
+    kernel_type = meta.get("kernel_type", "notebook")
+    if kernel_type == "notebook":
+        try:
+            nb_json = json.loads(nb_content)
+            if "cells" in nb_json:
+                for cell in nb_json["cells"]:
+                    if "outputs" in cell and cell.get("cell_type") == "code":
+                        cell["outputs"] = []
+                    if "source" in cell and isinstance(cell["source"], list):
+                        cell["source"] = "".join(cell["source"])
+            nb_content = json.dumps(nb_json)
+        except Exception as e:
+            print(f"⚠️ Cảnh báo khi format notebook: {e}")
+
     payload = {
-        "id": f"{user}/{KERNEL_SLUG}",
-        "slug": KERNEL_SLUG,
+        "slug": f"{user}/{KERNEL_SLUG}",
         "newTitle": title,
         "text": nb_content,
         "language": meta.get("language", "python"),
-        "kernelType": meta.get("kernel_type", "notebook"),
+        "kernelType": kernel_type,
         "isPrivate": is_private,
         "enableGpu": True,
         "enableInternet": True,
-        "datasetSources": meta.get("dataset_sources", []),
-        "competitionSources": meta.get("competition_sources", []),
-        "kernelSources": meta.get("kernel_sources", []),
-        "modelSources": meta.get("model_sources", []),
+        "datasetDataSources": meta.get("dataset_sources", []),
+        "competitionDataSources": meta.get("competition_sources", []),
+        "kernelDataSources": meta.get("kernel_sources", []),
+        "modelDataSources": meta.get("model_sources", []),
     }
 
     url = "https://www.kaggle.com/api/v1/kernels/push"
