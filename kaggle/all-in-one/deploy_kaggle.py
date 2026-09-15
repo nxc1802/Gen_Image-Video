@@ -21,6 +21,8 @@ KERNEL_SLUG = "kaggle-all-in-one-studio"
 
 
 def get_auth_header(user: str, key: str) -> str:
+    if key.startswith("KGAT_"):
+        return f"Bearer {key}"
     cred = f"{user}:{key}".encode("utf-8")
     return f"Basic {base64.b64encode(cred).decode('ascii')}"
 
@@ -134,17 +136,30 @@ def monitor_and_extract_url(user: str, key: str, timeout_seconds: int = 900) -> 
         if cur_status in ("running", "complete", "queued"):
             # Đọc output logs
             output_data = get_kernel_output(user, key)
-            log_text = output_data.get("log", "")
-            if log_text:
-                for line in log_text.splitlines():
-                    if line not in seen_lines and line.strip():
-                        seen_lines.add(line)
-                        if any(kw in line for kw in ["CLOUDFLARE", "trycloudflare.com", "Uvicorn running", "KHỞI ĐỘNG", "GPU", "VRAM", "Warmup", "nạp thành công"]):
-                            print(f"   📝 [Kaggle Log] {line.strip()}")
+            raw_log = output_data.get("log", "")
+            extracted_lines = []
+            if raw_log:
+                try:
+                    items = json.loads(raw_log)
+                    if isinstance(items, list):
+                        for it in items:
+                            d = it.get("data", "")
+                            if d:
+                                extracted_lines.extend(d.splitlines())
+                    else:
+                        extracted_lines.extend(raw_log.splitlines())
+                except Exception:
+                    extracted_lines.extend(raw_log.splitlines())
 
-                    match = re.search(r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com", line)
-                    if match:
-                        public_url = match.group(0)
+            for line in extracted_lines:
+                if line not in seen_lines and line.strip():
+                    seen_lines.add(line)
+                    if any(kw in line for kw in ["CLOUDFLARE", "trycloudflare.com", "Uvicorn running", "KHỞI ĐỘNG", "GPU", "VRAM", "Warmup", "nạp thành công", "Fast-Swap", "Đã nạp", "Public Base URL"]):
+                        print(f"   📝 [Kaggle Log] {line.strip()}")
+
+                match = re.search(r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com", line)
+                if match:
+                    public_url = match.group(0)
 
             if public_url:
                 break
