@@ -19,24 +19,29 @@ Toàn bộ dự án được thiết kế theo tư duy kỹ thuật phần mềm
 kaggle/all-in-one/
 ├── PLAN.md                     # Tài liệu thiết kế kiến trúc chi tiết
 ├── README.md                   # Hướng dẫn sử dụng & gọi API
+├── models.yaml                 # Khai báo cấu hình mô hình 1-Click
 ├── requirements.txt            # Danh sách thư viện Python
 ├── run_kaggle.ipynb            # Notebook bootstrap 1-click trên Kaggle
+├── test_studio.ipynb           # Notebook test tương tác (Hiển thị Audio, Image, Video ngay dưới cell)
 ├── main.py                     # Entrypoint điều phối toàn bộ Studio
-├── config.py                   # Cấu hình tập trung (Model IDs, VRAM, Ports, Precision)
+├── config.py                   # Cấu hình nạp models.yaml & fallback
 ├── core/
 │   ├── __init__.py
-│   └── memory_manager.py       # Điều phối hoán đổi VRAM GPU 1 <-> 30GB CPU RAM
+│   ├── base_engine.py          # Abstract Base Classes (Template cho mọi model)
+│   ├── device_resolver.py      # Trí thông minh tự động phân bổ GPU & Topology
+│   ├── model_registry.py       # Factory & Registry điều phối vòng đời mô hình
+│   └── memory_manager.py       # Điều phối RAM ↔ VRAM PCIe Fast Swapping
 ├── audio/
 │   ├── __init__.py
-│   ├── stt.py                  # Whisper Turbo (Bản FULL FP16 trên GPU 0)
-│   └── tts.py                  # Kokoro-82M (Bản FULL FP16 trên GPU 0)
+│   ├── stt.py                  # Whisper Turbo Adapter (Bản FULL FP16 trên GPU 0)
+│   └── tts.py                  # Kokoro-82M Adapter (Bản FULL FP16 trên GPU 0)
 ├── vlm/
 │   ├── __init__.py
-│   └── qwen.py                 # Qwen 26B 4-bit (Song song GPU 0 và GPU 1)
+│   └── qwen.py                 # Qwen VLM Adapter (Tự động 1 GPU nếu <= 8B, 2 GPU nếu >= 14B)
 ├── visual/
 │   ├── __init__.py
-│   ├── flux_image.py           # FLUX.1-schnell (NF4 trên GPU 1)
-│   └── wan_video.py            # Wan2.1-1.3B (trên GPU 1)
+│   ├── flux_image.py           # FLUX.1 Adapter (17B params 4-bit)
+│   └── wan_video.py            # Wan2.1 Adapter (14B params SOTA 4-bit)
 ├── server/
 │   ├── __init__.py
 │   ├── app.py                  # FastAPI Server chuẩn OpenAI
