@@ -44,7 +44,7 @@ FLUX_NUM_STEPS = 4
 FLUX_GUIDANCE = 0.0
 
 # --- 🎬 GenVideo: Wan2.1-1.3B ---
-VIDEO_MODEL_ID = os.environ.get("VIDEO_MODEL_ID", "Wan-AI/Wan2.1-T2V-1.3B")
+VIDEO_MODEL_ID = os.environ.get("VIDEO_MODEL_ID", "Wan-AI/Wan2.1-T2V-1.3B-Diffusers")
 
 # ==============================================================================
 # 3. FASTAPI SERVER & NETWORK GATEWAY

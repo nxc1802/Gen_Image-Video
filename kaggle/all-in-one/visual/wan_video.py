@@ -33,25 +33,44 @@ class WanVideoEngine:
         t0 = time.time()
 
         try:
-            from diffusers import AutoencoderKL
-            # Tự động nạp pipeline Wan2.1 Text-to-Video
-            # Lưu ý: diffusers hỗ trợ Wan pipeline hoặc LTX-Video
-            from diffusers import LTXPipeline
-            
-            pipe = LTXPipeline.from_pretrained(
-                VIDEO_MODEL_ID if "ltx" in VIDEO_MODEL_ID.lower() else "Lightricks/LTX-Video",
-                torch_dtype=torch.float16,
-            )
-            if DEVICE_VISUAL.startswith("cuda"):
-                pipe.enable_model_cpu_offload(device=torch.device(DEVICE_VISUAL))
-            else:
-                pipe.to("cpu")
+            # 1. Thử WanPipeline chính thức cho Wan2.1
+            try:
+                from diffusers import AutoencoderKLWan, WanPipeline
+                model_id = "Wan-AI/Wan2.1-T2V-1.3B-Diffusers" if "Diffusers" not in VIDEO_MODEL_ID else VIDEO_MODEL_ID
+                logger.info(f"🎬 Đang nạp WanPipeline từ {model_id}...")
+                
+                # Tùy chọn nạp VAE FP32 cho chất lượng ổn định
+                vae = AutoencoderKLWan.from_pretrained(
+                    model_id, subfolder="vae", torch_dtype=torch.float32
+                )
+                pipe = WanPipeline.from_pretrained(
+                    model_id,
+                    vae=vae,
+                    torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16,
+                )
+                if DEVICE_VISUAL.startswith("cuda"):
+                    pipe.enable_model_cpu_offload(device=torch.device(DEVICE_VISUAL))
+                else:
+                    pipe.to("cpu")
 
-            elapsed = time.time() - t0
-            logger.info(f"✅ Wan2.1 Video nạp thành công vào GPU 1 trong {elapsed:.2f}s!")
-            return pipe
+                elapsed = time.time() - t0
+                logger.info(f"✅ Wan2.1 Video (WanPipeline) nạp thành công trong {elapsed:.2f}s!")
+                return pipe
+            except (ImportError, Exception) as wan_err:
+                logger.warning(f"⚠️ WanPipeline chưa nạp được ({wan_err}), thử LTXPipeline...")
+                from diffusers import LTXPipeline
+                pipe = LTXPipeline.from_pretrained(
+                    "Lightricks/LTX-Video",
+                    torch_dtype=torch.float16,
+                )
+                if DEVICE_VISUAL.startswith("cuda"):
+                    pipe.enable_model_cpu_offload(device=torch.device(DEVICE_VISUAL))
+                else:
+                    pipe.to("cpu")
+                logger.info(f"✅ LTX-Video pipeline nạp thành công trong {time.time() - t0:.2f}s!")
+                return pipe
         except Exception as e:
-            logger.warning(f"⚠️ Wan2.1 pipeline đang chuẩn bị môi trường: {e}")
+            logger.error(f"❌ Lỗi nạp Video pipeline: {e}")
             return "fallback"
 
     def get_pipeline(self):

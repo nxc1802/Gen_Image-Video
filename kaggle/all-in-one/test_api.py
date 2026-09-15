@@ -152,6 +152,45 @@ def test_image(base_url: str, prompt: str = "A majestic mechanical tiger with gl
         return False
 
 
+def test_video(base_url: str, prompt: str = "A futuristic cyberpunk car driving on a rainy neon highway, cinematic lighting, 4k"):
+    print("\n" + "=" * 65)
+    print("🧪 4. TEST GEN VIDEO (Wan2.1-1.3B / LTX-Video)")
+    print(f"   URL: {base_url.rstrip('/')}/videos/generations")
+    print("=" * 65)
+    url = f"{base_url.rstrip('/')}/videos/generations"
+    payload = {
+        "model": "wan-2.1",
+        "prompt": prompt,
+        "num_frames": 25,
+        "width": 768,
+        "height": 512,
+    }
+    t0 = time.time()
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=360) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            elapsed = time.time() - t0
+            b64 = data["data"][0].get("b64_json")
+            if b64:
+                out_file = "test_kaggle_video.mp4"
+                with open(out_file, "wb") as f:
+                    f.write(base64.b64decode(b64))
+                print(f"✅ Sinh video thành công trong {elapsed:.2f}s!", flush=True)
+                print(f"💾 File video lưu tại: {os.path.abspath(out_file)}", flush=True)
+                return True
+            else:
+                print(f"⚠️ Không nhận được base64: {data}", flush=True)
+                return False
+    except Exception as e:
+        print(f"❌ Lỗi gọi Video: {e}", flush=True)
+        return False
+
+
 def detect_base_url(arg_url: str) -> str:
     if arg_url and arg_url != "auto":
         return arg_url.rstrip("/")
@@ -176,17 +215,19 @@ if __name__ == "__main__":
     parser.add_argument("--tts", action="store_true", help="Chỉ test TTS")
     parser.add_argument("--stt", action="store_true", help="Chỉ test STT")
     parser.add_argument("--image", action="store_true", help="Chỉ test Image")
+    parser.add_argument("--video", action="store_true", help="Chỉ test Video")
 
     args = parser.parse_args()
 
     target_url = detect_base_url(args.url)
     print(f"🎯 Target Endpoint: {target_url}")
 
-    if args.all or (not args.chat and not args.tts and not args.stt and not args.image):
+    if args.all or (not args.chat and not args.tts and not args.stt and not args.image and not args.video):
         test_chat(target_url)
         test_tts(target_url)
         test_stt(target_url)
         test_image(target_url)
+        test_video(target_url)
     else:
         if args.chat:
             test_chat(target_url)
@@ -196,3 +237,5 @@ if __name__ == "__main__":
             test_stt(target_url)
         if args.image:
             test_image(target_url)
+        if args.video:
+            test_video(target_url)
