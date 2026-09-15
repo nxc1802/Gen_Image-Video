@@ -11,38 +11,11 @@ import uuid
 from typing import Optional
 
 # ==============================================================================
-# 1. SQL SCHEMA CONSTANT (Dùng cho --sql hoặc auto-init)
+# 1. CẤU HÌNH MẶC ĐỊNH SUPABASE
 # ==============================================================================
-SUPABASE_SCHEMA_SQL = """-- ============================================================
--- FLUX.1 Image Generation Queue Schema for Supabase
--- ============================================================
+DEFAULT_SUPABASE_URL = "https://fxepzlszglckfsscport.supabase.co"
+DEFAULT_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4ZXB6bHN6Z2xja2Zzc2Nwb3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NDEzMzksImV4cCI6MjEwNTAxNzMzOX0.28rS1waBYB8xvGgHR7utoek9PqBc3ev6HPOG9yo9RdQ"
 
-CREATE TABLE IF NOT EXISTS public.image_jobs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    prompt TEXT NOT NULL,
-    model TEXT NOT NULL DEFAULT 'flux-1-dev',
-    size TEXT NOT NULL DEFAULT '1024x1024',
-    seed BIGINT,
-    steps INT,
-    guidance FLOAT,
-    response_format TEXT DEFAULT 'b64_json',
-    status TEXT NOT NULL DEFAULT 'pending',
-    result_b64 TEXT,
-    image_url TEXT,
-    error_message TEXT,
-    inference_time_sec FLOAT,
-    device_name TEXT
-);
-
-CREATE INDEX IF NOT EXISTS idx_image_jobs_queue ON public.image_jobs (status, created_at);
-ALTER TABLE public.image_jobs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow public select on image_jobs" ON public.image_jobs FOR SELECT USING (true);
-CREATE POLICY "Allow public insert on image_jobs" ON public.image_jobs FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update on image_jobs" ON public.image_jobs FOR UPDATE USING (true);
-ALTER PUBLICATION supabase_realtime ADD TABLE public.image_jobs;
-"""
 
 try:
     import marimo
@@ -379,20 +352,23 @@ def _(
 
 @app.cell
 def _(mo, os):
+    DEFAULT_SUPABASE_URL = "https://fxepzlszglckfsscport.supabase.co"
+    DEFAULT_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4ZXB6bHN6Z2xja2Zzc2Nwb3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NDEzMzksImV4cCI6MjEwNTAxNzMzOX0.28rS1waBYB8xvGgHR7utoek9PqBc3ev6HPOG9yo9RdQ"
+
     sb_url_ui = mo.ui.text(
-        value=os.environ.get("SUPABASE_URL", "https://fxepzlszglckfsscport.supabase.co"),
+        value=os.environ.get("SUPABASE_URL", DEFAULT_SUPABASE_URL),
         label="Supabase Project URL:",
     )
     sb_key_ui = mo.ui.text(
-        value=os.environ.get("SUPABASE_KEY", ""),
-        placeholder="Anon hoặc Service Role Key...",
+        value=os.environ.get("SUPABASE_KEY", DEFAULT_SUPABASE_KEY),
         label="Supabase API Key:",
         kind="password",
     )
     worker_toggle = mo.ui.switch(
-        value=False,
+        value=True,
         label="Kích hoạt Background Queue Worker (Lắng nghe Supabase)",
     )
+
 
     worker_ui_panel = mo.vstack(
         [
@@ -535,11 +511,18 @@ def _(
 
 def run_sql_schema():
     """In ra mã SQL Supabase để người dùng copy-paste vào Supabase Dashboard."""
+    schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "schema.sql")
+    if os.path.exists(schema_path):
+        with open(schema_path, "r", encoding="utf-8") as f:
+            sql = f.read()
+    else:
+        sql = "-- Vui lòng kiểm tra file schema.sql tại thư mục dự án"
     print("=" * 70)
-    print("📋 SUPABASE DATABASE QUEUE SCHEMA (Chạy tại Supabase SQL Editor)")
+    print("📋 SUPABASE DATABASE QUEUE SCHEMA (File: schema.sql)")
     print("=" * 70)
-    print(SUPABASE_SCHEMA_SQL)
+    print(sql)
     print("=" * 70)
+
 
 
 def run_bridge_server(supabase_url: str, supabase_key: str, host: str = "0.0.0.0", port: int = 8000, timeout_sec: int = 180):
@@ -777,8 +760,9 @@ if __name__ == "__main__":
     parser.add_argument("--sql", action="store_true", help="In ra mã SQL khởi tạo Supabase")
 
     # Arguments bổ trợ
-    parser.add_argument("--supabase-url", default=os.environ.get("SUPABASE_URL", "https://fxepzlszglckfsscport.supabase.co"))
-    parser.add_argument("--supabase-key", default=os.environ.get("SUPABASE_KEY", ""))
+    parser.add_argument("--supabase-url", default=os.environ.get("SUPABASE_URL", DEFAULT_SUPABASE_URL))
+    parser.add_argument("--supabase-key", default=os.environ.get("SUPABASE_KEY", DEFAULT_SUPABASE_KEY))
+
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--base-url", default="http://localhost:8000/v1")
