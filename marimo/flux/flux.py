@@ -15,6 +15,8 @@ from typing import Optional
 # ==============================================================================
 DEFAULT_SUPABASE_URL = "https://fxepzlszglckfsscport.supabase.co"
 DEFAULT_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4ZXB6bHN6Z2xja2Zzc2Nwb3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NDEzMzksImV4cCI6MjEwNTAxNzMzOX0.28rS1waBYB8xvGgHR7utoek9PqBc3ev6HPOG9yo9RdQ"
+worker_state = {"running": False, "thread": None}
+
 
 
 try:
@@ -387,14 +389,7 @@ def _(mo, os):
 
 
 @app.cell
-def _():
-    _worker_state = {"running": False, "thread": None}
-    return (_worker_state,)
-
-
-@app.cell
 def _(
-    _worker_state,
     base64,
     create_client,
     gpu_info,
@@ -421,8 +416,8 @@ def _(
         elif pipeline is None:
             worker_status_ui = mo.callout("⚠️ Vui lòng nạp mô hình ở Mục 1 trước khi bật Worker!", kind="warn")
         else:
-            if not _worker_state["running"]:
-                _worker_state["running"] = True
+            if not worker_state["running"]:
+                worker_state["running"] = True
 
                 def _run_worker_loop():
                     try:
@@ -432,7 +427,7 @@ def _(
                         print(f"[WORKER] Lỗi kết nối Supabase: {ce}")
                         return
 
-                    while _worker_state["running"]:
+                    while worker_state["running"]:
                         try:
                             res = sb.table("image_jobs").select("*").eq("status", "pending").order("created_at").limit(1).execute()
                             if res.data and len(res.data) > 0:
@@ -486,7 +481,7 @@ def _(
                         time.sleep(1.0)
 
                 th = threading.Thread(target=_run_worker_loop, daemon=True)
-                _worker_state["thread"] = th
+                worker_state["thread"] = th
                 th.start()
 
             worker_status_ui = mo.vstack([
@@ -494,7 +489,7 @@ def _(
                 mo.md(f"- Endpoint: `{url_val}` | Bảng: `image_jobs` | Thiết bị: `{gpu_info.get('name')}`"),
             ])
     else:
-        _worker_state["running"] = False
+        worker_state["running"] = False
         worker_status_ui = mo.callout("⚪ Worker đang dừng.", kind="neutral")
 
     worker_status_ui
