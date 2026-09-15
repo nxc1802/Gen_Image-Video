@@ -83,6 +83,36 @@ def test_tts(base_url: str, text: str = "Xin chào, tôi là trợ lý âm thanh
         return False
 
 
+def test_stt(base_url: str, audio_file: str = "test_tts_result.wav"):
+    print("\n" + "=" * 65)
+    print("🧪 2b. TEST SPEECH-TO-TEXT (Whisper-large-v3-turbo Full FP16)")
+    print(f"   URL: {base_url.rstrip('/')}/audio/transcriptions")
+    print("=" * 65)
+    if not os.path.exists(audio_file):
+        print(f"⚠️ Không tìm thấy file audio: {audio_file}")
+        return False
+    url = f"{base_url.rstrip('/')}/audio/transcriptions"
+    t0 = time.time()
+    try:
+        import requests
+        with open(audio_file, "rb") as f:
+            files = {"file": (os.path.basename(audio_file), f, "audio/wav")}
+            data = {"model": "whisper-large-v3-turbo"}
+            resp = requests.post(url, files=files, data=data, timeout=120)
+            elapsed = time.time() - t0
+            if resp.status_code == 200:
+                res_data = resp.json()
+                print(f"✅ STT Nhận diện thành công trong {elapsed:.2f}s:")
+                print(f"👉 Text: {res_data.get('text')}")
+                return True
+            else:
+                print(f"❌ Lỗi STT ({resp.status_code}): {resp.text}")
+                return False
+    except Exception as e:
+        print(f"❌ Lỗi gọi STT: {e}")
+        return False
+
+
 def test_image(base_url: str, prompt: str = "A majestic mechanical tiger with glowing neon circuitry, cyberpunk Tokyo rooftop, 8k render"):
     print("\n" + "=" * 65)
     print("🧪 3. TEST GEN IMAGE (FLUX.1-schnell NF4)")
@@ -144,6 +174,7 @@ if __name__ == "__main__":
     parser.add_argument("--all", action="store_true", help="Chạy toàn bộ các test")
     parser.add_argument("--chat", action="store_true", help="Chỉ test Chat VLM")
     parser.add_argument("--tts", action="store_true", help="Chỉ test TTS")
+    parser.add_argument("--stt", action="store_true", help="Chỉ test STT")
     parser.add_argument("--image", action="store_true", help="Chỉ test Image")
 
     args = parser.parse_args()
@@ -151,14 +182,17 @@ if __name__ == "__main__":
     target_url = detect_base_url(args.url)
     print(f"🎯 Target Endpoint: {target_url}")
 
-    if args.all or (not args.chat and not args.tts and not args.image):
+    if args.all or (not args.chat and not args.tts and not args.stt and not args.image):
         test_chat(target_url)
         test_tts(target_url)
+        test_stt(target_url)
         test_image(target_url)
     else:
         if args.chat:
             test_chat(target_url)
         if args.tts:
             test_tts(target_url)
+        if args.stt:
+            test_stt(target_url)
         if args.image:
             test_image(target_url)
