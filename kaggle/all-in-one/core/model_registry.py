@@ -95,17 +95,27 @@ class ModelRegistry:
         return None
 
     def get_catalog(self) -> Dict[str, Any]:
-        """Báo cáo danh mục các mô hình hiện hành và trạng thái nạp."""
+        """Báo cáo danh mục các mô hình hiện hành và chính sách vòng đời đầy đủ."""
         return {
             task: {
                 "model_id": cfg.get("id"),
                 "device_strategy": cfg.get("device_strategy"),
                 "quantization": cfg.get("quantization") or cfg.get("precision"),
+                "lifecycle": cfg.get("lifecycle"),
+                "preload": cfg.get("preload"),
+                "init_target": cfg.get("init_target"),
+                "allocation_policy": cfg.get("allocation_policy"),
             }
             for task, cfg in MODELS_CONFIG.items()
         }
 
 
 # Singleton accessor
+_global_registry = None
+
+
 def get_model_registry() -> ModelRegistry:
-    return ModelRegistry()
+    global _global_registry
+    if _global_registry is None:
+        _global_registry = ModelRegistry()
+    return _global_registry

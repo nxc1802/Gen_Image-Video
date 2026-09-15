@@ -2,7 +2,8 @@
 🖼️ Image Generation Module: FLUX.1 Adapter (4-bit NF4)
 Kế thừa BaseImageEngine:
 - Nạp trực tiếp Transformer & T5 text encoder ở chế độ 4-bit NF4 (low_cpu_mem_usage=True).
-- Điều phối VRAM qua Unified Memory Orchestrator để không gây OOM.
+- Tích hợp Adaptive Dynamic Allocator và Memory Lifecycle Orchestrator (dynamic_switch).
+- Không bao giờ gây OOM cho GPU 0 (nơi ghim các mô hình always_active).
 """
 
 import base64
@@ -39,16 +40,27 @@ class FluxImageEngine(BaseImageEngine):
         super().__init__(config or FLUX_CONFIG)
         self.model_id = self.config.get("id", FLUX_MODEL_ID)
         self.device_strategy = self.config.get("device_strategy", "gpu_1")
+        self.allocation_policy = self.config.get("allocation_policy", "adaptive")
+        self.lifecycle = self.config.get("lifecycle", "dynamic_switch")
         self.steps = int(self.config.get("steps", FLUX_NUM_STEPS))
         self.guidance = float(self.config.get("guidance", FLUX_GUIDANCE))
         self._initialized = True
 
     def _loader(self):
         resolver = get_device_resolver()
-        resolved = resolver.resolve("image", self.model_id, self.device_strategy)
+        resolved = resolver.resolve(
+            task="image",
+            model_id=self.model_id,
+            requested_strategy=self.device_strategy,
+            quantization="4bit",
+            config=self.config,
+        )
         self.resolved_device = resolved["device"]
 
-        logger.info(f"🖼️ Đang nạp FLUX.1 ({self.model_id}) 4-bit NF4 vào {self.resolved_device}...")
+        logger.info(
+            f"🖼️ Đang nạp FLUX.1 ({self.model_id}) 4-bit NF4 "
+            f"[Thiết bị: {self.resolved_device} | Lý do: {resolved['reason']}]..."
+        )
         t0 = time.time()
 
         try:
@@ -89,6 +101,7 @@ class FluxImageEngine(BaseImageEngine):
             else:
                 pipe.to("cpu")
 
+            self._model = pipe
             self._is_loaded = True
             elapsed = time.time() - t0
             logger.info(f"✅ FLUX.1 nạp thành công vào VRAM trong {elapsed:.2f}s!")
@@ -99,7 +112,7 @@ class FluxImageEngine(BaseImageEngine):
 
     def get_pipeline(self):
         mem = get_memory_manager()
-        return mem.switch_heavyweight_slot("flux", self._loader)
+        return mem.switch_dynamic_slot("flux", self._loader, engine_obj=self)
 
     def load(self) -> Any:
         return self.get_pipeline()

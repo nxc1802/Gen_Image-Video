@@ -1,46 +1,61 @@
 # ==============================================================================
 # 🎨 Kaggle All-in-One AI Studio: Declarative Model Configuration
-# Dễ dàng thay đổi mô hình tại đây. Hệ thống tự động tính toán sơ đồ phân bổ GPU!
+# Tự động hóa điều phối vòng đời (Lifecycle) và phân bổ GPU tự thích ứng (Adaptive)
 # ==============================================================================
 
 models:
-  # 👁️ 1. Vision-Language Model (VLM / Chat)
-  # - Đổi sang model nhỏ (ví dụ "Qwen/Qwen2.5-VL-7B-Instruct"): Tự động gán vào GPU 0, giải phóng GPU 1 hoàn toàn.
-  # - Đổi sang model lớn (ví dụ "Qwen/Qwen2.5-VL-26B-Instruct"): Tự động chia tải đều qua cả 2 GPU (Dual-GPU).
-  vlm:
-    id: "Qwen/Qwen2.5-VL-7B-Instruct"
-    quantization: "4bit"
-    device_strategy: "auto"
-    max_tokens: 512
-    temperature: 0.7
-
-  # 🖼️ 2. Text-to-Image Generation (FLUX.1 SOTA 17 Tỷ tham số)
-  image:
-    id: "black-forest-labs/FLUX.1-schnell"
-    quantization: "4bit"
-    device_strategy: "gpu_1"
-    steps: 4
-    guidance: 0.0
-
-  # 🎬 3. Text-to-Video Generation (Wan2.1-14B SOTA 14 Tỷ tham số)
-  video:
-    id: "Wan-AI/Wan2.1-T2V-14B-Diffusers"
-    fallback_id: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
-    quantization: "4bit"
-    device_strategy: "auto"
-    num_frames: 25
-    width: 768
-    height: 512
-
-  # 🎙️ 4. Speech-to-Text (Whisper Turbo Full FP16)
+  # 🎙️ 1. Speech-to-Text (Whisper Turbo Full FP16)
   stt:
     id: "openai/whisper-large-v3-turbo"
     precision: "fp16"
-    device_strategy: "gpu_0"
+    lifecycle: "always_active"      # Thường trực 100% trong VRAM, không bao giờ bị dọn
+    preload: true                  # Nạp ngay khi server khởi động
+    init_target: "gpu"             # Nạp thẳng vào VRAM
+    preferred_device: "gpu_0"      # Ghim trên GPU 0 (~1.8 GB VRAM)
 
-  # 🔊 5. Text-to-Speech (Kokoro-82M Full FP16)
+  # 🔊 2. Text-to-Speech (Kokoro-82M Full FP16)
   tts:
     id: "hexgrad/Kokoro-82M"
     voice: "af_heart"
     precision: "fp16"
-    device_strategy: "gpu_0"
+    lifecycle: "always_active"      # Thường trực 100% trong VRAM, không bao giờ bị dọn
+    preload: true                  # Nạp ngay khi server khởi động
+    init_target: "gpu"             # Nạp thẳng vào VRAM
+    preferred_device: "gpu_0"      # Ghim trên GPU 0 (~0.3 GB VRAM)
+
+  # 👁️ 3. Vision-Language Model (VLM / Chat)
+  # - Nếu chọn model nhỏ (<= 8B như Qwen 7B/2B): Tự động đặt 100% trên 1 GPU đơn (GPU 0 hoặc 1)
+  # - Nếu chọn model lớn (>= 14B như Qwen 26B): Tự động chia tải qua 2 GPU theo tỷ lệ VRAM thực tế
+  vlm:
+    id: "Qwen/Qwen2.5-VL-7B-Instruct"
+    quantization: "4bit"
+    lifecycle: "always_active"      # Model 7B đủ nhỏ để thường trực trong VRAM cùng Audio
+    preload: true                  # Nạp sẵn khi server khởi động
+    init_target: "gpu"             # Nạp thẳng vào GPU
+    allocation_policy: "adaptive"  # Tự động đo VRAM thực tế, chọn 1 GPU đơn hoặc chia tỷ lệ động
+    max_tokens: 512
+    temperature: 0.7
+
+  # 🖼️ 4. Text-to-Image Generation (FLUX.1 SOTA 17B)
+  image:
+    id: "black-forest-labs/FLUX.1-schnell"
+    quantization: "4bit"
+    lifecycle: "dynamic_switch"    # Hoán đổi qua PCIe bus khi có yêu cầu tạo ảnh
+    preload: false                 # Nạp theo nhu cầu (Lazy Load) hoặc đỗ sẵn trong RAM
+    init_target: "cpu"             # Đỗ sẵn trong CPU RAM để Fast-Swap sang GPU
+    allocation_policy: "adaptive"  # Tự động chọn GPU trống nhất (ưu tiên GPU 1)
+    steps: 4
+    guidance: 0.0
+
+  # 🎬 5. Text-to-Video Generation (Wan2.1-14B SOTA 14B)
+  video:
+    id: "Wan-AI/Wan2.1-T2V-14B-Diffusers"
+    fallback_id: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
+    quantization: "4bit"
+    lifecycle: "dynamic_switch"    # Hoán đổi qua PCIe bus khi có yêu cầu tạo video
+    preload: false                 # Nạp theo nhu cầu (Lazy Load)
+    init_target: "cpu"             # Đỗ sẵn trong CPU RAM
+    allocation_policy: "adaptive"  # Tự động đo VRAM, chia tỷ lệ nếu cần
+    num_frames: 25
+    width: 768
+    height: 512

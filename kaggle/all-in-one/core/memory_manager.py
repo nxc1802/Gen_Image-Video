@@ -1,20 +1,24 @@
 """
 🧠 Core Memory Lifecycle Manager: Unified RAM ↔ VRAM PCIe Orchestrator
-Điều phối tài nguyên VRAM trên 2x Tesla T4 (32GB gộp) và 30GB CPU RAM.
-Thực hiện PCIe Fast Swapping (12-14 GB/s) giữa VLM, FLUX.1 và Wan2.1:
-- Giữ các mô hình đã nạp trong bộ nhớ (RAM / VRAM), tuyệt đối KHÔNG đọc lại từ Disk.
-- Tự động dọn dẹp cache VRAM (`empty_cache`, `ipc_collect`) trước khi chuyển giao quyền điều khiển GPU.
-- Hỗ trợ Dynamic Multi-GPU Allocation & Accelerate CPU Offloading.
+Điều phối tài nguyên VRAM và bộ nhớ hệ thống theo chính sách vòng đời (Lifecycle):
+1. always_active: Mô hình thường trực 100% trong VRAM (Whisper STT, Kokoro TTS, VLM 7B...).
+   - Tuyệt đối không bị giải phóng hay hoán đổi khi các mô hình khác hoạt động.
+2. dynamic_switch: Mô hình hoán đổi qua bus PCIe tốc độ cao (12-14 GB/s) giữa CPU RAM và GPU VRAM (FLUX.1, Wan2.1...).
+   - Giữ nguyên instance trong CPU RAM (Zero Disk I/O, không bao giờ đọc lại từ SSD).
+3. preload & init_target:
+   - preload: true | false (Nạp ngay khi server khởi động hay đợi request).
+   - init_target: "gpu" | "cpu" (Nạp thẳng vào GPU VRAM hay đỗ sẵn trong CPU RAM).
 """
 
 import gc
 import logging
 import threading
 import time
-from typing import Optional, Dict, Any
+from typing import Any, Callable, Dict, Optional, Set
 import torch
 
-logging.basicConfig(level=logging.INFO)
+from config import MODELS_CONFIG
+
 logger = logging.getLogger("MemoryOrchestrator")
 
 
@@ -35,18 +39,20 @@ class MemoryManager:
         self._initialized = True
         self.operation_lock = threading.Lock()
 
-        # Bãi đỗ các mô hình thường trực trong bộ nhớ (System RAM hoặc VRAM)
-        # Giữ nguyên instance trong RAM, không bao giờ hủy (del) để không bị đọc lại từ SSD
-        self.ram_resident_models: Dict[str, Any] = {}
+        # 📌 Nhóm 1: Mô hình Thường Trực (Always Active) - Luôn nằm cố định trong GPU VRAM
+        self.always_active_models: Dict[str, Any] = {}
 
-        # Tên mô hình đang chiếm dụng slot tính toán chính (Visual/Heavyweight Slot)
-        self.active_heavyweight_slot: Optional[str] = None
+        # 🔄 Nhóm 2: Mô hình Hoán Đổi Động (Dynamic Switch Pool) - Đỗ trong CPU RAM, kích hoạt lên GPU khi cần
+        self.dynamic_models: Dict[str, Any] = {}
 
-        logger.info("⚡ Unified Memory Orchestrator đã sẵn sàng (RAM ↔ VRAM PCIe Bus).")
+        # Tên mô hình động đang chiếm dụng slot GPU tính toán
+        self.active_dynamic_slot: Optional[str] = None
+
+        logger.info("⚡ Unified Memory Lifecycle Orchestrator đã sẵn sàng (RAM ↔ VRAM PCIe Bus).")
 
     @staticmethod
     def clean_gpu():
-        """Giải phóng hoàn toàn bộ nhớ đệm (cache) và giải phóng các khối bộ nhớ không dùng trên tất cả GPU."""
+        """Giải phóng bộ nhớ đệm cache và phân mảnh CUDA trên tất cả GPU (không chạm vào weights đang dùng)."""
         gc.collect()
         if torch.cuda.is_available():
             for i in range(torch.cuda.device_count()):
@@ -56,7 +62,7 @@ class MemoryManager:
 
     @staticmethod
     def report_vram() -> Dict[str, Any]:
-        """Báo cáo dung lượng VRAM thực tế trên từng GPU."""
+        """Báo cáo dung lượng VRAM thực tế theo thời gian thực trên từng GPU."""
         stats = {}
         if not torch.cuda.is_available():
             return {"device": "cpu", "status": "No CUDA detected"}
@@ -74,51 +80,135 @@ class MemoryManager:
             }
         return stats
 
-    def switch_heavyweight_slot(self, target_slot: str, loader_fn) -> Any:
+    def register_always_active(self, slot_name: str, model_instance: Any):
+        """Đăng ký mô hình thường trực bất khả xâm phạm."""
+        with self.operation_lock:
+            self.always_active_models[slot_name] = model_instance
+            logger.info(f"📌 [Pinned VRAM] Mô hình '{slot_name}' đã được ghim thường trực (always_active).")
+
+    def switch_dynamic_slot(self, target_slot: str, loader_fn: Callable[[], Any], engine_obj: Optional[Any] = None) -> Any:
         """
-        Điều phối hoán đổi mô hình giữa RAM và VRAM qua bus PCIe tốc độ cao:
-        1. Nếu mô hình target đã nằm trong VRAM: Không cần làm gì (Zero latency).
-        2. Nếu mô hình target đã có trong RAM (đã từng nạp):
-           - Dọn cache VRAM của GPU.
-           - Tái kích hoạt mô hình target ngay từ RAM (mất < 1 giây qua PCIe, KHÔNG đọc từ Disk).
-        3. Nếu là lần đầu tiên gọi mô hình:
-           - Dọn cache VRAM.
-           - Chạy loader_fn để khởi tạo và lưu vào ram_resident_models.
+        Điều phối hoán đổi mô hình dynamic_switch giữa CPU RAM và GPU VRAM qua bus PCIe:
+        1. Nếu target_slot đang tích cực trên GPU: Trả về tức thì (Zero latency).
+        2. Nếu slot khác đang trên GPU: Chuyển slot cũ về CPU RAM, dọn cache VRAM.
+        3. Đưa target_slot lên GPU từ RAM (hoặc nạp lần đầu nếu chưa có).
         """
         with self.operation_lock:
-            # Trường hợp 1: Đang kích hoạt sẵn trong VRAM
-            if self.active_heavyweight_slot == target_slot and target_slot in self.ram_resident_models:
-                logger.info(f"✨ [PCIe Fast-Swap] Slot '{target_slot}' đã sẵn sàng trong VRAM (Zero latency).")
-                return self.ram_resident_models[target_slot]
+            # Trường hợp 1: Đang sẵn sàng trên GPU
+            if self.active_dynamic_slot == target_slot and target_slot in self.dynamic_models:
+                logger.debug(f"✨ [PCIe Fast-Swap] Slot '{target_slot}' đã sẵn sàng trên GPU (Zero latency).")
+                return self.dynamic_models[target_slot]
 
             t0 = time.time()
 
-            # Trường hợp 2: Mô hình đã được khởi tạo trong RAM từ trước
-            if target_slot in self.ram_resident_models:
-                logger.info(f"🔄 [RAM ➔ VRAM] Kích hoạt '{target_slot}' trực tiếp từ CPU RAM qua bus PCIe (Zero Disk I/O)...")
-                # Dọn dẹp cache VRAM trước để dành trọn VRAM cho mô hình mục tiêu
+            # Trường hợp 2: Có một mô hình dynamic khác đang chiếm GPU -> Chuyển về CPU RAM
+            if self.active_dynamic_slot and self.active_dynamic_slot != target_slot:
+                prev_slot = self.active_dynamic_slot
+                logger.info(f"🔄 [GPU ➔ RAM] Nhường VRAM: Chuyển '{prev_slot}' về CPU RAM...")
+                prev_model = self.dynamic_models.get(prev_slot)
+                if prev_model is not None:
+                    if hasattr(prev_model, "to"):
+                        try:
+                            prev_model.to("cpu")
+                        except Exception as e:
+                            logger.debug(f"Không thể chuyển {prev_slot} về CPU: {e}")
                 self.clean_gpu()
-                model = self.ram_resident_models[target_slot]
-                self.active_heavyweight_slot = target_slot
+                self.active_dynamic_slot = None
+
+            # Trường hợp 3: Target đã có sẵn trong CPU RAM -> Đẩy lên GPU
+            if target_slot in self.dynamic_models:
+                logger.info(f"⚡ [RAM ➔ GPU] Kích hoạt '{target_slot}' từ CPU RAM qua bus PCIe (Zero Disk I/O)...")
+                self.clean_gpu()
+                model = self.dynamic_models[target_slot]
+                if engine_obj and hasattr(engine_obj, "reload_to_gpu"):
+                    engine_obj.reload_to_gpu()
+                elif hasattr(model, "to") and torch.cuda.is_available():
+                    try:
+                        # Mặc định GPU 1 nếu có 2 GPU, ngược lại GPU 0
+                        dev = "cuda:1" if torch.cuda.device_count() > 1 else "cuda:0"
+                        model.to(dev)
+                    except Exception as e:
+                        logger.debug(f"Model to CUDA note: {e}")
+                self.active_dynamic_slot = target_slot
                 elapsed = time.time() - t0
-                logger.info(f"⚡ [PCIe Fast-Swap] '{target_slot}' kích hoạt thành công từ RAM trong {elapsed:.2f}s!")
+                logger.info(f"✨ [PCIe Fast-Swap] '{target_slot}' sẵn sàng trên GPU sau {elapsed:.2f}s!")
                 return model
 
-            # Trường hợp 3: Nạp lần đầu tiên (Cold Start)
-            logger.info(f"🚀 [Cold Start] Khởi tạo '{target_slot}' lần đầu vào bộ nhớ hệ thống...")
+            # Trường hợp 4: Nạp lần đầu (Cold Start)
+            logger.info(f"🚀 [Cold Start] Khởi tạo '{target_slot}' lần đầu vào bộ nhớ...")
             self.clean_gpu()
             model = loader_fn()
-            self.ram_resident_models[target_slot] = model
-            self.active_heavyweight_slot = target_slot
+            self.dynamic_models[target_slot] = model
+            self.active_dynamic_slot = target_slot
 
             elapsed = time.time() - t0
-            logger.info(f"✅ [Ready] '{target_slot}' đã nạp thành công vào Memory Pool trong {elapsed:.2f}s!")
+            logger.info(f"✅ [Ready] '{target_slot}' đã nạp thành công vào hệ thống sau {elapsed:.2f}s!")
             return model
 
-    def switch_gpu1_slot(self, target_slot: str, loader_fn) -> Any:
-        """Tương thích ngược cho các module visual gọi switch_gpu1_slot."""
-        return self.switch_heavyweight_slot(target_slot, loader_fn)
+    # Tương thích ngược với code cũ
+    def switch_heavyweight_slot(self, target_slot: str, loader_fn: Callable[[], Any]) -> Any:
+        return self.switch_dynamic_slot(target_slot, loader_fn)
+
+    def switch_gpu1_slot(self, target_slot: str, loader_fn: Callable[[], Any]) -> Any:
+        return self.switch_dynamic_slot(target_slot, loader_fn)
+
+    def warmup_models(self, registry):
+        """
+        Thực thi quy trình Warmup khi khởi động server dựa trên models.yaml:
+        - preload: true && init_target: 'gpu'  -> Nạp thẳng vào VRAM.
+        - preload: true && init_target: 'cpu'  -> Nạp sẵn vào RAM (sẵn sàng PCIe Fast-Swap).
+        - preload: false                       -> Đợi request (Lazy Load).
+        """
+        logger.info("\n" + "=" * 70)
+        logger.info("🚀 [Startup Warmup] Bắt đầu khởi tạo các mô hình theo cấu hình models.yaml...")
+        logger.info("=" * 70)
+
+        for task, cfg in MODELS_CONFIG.items():
+            is_preload = cfg.get("preload", False)
+            init_target = cfg.get("init_target", "gpu").lower()
+            lifecycle = cfg.get("lifecycle", "dynamic_switch").lower()
+            model_id = cfg.get("id", "")
+
+            if not is_preload:
+                logger.info(f"⏳ [{task.upper()}] '{model_id}' [preload=False, lifecycle={lifecycle}] -> Chờ Lazy Load khi có request.")
+                continue
+
+            logger.info(f"🔥 [{task.upper()}] Preloading '{model_id}' (Target: {init_target.upper()} | Policy: {lifecycle})...")
+            try:
+                engine = registry.get_engine(task)
+                if engine is None:
+                    continue
+
+                if init_target == "gpu":
+                    loaded_obj = engine.load()
+                    if lifecycle == "always_active":
+                        self.register_always_active(task, loaded_obj)
+                    else:
+                        self.dynamic_models[task] = loaded_obj
+                        self.active_dynamic_slot = task
+                elif init_target == "cpu":
+                    # Nạp vào RAM và đỗ lại ở CPU
+                    loaded_obj = engine.load()
+                    if hasattr(engine, "offload_to_cpu"):
+                        engine.offload_to_cpu()
+                    self.dynamic_models[task] = loaded_obj
+                    logger.info(f"🚗 [{task.upper()}] Đỗ sẵn trong CPU RAM (Zero VRAM taken). Sẵn sàng Fast-Swap qua PCIe!")
+
+            except Exception as e:
+                logger.warning(f"⚠️ Khởi tạo trước [{task.upper()}] gặp cảnh báo: {e}. Sẽ thử lại khi có request.")
+
+        self.clean_gpu()
+        logger.info("=" * 70)
+        logger.info(f"📊 [Warmup Hoàn Tất] Trạng thái VRAM sau khởi động:\n{self.report_vram()}")
+        logger.info("=" * 70 + "\n")
+
+
+# Singleton memory manager instance
+_global_memory_manager = None
 
 
 def get_memory_manager() -> MemoryManager:
-    return MemoryManager()
+    global _global_memory_manager
+    if _global_memory_manager is None:
+        _global_memory_manager = MemoryManager()
+    return _global_memory_manager

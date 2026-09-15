@@ -2,7 +2,8 @@
 🎬 Video Generation Module: Wan2.1 Adapter (Flagship SOTA Text-to-Video)
 Kế thừa BaseVideoEngine:
 - Hỗ trợ Wan2.1-14B 4-bit NF4 / FP16 và tự động fallback sang Wan2.1-1.3B / LTX-Video.
-- Tích hợp DeviceTopologyResolver và Unified Memory Orchestrator.
+- Tích hợp Adaptive Dynamic Allocator và Memory Lifecycle Orchestrator.
+- Tuân thủ lifecycle dynamic_switch (đỗ trong CPU RAM, kích hoạt lên GPU khi cần).
 """
 
 import base64
@@ -40,6 +41,8 @@ class WanVideoEngine(BaseVideoEngine):
         self.model_id = self.config.get("id", VIDEO_MODEL_ID)
         self.fallback_id = self.config.get("fallback_id", VIDEO_FALLBACK_ID)
         self.device_strategy = self.config.get("device_strategy", "auto")
+        self.allocation_policy = self.config.get("allocation_policy", "adaptive")
+        self.lifecycle = self.config.get("lifecycle", "dynamic_switch")
         self.num_frames = int(self.config.get("num_frames", 25))
         self.width = int(self.config.get("width", 768))
         self.height = int(self.config.get("height", 512))
@@ -47,12 +50,18 @@ class WanVideoEngine(BaseVideoEngine):
 
     def _loader(self):
         resolver = get_device_resolver()
-        resolved = resolver.resolve("video", self.model_id, self.device_strategy)
+        resolved = resolver.resolve(
+            task="video",
+            model_id=self.model_id,
+            requested_strategy=self.device_strategy,
+            quantization="4bit",
+            config=self.config,
+        )
         self.resolved_device = resolved["device"]
 
         logger.info(
             f"🎬 Đang nạp Wan2.1 Video ({self.model_id}) vào Memory Pool "
-            f"[Thiết bị: {self.resolved_device} | Lý do: {resolved['reason']}]..."
+            f"[Thiết bị: {self.resolved_device} | Dual-GPU: {resolved['is_dual_gpu']} | Lý do: {resolved['reason']}]..."
         )
         t0 = time.time()
 
@@ -77,6 +86,7 @@ class WanVideoEngine(BaseVideoEngine):
                 else:
                     pipe.to("cpu")
 
+                self._model = pipe
                 self._is_loaded = True
                 elapsed = time.time() - t0
                 logger.info(f"✅ Wan2.1 Video ({mid}) nạp thành công trong {elapsed:.2f}s!")
@@ -96,6 +106,7 @@ class WanVideoEngine(BaseVideoEngine):
                 pipe.enable_model_cpu_offload(device=torch.device(self.resolved_device))
             else:
                 pipe.to("cpu")
+            self._model = pipe
             self._is_loaded = True
             logger.info(f"✅ LTX-Video nạp thành công trong {time.time() - t0:.2f}s!")
             return pipe
@@ -105,7 +116,7 @@ class WanVideoEngine(BaseVideoEngine):
 
     def get_pipeline(self):
         mem = get_memory_manager()
-        return mem.switch_heavyweight_slot("wan_video", self._loader)
+        return mem.switch_dynamic_slot("wan_video", self._loader, engine_obj=self)
 
     def load(self) -> Any:
         return self.get_pipeline()

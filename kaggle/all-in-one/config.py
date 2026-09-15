@@ -1,7 +1,7 @@
 """
 ⚙️ Kaggle All-in-One Studio Configuration
 Tập trung tất cả thông số mô hình, thiết bị GPU, độ chính xác (Precision) và API.
-Tự động nạp cấu hình khai báo từ models.yaml và tính toán phân bổ GPU qua DeviceTopologyResolver.
+Tự động nạp cấu hình khai báo từ models.yaml và tính toán phân bổ GPU qua Adaptive Dynamic Allocator.
 """
 
 import os
@@ -27,9 +27,32 @@ DEVICE_VISUAL = DEVICE_GPU1
 # 2. ĐỌC CẤU HÌNH KHAI BÁO TỪ models.yaml (HOẶC FALLBACK MẶC ĐỊNH)
 # ==============================================================================
 DEFAULT_MODELS_CONFIG: Dict[str, Any] = {
+    "stt": {
+        "id": "openai/whisper-large-v3-turbo",
+        "precision": "fp16",
+        "lifecycle": "always_active",
+        "preload": True,
+        "init_target": "gpu",
+        "preferred_device": "gpu_0",
+        "device_strategy": "gpu_0",
+    },
+    "tts": {
+        "id": "hexgrad/Kokoro-82M",
+        "voice": "af_heart",
+        "precision": "fp16",
+        "lifecycle": "always_active",
+        "preload": True,
+        "init_target": "gpu",
+        "preferred_device": "gpu_0",
+        "device_strategy": "gpu_0",
+    },
     "vlm": {
         "id": "Qwen/Qwen2.5-VL-7B-Instruct",
         "quantization": "4bit",
+        "lifecycle": "always_active",
+        "preload": True,
+        "init_target": "gpu",
+        "allocation_policy": "adaptive",
         "device_strategy": "auto",
         "max_tokens": 512,
         "temperature": 0.7,
@@ -37,6 +60,10 @@ DEFAULT_MODELS_CONFIG: Dict[str, Any] = {
     "image": {
         "id": "black-forest-labs/FLUX.1-schnell",
         "quantization": "4bit",
+        "lifecycle": "dynamic_switch",
+        "preload": False,
+        "init_target": "cpu",
+        "allocation_policy": "adaptive",
         "device_strategy": "gpu_1",
         "steps": 4,
         "guidance": 0.0,
@@ -45,27 +72,20 @@ DEFAULT_MODELS_CONFIG: Dict[str, Any] = {
         "id": "Wan-AI/Wan2.1-T2V-14B-Diffusers",
         "fallback_id": "Wan-AI/Wan2.1-T2V-1.3B-Diffusers",
         "quantization": "4bit",
+        "lifecycle": "dynamic_switch",
+        "preload": False,
+        "init_target": "cpu",
+        "allocation_policy": "adaptive",
         "device_strategy": "auto",
         "num_frames": 25,
         "width": 768,
         "height": 512,
     },
-    "stt": {
-        "id": "openai/whisper-large-v3-turbo",
-        "precision": "fp16",
-        "device_strategy": "gpu_0",
-    },
-    "tts": {
-        "id": "hexgrad/Kokoro-82M",
-        "voice": "af_heart",
-        "precision": "fp16",
-        "device_strategy": "gpu_0",
-    },
 }
 
 
 def load_yaml_config() -> Dict[str, Any]:
-    """Đọc models.yaml nếu có, nếu chưa cài pyyaml thì dùng parser an toàn hoặc fallback."""
+    """Đọc models.yaml nếu có, hỗ trợ pyyaml hoặc fallback parser an toàn."""
     config_path = Path(__file__).parent / "models.yaml"
     if not config_path.exists():
         return DEFAULT_MODELS_CONFIG
@@ -75,11 +95,18 @@ def load_yaml_config() -> Dict[str, Any]:
         with open(config_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
             if data and "models" in data:
-                return data["models"]
+                # Merge với defaults để không thiếu key
+                result = dict(DEFAULT_MODELS_CONFIG)
+                for k, v in data["models"].items():
+                    if k in result and isinstance(result[k], dict) and isinstance(v, dict):
+                        result[k].update(v)
+                    else:
+                        result[k] = v
+                return result
     except Exception as e:
         logger.debug(f"PyYAML không khả dụng hoặc lỗi đọc file: {e}. Dùng parser dự phòng.")
 
-    # Parser thủ công nhẹ cho YAML chuẩn phẳng
+    # Parser thủ công an toàn cho YAML chuẩn phẳng
     parsed = dict(DEFAULT_MODELS_CONFIG)
     try:
         current_section = None
@@ -95,6 +122,9 @@ def load_yaml_config() -> Dict[str, Any]:
                 elif ":" in line and current_section:
                     k, v = line.split(":", 1)
                     k = k.strip()
+                    # Loại bỏ inline comment nếu có
+                    if "#" in v:
+                        v = v.split("#", 1)[0]
                     v = v.strip().strip('"').strip("'")
                     if v.lower() == "true":
                         v = True
@@ -102,6 +132,11 @@ def load_yaml_config() -> Dict[str, Any]:
                         v = False
                     elif v.isdigit():
                         v = int(v)
+                    else:
+                        try:
+                            v = float(v)
+                        except ValueError:
+                            pass
                     parsed[current_section][k] = v
     except Exception:
         pass

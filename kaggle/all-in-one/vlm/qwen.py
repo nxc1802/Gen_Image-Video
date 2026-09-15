@@ -1,9 +1,9 @@
 """
 👁️ Vision-Language Model (VLM) Module: Qwen Adapter (Hỗ trợ 2B, 7B, 14B, 26B, 32B...)
-Kế thừa BaseVLMEngine và sử dụng DeviceTopologyResolver:
-- Nếu là model nhỏ (<= 8B như Qwen 7B/2B): Tự động nạp vào GPU 0 (cuda:0), giải phóng 100% GPU 1 cho Visual models!
-- Nếu là model lớn (>= 14B như Qwen 26B): Tự động chia tải song song qua cả 2 GPU (device_map='auto').
-- Hỗ trợ đầy đủ định dạng OpenAI /v1/chat/completions (Văn bản + Hình ảnh).
+Kế thừa BaseVLMEngine và tích hợp Adaptive Dynamic Allocator:
+- Nếu là model nhỏ (<= 8B như Qwen 7B/2B): Tự động nạp 100% vào 1 GPU đơn (GPU 0 hoặc GPU 1 tùy VRAM trống), loại bỏ 100% độ trễ PCIe!
+- Nếu là model lớn (>= 14B như Qwen 26B): Tự động chia tải động theo tỷ lệ VRAM thực tế qua max_memory (BỎ CHIA CỨNG 50-50).
+- Tuân thủ chính sách vòng đời (always_active vs dynamic_switch) từ models.yaml.
 """
 
 import base64
@@ -38,9 +38,9 @@ class QwenVLMEngine(BaseVLMEngine):
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super(QwenVLMEngine, cls).__new__(cls)
-            cls._instance._model = None
-            cls._instance._processor = None
-            cls._instance._initialized = False
+            cls._model = None
+            cls._processor = None
+            cls._initialized = False
         return cls._instance
 
     def __init__(self, config: Optional[Dict[str, Any]] = None):
@@ -49,21 +49,26 @@ class QwenVLMEngine(BaseVLMEngine):
         super().__init__(config or VLM_CONFIG)
         self.model_id = self.config.get("id", VLM_MODEL_ID)
         self.device_strategy = self.config.get("device_strategy", "auto")
+        self.allocation_policy = self.config.get("allocation_policy", "adaptive")
         self.quantization = self.config.get("quantization", "4bit")
+        self.lifecycle = self.config.get("lifecycle", "always_active")
         self._initialized = True
 
-    def load_model(self):
-        if self._model is not None:
-            return self._model, self._processor
-
+    def _actual_loader(self):
+        """Khởi tạo trọng số mô hình và processor với cấu hình phân bổ tự thích ứng."""
         resolver = get_device_resolver()
-        resolved = resolver.resolve("vlm", self.model_id, self.device_strategy)
+        resolved = resolver.resolve(
+            task="vlm",
+            model_id=self.model_id,
+            requested_strategy=self.device_strategy,
+            quantization=self.quantization,
+            config=self.config,
+        )
         self.resolved_device = resolved["device"]
-        device_map = resolved["device_map"] or self.resolved_device
 
         logger.info(
             f"👁️ Đang nạp VLM ({self.model_id}) "
-            f"[Thiết bị: {device_map} | Lý do: {resolved['reason']}]..."
+            f"[Thiết bị: {self.resolved_device} | Dual-GPU: {resolved['is_dual_gpu']} | Lý do: {resolved['reason']}]..."
         )
         t0 = time.time()
 
@@ -82,12 +87,25 @@ class QwenVLMEngine(BaseVLMEngine):
                 self.model_id,
                 trust_remote_code=True,
             )
+
+            load_kwargs = {
+                "quantization_config": bnb_config if torch.cuda.is_available() else None,
+                "torch_dtype": torch.float16 if torch.cuda.is_available() else torch.float32,
+                "trust_remote_code": True,
+            }
+
+            # ⚖️ PHÂN BỔ ĐA GPU TỰ THÍCH ỨNG (ADAPTIVE WATERMARK SPLIT)
+            if resolved.get("is_dual_gpu") and resolved.get("max_memory"):
+                load_kwargs["device_map"] = "auto"
+                load_kwargs["max_memory"] = resolved["max_memory"]
+                logger.info(f"⚖️ Áp dụng max_memory tự thích ứng: {resolved['max_memory']}")
+            else:
+                target_map = resolved.get("device_map") or resolved.get("device")
+                load_kwargs["device_map"] = target_map
+
             self._model = AutoVLMModel.from_pretrained(
                 self.model_id,
-                quantization_config=bnb_config if torch.cuda.is_available() else None,
-                device_map=device_map,
-                torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-                trust_remote_code=True,
+                **load_kwargs,
             )
             self._is_loaded = True
             elapsed = time.time() - t0
@@ -98,6 +116,25 @@ class QwenVLMEngine(BaseVLMEngine):
             self._processor = "fallback"
 
         return self._model, self._processor
+
+    def load_model(self):
+        if self._model is not None:
+            return self._model, self._processor
+
+        mem = get_memory_manager()
+        # Nếu là always_active: nạp trực tiếp và giữ cố định
+        if self.lifecycle == "always_active":
+            model, processor = self._actual_loader()
+            mem.register_always_active("vlm", model)
+            return model, processor
+        else:
+            # Nếu là dynamic_switch: quản lý qua dynamic pool
+            def loader_wrapper():
+                m, _ = self._actual_loader()
+                return m
+
+            mem.switch_dynamic_slot("vlm", loader_wrapper, engine_obj=self)
+            return self._model, self._processor
 
     def load(self) -> Any:
         return self.load_model()

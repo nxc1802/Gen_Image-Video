@@ -1,9 +1,10 @@
 """
 🚀 Kaggle All-in-One Studio: Main Entrypoint
-Điều phối khởi động hệ sinh thái AI:
-1. Pre-warm Audio Core (Whisper Full FP16 + Kokoro Full FP16 trên GPU 0).
-2. Kích hoạt Cloudflare Quick Tunnel (xuất Public HTTPS URL).
-3. Khởi chạy FastAPI Server chuẩn OpenAI REST API.
+Điều phối khởi động hệ sinh thái AI với cơ chế Adaptive Dynamic Balancing:
+1. Warmup các mô hình có preload: true (gpu hoặc cpu) theo khai báo trong models.yaml.
+2. Ghim các mô hình always_active (Whisper, Kokoro, VLM nhỏ) an toàn trong VRAM.
+3. Kích hoạt Cloudflare Quick Tunnel (xuất Public HTTPS URL).
+4. Khởi chạy FastAPI Server chuẩn OpenAI REST API.
 """
 
 import argparse
@@ -13,8 +14,9 @@ import threading
 import time
 import uvicorn
 
-from config import HOST, PORT, ENABLE_CLOUDFLARE
+from config import HOST, PORT, ENABLE_CLOUDFLARE, MODELS_CONFIG
 from core.memory_manager import get_memory_manager
+from core.model_registry import get_model_registry
 from server.app import create_app
 from tunnel.cloudflare import start_cloudflare_tunnel
 
@@ -35,19 +37,30 @@ def main():
 
     args = parser.parse_args()
 
-    print("\n" + "=" * 75)
-    print("🎨 KHỞI ĐỘNG KAGGLE ALL-IN-ONE AI STUDIO (2x TESLA T4)")
-    print("   • VLM       : Qwen 26B (4-bit Dual-GPU)")
-    print("   • Audio STT : Whisper-large-v3-turbo (BẢN FULL FP16 trên GPU 0)")
-    print("   • Audio TTS : Kokoro-82M (BẢN FULL FP16 trên GPU 0)")
-    print("   • GenImage  : FLUX.1-schnell (4-bit NF4 trên GPU 1)")
-    print("   • GenVideo  : Wan2.1-1.3B (Text-to-Video trên GPU 1)")
-    print("=" * 75 + "\n")
+    vlm_cfg = MODELS_CONFIG.get("vlm", {})
+    img_cfg = MODELS_CONFIG.get("image", {})
+    vid_cfg = MODELS_CONFIG.get("video", {})
+    stt_cfg = MODELS_CONFIG.get("stt", {})
+    tts_cfg = MODELS_CONFIG.get("tts", {})
+
+    print("\n" + "=" * 78)
+    print("🎨 KHỞI ĐỘNG KAGGLE ALL-IN-ONE AI STUDIO (ADAPTIVE DYNAMIC BALANCING)")
+    print(f"   • VLM       : {vlm_cfg.get('id', 'N/A')} [{vlm_cfg.get('lifecycle', 'always_active')}]")
+    print(f"   • Audio STT : {stt_cfg.get('id', 'N/A')} [{stt_cfg.get('lifecycle', 'always_active')}]")
+    print(f"   • Audio TTS : {tts_cfg.get('id', 'N/A')} [{tts_cfg.get('lifecycle', 'always_active')}]")
+    print(f"   • GenImage  : {img_cfg.get('id', 'N/A')} [{img_cfg.get('lifecycle', 'dynamic_switch')}]")
+    print(f"   • GenVideo  : {vid_cfg.get('id', 'N/A')} [{vid_cfg.get('lifecycle', 'dynamic_switch')}]")
+    print("=" * 78 + "\n")
 
     mem = get_memory_manager()
+    registry = get_model_registry()
     logger.info(f"📊 Trạng thái VRAM ban đầu: {mem.report_vram()}")
 
-    # 1. Khởi động Cloudflare Tunnel trong luồng riêng để không chặn server
+    # 1. Warmup các mô hình preload nếu không bị bỏ qua
+    if not args.skip_warmup:
+        mem.warmup_models(registry)
+
+    # 2. Khởi động Cloudflare Tunnel trong luồng riêng để không chặn server
     if ENABLE_CLOUDFLARE and not args.no_tunnel:
         def tunnel_thread():
             time.sleep(2.0)  # Đợi Uvicorn bind port
@@ -55,7 +68,6 @@ def main():
 
         t = threading.Thread(target=tunnel_thread, daemon=True)
         t.start()
-
 
     # 3. Tạo FastAPI App
     app = create_app()

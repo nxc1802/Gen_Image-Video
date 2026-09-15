@@ -2,7 +2,7 @@
 🔊 Text-to-Speech (TTS) Module: Kokoro Adapter
 Kế thừa BaseTTSEngine:
 - Chạy ở BẢN FULL FP16 (Không Quantize) trên GPU 0.
-- Giữ 100% nhạc tính, ngữ điệu người thật chuẩn phòng thu, tốc độ 80x realtime.
+- Tuân thủ lifecycle always_active (thường trực 100% trong VRAM, không bao giờ bị dọn).
 """
 
 import io
@@ -16,6 +16,7 @@ import torch
 from config import TTS_MODEL_ID, TTS_CONFIG, DEVICE_AUDIO, TTS_VOICE
 from core.base_engine import BaseTTSEngine
 from core.device_resolver import get_device_resolver
+from core.memory_manager import get_memory_manager
 
 logger = logging.getLogger("TTSEngine")
 
@@ -36,6 +37,7 @@ class TTSEngine(BaseTTSEngine):
         super().__init__(config or TTS_CONFIG)
         self.model_id = self.config.get("id", TTS_MODEL_ID)
         self.device_strategy = self.config.get("device_strategy", "gpu_0")
+        self.lifecycle = self.config.get("lifecycle", "always_active")
         self.default_voice = self.config.get("voice", TTS_VOICE)
         self._initialized = True
 
@@ -44,7 +46,13 @@ class TTSEngine(BaseTTSEngine):
             return self._pipeline
 
         resolver = get_device_resolver()
-        resolved = resolver.resolve("tts", self.model_id, self.device_strategy)
+        resolved = resolver.resolve(
+            task="tts",
+            model_id=self.model_id,
+            requested_strategy=self.device_strategy,
+            precision="fp16",
+            config=self.config,
+        )
         self.resolved_device = resolved["device"]
 
         logger.info(f"🔊 Đang nạp TTS Kokoro-82M ở BẢN FULL FP16 vào {self.resolved_device}...")
@@ -59,6 +67,10 @@ class TTSEngine(BaseTTSEngine):
         except Exception as e:
             logger.warning(f"⚠️ Kokoro package chưa cài đặt sẵn hoặc tải lỗi ({e}), chuyển sang fallback engine.")
             self._pipeline = "fallback"
+
+        if self.lifecycle == "always_active":
+            mem = get_memory_manager()
+            mem.register_always_active("tts", self._pipeline)
 
         return self._pipeline
 
