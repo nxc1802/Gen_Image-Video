@@ -9,12 +9,13 @@ Kế thừa BaseVLMEngine và tích hợp Adaptive Dynamic Allocator:
 import base64
 import io
 import logging
+import threading
 import time
 from typing import Any, Dict, List, Optional
 from PIL import Image
 import requests
 import torch
-from transformers import AutoProcessor, BitsAndBytesConfig
+from transformers import AutoProcessor, BitsAndBytesConfig, TextIteratorStreamer
 
 try:
     from transformers import AutoModelForImageTextToText as AutoVLMModel
@@ -257,6 +258,107 @@ class QwenVLMEngine(BaseVLMEngine):
                 "tokens": 0,
                 "elapsed": round(time.time() - t0, 2),
             }
+
+    def chat_stream(
+        self,
+        messages: List[Dict[str, Any]],
+        max_tokens: int = 512,
+        temperature: float = 0.7,
+        top_p: float = 0.9,
+    ):
+        """Xử lý chat đa phương thức với SSE Streaming từng token."""
+        model, processor = self.load_model()
+
+        if model == "fallback":
+            user_text = messages[-1].get("content", "") if messages else ""
+            if isinstance(user_text, list):
+                user_text = " ".join([c.get("text", "") for c in user_text if isinstance(c, dict) and "text" in c])
+            mock_tokens = [
+                "Xin ", "chào! ", "Tôi ", "là ", "trợ ", "lý ", "AI ", "Studio ", "đang ",
+                "chạy ", "trên ", "Kaggle. ", f"Tôi đã nhận được câu hỏi: '{user_text[:50]}'. ",
+                "Hệ ", "thống ", "đang ", "hoạt ", "động ", "rất ", "tốt! "
+            ]
+            for tok in mock_tokens:
+                time.sleep(0.04)
+                yield tok
+            return
+
+        # Chuẩn bị tin nhắn
+        qwen_messages = []
+        raw_images = []
+
+        for msg in messages:
+            role = msg.get("role", "user")
+            content = msg.get("content", "")
+
+            if isinstance(content, str):
+                qwen_messages.append({"role": role, "content": content})
+            elif isinstance(content, list):
+                text_parts = []
+                for part in content:
+                    p_type = part.get("type", "")
+                    if p_type == "text":
+                        text_parts.append(part.get("text", ""))
+                    elif p_type == "image_url":
+                        img_url = part.get("image_url", {}).get("url", "")
+                        if img_url:
+                            try:
+                                pil_img = self._parse_image(img_url)
+                                raw_images.append(pil_img)
+                                text_parts.append("<|image_pad|>")
+                            except Exception as e:
+                                logger.error(f"Lỗi khi đọc ảnh đầu vào: {e}")
+
+                qwen_messages.append({"role": role, "content": " ".join(text_parts)})
+
+        try:
+            text_prompt = processor.apply_chat_template(
+                qwen_messages, tokenize=False, add_generation_prompt=True
+            )
+
+            if raw_images:
+                inputs = processor(
+                    text=[text_prompt],
+                    images=raw_images,
+                    padding=True,
+                    return_tensors="pt",
+                )
+            else:
+                inputs = processor(
+                    text=[text_prompt],
+                    padding=True,
+                    return_tensors="pt",
+                )
+
+            target_device = self.resolved_device if self.resolved_device != "cpu" else "cpu"
+            if torch.cuda.is_available() and target_device != "cpu":
+                inputs = {k: v.to(target_device) if hasattr(v, "to") else v for k, v in inputs.items()}
+
+            tokenizer = getattr(processor, "tokenizer", processor)
+            streamer = TextIteratorStreamer(
+                tokenizer, skip_prompt=True, skip_special_tokens=True
+            )
+
+            gen_kwargs = {
+                **inputs,
+                "streamer": streamer,
+                "max_new_tokens": max_tokens,
+                "temperature": temperature if temperature > 0 else None,
+                "top_p": top_p if temperature > 0 else None,
+                "do_sample": (temperature > 0),
+            }
+
+            generation_thread = threading.Thread(target=model.generate, kwargs=gen_kwargs)
+            generation_thread.start()
+
+            for new_text in streamer:
+                if new_text:
+                    yield new_text
+
+            generation_thread.join(timeout=10.0)
+        except Exception as e:
+            logger.error(f"Lỗi trong quá trình streaming VLM: {e}")
+            yield f"\n[Lỗi stream: {str(e)}]"
 
     # Alias tương thích OpenAI route
     chat_completion = chat

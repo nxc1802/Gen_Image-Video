@@ -59,9 +59,14 @@ DEFAULT_MODELS_CONFIG: Dict[str, Any] = {
     },
     "image": {
         "id": "black-forest-labs/FLUX.1-schnell",
+        "default_variant": "schnell",
+        "variants": {
+            "schnell": "black-forest-labs/FLUX.1-schnell",
+            "dev": "black-forest-labs/FLUX.1-dev",
+        },
         "quantization": "4bit",
         "lifecycle": "dynamic_switch",
-        "preload": False,
+        "preload": True,
         "init_target": "cpu",
         "allocation_policy": "adaptive",
         "device_strategy": "gpu_1",
@@ -69,11 +74,17 @@ DEFAULT_MODELS_CONFIG: Dict[str, Any] = {
         "guidance": 0.0,
     },
     "video": {
-        "id": "Wan-AI/Wan2.1-T2V-14B-Diffusers",
+        "id": "Wan-AI/Wan2.1-T2V-1.3B-Diffusers",
+        "default_variant": "1.3b",
         "fallback_id": "Wan-AI/Wan2.1-T2V-1.3B-Diffusers",
+        "variants": {
+            "t2v_1_3b": "Wan-AI/Wan2.1-T2V-1.3B-Diffusers",
+            "t2v_14b": "Wan-AI/Wan2.1-T2V-14B-Diffusers",
+            "i2v_14b": "Wan-AI/Wan2.1-I2V-14B-480P-Diffusers",
+        },
         "quantization": "4bit",
         "lifecycle": "dynamic_switch",
-        "preload": False,
+        "preload": True,
         "init_target": "cpu",
         "allocation_policy": "adaptive",
         "device_strategy": "auto",
@@ -169,12 +180,47 @@ FLUX_CONFIG = MODELS_CONFIG.get("image", {})
 FLUX_MODEL_ID = os.environ.get("FLUX_MODEL_ID", FLUX_CONFIG.get("id", "black-forest-labs/FLUX.1-schnell"))
 FLUX_NUM_STEPS = int(FLUX_CONFIG.get("steps", 4))
 FLUX_GUIDANCE = float(FLUX_CONFIG.get("guidance", 0.0))
+FLUX_VARIANTS = FLUX_CONFIG.get("variants", {
+    "schnell": "black-forest-labs/FLUX.1-schnell",
+    "dev": "black-forest-labs/FLUX.1-dev",
+})
+
+def resolve_image_model_id(model_name: Optional[str] = None) -> str:
+    """Ánh xạ tên model request sang Hugging Face model ID."""
+    if not model_name:
+        return FLUX_MODEL_ID
+    clean = model_name.lower().strip()
+    if "dev" in clean:
+        return FLUX_VARIANTS.get("dev", "black-forest-labs/FLUX.1-dev")
+    elif "schnell" in clean:
+        return FLUX_VARIANTS.get("schnell", "black-forest-labs/FLUX.1-schnell")
+    return model_name if "/" in model_name else FLUX_MODEL_ID
 
 # Video
 VIDEO_CONFIG = MODELS_CONFIG.get("video", {})
-VIDEO_MODEL_ID = os.environ.get("VIDEO_MODEL_ID", VIDEO_CONFIG.get("id", "Wan-AI/Wan2.1-T2V-14B-Diffusers"))
+VIDEO_MODEL_ID = os.environ.get("VIDEO_MODEL_ID", VIDEO_CONFIG.get("id", "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"))
 VIDEO_FALLBACK_ID = os.environ.get("VIDEO_FALLBACK_ID", VIDEO_CONFIG.get("fallback_id", "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"))
 VIDEO_LOAD_IN_4BIT = str(VIDEO_CONFIG.get("quantization", "4bit")).lower() == "4bit"
+VIDEO_VARIANTS = VIDEO_CONFIG.get("variants", {
+    "t2v_1_3b": "Wan-AI/Wan2.1-T2V-1.3B-Diffusers",
+    "t2v_14b": "Wan-AI/Wan2.1-T2V-14B-Diffusers",
+    "i2v_14b": "Wan-AI/Wan2.1-I2V-14B-480P-Diffusers",
+})
+
+def resolve_video_model_id(model_name: Optional[str] = None, is_i2v: bool = False) -> str:
+    """Ánh xạ tên video model request sang Hugging Face model ID cho T2V hoặc I2V."""
+    if is_i2v:
+        return VIDEO_VARIANTS.get("i2v_14b", "Wan-AI/Wan2.1-I2V-14B-480P-Diffusers")
+    if not model_name:
+        return VIDEO_MODEL_ID
+    clean = model_name.lower().strip()
+    if "i2v" in clean:
+        return VIDEO_VARIANTS.get("i2v_14b", "Wan-AI/Wan2.1-I2V-14B-480P-Diffusers")
+    elif "14b" in clean:
+        return VIDEO_VARIANTS.get("t2v_14b", "Wan-AI/Wan2.1-T2V-14B-Diffusers")
+    elif "1.3b" in clean or "1_3b" in clean:
+        return VIDEO_VARIANTS.get("t2v_1_3b", "Wan-AI/Wan2.1-T2V-1.3B-Diffusers")
+    return model_name if "/" in model_name else VIDEO_MODEL_ID
 
 # ==============================================================================
 # 4. FASTAPI SERVER & NETWORK GATEWAY

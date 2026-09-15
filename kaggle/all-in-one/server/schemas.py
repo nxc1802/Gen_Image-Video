@@ -17,7 +17,7 @@ class ChatCompletionRequest(BaseModel):
     stream: Optional[bool] = False
 
 
-# --- Image Generation Schemas ---
+# --- Image Generation & Editing Schemas ---
 class ImageGenerationRequest(BaseModel):
     prompt: str
     model: Optional[str] = "flux-1-schnell"
@@ -27,6 +27,24 @@ class ImageGenerationRequest(BaseModel):
     steps: Optional[int] = None
     guidance: Optional[float] = None
     seed: Optional[int] = None
+    stream: Optional[bool] = False
+    image: Optional[str] = None       # Dùng khi gọi inpainting qua generation endpoint
+    mask_image: Optional[str] = None  # Mặt nạ inpainting
+
+
+class ImageEditRequest(BaseModel):
+    prompt: str
+    image: str                         # Base64 data URI hoặc image URL
+    mask: Optional[str] = None         # Chuẩn OpenAI param 'mask'
+    mask_image: Optional[str] = None   # Alias thuận tiện 'mask_image'
+    model: Optional[str] = "flux-1-schnell"
+    n: Optional[int] = 1
+    size: Optional[str] = "1024x1024"
+    response_format: Optional[str] = "b64_json"
+    steps: Optional[int] = None
+    guidance: Optional[float] = None
+    seed: Optional[int] = None
+    stream: Optional[bool] = False
 
 
 # --- TTS Schemas ---
@@ -38,11 +56,13 @@ class SpeechRequest(BaseModel):
     speed: Optional[float] = 1.0
 
 
-# --- Video Generation Schemas ---
+# --- Video Generation & ITV Schemas ---
 class VideoGenerationRequest(BaseModel):
     prompt: str
-    model: Optional[str] = "wan-2.1"
+    model: Optional[str] = "wan-2.1-1.3b"
+    image: Optional[str] = None        # Nếu có: kích hoạt Image-to-Video (ITV)
     num_frames: Optional[int] = 25
     width: Optional[int] = 768
     height: Optional[int] = 512
     seed: Optional[int] = None
+    stream: Optional[bool] = False

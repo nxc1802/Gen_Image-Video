@@ -4,7 +4,7 @@ uvicorn>=0.32.0
 pydantic>=2.10.0
 transformers>=4.48.0
 accelerate>=1.2.0
-diffusers>=0.32.0
+git+https://github.com/huggingface/diffusers.git
 bitsandbytes>=0.45.0
 sentencepiece>=0.2.0
 protobuf>=5.29.0

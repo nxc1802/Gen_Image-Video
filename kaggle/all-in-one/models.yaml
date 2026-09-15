@@ -9,9 +9,10 @@ models:
     id: "openai/whisper-large-v3-turbo"
     precision: "fp16"
     lifecycle: "always_active"      # Thường trực 100% trong VRAM, không bao giờ bị dọn
-    preload: true                  # Nạp ngay khi server khởi động
+    preload: true                  # Nạp trước ngay khi server khởi động
     init_target: "gpu"             # Nạp thẳng vào VRAM
     preferred_device: "gpu_0"      # Ghim trên GPU 0 (~1.8 GB VRAM)
+    device_strategy: "gpu_0"
 
   # 🔊 2. Text-to-Speech (Kokoro-82M Full FP16)
   tts:
@@ -19,9 +20,10 @@ models:
     voice: "af_heart"
     precision: "fp16"
     lifecycle: "always_active"      # Thường trực 100% trong VRAM, không bao giờ bị dọn
-    preload: true                  # Nạp ngay khi server khởi động
+    preload: true                  # Nạp trước ngay khi server khởi động
     init_target: "gpu"             # Nạp thẳng vào VRAM
     preferred_device: "gpu_0"      # Ghim trên GPU 0 (~0.3 GB VRAM)
+    device_strategy: "gpu_0"
 
   # 👁️ 3. Vision-Language Model (VLM / Chat)
   # - Nếu chọn model nhỏ (<= 8B như Qwen 7B/2B): Tự động đặt 100% trên 1 GPU đơn (GPU 0 hoặc 1)
@@ -30,32 +32,44 @@ models:
     id: "Qwen/Qwen2.5-VL-7B-Instruct"
     quantization: "4bit"
     lifecycle: "always_active"      # Model 7B đủ nhỏ để thường trực trong VRAM cùng Audio
-    preload: true                  # Nạp sẵn khi server khởi động
+    preload: true                  # Nạp trước ngay khi server khởi động
     init_target: "gpu"             # Nạp thẳng vào GPU
     allocation_policy: "adaptive"  # Tự động đo VRAM thực tế, chọn 1 GPU đơn hoặc chia tỷ lệ động
+    device_strategy: "auto"
     max_tokens: 512
     temperature: 0.7
 
-  # 🖼️ 4. Text-to-Image Generation (FLUX.1 SOTA 17B)
+  # 🖼️ 4. Text-to-Image & Inpainting Generation (FLUX.1 SOTA)
   image:
     id: "black-forest-labs/FLUX.1-schnell"
+    default_variant: "schnell"
+    variants:
+      schnell: "black-forest-labs/FLUX.1-schnell"
+      dev: "black-forest-labs/FLUX.1-dev"
     quantization: "4bit"
     lifecycle: "dynamic_switch"    # Hoán đổi qua PCIe bus khi có yêu cầu tạo ảnh
-    preload: false                 # Nạp theo nhu cầu (Lazy Load) hoặc đỗ sẵn trong RAM
-    init_target: "cpu"             # Đỗ sẵn trong CPU RAM để Fast-Swap sang GPU
+    preload: true                  # Nạp trước vào 30GB CPU RAM khi khởi động
+    init_target: "cpu"             # Đỗ sẵn trong CPU RAM để Fast-Swap sang GPU (Zero Disk I/O)
     allocation_policy: "adaptive"  # Tự động chọn GPU trống nhất (ưu tiên GPU 1)
+    device_strategy: "gpu_1"
     steps: 4
     guidance: 0.0
 
-  # 🎬 5. Text-to-Video Generation (Wan2.1-14B SOTA 14B)
+  # 🎬 5. Text-to-Video & Image-to-Video Generation (Wan2.1)
   video:
-    id: "Wan-AI/Wan2.1-T2V-14B-Diffusers"
+    id: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
+    default_variant: "1.3b"
     fallback_id: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
+    variants:
+      t2v_1_3b: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
+      t2v_14b: "Wan-AI/Wan2.1-T2V-14B-Diffusers"
+      i2v_14b: "Wan-AI/Wan2.1-I2V-14B-480P-Diffusers"
     quantization: "4bit"
     lifecycle: "dynamic_switch"    # Hoán đổi qua PCIe bus khi có yêu cầu tạo video
-    preload: false                 # Nạp theo nhu cầu (Lazy Load)
+    preload: true                  # Nạp trước vào 30GB CPU RAM khi khởi động
     init_target: "cpu"             # Đỗ sẵn trong CPU RAM
     allocation_policy: "adaptive"  # Tự động đo VRAM, chia tỷ lệ nếu cần
+    device_strategy: "auto"
     num_frames: 25
     width: 768
     height: 512

@@ -82,15 +82,29 @@ class BaseVLMEngine(BaseModelEngine):
         """
         pass
 
+    def chat_stream(
+        self,
+        messages: List[Dict[str, Any]],
+        max_tokens: int = 512,
+        temperature: float = 0.7,
+        top_p: float = 0.9,
+    ):
+        """
+        Stream từng token cho Server-Sent Events (SSE).
+        Yields chuỗi text token mới.
+        """
+        res = self.chat(messages, max_tokens, temperature, top_p)
+        yield res.get("text", "")
+
     def infer(self, *args, **kwargs) -> Any:
         return self.chat(*args, **kwargs)
 
 
 # ==============================================================================
-# 2. TEMPLATE CHO TẠO ẢNH (IMAGE GENERATION)
+# 2. TEMPLATE CHO TẠO ẢNH & INPAINTING (IMAGE GENERATION)
 # ==============================================================================
 class BaseImageEngine(BaseModelEngine):
-    """Template chuẩn cho Image Generation Models (FLUX.1, SD3.5, PixArt...)."""
+    """Template chuẩn cho Image Generation & Inpainting Models (FLUX.1, SD3.5...)."""
 
     @abstractmethod
     def generate(
@@ -100,6 +114,7 @@ class BaseImageEngine(BaseModelEngine):
         steps: Optional[int] = None,
         guidance: Optional[float] = None,
         seed: Optional[int] = None,
+        model_variant: Optional[str] = None,
     ) -> Tuple[str, float]:
         """
         Sinh ảnh từ văn bản.
@@ -107,15 +122,63 @@ class BaseImageEngine(BaseModelEngine):
         """
         pass
 
+    @abstractmethod
+    def inpaint(
+        self,
+        prompt: str,
+        image: Any,
+        mask_image: Any,
+        size: str = "1024x1024",
+        steps: Optional[int] = None,
+        guidance: Optional[float] = None,
+        seed: Optional[int] = None,
+        model_variant: Optional[str] = None,
+    ) -> Tuple[str, float]:
+        """
+        Chỉnh sửa / vẽ bù ảnh dựa trên mặt nạ (Masked Inpainting).
+        Trả về tuple: (base64_png_string, elapsed_seconds)
+        """
+        pass
+
+    def generate_stream(
+        self,
+        prompt: str,
+        size: str = "1024x1024",
+        steps: Optional[int] = None,
+        guidance: Optional[float] = None,
+        seed: Optional[int] = None,
+        model_variant: Optional[str] = None,
+    ):
+        """Yields tiến độ diffusion từng step và kết quả cuối cùng."""
+        b64_res, elapsed = self.generate(prompt, size, steps, guidance, seed, model_variant)
+        yield {"type": "progress", "step": steps or 4, "total_steps": steps or 4, "progress": 100}
+        yield {"type": "complete", "b64_json": b64_res, "elapsed": elapsed}
+
+    def inpaint_stream(
+        self,
+        prompt: str,
+        image: Any,
+        mask_image: Any,
+        size: str = "1024x1024",
+        steps: Optional[int] = None,
+        guidance: Optional[float] = None,
+        seed: Optional[int] = None,
+        model_variant: Optional[str] = None,
+    ):
+        """Yields tiến độ inpaint từng step và kết quả cuối cùng."""
+        b64_res, elapsed = self.inpaint(prompt, image, mask_image, size, steps, guidance, seed, model_variant)
+        yield {"type": "progress", "step": steps or 4, "total_steps": steps or 4, "progress": 100}
+        yield {"type": "complete", "b64_json": b64_res, "elapsed": elapsed}
+
     def infer(self, *args, **kwargs) -> Any:
         return self.generate(*args, **kwargs)
 
 
 # ==============================================================================
-# 3. TEMPLATE CHO TẠO VIDEO (VIDEO GENERATION)
+# 3. TEMPLATE CHO TẠO VIDEO (TEXT-TO-VIDEO & IMAGE-TO-VIDEO)
 # ==============================================================================
 class BaseVideoEngine(BaseModelEngine):
-    """Template chuẩn cho Video Generation Models (Wan2.1, LTX-Video, CogVideoX...)."""
+    """Template chuẩn cho Video Generation Models (Wan2.1 T2V & I2V)."""
 
     @abstractmethod
     def generate(
@@ -125,12 +188,59 @@ class BaseVideoEngine(BaseModelEngine):
         width: int = 768,
         height: int = 512,
         seed: Optional[int] = None,
+        model_variant: Optional[str] = None,
     ) -> Tuple[bytes, float]:
         """
         Sinh video từ văn bản (Text-to-Video).
         Trả về tuple: (video_mp4_bytes, elapsed_seconds)
         """
         pass
+
+    @abstractmethod
+    def generate_i2v(
+        self,
+        prompt: str,
+        image: Any,
+        num_frames: int = 25,
+        width: int = 768,
+        height: int = 512,
+        seed: Optional[int] = None,
+        model_variant: Optional[str] = None,
+    ) -> Tuple[bytes, float]:
+        """
+        Sinh video từ ảnh tĩnh đầu vào (Image-to-Video).
+        Trả về tuple: (video_mp4_bytes, elapsed_seconds)
+        """
+        pass
+
+    def generate_stream(
+        self,
+        prompt: str,
+        num_frames: int = 25,
+        width: int = 768,
+        height: int = 512,
+        seed: Optional[int] = None,
+        model_variant: Optional[str] = None,
+    ):
+        """Yields tiến độ sinh video T2V từng step và kết quả cuối cùng."""
+        video_bytes, elapsed = self.generate(prompt, num_frames, width, height, seed, model_variant)
+        yield {"type": "progress", "step": 25, "total_steps": 25, "progress": 100}
+        yield {"type": "complete", "video_bytes": video_bytes, "elapsed": elapsed}
+
+    def generate_i2v_stream(
+        self,
+        prompt: str,
+        image: Any,
+        num_frames: int = 25,
+        width: int = 768,
+        height: int = 512,
+        seed: Optional[int] = None,
+        model_variant: Optional[str] = None,
+    ):
+        """Yields tiến độ sinh video I2V từng step và kết quả cuối cùng."""
+        video_bytes, elapsed = self.generate_i2v(prompt, image, num_frames, width, height, seed, model_variant)
+        yield {"type": "progress", "step": 25, "total_steps": 25, "progress": 100}
+        yield {"type": "complete", "video_bytes": video_bytes, "elapsed": elapsed}
 
     def infer(self, *args, **kwargs) -> Any:
         return self.generate(*args, **kwargs)

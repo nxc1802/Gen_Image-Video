@@ -61,23 +61,60 @@ class MemoryManager:
                     torch.cuda.ipc_collect()
 
     @staticmethod
-    def report_vram() -> Dict[str, Any]:
-        """Báo cáo dung lượng VRAM thực tế theo thời gian thực trên từng GPU."""
+    def get_system_ram() -> Dict[str, Any]:
+        """Đọc dung lượng CPU System RAM theo thời gian thực."""
+        try:
+            import psutil
+            mem = psutil.virtual_memory()
+            return {
+                "total_gb": round(mem.total / (1024 ** 3), 2),
+                "available_gb": round(mem.available / (1024 ** 3), 2),
+                "used_gb": round(mem.used / (1024 ** 3), 2),
+                "percent": mem.percent,
+            }
+        except Exception:
+            try:
+                with open("/proc/meminfo", "r") as f:
+                    lines = f.readlines()
+                info = {line.split(":")[0].strip(): int(line.split(":")[1].split()[0]) for line in lines if ":" in line}
+                tot = info.get("MemTotal", 0)
+                avail = info.get("MemAvailable", info.get("MemFree", 0))
+                return {
+                    "total_gb": round(tot / (1024 ** 2), 2),
+                    "available_gb": round(avail / (1024 ** 2), 2),
+                    "used_gb": round((tot - avail) / (1024 ** 2), 2),
+                    "percent": round(((tot - avail) / max(tot, 1)) * 100, 1),
+                }
+            except Exception:
+                return {"status": "RAM info unavailable"}
+
+    def report_vram(self) -> Dict[str, Any]:
+        """Báo cáo dung lượng VRAM thực tế và CPU RAM cùng trạng thái các slot hoán đổi."""
         stats = {}
         if not torch.cuda.is_available():
-            return {"device": "cpu", "status": "No CUDA detected"}
+            stats["gpus"] = {"device": "cpu", "status": "No CUDA detected"}
+        else:
+            gpus = {}
+            for i in range(torch.cuda.device_count()):
+                allocated = torch.cuda.memory_allocated(i) / (1024 ** 3)
+                reserved = torch.cuda.memory_reserved(i) / (1024 ** 3)
+                total = torch.cuda.get_device_properties(i).total_memory / (1024 ** 3)
+                gpus[f"gpu_{i}"] = {
+                    "name": torch.cuda.get_device_name(i),
+                    "allocated_gb": round(allocated, 2),
+                    "reserved_gb": round(reserved, 2),
+                    "total_gb": round(total, 2),
+                    "free_gb": round(total - reserved, 2),
+                }
+            stats["gpus"] = gpus
+            # Backward compatibility for legacy flat keys
+            for k, v in gpus.items():
+                stats[k] = v
 
-        for i in range(torch.cuda.device_count()):
-            allocated = torch.cuda.memory_allocated(i) / (1024 ** 3)
-            reserved = torch.cuda.memory_reserved(i) / (1024 ** 3)
-            total = torch.cuda.get_device_properties(i).total_memory / (1024 ** 3)
-            stats[f"gpu_{i}"] = {
-                "name": torch.cuda.get_device_name(i),
-                "allocated_gb": round(allocated, 2),
-                "reserved_gb": round(reserved, 2),
-                "total_gb": round(total, 2),
-                "free_gb": round(total - reserved, 2),
-            }
+        stats["ram"] = self.get_system_ram()
+        stats["active_dynamic_slot"] = self.active_dynamic_slot
+        stats["always_active_slots"] = list(self.always_active_models.keys())
+        stats["cached_dynamic_slots"] = list(self.dynamic_models.keys())
         return stats
 
     def register_always_active(self, slot_name: str, model_instance: Any):
