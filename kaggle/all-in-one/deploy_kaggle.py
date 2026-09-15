@@ -15,6 +15,8 @@ import time
 import urllib.request
 import urllib.error
 
+sys.stdout.reconfigure(line_buffering=True)
+
 DEFAULT_KAGGLE_USER = os.environ.get("KAGGLE_USERNAME", "cuongnguyen1802")
 DEFAULT_KAGGLE_KEY = os.environ.get("KAGGLE_KEY", "KGAT_3d7139436bbefa39a3616a3f9285568f")
 KERNEL_SLUG = "kaggle-all-in-one-studio"
@@ -146,6 +148,24 @@ def monitor_and_extract_url(user: str, key: str, timeout_seconds: int = 900) -> 
             print(f"[{time.strftime('%H:%M:%S')}] 🔄 Trạng thái Kernel: {cur_status.upper()} (Failure message: {status_data.get('failureMessage') or 'None'})")
             last_status = cur_status
 
+        # 📡 Kiểm tra kênh phát sóng ntfy.sh để bắt URL tức thì (bỏ qua trễ log Kaggle)
+        try:
+            ntfy_check_req = urllib.request.Request("https://ntfy.sh/studio-ai-url-cuongnguyen1802/raw?poll=1")
+            with urllib.request.urlopen(ntfy_check_req, timeout=5) as ntfy_resp:
+                content = ntfy_resp.read().decode("utf-8").strip()
+                if content:
+                    for cline in content.splitlines():
+                        match_n = re.search(r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com", cline)
+                        if match_n:
+                            public_url = match_n.group(0)
+                            print(f"[{time.strftime('%H:%M:%S')}] 📡 Đã bắt được Cloudflare URL từ kênh phát sóng: {public_url}")
+                            break
+        except Exception:
+            pass
+
+        if public_url:
+            break
+
         if cur_status in ("running", "complete", "queued"):
             # Đọc output logs
             output_data = get_kernel_output(user, key)
@@ -203,6 +223,7 @@ def main():
     parser.add_argument("--user", default=DEFAULT_KAGGLE_USER, help="Kaggle username")
     parser.add_argument("--key", default=DEFAULT_KAGGLE_KEY, help="Kaggle API Key")
     parser.add_argument("--push-only", action="store_true", help="Chỉ đẩy kernel, không đợi")
+    parser.add_argument("--monitor-only", action="store_true", help="Chỉ theo dõi kernel đang chạy và bắt URL")
     parser.add_argument("--status-only", action="store_true", help="Chỉ kiểm tra trạng thái")
     parser.add_argument("--timeout", type=int, default=900, help="Thời gian chờ tối đa (giây)")
     args = parser.parse_args()
@@ -210,6 +231,12 @@ def main():
     if args.status_only:
         st = get_kernel_status(args.user, args.key)
         print("Kernel Status:", json.dumps(st, indent=2))
+        return
+
+    if args.monitor_only:
+        url = monitor_and_extract_url(args.user, args.key, timeout_seconds=args.timeout)
+        if not url:
+            sys.exit(2)
         return
 
     ok = push_kernel(args.user, args.key)

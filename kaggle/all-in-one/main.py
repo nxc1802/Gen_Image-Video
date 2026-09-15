@@ -56,18 +56,23 @@ def main():
     registry = get_model_registry()
     logger.info(f"📊 Trạng thái VRAM ban đầu: {mem.report_vram()}")
 
-    # 1. Warmup các mô hình preload nếu không bị bỏ qua
-    if not args.skip_warmup:
-        mem.warmup_models(registry)
-
-    # 2. Khởi động Cloudflare Tunnel trong luồng riêng để không chặn server
+    # 1. Khởi động Cloudflare Tunnel trong luồng riêng ngay lập tức
     if ENABLE_CLOUDFLARE and not args.no_tunnel:
         def tunnel_thread():
-            time.sleep(2.0)  # Đợi Uvicorn bind port
+            time.sleep(1.0)  # Đợi Uvicorn bắt đầu lắng nghe
             start_cloudflare_tunnel(port=args.port)
 
         t = threading.Thread(target=tunnel_thread, daemon=True)
         t.start()
+
+    # 2. Warmup các mô hình preload trong luồng nền song song (không chặn server)
+    if not args.skip_warmup:
+        def warmup_thread():
+            time.sleep(1.5)
+            mem.warmup_models(registry)
+
+        w_th = threading.Thread(target=warmup_thread, daemon=True)
+        w_th.start()
 
     # 3. Tạo FastAPI App
     app = create_app()

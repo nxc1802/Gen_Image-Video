@@ -105,15 +105,21 @@ class StudioTester:
         print("🔍 [TEST 0] KIỂM TRA HEALTH CHECK & BỘ NHỚ HỆ THỐNG BAN ĐẦU")
         print("=" * 78)
         t0 = time.time()
-        try:
-            resp = requests.get(f"{self.root_url}/health", timeout=15)
-            dur = time.time() - t0
-            if resp.status_code == 200:
-                print(f"✅ Health check OK ({dur:.2f}s): {resp.json()}")
-            else:
-                print(f"⚠️ Health check trả về HTTP {resp.status_code}")
-        except Exception as e:
-            print(f"❌ Không thể kết nối tới {self.root_url}/health: {e}")
+        resp = None
+        for attempt in range(12):
+            try:
+                resp = requests.get(f"{self.root_url}/health", timeout=10)
+                if resp.status_code == 200:
+                    dur = time.time() - t0
+                    print(f"✅ Health check OK sau {dur:.2f}s (Lần thử {attempt+1}): {resp.json()}")
+                    break
+            except Exception as ex:
+                if attempt == 0:
+                    print(f"⏳ Đang kết nối tới server ({self.root_url})...")
+                time.sleep(3.0)
+
+        if resp is None or resp.status_code != 200:
+            print(f"❌ Không thể kết nối tới {self.root_url}/health sau {time.time() - t0:.2f}s")
 
         # Check /v1/memory
         try:

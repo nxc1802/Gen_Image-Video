@@ -99,6 +99,21 @@ def start_cloudflare_tunnel(port: int = 8000, timeout_sec: int = 35) -> Optional
                     f.write(f"{public_url}/v1\n")
         except Exception:
             pass
+
+        # 📡 Phát sóng URL qua ntfy.sh để local client nhận tức thì không bị phụ thuộc vào trễ log Kaggle
+        try:
+            import urllib.request
+            ntfy_url = "https://ntfy.sh/studio-ai-url-cuongnguyen1802"
+            ntfy_req = urllib.request.Request(
+                ntfy_url,
+                data=f"{public_url}/v1".encode("utf-8"),
+                headers={"Title": "Cloudflare URL Ready"},
+                method="POST",
+            )
+            with urllib.request.urlopen(ntfy_req, timeout=5) as resp:
+                logger.info(f"📡 Đã phát sóng URL qua ntfy.sh ({resp.status}) thành công!")
+        except Exception as ne:
+            logger.debug(f"Không thể phát sóng qua ntfy: {ne}")
     else:
         logger.warning("⚠️ Không thể tự động phát hiện URL Cloudflare trong thời gian chờ.")
 
