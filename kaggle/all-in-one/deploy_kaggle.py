@@ -92,9 +92,14 @@ def push_kernel(user: str, key: str, notebook_path: str = "run_kaggle.ipynb", me
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = json.loads(resp.read().decode("utf-8"))
-            print(f"✅ Đẩy Kernel thành công! Version: {data.get('versionNumber')}")
+            if data.get("hasError"):
+                print(f"❌ Lỗi từ Kaggle API: {data.get('error') or data.get('errorNullable')}")
+                return False
+            v_num = data.get("versionNumberNullable") or data.get("versionNumber")
+            print(f"✅ Đẩy Kernel thành công! Version: {v_num}")
             print(f"🔗 URL Kernel: {data.get('url', f'https://www.kaggle.com/code/{user}/{KERNEL_SLUG}')}")
             return True
+
     except urllib.error.HTTPError as he:
         body = he.read().decode("utf-8", errors="replace")
         print(f"❌ Lỗi HTTP khi đẩy Kernel ({he.code}): {body}")
