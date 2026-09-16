@@ -66,10 +66,18 @@ class TTSEngine(BaseTTSEngine):
         cleaned = re.sub(r"\s+", " ", cleaned).strip()
         return cleaned
 
-    def load_pipeline(self):
-        if self._pipeline is not None:
-            return self._pipeline
+    def release_from_gpu(self):
+        """Giải phóng Kokoro TTS khỏi GPU VRAM về CPU/RAM."""
+        logger.info("🧹 Giải phóng Kokoro TTS khỏi GPU VRAM...")
+        if self._pipeline is not None and self._pipeline != "fallback":
+            self._pipeline = None
+            self._is_loaded = False
+        import gc
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
+    def _actual_loader(self):
         resolver = get_device_resolver()
         resolved = resolver.resolve(
             task="tts",
@@ -84,8 +92,14 @@ class TTSEngine(BaseTTSEngine):
         t0 = time.time()
 
         try:
+            target_idx = 0
+            if "cuda:" in self.resolved_device:
+                try:
+                    target_idx = int(self.resolved_device.split(":")[1])
+                except Exception:
+                    pass
             if torch.cuda.is_available():
-                torch.cuda.set_device(0)
+                torch.cuda.set_device(target_idx)
             from kokoro import KPipeline
             self._pipeline = KPipeline(lang_code="a")
             self._is_loaded = True
@@ -95,11 +109,11 @@ class TTSEngine(BaseTTSEngine):
             logger.warning(f"⚠️ Kokoro package chưa cài đặt sẵn hoặc tải lỗi ({e}), chuyển sang fallback engine.")
             self._pipeline = "fallback"
 
-        if self.lifecycle == "always_active":
-            mem = get_memory_manager()
-            mem.register_always_active("tts", self._pipeline)
-
         return self._pipeline
+
+    def load_pipeline(self):
+        mem = get_memory_manager()
+        return mem.switch_dynamic_slot("tts", self._actual_loader, engine_obj=self)
 
     def load(self) -> Any:
         return self.load_pipeline()

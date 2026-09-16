@@ -15,10 +15,30 @@ import time
 import urllib.request
 import urllib.error
 
-sys.stdout.reconfigure(line_buffering=True)
+def load_env_file():
+    env_paths = [
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"),
+        os.path.join(os.getcwd(), ".env"),
+    ]
+    for env_path in env_paths:
+        if os.path.exists(env_path):
+            try:
+                with open(env_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith("#") and "=" in line:
+                            k, v = line.split("=", 1)
+                            k = k.strip()
+                            v = v.strip().strip("'\"")
+                            if k not in os.environ or not os.environ[k]:
+                                os.environ[k] = v
+            except Exception:
+                pass
 
-DEFAULT_KAGGLE_USER = os.environ.get("KAGGLE_USERNAME", "cuongnguyen1802")
-DEFAULT_KAGGLE_KEY = os.environ.get("KAGGLE_KEY", "KGAT_3d7139436bbefa39a3616a3f9285568f")
+load_env_file()
+
+DEFAULT_KAGGLE_USER = os.environ.get("KAGGLE_USERNAME", "nguynxuncngde180528")
+DEFAULT_KAGGLE_KEY = os.environ.get("KAGGLE_KEY", "KGAT_8cf30e03c2129179e5e0870f50b86773")
 KERNEL_SLUG = "kaggle-all-in-one-studio"
 
 
@@ -46,7 +66,7 @@ def pack_and_update_run_notebook(notebook_path: str = "run_kaggle.ipynb") -> boo
         for root, dirs, files in os.walk(curr_dir):
             dirs[:] = [d for d in dirs if d not in (".git", "__pycache__", "test_outputs", "checkpoints", ".ipynb_checkpoints")]
             for f in files:
-                if f.endswith((".py", ".yaml", ".txt")) and not f.startswith("deploy_") and not f.startswith("build_") and f != "public_url.txt":
+                if (f.endswith((".py", ".yaml", ".txt")) or f == ".env") and not f.startswith("deploy_") and not f.startswith("build_") and not f.startswith("diffusers_") and f != "public_url.txt":
                     full_p = os.path.join(root, f)
                     rel_p = os.path.relpath(full_p, curr_dir)
                     tar.add(full_p, arcname=rel_p)
@@ -217,7 +237,8 @@ def monitor_and_extract_url(user: str, key: str, slug: str = KERNEL_SLUG, timeou
 
         # 📡 Kiểm tra kênh phát sóng ntfy.sh để bắt URL tức thì (bỏ qua trễ log Kaggle)
         try:
-            ntfy_check_req = urllib.request.Request("https://ntfy.sh/studio-ai-url-cuongnguyen1802/raw?poll=1")
+            ntfy_topic = os.environ.get("NTFY_TOPIC", f"studio-ai-url-{user}")
+            ntfy_check_req = urllib.request.Request(f"https://ntfy.sh/{ntfy_topic}/raw?poll=1")
             with urllib.request.urlopen(ntfy_check_req, timeout=5) as ntfy_resp:
                 content = ntfy_resp.read().decode("utf-8").strip()
                 if content:

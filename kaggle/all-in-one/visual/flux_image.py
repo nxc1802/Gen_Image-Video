@@ -190,6 +190,14 @@ class FluxImageEngine(BaseImageEngine):
                 torch.cuda.set_device(target_device)
                 torch.cuda.empty_cache()
 
+            try:
+                import diffusers.models.model_loading_utils
+                diffusers.models.model_loading_utils._caching_allocator_warmup = lambda *args, **kwargs: None
+                import transformers.modeling_utils
+                transformers.modeling_utils.caching_allocator_warmup = lambda *args, **kwargs: None
+            except Exception:
+                pass
+
             bnb_4bit = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_quant_type="nf4",
@@ -254,6 +262,18 @@ class FluxImageEngine(BaseImageEngine):
             self._pipe = None
 
         return mem.switch_dynamic_slot("image", loader_wrap, engine_obj=self)
+
+    def release_from_gpu(self):
+        """Giải phóng hoàn toàn FLUX khỏi GPU 1 khi nhường chỗ cho Video."""
+        logger.info("🧹 Giải phóng FLUX khỏi GPU 1...")
+        self._pipe = None
+        self._model = None
+        self._is_loaded = False
+        import gc
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            torch.cuda.ipc_collect()
 
     def reload_to_gpu(self):
         """Kích hoạt lại FLUX lên GPU từ CPU RAM an toàn."""

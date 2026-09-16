@@ -9,7 +9,18 @@ import json
 import os
 import sys
 import time
+import socket
 import requests
+
+_orig_getaddrinfo = socket.getaddrinfo
+def _patched_getaddrinfo(host, port, *args, **kwargs):
+    try:
+        return _orig_getaddrinfo(host, port, *args, **kwargs)
+    except Exception:
+        if "trycloudflare.com" in str(host):
+            return _orig_getaddrinfo("104.16.231.132", port, *args, **kwargs)
+        raise
+socket.getaddrinfo = _patched_getaddrinfo
 
 BASE_URL = sys.argv[1] if len(sys.argv) > 1 else "https://season-charge-wake-exchange.trycloudflare.com/v1"
 OUTPUT_PATH = sys.argv[2] if len(sys.argv) > 2 else "test_outputs/k35_wan_video.mp4"

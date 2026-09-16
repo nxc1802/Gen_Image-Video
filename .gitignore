@@ -25,4 +25,14 @@ Thumbs.db
 *.jpg
 *.jpeg
 *.webp
+*.mp4
+*.wav
 !flux_generated_sample.png
+.env
+test_outputs/
+diffusers_*
+benchmark_studio_ai.ipynb
+build_executed_notebook.py
+test_studio.ipynb
+kaggle/all-in-one/public_url.txt
+

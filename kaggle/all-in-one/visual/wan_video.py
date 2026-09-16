@@ -21,12 +21,17 @@ import requests
 import torch
 from transformers import BitsAndBytesConfig
 
-# 🛡️ Monkey-patch Hugging Face caching_allocator_warmup
-# In latest transformers, caching_allocator_warmup attempts to preallocate a 7.47 GiB dummy tensor
-# using torch.empty(), which causes instantaneous CUDA Out of Memory on 16GB Tesla T4!
+# 🛡️ Monkey-patch Hugging Face and Diffusers caching_allocator_warmup
+# caching_allocator_warmup attempts to preallocate dummy tensors (5.54GB to 7.47GB)
+# using torch.empty(), causing instantaneous CUDA Out of Memory on 16GB Tesla T4!
 try:
     import transformers.modeling_utils
     transformers.modeling_utils.caching_allocator_warmup = lambda *args, **kwargs: None
+except Exception:
+    pass
+try:
+    import diffusers.models.model_loading_utils
+    diffusers.models.model_loading_utils._caching_allocator_warmup = lambda *args, **kwargs: None
 except Exception:
     pass
 
@@ -169,140 +174,218 @@ class WanVideoEngine(BaseVideoEngine):
             except Exception as se:
                 logger.warning(f"⚠️ Không nạp được SVD ({se}), fallback sang Wan T2V pipeline.")
 
-        # Text-to-Video Pipeline (Wan2.1-T2V-1.3B)
-        candidates = ["Wan-AI/Wan2.1-T2V-1.3B-Diffusers"]
-        seen = set()
-        clean_candidates = []
-        for c in candidates:
-            if c and c not in seen:
-                clean_candidates.append(c)
-                seen.add(c)
+        # Text-to-Video Pipeline (Wan2.1)
+        target_id = target_model_id or self.model_id
+        resolver = get_device_resolver()
+        resolved = resolver.resolve(
+            task="video",
+            model_id=target_id,
+            requested_strategy=self.device_strategy,
+            precision="fp16",
+            config=self.config,
+        )
+        dev_str = resolved["device"]
+        is_dual_gpu = resolved.get("is_dual_gpu", False)
 
-        candidate_errors = {}
-        for mid in clean_candidates:
-            try:
-                from transformers import BitsAndBytesConfig, UMT5EncoderModel
-                from diffusers import AutoencoderKLWan, WanPipeline, WanTransformer3DModel
+        logger.info(
+            f"🎬 [Wan Pipeline] Nạp '{target_id}' BẢN CHUẨN FP16 "
+            f"[Thiết bị: {dev_str} | 2-GPU Dual Scaling: {is_dual_gpu} | Lý do: {resolved['reason']}]..."
+        )
 
-                logger.info(f"🎬 [Wan 1.3B Native FP16] Bắt đầu nạp Wan2.1 1.3B từ '{mid}' trực tiếp lên {dev_str} (NO CPU OFFLOAD)...")
+        try:
+            from diffusers import WanPipeline, AutoencoderKLWan
 
-                # Text Encoder: google/umt5-xxl in 4-bit NF4 with FP32 compute (~5.2 GB VRAM)
-                # Dùng bnb_4bit_compute_dtype=torch.float32 để bitsandbytes nạp trực tiếp vào 4.06GB mà không bị lỗi cấp phát 14GB tạm thời!
-                bnb_config_text = BitsAndBytesConfig(
-                    load_in_4bit=True,
-                    bnb_4bit_quant_type="nf4",
-                    bnb_4bit_compute_dtype=torch.float32,
-                    bnb_4bit_use_double_quant=True,
-                )
+            load_kwargs = {
+                "torch_dtype": torch.float16,
+                "low_cpu_mem_usage": True,
+            }
 
-                # 1. Text Encoder: google/umt5-xxl
-                try:
-                    import transformers.modeling_utils
-                    transformers.modeling_utils.caching_allocator_warmup = lambda *args, **kwargs: None
-                except Exception:
-                    pass
+            # Phân bổ thiết bị: 2 GPU (GPU 0: UMT5, GPU 1: Transformer + VAE) hoặc 1 GPU (CPU Offload)
+            if is_dual_gpu:
+                logger.info("⚖️ [Wan 2-GPU Scaling] Cấu hình 2 GPU: GPU 0 -> UMT5 FP16 (~9.4GB) | GPU 1 -> Transformer FP16 (2.6GB) + VAE FP32 (1.2GB)...")
+                from transformers import UMT5EncoderModel, AutoTokenizer
+                from diffusers import WanTransformer3DModel, AutoencoderKLWan
 
-                logger.info(f"🎬 [Wan] Đang nạp UMT5EncoderModel (4-bit NF4, FP32 compute, FP16 storage ~5.2GB) từ '{mid}/text_encoder'...")
+                # 1. Text Encoder UMT5 on GPU 0 (cuda:0)
+                logger.info("🎬 [2-GPU] Nạp UMT5EncoderModel FP16 lên cuda:0...")
                 text_encoder = UMT5EncoderModel.from_pretrained(
-                    mid,
+                    target_id,
                     subfolder="text_encoder",
-                    quantization_config=bnb_config_text,
                     torch_dtype=torch.float16,
-                    device_map={"": dev_str},
                     low_cpu_mem_usage=True,
-                )
-                if torch.cuda.is_available():
-                    torch.cuda.empty_cache()
+                ).to("cuda:0")
 
-                # 2. Transformer: WanTransformer3DModel in native unquantized FP16 (~2.7 GB VRAM)
-                logger.info(f"🎬 [Wan] Đang nạp WanTransformer3DModel (FP16 nguyên bản không lượng tử hóa, ~2.7GB) từ '{mid}/transformer'...")
+                # 2. Transformer on GPU 1 (cuda:1)
+                logger.info("🎬 [2-GPU] Nạp WanTransformer3DModel FP16 lên cuda:1...")
                 transformer = WanTransformer3DModel.from_pretrained(
-                    mid,
+                    target_id,
                     subfolder="transformer",
                     torch_dtype=torch.float16,
-                ).to(dev_str)
-                if torch.cuda.is_available():
-                    torch.cuda.empty_cache()
+                    low_cpu_mem_usage=True,
+                ).to("cuda:1")
 
-                # 3. VAE: AutoencoderKLWan in float32 (~1.2 GB VRAM)
-                logger.info(f"🎬 [Wan] Đang nạp AutoencoderKLWan (FP32 nguyên bản) từ '{mid}/vae'...")
+                # 3. VAE on GPU 1 (cuda:1) chuẩn float32 để chống lỗi 3D Causal Conv illegal address
+                logger.info("🎬 [2-GPU] Nạp AutoencoderKLWan FLOAT32 lên cuda:1 (chống tràn/lỗi nhân CUDA)...")
                 vae = AutoencoderKLWan.from_pretrained(
-                    mid,
+                    target_id,
                     subfolder="vae",
                     torch_dtype=torch.float32,
-                )
-                vae = vae.to(dev_str)
-
-                # 4. Assembled WanPipeline directly bound to GPU 1 in unified FP16
-                logger.info(f"🎬 [Wan] Lắp ráp WanPipeline nguyên khối trực tiếp trên {dev_str} với torch_dtype=torch.float16...")
+                    low_cpu_mem_usage=True,
+                ).to("cuda:1")
                 try:
-                    pipe = WanPipeline.from_pretrained(
-                        mid,
-                        transformer=transformer,
-                        text_encoder=text_encoder,
-                        vae=vae,
-                        torch_dtype=torch.float16,
-                    )
-                except Exception as p_err:
-                    logger.warning(f"from_pretrained note ({p_err}), nạp pipeline trực tiếp...")
-                    from diffusers.schedulers import UniPCMultistepScheduler
-                    from transformers import AutoTokenizer
+                    vae.enable_tiling()
+                    logger.info("✅ Đã kích hoạt VAE Tiling (tiết kiệm bộ nhớ khi decode video)!")
+                except Exception as tile_err:
+                    logger.warning(f"Không thể kích hoạt VAE tiling: {tile_err}")
 
-                    tokenizer = AutoTokenizer.from_pretrained(mid, subfolder="tokenizer")
-                    base_sched = UniPCMultistepScheduler.from_pretrained(mid, subfolder="scheduler")
-                    pipe = WanPipeline(
-                        tokenizer=tokenizer,
-                        text_encoder=text_encoder,
-                        transformer=transformer,
-                        vae=vae,
-                        scheduler=base_sched,
-                    )
+                tokenizer = AutoTokenizer.from_pretrained(target_id, subfolder="tokenizer")
 
-                # 5. Giữ nguyên scheduler gốc UniPCMultistepScheduler của Wan2.1
-                sched_name = pipe.scheduler.__class__.__name__
-                logger.info(f"✅ Wan Scheduler chính thức: {sched_name}")
+                # Load scheduler từ pretrained config
+                try:
+                    from diffusers import FlowMatchEulerDiscreteScheduler
+                    base_sched = FlowMatchEulerDiscreteScheduler.from_pretrained(target_id, subfolder="scheduler")
+                except Exception:
+                    base_sched = None
 
-                if hasattr(pipe, "vae") and pipe.vae is not None:
+                self._text_encoder = text_encoder
+                self._tokenizer = tokenizer
+                self._is_dual_gpu = True
+
+                pipe_kwargs = {
+                    "tokenizer": tokenizer,
+                    "text_encoder": text_encoder,
+                    "transformer": transformer,
+                    "vae": vae,
+                }
+                if base_sched is not None:
+                    pipe_kwargs["scheduler"] = base_sched
+
+                pipe = WanPipeline(**pipe_kwargs)
+                # Đảm bảo pipe._execution_device luôn trỏ vào cuda:1 (nơi transformer và VAE thực thi diffusion loop)
+                pipe.__class__ = type("DualGpuWanPipeline", (pipe.__class__,), {
+                    "_execution_device": property(lambda self: torch.device("cuda:1"))
+                })
+                logger.info("✅ [Wan 2-GPU] Đã kết nối pipeline phân bổ hoàn hảo giữa GPU 0 và GPU 1 (execution_device: cuda:1)!")
+            elif torch.cuda.is_available():
+                target_dev_idx = 1 if torch.cuda.device_count() > 1 else 0
+                if "cuda:" in dev_str:
                     try:
-                        pipe.vae.to(dev_str, dtype=torch.float32)
-                        if hasattr(pipe.vae, "enable_tiling"):
-                            pipe.vae.enable_tiling()
-                        if hasattr(pipe.vae, "enable_slicing"):
-                            pipe.vae.enable_slicing()
-                        logger.info("✅ Đã bật VAE enable_tiling() & enable_slicing() tối ưu VRAM decode!")
-                    except Exception as ve:
-                        logger.warning(f"vae setup note: {ve}")
+                        target_dev_idx = int(dev_str.split(":")[1])
+                    except Exception:
+                        pass
+                dev_obj = torch.device(f"cuda:{target_dev_idx}")
+                logger.info(f"🎯 [Wan 1-GPU Scaling] Kích hoạt enable_model_cpu_offload({dev_obj}) chuẩn FP16...")
+                try:
+                    pipe = WanPipeline.from_pretrained(target_id, **load_kwargs)
+                except Exception as p_err:
+                    vae = AutoencoderKLWan.from_pretrained(target_id, subfolder="vae", torch_dtype=torch.float16)
+                    pipe = WanPipeline.from_pretrained(target_id, vae=vae, **load_kwargs)
+                pipe.enable_model_cpu_offload(device=dev_obj)
+            else:
+                pipe = WanPipeline.from_pretrained(target_id, **load_kwargs)
+                pipe.to("cpu")
 
-                self._model = pipe
-                self._pipe = pipe
-                self._current_loaded_id = mid
-                self._is_loaded = True
-                elapsed = time.time() - t0
-                logger.info(f"✅ Wan2.1 Video 1.3B (Native FP16 Transformer + 4-bit FP32-Compute UMT5 + FlowMatchEuler) nạp thành công 100% trên {dev_str} trong {elapsed:.2f}s! (NO CPU OFFLOAD)")
-                return pipe
-            except Exception as e:
-                import traceback
-                tb = traceback.format_exc()
-                candidate_errors[mid] = f"{e}\n{tb}"
-                logger.error(f"❌ [Wan 4-bit Loading Error on {mid}]: {e}\n{tb}")
+            self._model = pipe
+            self._pipe = pipe
+            self._current_loaded_id = target_id
+            self._is_loaded = True
+            elapsed = time.time() - t0
+            logger.info(f"✅ Wan2.1 Video ({target_id}) nạp thành công ở chuẩn FP16 trong {elapsed:.2f}s!")
+            return pipe
+        except Exception as e:
+            import traceback
+            tb = traceback.format_exc()
+            logger.error(f"❌ [Wan Loading Error on {target_id}]: {e}\n{tb}")
+            raise RuntimeError(f"Không thể nạp Wan2.1 T2V pipeline ({target_id}): {e}\n{tb}")
 
-        err_summary = "\n---\n".join([f"Candidate '{m}': {err}" for m, err in candidate_errors.items()])
-        self.last_error = err_summary
-        raise RuntimeError(f"Không thể nạp Wan2.1 T2V pipeline với bất kỳ candidate nào:\n{err_summary}")
+    def _encode_prompt_2gpu(
+        self,
+        prompt: str,
+        negative_prompt: Optional[str] = None,
+        max_sequence_length: int = 226,
+        dtype: torch.dtype = torch.float16,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Mã hóa prompt văn bản trên GPU 0 bằng UMT5 FP16, sau đó chuyển embeddings sang GPU 1 (cuda:1)."""
+        import re, html
+        def _clean_text(text: str) -> str:
+            text = html.unescape(html.unescape(text.strip()))
+            text = re.sub(r"\s+", " ", text)
+            return text.strip()
+
+        tokenizer = getattr(self, "_tokenizer", None) or getattr(self._pipe, "tokenizer", None)
+        text_encoder = getattr(self, "_text_encoder", None) or getattr(self._pipe, "text_encoder", None)
+
+        if tokenizer is None or text_encoder is None:
+            raise RuntimeError("Không tìm thấy tokenizer hoặc text_encoder cho Wan 2-GPU encoding!")
+
+        try:
+            first_dev = next(text_encoder.parameters()).device
+        except Exception:
+            first_dev = getattr(text_encoder, "device", torch.device("cuda:0"))
+
+        def _get_embed(text: str) -> torch.Tensor:
+            clean = _clean_text(text)
+            text_inputs = tokenizer(
+                [clean],
+                padding="max_length",
+                max_length=max_sequence_length,
+                truncation=True,
+                add_special_tokens=True,
+                return_attention_mask=True,
+                return_tensors="pt",
+            )
+            input_ids = text_inputs.input_ids.to(first_dev)
+            mask = text_inputs.attention_mask.to(first_dev)
+            seq_lens = mask.gt(0).sum(dim=1).long()
+
+            with torch.no_grad():
+                out = text_encoder(input_ids, mask)
+                embeds = out.last_hidden_state.to(device="cuda:1", dtype=dtype)
+
+            del out, input_ids, mask
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
+            embeds = [u[:v.item()] for u, v in zip(embeds, seq_lens)]
+            embeds = torch.stack(
+                [torch.cat([u, u.new_zeros(max_sequence_length - u.size(0), u.size(1))]) for u in embeds],
+                dim=0,
+            )
+            return embeds.to("cuda:1", dtype=dtype)
+
+        prompt_embeds = _get_embed(prompt)
+        neg_text = negative_prompt if negative_prompt is not None else ""
+        neg_embeds = _get_embed(neg_text)
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        return prompt_embeds, neg_embeds
+
+    def release_from_gpu(self):
+        """Giải phóng hoàn toàn Wan2.1 khỏi cả GPU 0 và GPU 1 khi nhường chỗ cho Image."""
+        logger.info("🧹 Giải phóng Wan2.1 khỏi GPU 0 và GPU 1...")
+        self._pipe = None
+        self._model = None
+        self._i2v_pipe = None
+        self._text_encoder = None
+        self._tokenizer = None
+        self._is_dual_gpu = False
+        self._is_loaded = False
+        import gc
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            torch.cuda.ipc_collect()
 
     def get_pipeline(self, target_model_id: Optional[str] = None, is_i2v: bool = False):
-        if is_i2v:
-            if self._i2v_pipe and self._i2v_pipe != "fallback":
-                return self._i2v_pipe
-        else:
-            if self._pipe and self._pipe != "fallback":
-                return self._pipe
-
         target_id = target_model_id or (
             resolve_video_model_id(None, is_i2v=True) if is_i2v else self.model_id
         )
 
         if self.lifecycle == "always_active":
+            if is_i2v and self._i2v_pipe and self._i2v_pipe != "fallback":
+                return self._i2v_pipe
+            if not is_i2v and self._pipe and self._pipe != "fallback":
+                return self._pipe
             return self._loader(target_id, is_i2v=is_i2v)
 
         mem = get_memory_manager()
@@ -371,24 +454,42 @@ class WanVideoEngine(BaseVideoEngine):
                         torch.cuda.empty_cache()
                     return callback_kwargs
 
-                neg_p = negative_prompt or (
+                default_neg = (
                     "Bright tones, overexposed, static, blurred details, subtitles, style, "
                     "works, paintings, images, static, overall gray, worst quality, low quality, "
                     "JPEG artifacts, ugly, deformed, extra limbs, poorly drawn hands, poorly drawn face"
                 )
+                neg_p = negative_prompt if negative_prompt is not None else default_neg
 
                 try:
                     with torch.inference_mode():
-                        call_kwargs = {
-                            "prompt": prompt,
-                            "negative_prompt": neg_p,
-                            "width": w,
-                            "height": h,
-                            "num_frames": frames,
-                            "num_inference_steps": tot_steps,
-                            "guidance_scale": guidance if guidance is not None else 5.0,
-                            "generator": generator,
-                        }
+                        if getattr(self, "_is_dual_gpu", False) and getattr(self, "_text_encoder", None) is not None:
+                            logger.info("🎬 [Wan 2-GPU] Đang sinh Prompt Embeddings qua UMT5 FP16 trên GPU 0...")
+                            p_embeds, neg_embeds = self._encode_prompt_2gpu(prompt, neg_p)
+                            logger.info(f"✅ [Wan 2-GPU] Prompt Embeddings đã chuyển sang GPU 1 (shape={p_embeds.shape}, dtype={p_embeds.dtype})")
+                            call_kwargs = {
+                                "prompt": None,
+                                "negative_prompt": None,
+                                "prompt_embeds": p_embeds,
+                                "negative_prompt_embeds": neg_embeds,
+                                "width": w,
+                                "height": h,
+                                "num_frames": frames,
+                                "num_inference_steps": tot_steps,
+                                "guidance_scale": guidance if guidance is not None else 5.0,
+                                "generator": generator,
+                            }
+                        else:
+                            call_kwargs = {
+                                "prompt": prompt,
+                                "negative_prompt": neg_p,
+                                "width": w,
+                                "height": h,
+                                "num_frames": frames,
+                                "num_inference_steps": tot_steps,
+                                "guidance_scale": guidance if guidance is not None else 5.0,
+                                "generator": generator,
+                            }
 
                         try:
                             video_frames = pipe(**call_kwargs, callback_on_step_end=step_cb).frames[0]
@@ -489,11 +590,12 @@ class WanVideoEngine(BaseVideoEngine):
                         torch.cuda.empty_cache()
                     return callback_kwargs
 
-                neg_p = negative_prompt or (
+                default_neg = (
                     "Bright tones, overexposed, static, blurred details, subtitles, style, "
                     "works, paintings, images, static, overall gray, worst quality, low quality, "
                     "JPEG artifacts, ugly, deformed, extra limbs, poorly drawn hands, poorly drawn face"
                 )
+                neg_p = negative_prompt if negative_prompt is not None else default_neg
 
                 try:
                     with torch.inference_mode():

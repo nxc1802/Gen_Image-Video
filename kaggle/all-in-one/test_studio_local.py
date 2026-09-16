@@ -472,12 +472,14 @@ class StudioTester:
             "model": "1.3b",
             "prompt": prompt,
             "num_frames": 17,
-            "width": 512,
-            "height": 512,
+            "width": 832,
+            "height": 480,
+            "steps": 15,
+            "guidance": 5.0,
             "stream": True,
         }
 
-        print(f"📤 Gửi yêu cầu sinh Video T2V: '{prompt}' (model=1.3b, frames=17)")
+        print(f"📤 Gửi yêu cầu sinh Video T2V: '{prompt}' (model=1.3b, frames=17, 832x480, 15 steps)")
         t0 = time.time()
         final_b64 = None
 
@@ -487,7 +489,7 @@ class StudioTester:
                 headers=self.headers,
                 json=payload,
                 stream=True,
-                timeout=300,
+                timeout=600,
             )
             resp.raise_for_status()
 

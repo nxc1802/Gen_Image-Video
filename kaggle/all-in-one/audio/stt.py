@@ -41,10 +41,23 @@ class STTEngine(BaseSTTEngine):
         self.lifecycle = self.config.get("lifecycle", "always_active")
         self._initialized = True
 
-    def load_model(self):
-        if self._model is not None:
-            return self._model
+    def release_from_gpu(self):
+        """Giải phóng hoàn toàn Whisper STT khỏi GPU VRAM về CPU/RAM."""
+        logger.info("🧹 Giải phóng Whisper STT khỏi GPU VRAM...")
+        if self._model is not None and self._model != "fallback":
+            try:
+                if hasattr(self._model, "cpu"):
+                    self._model.cpu()
+            except Exception:
+                pass
+            self._model = None
+            self._is_loaded = False
+        import gc
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
+    def _actual_loader(self):
         resolver = get_device_resolver()
         resolved = resolver.resolve(
             task="stt",
@@ -66,13 +79,13 @@ class STTEngine(BaseSTTEngine):
             logger.warning(f"⚠️ Không thể nạp whisper ({e}), kích hoạt fallback.")
             self._model = "fallback"
 
-        if self.lifecycle == "always_active":
-            mem = get_memory_manager()
-            mem.register_always_active("stt", self._model)
-
         elapsed = time.time() - t0
         logger.info(f"✅ STT Whisper nạp thành công trong {elapsed:.2f}s!")
         return self._model
+
+    def load_model(self):
+        mem = get_memory_manager()
+        return mem.switch_dynamic_slot("stt", self._actual_loader, engine_obj=self)
 
     def load(self) -> Any:
         return self.load_model()

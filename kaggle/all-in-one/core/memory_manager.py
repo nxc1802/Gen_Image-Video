@@ -44,6 +44,7 @@ class MemoryManager:
 
         # 🔄 Nhóm 2: Mô hình Hoán Đổi Động (Dynamic Switch Pool) - Đỗ trong CPU RAM, kích hoạt lên GPU khi cần
         self.dynamic_models: Dict[str, Any] = {}
+        self.registered_engines: Dict[str, Any] = {}
 
         # Tên mô hình động đang chiếm dụng slot GPU tính toán
         self.active_dynamic_slot: Optional[str] = None
@@ -52,13 +53,28 @@ class MemoryManager:
 
     @staticmethod
     def clean_gpu():
-        """Giải phóng bộ nhớ đệm cache và phân mảnh CUDA trên tất cả GPU (không chạm vào weights đang dùng)."""
+        """Giải phóng bộ nhớ đệm cache và phân mảnh CUDA trên tất cả GPU."""
         gc.collect()
         if torch.cuda.is_available():
             for i in range(torch.cuda.device_count()):
                 with torch.cuda.device(i):
                     torch.cuda.empty_cache()
                     torch.cuda.ipc_collect()
+
+    def clean_all_vram(self):
+        """Dọn dẹp triệt để 100% VRAM trên mọi GPU: giải phóng toàn bộ model đang chiếm GPU về RAM/CPU."""
+        with self.operation_lock:
+            for slot_name, engine in list(self.registered_engines.items()):
+                if hasattr(engine, "release_from_gpu"):
+                    try:
+                        logger.info(f"🧹 Dọn dẹp VRAM: release_from_gpu() cho engine '{slot_name}'...")
+                        engine.release_from_gpu()
+                    except Exception as e:
+                        logger.warning(f"Lỗi khi giải phóng engine {slot_name}: {e}")
+            self.dynamic_models.clear()
+            self.active_dynamic_slot = None
+            self.clean_gpu()
+            logger.info("✨ [Clean All VRAM] Đã dọn sạch hoàn toàn VRAM trên toàn bộ GPU!")
 
     @staticmethod
     def get_system_ram() -> Dict[str, Any]:
@@ -124,8 +140,17 @@ class MemoryManager:
             logger.info(f"📌 [Pinned VRAM] Mô hình '{slot_name}' đã được ghim thường trực (always_active).")
 
     SLOT_ALIASES = {
+        "stt": "stt",
+        "whisper": "stt",
+        "tts": "tts",
+        "kokoro": "tts",
+        "vlm": "vlm",
+        "qwen": "vlm",
+        "chat": "vlm",
+        "image": "image",
         "flux": "image",
         "flux_image": "image",
+        "video": "video",
         "wan": "video",
         "wan_video": "video",
         "wan_video_i2v": "video",
@@ -142,6 +167,9 @@ class MemoryManager:
         """
         target_slot = self.SLOT_ALIASES.get(target_slot.lower(), target_slot.lower())
         with self.operation_lock:
+            if engine_obj:
+                self.registered_engines[target_slot] = engine_obj
+
             # Trường hợp 1: Đang sẵn sàng trên GPU
             if self.active_dynamic_slot == target_slot and target_slot in self.dynamic_models:
                 logger.debug(f"✨ [PCIe Fast-Swap] Slot '{target_slot}' đã sẵn sàng trên GPU (Zero latency).")
@@ -153,6 +181,12 @@ class MemoryManager:
             if self.active_dynamic_slot and self.active_dynamic_slot != target_slot:
                 prev_slot = self.active_dynamic_slot
                 logger.info(f"🔄 [GPU ➔ RAM] Nhường VRAM: Giải phóng slot '{prev_slot}'...")
+                prev_engine = self.registered_engines.get(prev_slot)
+                if prev_engine and hasattr(prev_engine, "release_from_gpu"):
+                    try:
+                        prev_engine.release_from_gpu()
+                    except Exception as re:
+                        logger.warning(f"Lỗi giải phóng {prev_slot}: {re}")
                 if prev_slot in self.dynamic_models:
                     del self.dynamic_models[prev_slot]
                 self.clean_gpu()
@@ -235,6 +269,7 @@ class MemoryManager:
                     else:
                         self.dynamic_models[task] = loaded_obj
                         self.active_dynamic_slot = task
+                        self.registered_engines[task] = engine
                 elif init_target == "cpu":
                     # Nạp vào RAM và đỗ lại ở CPU
                     loaded_obj = engine.load()

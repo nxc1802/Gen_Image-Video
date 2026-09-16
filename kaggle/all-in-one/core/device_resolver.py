@@ -183,7 +183,30 @@ class DeviceTopologyResolver:
                 "reason": "Không phát hiện card đồ họa NVIDIA (CUDA), chạy chế độ CPU."
             }
 
-        # 2. Trường hợp người dùng chỉ định cứng thiết bị
+        # 2. ƯU TIÊN TUYỆT ĐỐI CẤU HÌNH NGƯỜI DÙNG CHỈ ĐỊNH (Config-Driven, No Auto-Predict)
+        gpu_count_cfg = cfg.get("gpu_count")
+        if gpu_count_cfg == 2 or strategy in ("dual_gpu", "2_gpu", "split"):
+            return {
+                "device": "cuda:0",
+                "device_map": "auto",
+                "max_memory": {0: "14GiB", 1: "14GiB"} if self.gpu_count > 1 else {0: "14GiB"},
+                "is_dual_gpu": (self.gpu_count > 1),
+                "detected_size_b": detected_size,
+                "estimated_vram_gb": needed_gb,
+                "reason": "Người dùng chỉ định rõ ràng chế độ 2 GPU trong config (dual_gpu / gpu_count: 2)."
+            }
+        elif gpu_count_cfg == 1 or strategy in ("single_gpu", "1_gpu"):
+            target_idx = 1 if (preferred_device == "gpu_1" and self.gpu_count > 1) else 0
+            return {
+                "device": f"cuda:{target_idx}",
+                "device_map": None,
+                "max_memory": None,
+                "is_dual_gpu": False,
+                "detected_size_b": detected_size,
+                "estimated_vram_gb": needed_gb,
+                "reason": f"Người dùng chỉ định rõ ràng chế độ 1 GPU trong config (cuda:{target_idx})."
+            }
+
         if strategy == "gpu_0":
             return {
                 "device": "cuda:0",
@@ -207,9 +230,14 @@ class DeviceTopologyResolver:
                 "reason": f"Chỉ định cứng GPU 1 ({target})."
             }
 
-        # 3. Task Âm thanh luôn ưu tiên GPU 0 (nhẹ ~0.35 - 1.8GB)
+        # 3. Task Âm thanh (nhẹ ~0.35 - 1.8GB): Tự động chọn GPU trống nhất
         if task in ("stt", "tts", "audio"):
-            target = "cuda:0"
+            target_idx = 0
+            if self.gpu_count > 1:
+                gpu_info = self.get_realtime_gpu_memory(headroom_gb=1.0)
+                if gpu_info:
+                    target_idx = max(gpu_info, key=lambda g: g["free_gb"])["gpu_id"]
+            target = f"cuda:{target_idx}"
             return {
                 "device": target,
                 "device_map": None,
@@ -217,7 +245,7 @@ class DeviceTopologyResolver:
                 "is_dual_gpu": False,
                 "detected_size_b": detected_size,
                 "estimated_vram_gb": needed_gb,
-                "reason": f"Mô hình âm thanh nhẹ (~{needed_gb}GB), luôn thường trực trên GPU 0."
+                "reason": f"Mô hình âm thanh nhẹ (~{needed_gb}GB), phân bổ động vào {target}."
             }
 
         # 4. CHẾ ĐỘ TỰ THÍCH ỨNG (ADAPTIVE DYNAMIC ALLOCATION)

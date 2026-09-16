@@ -103,7 +103,8 @@ def start_cloudflare_tunnel(port: int = 8000, timeout_sec: int = 35) -> Optional
         # 📡 Phát sóng URL qua ntfy.sh để local client nhận tức thì không bị phụ thuộc vào trễ log Kaggle
         try:
             import urllib.request
-            ntfy_url = "https://ntfy.sh/studio-ai-url-cuongnguyen1802"
+            ntfy_topic = os.environ.get("NTFY_TOPIC", f"studio-ai-url-{os.environ.get('KAGGLE_USERNAME', 'nguynxuncngde180528')}")
+            ntfy_url = f"https://ntfy.sh/{ntfy_topic}"
             ntfy_req = urllib.request.Request(
                 ntfy_url,
                 data=f"{public_url}/v1".encode("utf-8"),

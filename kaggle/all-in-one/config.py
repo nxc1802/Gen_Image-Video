@@ -5,10 +5,32 @@ Tự động nạp cấu hình khai báo từ models.yaml và tính toán phân 
 """
 
 import os
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
 import torch
+
+def _load_dotenv():
+    env_paths = [
+        Path(__file__).parent / ".env",
+        Path.cwd() / ".env",
+    ]
+    for p in env_paths:
+        if p.exists():
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith("#") and "=" in line:
+                            k, v = line.split("=", 1)
+                            k, v = k.strip(), v.strip().strip("'\"")
+                            if k not in os.environ or not os.environ[k]:
+                                os.environ[k] = v
+            except Exception:
+                pass
+
+_load_dotenv()
 
 logger = logging.getLogger("Config")
 

@@ -140,24 +140,34 @@ class QwenVLMEngine(BaseVLMEngine):
 
         return self._model, self._processor
 
+    def release_from_gpu(self):
+        """Giải phóng hoàn toàn VLM Qwen khỏi GPU VRAM về CPU/RAM."""
+        logger.info("🧹 Giải phóng VLM Qwen khỏi GPU VRAM...")
+        if self._model is not None and self._model != "fallback":
+            try:
+                if hasattr(self._model, "cpu"):
+                    self._model.cpu()
+            except Exception:
+                pass
+            self._model = None
+            self._processor = None
+            self._is_loaded = False
+        import gc
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
     def load_model(self):
-        if self._model is not None:
+        if self._model is not None and self._model != "fallback":
             return self._model, self._processor
 
         mem = get_memory_manager()
-        # Nếu là always_active: nạp trực tiếp và giữ cố định
-        if self.lifecycle == "always_active":
-            model, processor = self._actual_loader()
-            mem.register_always_active("vlm", model)
-            return model, processor
-        else:
-            # Nếu là dynamic_switch: quản lý qua dynamic pool
-            def loader_wrapper():
-                m, _ = self._actual_loader()
-                return m
+        def loader_wrapper():
+            m, _ = self._actual_loader()
+            return m
 
-            mem.switch_dynamic_slot("vlm", loader_wrapper, engine_obj=self)
-            return self._model, self._processor
+        mem.switch_dynamic_slot("vlm", loader_wrapper, engine_obj=self)
+        return self._model, self._processor
 
     def load(self) -> Any:
         return self.load_model()
