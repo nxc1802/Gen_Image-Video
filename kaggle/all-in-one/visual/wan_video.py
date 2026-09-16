@@ -227,12 +227,12 @@ class WanVideoEngine(BaseVideoEngine):
                     low_cpu_mem_usage=True,
                 ).to("cuda:1")
 
-                # 3. VAE on GPU 1 (cuda:1) in FP32 (chuẩn Diffusers Wan, chỉ ~480MB VRAM, chống underflow/clipping)
-                logger.info("🎬 [2-GPU] Nạp AutoencoderKLWan FP32 lên cuda:1...")
+                # 3. VAE on GPU 1 (cuda:1) in FP16 (tối ưu VRAM cho Transformer Attention, kèm Tiling)
+                logger.info("🎬 [2-GPU] Nạp AutoencoderKLWan FP16 lên cuda:1...")
                 vae = AutoencoderKLWan.from_pretrained(
                     target_id,
                     subfolder="vae",
-                    torch_dtype=torch.float32,
+                    torch_dtype=torch.float16,
                     low_cpu_mem_usage=True,
                 ).to("cuda:1")
                 try:
@@ -291,7 +291,7 @@ class WanVideoEngine(BaseVideoEngine):
                 try:
                     pipe = WanPipeline.from_pretrained(target_id, **load_kwargs)
                 except Exception as p_err:
-                    vae = AutoencoderKLWan.from_pretrained(target_id, subfolder="vae", torch_dtype=torch.float32)
+                    vae = AutoencoderKLWan.from_pretrained(target_id, subfolder="vae", torch_dtype=torch.float16)
                     pipe = WanPipeline.from_pretrained(target_id, vae=vae, **load_kwargs)
                 pipe.enable_model_cpu_offload(device=dev_obj)
             else:
