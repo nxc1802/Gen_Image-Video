@@ -168,12 +168,16 @@ class MemoryManager:
                 logger.info(f"⚡ [RAM ➔ GPU] Kích hoạt '{target_slot}' từ CPU RAM qua bus PCIe (Zero Disk I/O)...")
                 self.clean_gpu()
                 model = self.dynamic_models[target_slot]
+                dev = "cuda:1" if torch.cuda.device_count() > 1 else "cuda:0"
                 if engine_obj and hasattr(engine_obj, "reload_to_gpu"):
                     engine_obj.reload_to_gpu()
+                elif hasattr(model, "enable_model_cpu_offload") and torch.cuda.is_available():
+                    try:
+                        model.enable_model_cpu_offload(device=torch.device(dev))
+                    except Exception as e:
+                        logger.debug(f"Pipeline enable_model_cpu_offload note: {e}")
                 elif hasattr(model, "to") and torch.cuda.is_available():
                     try:
-                        # Mặc định GPU 1 nếu có 2 GPU, ngược lại GPU 0
-                        dev = "cuda:1" if torch.cuda.device_count() > 1 else "cuda:0"
                         model.to(dev)
                     except Exception as e:
                         logger.debug(f"Model to CUDA note: {e}")

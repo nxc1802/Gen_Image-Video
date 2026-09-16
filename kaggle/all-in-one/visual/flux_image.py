@@ -174,6 +174,16 @@ class FluxImageEngine(BaseImageEngine):
 
         return mem.switch_dynamic_slot("image", loader_wrap, engine_obj=self)
 
+    def reload_to_gpu(self):
+        """Kích hoạt lại FLUX lên GPU từ CPU RAM an toàn."""
+        if self._pipe and self._pipe != "fallback":
+            dev = self.resolved_device if self.resolved_device.startswith("cuda") else "cuda:1"
+            if hasattr(self._pipe, "enable_model_cpu_offload"):
+                try:
+                    self._pipe.enable_model_cpu_offload(device=torch.device(dev))
+                except Exception as e:
+                    logger.debug(f"FLUX reload_to_gpu note: {e}")
+
     def load(self) -> Any:
         return self.get_pipeline()
 
@@ -293,6 +303,11 @@ class FluxImageEngine(BaseImageEngine):
                     logger.info("🎨 Khởi tạo FluxInpaintPipeline từ pipeline hiện hành...")
                     self._inpaint_pipe = FluxInpaintPipeline.from_pipe(pipe)
                     self._inpaint_pipe._base_pipe = pipe
+                    if self.resolved_device.startswith("cuda"):
+                        try:
+                            self._inpaint_pipe.enable_model_cpu_offload(device=torch.device(self.resolved_device))
+                        except Exception:
+                            pass
 
                 with torch.inference_mode():
                     image_out = self._inpaint_pipe(
@@ -308,8 +323,16 @@ class FluxImageEngine(BaseImageEngine):
                     ).images[0]
             except Exception as ie:
                 logger.warning(f"FluxInpaintPipeline không khả dụng ({ie}), chuyển sang image blending fallback.")
-                # Fallback: Sinh ảnh và dán qua mask
-                raw_gen, _ = self.generate(prompt, size, steps, guidance, seed, model_variant)
+                # Fallback: Sinh ảnh và dán qua mask với progress_callback
+                raw_gen, _ = self.generate(
+                    prompt=prompt,
+                    size=size,
+                    steps=steps,
+                    guidance=guidance,
+                    seed=seed,
+                    model_variant=model_variant,
+                    progress_callback=progress_callback,
+                )
                 gen_img = self._parse_image(raw_gen).resize((w, h))
                 image_out = Image.composite(gen_img, pil_img, pil_mask)
         else:

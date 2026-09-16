@@ -507,6 +507,9 @@ class StudioTester:
                     if items and "b64_json" in items[0]:
                         final_b64 = items[0]["b64_json"]
                         print(f"   🎉 Sinh video hoàn tất! (Inference time: {data.get('x_inference_time_seconds', 0):.2f}s)")
+                elif ev_type == "error":
+                    err_msg = data.get("error", "Unknown error") if isinstance(data, dict) else str(data)
+                    print(f"   ❌ Server báo lỗi Video SSE: {err_msg}")
                 elif ev_type == "done" or data == "[DONE]":
                     break
 
@@ -590,6 +593,9 @@ class StudioTester:
                     if items and "b64_json" in items[0]:
                         final_b64 = items[0]["b64_json"]
                         print(f"   🎉 Sinh ITV video hoàn tất! (Inference time: {data.get('x_inference_time_seconds', 0):.2f}s)")
+                elif ev_type == "error":
+                    err_msg = data.get("error", "Unknown error") if isinstance(data, dict) else str(data)
+                    print(f"   ❌ Server báo lỗi ITV SSE: {err_msg}")
                 elif ev_type == "done" or data == "[DONE]":
                     break
 
@@ -639,7 +645,7 @@ class StudioTester:
             print(f"   • Dynamic Slot đỗ trong RAM   : {cached_slots}")
             print(f"   • RAM sử dụng / khả dụng      : {ram.get('used_gb', 'N/A')}GB / {ram.get('total_gb', 'N/A')}GB ({ram.get('percent', 'N/A')}%)")
 
-            is_valid_swap = (active_dynamic in ["flux", "wan_video"]) and (len(cached_slots) >= 1)
+            is_valid_swap = (active_dynamic in ["flux", "image", "video", "wan_video"]) and (len(cached_slots) >= 1)
             self.record_result(
                 "RAM-VRAM PCIe Fast-Swap",
                 is_valid_swap,
