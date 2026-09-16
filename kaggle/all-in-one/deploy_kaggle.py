@@ -86,10 +86,10 @@ def pack_and_update_run_notebook(notebook_path: str = "run_kaggle.ipynb") -> boo
     return updated
 
 
-def push_kernel(user: str, key: str, notebook_path: str = "run_kaggle.ipynb", metadata_path: str = "kernel-metadata.json") -> bool:
+def push_kernel(user: str, key: str, notebook_path: str = "run_kaggle.ipynb", metadata_path: str = "kernel-metadata.json", slug: str = KERNEL_SLUG) -> bool:
     """Đẩy notebook lên Kaggle qua REST API."""
     print("=" * 72)
-    print(f"🚀 [1/3] ĐẨY NOTEBOOK LÊN KAGGLE API ({user}/{KERNEL_SLUG})...")
+    print(f"🚀 [1/3] ĐẨY NOTEBOOK LÊN KAGGLE API ({user}/{slug})...")
     print("=" * 72)
 
     # 1. Đóng gói mã nguồn mới nhất vào notebook trước khi đẩy
@@ -108,6 +108,8 @@ def push_kernel(user: str, key: str, notebook_path: str = "run_kaggle.ipynb", me
             meta = json.load(f)
 
     title = meta.get("title", "Kaggle All in One Studio")
+    if slug != KERNEL_SLUG:
+        title = f"{title} V2"
     is_private = meta.get("is_private", "true")
     if isinstance(is_private, str):
         is_private = is_private.lower() == "true"
@@ -127,7 +129,7 @@ def push_kernel(user: str, key: str, notebook_path: str = "run_kaggle.ipynb", me
             print(f"⚠️ Cảnh báo khi format notebook: {e}")
 
     payload = {
-        "slug": f"{user}/{KERNEL_SLUG}",
+        "slug": f"{user}/{slug}",
         "newTitle": title,
         "text": nb_content,
         "language": meta.get("language", "python"),
@@ -169,9 +171,9 @@ def push_kernel(user: str, key: str, notebook_path: str = "run_kaggle.ipynb", me
         return False
 
 
-def get_kernel_status(user: str, key: str) -> dict:
+def get_kernel_status(user: str, key: str, slug: str = KERNEL_SLUG) -> dict:
     """Lấy trạng thái thực thi hiện tại của kernel."""
-    url = f"https://www.kaggle.com/api/v1/kernels/status?userName={user}&kernelSlug={KERNEL_SLUG}"
+    url = f"https://www.kaggle.com/api/v1/kernels/status?userName={user}&kernelSlug={slug}"
     headers = {"Authorization": get_auth_header(user, key)}
     req = urllib.request.Request(url, headers=headers)
     try:
@@ -181,9 +183,9 @@ def get_kernel_status(user: str, key: str) -> dict:
         return {"status": "unknown", "error": str(e)}
 
 
-def get_kernel_output(user: str, key: str) -> dict:
+def get_kernel_output(user: str, key: str, slug: str = KERNEL_SLUG) -> dict:
     """Lấy stdout / logs của kernel đang chạy."""
-    url = f"https://www.kaggle.com/api/v1/kernels/output?userName={user}&kernelSlug={KERNEL_SLUG}"
+    url = f"https://www.kaggle.com/api/v1/kernels/output?userName={user}&kernelSlug={slug}"
     headers = {"Authorization": get_auth_header(user, key)}
     req = urllib.request.Request(url, headers=headers)
     try:
@@ -193,10 +195,10 @@ def get_kernel_output(user: str, key: str) -> dict:
         return {"error": str(e)}
 
 
-def monitor_and_extract_url(user: str, key: str, timeout_seconds: int = 900) -> str:
+def monitor_and_extract_url(user: str, key: str, slug: str = KERNEL_SLUG, timeout_seconds: int = 900) -> str:
     """Theo dõi kernel chạy trên Kaggle và trích xuất URL Cloudflare."""
     print("\n" + "=" * 72)
-    print(f"⏳ [2/3] THEO DÕI PHIÊN KAGGLE & BẮT URL CLOUDFLARE PUBLIC...")
+    print(f"⏳ [2/3] THEO DÕI PHIÊN KAGGLE ({user}/{slug}) & BẮT URL CLOUDFLARE PUBLIC...")
     print(f"   Thời gian chờ tối đa: {timeout_seconds}s (15 phút)")
     print("=" * 72)
 
@@ -206,7 +208,7 @@ def monitor_and_extract_url(user: str, key: str, timeout_seconds: int = 900) -> 
     public_url = None
 
     while time.time() < deadline:
-        status_data = get_kernel_status(user, key)
+        status_data = get_kernel_status(user, key, slug=slug)
         cur_status = status_data.get("status")
 
         if cur_status != last_status:
@@ -241,7 +243,7 @@ def monitor_and_extract_url(user: str, key: str, timeout_seconds: int = 900) -> 
 
         if cur_status in ("running", "complete", "queued"):
             # Đọc output logs
-            output_data = get_kernel_output(user, key)
+            output_data = get_kernel_output(user, key, slug=slug)
             raw_log = output_data.get("log", "")
             extracted_lines = []
             if raw_log:
@@ -295,6 +297,7 @@ def main():
     parser = argparse.ArgumentParser(description="🚀 Kaggle Automated Deployer")
     parser.add_argument("--user", default=DEFAULT_KAGGLE_USER, help="Kaggle username")
     parser.add_argument("--key", default=DEFAULT_KAGGLE_KEY, help="Kaggle API Key")
+    parser.add_argument("--slug", default=KERNEL_SLUG, help="Kaggle kernel slug")
     parser.add_argument("--push-only", action="store_true", help="Chỉ đẩy kernel, không đợi")
     parser.add_argument("--monitor-only", action="store_true", help="Chỉ theo dõi kernel đang chạy và bắt URL")
     parser.add_argument("--status-only", action="store_true", help="Chỉ kiểm tra trạng thái")
@@ -302,22 +305,22 @@ def main():
     args = parser.parse_args()
 
     if args.status_only:
-        st = get_kernel_status(args.user, args.key)
-        print("Kernel Status:", json.dumps(st, indent=2))
+        st = get_kernel_status(args.user, args.key, slug=args.slug)
+        print(f"Kernel Status ({args.slug}):", json.dumps(st, indent=2))
         return
 
     if args.monitor_only:
-        url = monitor_and_extract_url(args.user, args.key, timeout_seconds=args.timeout)
+        url = monitor_and_extract_url(args.user, args.key, slug=args.slug, timeout_seconds=args.timeout)
         if not url:
             sys.exit(2)
         return
 
-    ok = push_kernel(args.user, args.key)
+    ok = push_kernel(args.user, args.key, slug=args.slug)
     if not ok:
         sys.exit(1)
 
     if not args.push_only:
-        url = monitor_and_extract_url(args.user, args.key, timeout_seconds=args.timeout)
+        url = monitor_and_extract_url(args.user, args.key, slug=args.slug, timeout_seconds=args.timeout)
         if not url:
             sys.exit(2)
 

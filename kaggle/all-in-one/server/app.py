@@ -68,15 +68,7 @@ def create_app() -> FastAPI:
             "vram_status": mem.report_vram(),
         }
 
-    @app.post("/v1/admin/shutdown")
-    def shutdown_admin(authorization: Optional[str] = Header(None)):
-        verify_auth(authorization)
-        import os, signal, threading
-        def _terminate():
-            time.sleep(1)
-            os.kill(os.getpid(), signal.SIGTERM)
-        threading.Thread(target=_terminate).start()
-        return {"status": "shutting_down", "message": "Server is terminating process."}
+
 
     @app.get("/v1/models")
     def list_models(authorization: Optional[str] = Header(None)):
