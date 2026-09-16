@@ -186,12 +186,12 @@ class WanVideoEngine(BaseVideoEngine):
 
                 logger.info(f"🎬 [Wan 1.3B Native FP16] Bắt đầu nạp Wan2.1 1.3B từ '{mid}' trực tiếp lên {dev_str} (NO CPU OFFLOAD)...")
 
-                # Text Encoder: google/umt5-xxl in 4-bit NF4 with FP32 compute (~5.2 GB VRAM)
-                # Dùng bnb_4bit_compute_dtype=torch.float32 và torch_dtype=torch.float32 để triệt tiêu hoàn toàn lỗi tràn số (overflow/NaN) của T5 trong FP16!
+                # Text Encoder: google/umt5-xxl in 4-bit NF4 with FP16 compute (~5.2 GB VRAM)
+                # Dùng bnb_4bit_compute_dtype=torch.float16 và torch_dtype=torch.float16 đồng bộ hoàn toàn với Transformer FP16!
                 bnb_config_text = BitsAndBytesConfig(
                     load_in_4bit=True,
                     bnb_4bit_quant_type="nf4",
-                    bnb_4bit_compute_dtype=torch.float32,
+                    bnb_4bit_compute_dtype=torch.float16,
                     bnb_4bit_use_double_quant=True,
                 )
 
@@ -202,7 +202,7 @@ class WanVideoEngine(BaseVideoEngine):
                 except Exception:
                     pass
 
-                logger.info(f"🎬 [Wan] Đang nạp UMT5EncoderModel (4-bit NF4, FP32 compute, FP16 storage ~5.2GB) từ '{mid}/text_encoder'...")
+                logger.info(f"🎬 [Wan] Đang nạp UMT5EncoderModel (4-bit NF4, FP16 compute & storage ~5.2GB) từ '{mid}/text_encoder'...")
                 text_encoder = UMT5EncoderModel.from_pretrained(
                     mid,
                     subfolder="text_encoder",
@@ -215,9 +215,6 @@ class WanVideoEngine(BaseVideoEngine):
                     torch.cuda.empty_cache()
 
                 # 2. Transformer: WanTransformer3DModel in native unquantized FP16 (~2.7 GB VRAM)
-                # Lưu ý: Model 1.3B chỉ có 1.36 tỷ tham số (~2.7GB FP16), hoàn toàn vừa vặn trong VRAM Tesla T4!
-                # KHÔNG lượng tử hóa 4-bit transformer vì bnb NF4 làm sụp đổ trường vector dòng chảy (flow matching trajectory),
-                # dẫn đến hiện tượng video bị xám đặc (grey static noise, std ~6.2).
                 logger.info(f"🎬 [Wan] Đang nạp WanTransformer3DModel (FP16 nguyên bản không lượng tử hóa, ~2.7GB) từ '{mid}/transformer'...")
                 transformer = WanTransformer3DModel.from_pretrained(
                     mid,
@@ -236,35 +233,34 @@ class WanVideoEngine(BaseVideoEngine):
                 )
                 vae = vae.to(dev_str)
 
-                # 4. Assembled WanPipeline directly bound to GPU 1
-                logger.info(f"🎬 [Wan] Lắp ráp WanPipeline nguyên khối trực tiếp trên {dev_str} (NO CPU OFFLOAD)...")
+                # 4. Assembled WanPipeline directly bound to GPU 1 in unified FP16
+                logger.info(f"🎬 [Wan] Lắp ráp WanPipeline nguyên khối trực tiếp trên {dev_str} với torch_dtype=torch.float16...")
                 try:
                     pipe = WanPipeline.from_pretrained(
                         mid,
                         transformer=transformer,
                         text_encoder=text_encoder,
                         vae=vae,
+                        torch_dtype=torch.float16,
                     )
                 except Exception as p_err:
-                    logger.warning(f"from_pretrained note ({p_err}), thử khởi tạo trực tiếp với FlowMatchEulerDiscreteScheduler...")
-                    from diffusers.schedulers import FlowMatchEulerDiscreteScheduler
+                    logger.warning(f"from_pretrained note ({p_err}), nạp pipeline trực tiếp...")
+                    from diffusers.schedulers import UniPCMultistepScheduler
                     from transformers import AutoTokenizer
 
                     tokenizer = AutoTokenizer.from_pretrained(mid, subfolder="tokenizer")
-                    base_sched = FlowMatchEulerDiscreteScheduler.from_pretrained(mid, subfolder="scheduler")
-                    scheduler = FlowMatchEulerDiscreteScheduler.from_config(base_sched.config, shift=3.0)
+                    base_sched = UniPCMultistepScheduler.from_pretrained(mid, subfolder="scheduler")
                     pipe = WanPipeline(
                         tokenizer=tokenizer,
                         text_encoder=text_encoder,
                         transformer=transformer,
                         vae=vae,
-                        scheduler=scheduler,
+                        scheduler=base_sched,
                     )
 
-                # 5. Cấu hình FlowMatchEulerDiscreteScheduler với shift=3.0 (chuẩn Flow Matching cho Wan2.1 1.3B 480P)
-                from diffusers.schedulers import FlowMatchEulerDiscreteScheduler
-                pipe.scheduler = FlowMatchEulerDiscreteScheduler.from_config(pipe.scheduler.config, shift=3.0)
-                logger.info("✅ Đã cấu hình FlowMatchEulerDiscreteScheduler (shift=3.0) chuẩn cho WanPipeline!")
+                # 5. Giữ nguyên scheduler gốc UniPCMultistepScheduler của Wan2.1
+                sched_name = pipe.scheduler.__class__.__name__
+                logger.info(f"✅ Wan Scheduler chính thức: {sched_name}")
 
                 if hasattr(pipe, "vae") and pipe.vae is not None:
                     try:
