@@ -186,12 +186,12 @@ class WanVideoEngine(BaseVideoEngine):
 
                 logger.info(f"🎬 [Wan 1.3B Native FP16] Bắt đầu nạp Wan2.1 1.3B từ '{mid}' trực tiếp lên {dev_str} (NO CPU OFFLOAD)...")
 
-                # Text Encoder: google/umt5-xxl in 4-bit NF4 with FP16 compute (~5.2 GB VRAM)
-                # Dùng bnb_4bit_compute_dtype=torch.float16 và torch_dtype=torch.float16 đồng bộ hoàn toàn với Transformer FP16!
+                # Text Encoder: google/umt5-xxl in 4-bit NF4 with FP32 compute (~5.2 GB VRAM)
+                # Dùng bnb_4bit_compute_dtype=torch.float32 để bitsandbytes nạp trực tiếp vào 4.06GB mà không bị lỗi cấp phát 14GB tạm thời!
                 bnb_config_text = BitsAndBytesConfig(
                     load_in_4bit=True,
                     bnb_4bit_quant_type="nf4",
-                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_compute_dtype=torch.float32,
                     bnb_4bit_use_double_quant=True,
                 )
 
@@ -202,7 +202,7 @@ class WanVideoEngine(BaseVideoEngine):
                 except Exception:
                     pass
 
-                logger.info(f"🎬 [Wan] Đang nạp UMT5EncoderModel (4-bit NF4, FP16 compute & storage ~5.2GB) từ '{mid}/text_encoder'...")
+                logger.info(f"🎬 [Wan] Đang nạp UMT5EncoderModel (4-bit NF4, FP32 compute, FP16 storage ~5.2GB) từ '{mid}/text_encoder'...")
                 text_encoder = UMT5EncoderModel.from_pretrained(
                     mid,
                     subfolder="text_encoder",
