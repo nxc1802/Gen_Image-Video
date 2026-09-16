@@ -169,6 +169,7 @@ class WanVideoEngine(BaseVideoEngine):
                 clean_candidates.append(c)
                 seen.add(c)
 
+        candidate_errors = {}
         for mid in clean_candidates:
             try:
                 from transformers import BitsAndBytesConfig, UMT5EncoderModel
@@ -228,29 +229,27 @@ class WanVideoEngine(BaseVideoEngine):
                     vae.enable_tiling()
 
                 # 4. Assembled WanPipeline directly bound to GPU 1
-                logger.info(f"🎬 [Wan 4-bit] Đang nạp tokenizer & scheduler từ '{mid}'...")
-                from diffusers.schedulers import FlowMatchEulerDiscreteScheduler
-                from transformers import AutoTokenizer
-
-                tokenizer = AutoTokenizer.from_pretrained(mid, subfolder="tokenizer")
-                scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained(mid, subfolder="scheduler")
-
                 logger.info(f"🎬 [Wan 4-bit] Lắp ráp WanPipeline nguyên khối trực tiếp trên {dev_str} (NO CPU OFFLOAD)...")
                 try:
+                    pipe = WanPipeline.from_pretrained(
+                        mid,
+                        transformer=transformer,
+                        text_encoder=text_encoder,
+                        vae=vae,
+                    )
+                except Exception as p_err:
+                    logger.warning(f"from_pretrained note ({p_err}), thử khởi tạo trực tiếp với UniPCMultistepScheduler...")
+                    from diffusers.schedulers import UniPCMultistepScheduler
+                    from transformers import AutoTokenizer
+
+                    tokenizer = AutoTokenizer.from_pretrained(mid, subfolder="tokenizer")
+                    scheduler = UniPCMultistepScheduler.from_pretrained(mid, subfolder="scheduler")
                     pipe = WanPipeline(
                         tokenizer=tokenizer,
                         text_encoder=text_encoder,
                         transformer=transformer,
                         vae=vae,
                         scheduler=scheduler,
-                    )
-                except Exception as init_err:
-                    logger.warning(f"WanPipeline direct init note ({init_err}), thử from_pretrained không ép dtype...")
-                    pipe = WanPipeline.from_pretrained(
-                        mid,
-                        transformer=transformer,
-                        text_encoder=text_encoder,
-                        vae=vae,
                     )
 
                 if hasattr(pipe, "vae") and pipe.vae is not None:
@@ -273,9 +272,12 @@ class WanVideoEngine(BaseVideoEngine):
             except Exception as e:
                 import traceback
                 tb = traceback.format_exc()
+                candidate_errors[mid] = f"{e}\n{tb}"
                 logger.error(f"❌ [Wan 4-bit Loading Error on {mid}]: {e}\n{tb}")
 
-        raise RuntimeError("Không thể nạp Wan2.1 T2V pipeline với bất kỳ candidate nào.")
+        err_summary = "\n---\n".join([f"Candidate '{m}': {err}" for m, err in candidate_errors.items()])
+        self.last_error = err_summary
+        raise RuntimeError(f"Không thể nạp Wan2.1 T2V pipeline với bất kỳ candidate nào:\n{err_summary}")
 
     def get_pipeline(self, target_model_id: Optional[str] = None, is_i2v: bool = False):
         if is_i2v:
