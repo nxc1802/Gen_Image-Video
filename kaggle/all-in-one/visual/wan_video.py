@@ -202,18 +202,21 @@ class WanVideoEngine(BaseVideoEngine):
 
             # Phân bổ thiết bị: 2 GPU (GPU 0: UMT5, GPU 1: Transformer + VAE) hoặc 1 GPU (CPU Offload)
             if is_dual_gpu:
-                logger.info("⚖️ [Wan 2-GPU Scaling] Cấu hình 2 GPU: GPU 0 -> UMT5 FP16 (~9.4GB) | GPU 1 -> Transformer FP16 (2.6GB) + VAE FP32 (1.2GB)...")
+                logger.info("⚖️ [Wan 2-GPU Scaling] Cấu hình 2 GPU: UMT5 chia tải 2 GPU (max_memory 6GiB/GPU) | GPU 1 -> Transformer FP16 (2.6GB) + VAE FP16 (0.6GB)...")
                 from transformers import UMT5EncoderModel, AutoTokenizer
                 from diffusers import WanTransformer3DModel, AutoencoderKLWan
 
-                # 1. Text Encoder UMT5 on GPU 0 (cuda:0)
-                logger.info("🎬 [2-GPU] Nạp UMT5EncoderModel FP16 lên cuda:0...")
+                # 1. Text Encoder UMT5 chia tải đều trên 2 GPU (GPU 0 & GPU 1)
+                logger.info("🎬 [2-GPU] Nạp UMT5EncoderModel FP16 qua device_map='auto' (6GiB trên GPU 0, 6GiB trên GPU 1)...")
+                max_mem = {0: "6GiB", 1: "6GiB"}
                 text_encoder = UMT5EncoderModel.from_pretrained(
                     target_id,
                     subfolder="text_encoder",
                     torch_dtype=torch.float16,
+                    device_map="auto",
+                    max_memory=max_mem,
                     low_cpu_mem_usage=True,
-                ).to("cuda:0")
+                )
 
                 # 2. Transformer on GPU 1 (cuda:1)
                 logger.info("🎬 [2-GPU] Nạp WanTransformer3DModel FP16 lên cuda:1...")
@@ -224,19 +227,24 @@ class WanVideoEngine(BaseVideoEngine):
                     low_cpu_mem_usage=True,
                 ).to("cuda:1")
 
-                # 3. VAE on GPU 1 (cuda:1) chuẩn float32 để chống lỗi 3D Causal Conv illegal address
-                logger.info("🎬 [2-GPU] Nạp AutoencoderKLWan FLOAT32 lên cuda:1 (chống tràn/lỗi nhân CUDA)...")
+                # 3. VAE on GPU 1 (cuda:1)
+                logger.info("🎬 [2-GPU] Nạp AutoencoderKLWan FP16 lên cuda:1...")
                 vae = AutoencoderKLWan.from_pretrained(
                     target_id,
                     subfolder="vae",
-                    torch_dtype=torch.float32,
+                    torch_dtype=torch.float16,
                     low_cpu_mem_usage=True,
                 ).to("cuda:1")
                 try:
                     vae.enable_tiling()
-                    logger.info("✅ Đã kích hoạt VAE Tiling (tiết kiệm bộ nhớ khi decode video)!")
-                except Exception as tile_err:
-                    logger.warning(f"Không thể kích hoạt VAE tiling: {tile_err}")
+                    logger.info("✅ [Wan 2-GPU] Đã kích hoạt vae.enable_tiling() thành công!")
+                except Exception as te:
+                    logger.warning(f"⚠️ Không thể kích hoạt enable_tiling trên VAE: {te}")
+                try:
+                    vae.enable_slicing()
+                    logger.info("✅ [Wan 2-GPU] Đã kích hoạt vae.enable_slicing() thành công!")
+                except Exception:
+                    pass
 
                 tokenizer = AutoTokenizer.from_pretrained(target_id, subfolder="tokenizer")
 
@@ -261,6 +269,11 @@ class WanVideoEngine(BaseVideoEngine):
                     pipe_kwargs["scheduler"] = base_sched
 
                 pipe = WanPipeline(**pipe_kwargs)
+                try:
+                    if hasattr(pipe, "vae") and hasattr(pipe.vae, "enable_tiling"):
+                        pipe.vae.enable_tiling()
+                except Exception:
+                    pass
                 # Đảm bảo pipe._execution_device luôn trỏ vào cuda:1 (nơi transformer và VAE thực thi diffusion loop)
                 pipe.__class__ = type("DualGpuWanPipeline", (pipe.__class__,), {
                     "_execution_device": property(lambda self: torch.device("cuda:1"))
@@ -304,7 +317,7 @@ class WanVideoEngine(BaseVideoEngine):
         negative_prompt: Optional[str] = None,
         max_sequence_length: int = 226,
         dtype: torch.dtype = torch.float16,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         """Mã hóa prompt văn bản trên GPU 0 bằng UMT5 FP16, sau đó chuyển embeddings sang GPU 1 (cuda:1)."""
         import re, html
         def _clean_text(text: str) -> str:
@@ -318,11 +331,6 @@ class WanVideoEngine(BaseVideoEngine):
         if tokenizer is None or text_encoder is None:
             raise RuntimeError("Không tìm thấy tokenizer hoặc text_encoder cho Wan 2-GPU encoding!")
 
-        try:
-            first_dev = next(text_encoder.parameters()).device
-        except Exception:
-            first_dev = getattr(text_encoder, "device", torch.device("cuda:0"))
-
         def _get_embed(text: str) -> torch.Tensor:
             clean = _clean_text(text)
             text_inputs = tokenizer(
@@ -334,6 +342,7 @@ class WanVideoEngine(BaseVideoEngine):
                 return_attention_mask=True,
                 return_tensors="pt",
             )
+            first_dev = getattr(text_encoder, "device", torch.device("cuda:0"))
             input_ids = text_inputs.input_ids.to(first_dev)
             mask = text_inputs.attention_mask.to(first_dev)
             seq_lens = mask.gt(0).sum(dim=1).long()
@@ -341,10 +350,6 @@ class WanVideoEngine(BaseVideoEngine):
             with torch.no_grad():
                 out = text_encoder(input_ids, mask)
                 embeds = out.last_hidden_state.to(device="cuda:1", dtype=dtype)
-
-            del out, input_ids, mask
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
 
             embeds = [u[:v.item()] for u, v in zip(embeds, seq_lens)]
             embeds = torch.stack(
@@ -354,8 +359,7 @@ class WanVideoEngine(BaseVideoEngine):
             return embeds.to("cuda:1", dtype=dtype)
 
         prompt_embeds = _get_embed(prompt)
-        neg_text = negative_prompt if negative_prompt is not None else ""
-        neg_embeds = _get_embed(neg_text)
+        neg_embeds = _get_embed(negative_prompt) if negative_prompt else None
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         return prompt_embeds, neg_embeds
@@ -452,6 +456,7 @@ class WanVideoEngine(BaseVideoEngine):
                         progress_callback(step_idx + 1, tot_steps, min(pct, 100))
                     if step_idx + 1 >= tot_steps and torch.cuda.is_available():
                         torch.cuda.empty_cache()
+                        torch.cuda.ipc_collect()
                     return callback_kwargs
 
                 default_neg = (
@@ -464,8 +469,8 @@ class WanVideoEngine(BaseVideoEngine):
                 try:
                     with torch.inference_mode():
                         if getattr(self, "_is_dual_gpu", False) and getattr(self, "_text_encoder", None) is not None:
-                            logger.info("🎬 [Wan 2-GPU] Đang sinh Prompt Embeddings qua UMT5 FP16 trên GPU 0...")
-                            p_embeds, neg_embeds = self._encode_prompt_2gpu(prompt, neg_p)
+                            logger.info("🎬 [Wan 2-GPU] Đang sinh Prompt Embeddings qua UMT5 FP16 trên GPU 0 (max_sequence_length=226)...")
+                            p_embeds, neg_embeds = self._encode_prompt_2gpu(prompt, neg_p, max_sequence_length=226)
                             logger.info(f"✅ [Wan 2-GPU] Prompt Embeddings đã chuyển sang GPU 1 (shape={p_embeds.shape}, dtype={p_embeds.dtype})")
                             call_kwargs = {
                                 "prompt": None,
@@ -478,6 +483,7 @@ class WanVideoEngine(BaseVideoEngine):
                                 "num_inference_steps": tot_steps,
                                 "guidance_scale": guidance if guidance is not None else 5.0,
                                 "generator": generator,
+                                "max_sequence_length": 226,
                             }
                         else:
                             call_kwargs = {
@@ -489,12 +495,31 @@ class WanVideoEngine(BaseVideoEngine):
                                 "num_inference_steps": tot_steps,
                                 "guidance_scale": guidance if guidance is not None else 5.0,
                                 "generator": generator,
+                                "max_sequence_length": 226,
                             }
+
+                        # Đảm bảo VAE luôn kích hoạt enable_tiling() và enable_slicing() trước khi decode latents
+                        if hasattr(pipe, "vae"):
+                            if hasattr(pipe.vae, "enable_tiling"):
+                                try:
+                                    pipe.vae.enable_tiling()
+                                    logger.info("✅ Đã bật pipe.vae.enable_tiling() trước khi sinh video.")
+                                except Exception as te:
+                                    logger.warning(f"Không thể bật pipe.vae.enable_tiling(): {te}")
+                            if hasattr(pipe.vae, "enable_slicing"):
+                                try:
+                                    pipe.vae.enable_slicing()
+                                except Exception:
+                                    pass
 
                         try:
                             video_frames = pipe(**call_kwargs, callback_on_step_end=step_cb).frames[0]
                         except TypeError:
-                            video_frames = pipe(**call_kwargs).frames[0]
+                            try:
+                                video_frames = pipe(**call_kwargs).frames[0]
+                            except TypeError:
+                                call_kwargs.pop("max_sequence_length", None)
+                                video_frames = pipe(**call_kwargs).frames[0]
 
                         # Thống kê phân bố điểm ảnh để kiểm định chất lượng trực tiếp trong log
                         try:
