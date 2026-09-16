@@ -255,15 +255,18 @@ class WanVideoEngine(BaseVideoEngine):
 
                 tokenizer = AutoTokenizer.from_pretrained(target_id, subfolder="tokenizer")
 
-                # Load scheduler từ pretrained config: ưu tiên UniPCMultistepScheduler chuẩn gốc của Wan 2.1
+                # Load scheduler: dùng FlowMatchEulerDiscreteScheduler với shift=3.0 (tối ưu 480p, tương thích 100% WanTransformer3D & RoPE)
                 try:
-                    from diffusers import UniPCMultistepScheduler
-                    base_sched = UniPCMultistepScheduler.from_pretrained(target_id, subfolder="scheduler")
-                    logger.info(f"✅ [Wan 2-GPU] Đã nạp UniPCMultistepScheduler từ {target_id}/scheduler (flow_shift={getattr(base_sched.config, 'flow_shift', None)})")
-                except Exception as ue:
-                    logger.warning(f"⚠️ Không nạp được UniPCMultistepScheduler ({ue}), thử FlowMatchEulerDiscreteScheduler...")
+                    from diffusers import FlowMatchEulerDiscreteScheduler
+                    base_sched = FlowMatchEulerDiscreteScheduler.from_pretrained(
+                        target_id,
+                        subfolder="scheduler",
+                        shift=3.0,
+                    )
+                    logger.info("✅ [Wan 2-GPU] Đã nạp FlowMatchEulerDiscreteScheduler(shift=3.0) thành công!")
+                except Exception as fe:
+                    logger.warning(f"⚠️ Không nạp được FlowMatchEulerDiscreteScheduler với shift=3.0 ({fe}), nạp mặc định...")
                     try:
-                        from diffusers import FlowMatchEulerDiscreteScheduler
                         base_sched = FlowMatchEulerDiscreteScheduler.from_pretrained(target_id, subfolder="scheduler")
                     except Exception:
                         base_sched = None
