@@ -227,12 +227,12 @@ class WanVideoEngine(BaseVideoEngine):
                     low_cpu_mem_usage=True,
                 ).to("cuda:1")
 
-                # 3. VAE on GPU 1 (cuda:1)
-                logger.info("🎬 [2-GPU] Nạp AutoencoderKLWan FP16 lên cuda:1...")
+                # 3. VAE on GPU 1 (cuda:1) in FP32 (chuẩn Diffusers Wan, chỉ ~480MB VRAM, chống underflow/clipping)
+                logger.info("🎬 [2-GPU] Nạp AutoencoderKLWan FP32 lên cuda:1...")
                 vae = AutoencoderKLWan.from_pretrained(
                     target_id,
                     subfolder="vae",
-                    torch_dtype=torch.float16,
+                    torch_dtype=torch.float32,
                     low_cpu_mem_usage=True,
                 ).to("cuda:1")
                 try:
@@ -291,7 +291,7 @@ class WanVideoEngine(BaseVideoEngine):
                 try:
                     pipe = WanPipeline.from_pretrained(target_id, **load_kwargs)
                 except Exception as p_err:
-                    vae = AutoencoderKLWan.from_pretrained(target_id, subfolder="vae", torch_dtype=torch.float16)
+                    vae = AutoencoderKLWan.from_pretrained(target_id, subfolder="vae", torch_dtype=torch.float32)
                     pipe = WanPipeline.from_pretrained(target_id, vae=vae, **load_kwargs)
                 pipe.enable_model_cpu_offload(device=dev_obj)
             else:
@@ -321,6 +321,13 @@ class WanVideoEngine(BaseVideoEngine):
         """Mã hóa prompt văn bản trên GPU 0 bằng UMT5 FP16, sau đó chuyển embeddings sang GPU 1 (cuda:1)."""
         import re, html
         def _clean_text(text: str) -> str:
+            if not text:
+                return ""
+            try:
+                import ftfy
+                text = ftfy.fix_text(text)
+            except Exception:
+                pass
             text = html.unescape(html.unescape(text.strip()))
             text = re.sub(r"\s+", " ", text)
             return text.strip()
@@ -348,7 +355,7 @@ class WanVideoEngine(BaseVideoEngine):
             seq_lens = mask.gt(0).sum(dim=1).long()
 
             with torch.no_grad():
-                out = text_encoder(input_ids, mask)
+                out = text_encoder(input_ids=input_ids, attention_mask=mask)
                 embeds = out.last_hidden_state.to(device="cuda:1", dtype=dtype)
 
             embeds = [u[:v.item()] for u, v in zip(embeds, seq_lens)]
@@ -359,7 +366,8 @@ class WanVideoEngine(BaseVideoEngine):
             return embeds.to("cuda:1", dtype=dtype)
 
         prompt_embeds = _get_embed(prompt)
-        neg_embeds = _get_embed(negative_prompt) if negative_prompt else None
+        neg_text = negative_prompt if negative_prompt is not None else ""
+        neg_embeds = _get_embed(neg_text)
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         return prompt_embeds, neg_embeds
@@ -459,12 +467,7 @@ class WanVideoEngine(BaseVideoEngine):
                         torch.cuda.ipc_collect()
                     return callback_kwargs
 
-                default_neg = (
-                    "Bright tones, overexposed, static, blurred details, subtitles, style, "
-                    "works, paintings, images, static, overall gray, worst quality, low quality, "
-                    "JPEG artifacts, ugly, deformed, extra limbs, poorly drawn hands, poorly drawn face"
-                )
-                neg_p = negative_prompt if negative_prompt is not None else default_neg
+                neg_p = negative_prompt if negative_prompt is not None else ""
 
                 try:
                     with torch.inference_mode():
@@ -615,12 +618,7 @@ class WanVideoEngine(BaseVideoEngine):
                         torch.cuda.empty_cache()
                     return callback_kwargs
 
-                default_neg = (
-                    "Bright tones, overexposed, static, blurred details, subtitles, style, "
-                    "works, paintings, images, static, overall gray, worst quality, low quality, "
-                    "JPEG artifacts, ugly, deformed, extra limbs, poorly drawn hands, poorly drawn face"
-                )
-                neg_p = negative_prompt if negative_prompt is not None else default_neg
+                neg_p = negative_prompt if negative_prompt is not None else ""
 
                 try:
                     with torch.inference_mode():
