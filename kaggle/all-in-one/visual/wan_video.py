@@ -161,7 +161,7 @@ class WanVideoEngine(BaseVideoEngine):
                 logger.warning(f"⚠️ Không nạp được SVD ({se}), fallback sang Wan T2V pipeline.")
 
         # Text-to-Video Pipeline (Wan2.1-T2V-1.3B)
-        candidates = [target_id, self.model_id, self.fallback_id, "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"]
+        candidates = ["Wan-AI/Wan2.1-T2V-1.3B-Diffusers"]
         seen = set()
         clean_candidates = []
         for c in candidates:
@@ -180,42 +180,38 @@ class WanVideoEngine(BaseVideoEngine):
                 bnb_config = BitsAndBytesConfig(
                     load_in_4bit=True,
                     bnb_4bit_quant_type="nf4",
-                    bnb_4bit_compute_dtype=torch.float32,
+                    bnb_4bit_compute_dtype=torch.float16,
                     bnb_4bit_use_double_quant=True,
                 )
 
-                # 1. Text Encoder: google/umt5-xxl in 4-bit NF4 with FP32 compute (~2.5 GB VRAM)
-                # UMT5 CỰC KỲ nhạy cảm với FP16 (gây overflow/NaN), phải dùng compute_dtype=FP32
-                logger.info(f"🎬 [Wan 4-bit] Đang nạp UMT5EncoderModel (4-bit NF4, FP32 compute) từ '{mid}/text_encoder'...")
+                # 1. Text Encoder: google/umt5-xxl in 4-bit NF4 (~2.5 GB VRAM)
+                # Dùng torch_dtype=torch.float16 để tránh phình 22GB (FP32) gây OOM
+                logger.info(f"🎬 [Wan 4-bit] Đang nạp UMT5EncoderModel (4-bit NF4) từ '{mid}/text_encoder'...")
                 text_encoder = UMT5EncoderModel.from_pretrained(
                     mid,
                     subfolder="text_encoder",
                     quantization_config=bnb_config,
-                    torch_dtype=torch.float32,
+                    torch_dtype=torch.float16,
                     device_map={"": dev_str},
                     low_cpu_mem_usage=True,
                 )
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
 
-                # 2. Transformer: WanTransformer3DModel in 4-bit NF4 with FP32 compute (~1.0 GB VRAM)
-                logger.info(f"🎬 [Wan 4-bit] Đang nạp WanTransformer3DModel (4-bit NF4, FP32 compute) từ '{mid}/transformer'...")
-                try:
-                    transformer = WanTransformer3DModel.from_pretrained(
-                        mid,
-                        subfolder="transformer",
-                        quantization_config=bnb_config,
-                        torch_dtype=torch.float32,
-                        device_map={"": dev_str},
-                        low_cpu_mem_usage=True,
-                    )
-                except Exception as t_err:
-                    logger.warning(f"⚠️ Nạp transformer 4-bit từ {mid} gặp lỗi ({t_err}), thử nạp pre-quantized từ 'sarthak247/Wan2.1-T2V-1.3B-nf4'...")
-                    transformer = WanTransformer3DModel.from_pretrained(
-                        "sarthak247/Wan2.1-T2V-1.3B-nf4",
-                        torch_dtype=torch.float32,
-                        device_map={"": dev_str},
-                    )
+                # 2. Transformer: WanTransformer3DModel in 4-bit NF4 (~0.8 GB VRAM)
+                logger.info(f"🎬 [Wan 4-bit] Đang nạp WanTransformer3DModel (4-bit NF4) từ '{mid}/transformer'...")
+                transformer = WanTransformer3DModel.from_pretrained(
+                    mid,
+                    subfolder="transformer",
+                    quantization_config=bnb_config,
+                    torch_dtype=torch.float16,
+                    device_map={"": dev_str},
+                    low_cpu_mem_usage=True,
+                )
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
 
-                # 3. VAE: AutoencoderKLWan in float32 with slicing & tiling (~1.5 GB VRAM)
+                # 3. VAE: AutoencoderKLWan in float32 with slicing & tiling (~1.2 GB VRAM)
                 logger.info(f"🎬 [Wan 4-bit] Đang nạp AutoencoderKLWan (FP32/Slicing/Tiling) từ '{mid}/vae'...")
                 vae = AutoencoderKLWan.from_pretrained(
                     mid,
