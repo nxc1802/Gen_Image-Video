@@ -187,12 +187,12 @@ class WanVideoEngine(BaseVideoEngine):
                 )
 
                 # 1. Text Encoder: google/umt5-xxl
-                logger.info(f"🎬 [Wan] Đang nạp UMT5EncoderModel (4-bit NF4, FP32 compute & weights) từ '{mid}/text_encoder'...")
+                logger.info(f"🎬 [Wan] Đang nạp UMT5EncoderModel (4-bit NF4, FP32 compute, FP16 storage ~5.2GB) từ '{mid}/text_encoder'...")
                 text_encoder = UMT5EncoderModel.from_pretrained(
                     mid,
                     subfolder="text_encoder",
                     quantization_config=bnb_config_text,
-                    torch_dtype=torch.float32,
+                    torch_dtype=torch.float16,
                     device_map={"": dev_str},
                     low_cpu_mem_usage=True,
                 )
