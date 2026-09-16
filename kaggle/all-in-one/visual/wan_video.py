@@ -21,6 +21,15 @@ import requests
 import torch
 from transformers import BitsAndBytesConfig
 
+# 🛡️ Monkey-patch Hugging Face caching_allocator_warmup
+# In latest transformers, caching_allocator_warmup attempts to preallocate a 7.47 GiB dummy tensor
+# using torch.empty(), which causes instantaneous CUDA Out of Memory on 16GB Tesla T4!
+try:
+    import transformers.modeling_utils
+    transformers.modeling_utils.caching_allocator_warmup = lambda *args, **kwargs: None
+except Exception:
+    pass
+
 from config import (
     VIDEO_MODEL_ID,
     VIDEO_FALLBACK_ID,
@@ -187,6 +196,12 @@ class WanVideoEngine(BaseVideoEngine):
                 )
 
                 # 1. Text Encoder: google/umt5-xxl
+                try:
+                    import transformers.modeling_utils
+                    transformers.modeling_utils.caching_allocator_warmup = lambda *args, **kwargs: None
+                except Exception:
+                    pass
+
                 logger.info(f"🎬 [Wan] Đang nạp UMT5EncoderModel (4-bit NF4, FP32 compute, FP16 storage ~5.2GB) từ '{mid}/text_encoder'...")
                 text_encoder = UMT5EncoderModel.from_pretrained(
                     mid,
