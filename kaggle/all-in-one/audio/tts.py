@@ -41,6 +41,31 @@ class TTSEngine(BaseTTSEngine):
         self.default_voice = self.config.get("voice", TTS_VOICE)
         self._initialized = True
 
+    def _normalize_vietnamese(self, text: str) -> str:
+        """
+        Chuẩn hóa văn bản tiếng Việt sang dạng ký tự Latinh tối ưu ngữ âm cho Kokoro.
+        Ngăn chặn triệt để hiện tượng phonemizer bị lỗi văng mã unicode ('Letter 1EB5N...').
+        """
+        import unicodedata
+        import re
+
+        # Ánh xạ chữ Đ/đ riêng trước khi phân rã unicode
+        trans_map = {
+            "đ": "d", "Đ": "D",
+            "“": '"', "”": '"', "’": "'", "‘": "'",
+            "–": "-", "—": "-",
+        }
+        for k, v in trans_map.items():
+            text = text.replace(k, v)
+
+        # Phân rã NFKD để tách các dấu thanh (diacritics) ra khỏi nguyên âm
+        nfkd = unicodedata.normalize("NFKD", text)
+        cleaned = "".join(c for c in nfkd if unicodedata.category(c) != "Mn")
+
+        # Chuẩn hóa khoảng trắng thừa
+        cleaned = re.sub(r"\s+", " ", cleaned).strip()
+        return cleaned
+
     def load_pipeline(self):
         if self._pipeline is not None:
             return self._pipeline
@@ -59,6 +84,8 @@ class TTSEngine(BaseTTSEngine):
         t0 = time.time()
 
         try:
+            if torch.cuda.is_available():
+                torch.cuda.set_device(0)
             from kokoro import KPipeline
             self._pipeline = KPipeline(lang_code="a")
             self._is_loaded = True
@@ -77,15 +104,41 @@ class TTSEngine(BaseTTSEngine):
     def load(self) -> Any:
         return self.load_pipeline()
 
-    def synthesize(self, text: str, voice: Optional[str] = None, response_format: str = "wav") -> bytes:
-        """Đọc văn bản thành audio bytes (WAV/OGG) chuẩn OpenAI /v1/audio/speech."""
+    def synthesize(
+        self,
+        text: str,
+        voice: Optional[str] = None,
+        language: Optional[str] = None,
+        speed: float = 1.0,
+        sample_rate: int = 24000,
+        response_format: str = "wav",
+    ) -> bytes:
+        """
+        Đọc văn bản thành audio bytes (WAV/OGG) chuẩn OpenAI /v1/audio/speech.
+        Hỗ trợ cả tiếng Anh và tiếng Việt, tùy biến voice, speed, sample_rate.
+        """
         pipe = self.load_pipeline()
         selected_voice = voice or self.default_voice
         t0 = time.time()
 
+        # Kiểm tra ngôn ngữ: nếu là tiếng Việt hoặc có chứa ký tự tiếng Việt, thực hiện phonetic normalization
+        is_vietnamese = (language and language.lower().startswith("vi")) or any(
+            c in "àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđĐ"
+            for c in text
+        )
+
+        processed_text = self._normalize_vietnamese(text) if is_vietnamese else text
+        speed_val = max(0.25, min(4.0, float(speed)))
+        target_sr = sample_rate or 24000
+
         if pipe != "fallback":
             try:
-                generator = pipe(text, voice=selected_voice, speed=1.0, split_pattern=r"\n+")
+                generator = pipe(
+                    processed_text,
+                    voice=selected_voice,
+                    speed=speed_val,
+                    split_pattern=r"\n+",
+                )
                 audio_chunks = []
                 for _, _, audio in generator:
                     audio_chunks.append(audio)
@@ -93,25 +146,25 @@ class TTSEngine(BaseTTSEngine):
                 if audio_chunks:
                     full_audio = np.concatenate(audio_chunks)
                 else:
-                    full_audio = np.zeros(24000, dtype=np.float32)
-                sample_rate = 24000
+                    full_audio = np.zeros(target_sr, dtype=np.float32)
             except Exception as e:
                 logger.error(f"Lỗi khi sinh âm thanh bằng Kokoro: {e}")
-                full_audio = np.zeros(24000, dtype=np.float32)
-                sample_rate = 24000
+                full_audio = np.zeros(target_sr, dtype=np.float32)
         else:
-            sample_rate = 24000
-            duration = 1.0
-            t = np.linspace(0, duration, int(sample_rate * duration), False)
+            duration = max(1.0, len(processed_text) * 0.08 / speed_val)
+            t = np.linspace(0, duration, int(target_sr * duration), False)
             full_audio = 0.1 * np.sin(2 * np.pi * 440 * t).astype(np.float32)
 
         buffer = io.BytesIO()
         sf_format = "WAV" if response_format.lower() in ("wav", "audio/wav") else "OGG"
-        sf.write(buffer, full_audio, sample_rate, format=sf_format)
+        sf.write(buffer, full_audio, target_sr, format=sf_format)
         audio_bytes = buffer.getvalue()
 
         elapsed = time.time() - t0
-        logger.info(f"🎶 Sinh giọng nói thành công trong {elapsed:.2f}s ({len(audio_bytes)} bytes)")
+        logger.info(
+            f"🎶 Sinh giọng nói thành công trong {elapsed:.2f}s "
+            f"(lang={'vi' if is_vietnamese else 'en'}, voice={selected_voice}, speed={speed_val}, {len(audio_bytes)} bytes)"
+        )
         return audio_bytes
 
 

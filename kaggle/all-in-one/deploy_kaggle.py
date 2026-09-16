@@ -29,11 +29,71 @@ def get_auth_header(user: str, key: str) -> str:
     return f"Basic {base64.b64encode(cred).decode('ascii')}"
 
 
+def pack_and_update_run_notebook(notebook_path: str = "run_kaggle.ipynb") -> bool:
+    """
+    Tự động đóng gói toàn bộ mã nguồn python, yaml, config hiện hành thành tar.gz
+    và nhúng vào cell payload_data của run_kaggle.ipynb.
+    Đảm bảo 100% code mới nhất luôn được nạp trên Kaggle mà không bị dính cache cũ.
+    """
+    import io
+    import tarfile
+
+    curr_dir = os.path.dirname(os.path.abspath(__file__))
+    buf = io.BytesIO()
+
+    packed_count = 0
+    with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+        for root, dirs, files in os.walk(curr_dir):
+            dirs[:] = [d for d in dirs if d not in (".git", "__pycache__", "test_outputs", "checkpoints", ".ipynb_checkpoints")]
+            for f in files:
+                if f.endswith((".py", ".yaml", ".txt")) and not f.startswith("deploy_") and not f.startswith("build_") and f != "public_url.txt":
+                    full_p = os.path.join(root, f)
+                    rel_p = os.path.relpath(full_p, curr_dir)
+                    tar.add(full_p, arcname=rel_p)
+                    packed_count += 1
+
+    tar_bytes = buf.getvalue()
+    b64_payload = base64.b64encode(tar_bytes).decode("ascii")
+    print(f"📦 Đã đóng gói {packed_count} files thành Live Payload tar.gz ({len(tar_bytes):,} bytes | base64: {len(b64_payload):,} chars)")
+
+    if not os.path.exists(notebook_path):
+        print(f"⚠️ Không tìm thấy file {notebook_path} để nhúng payload.")
+        return False
+
+    with open(notebook_path, "r", encoding="utf-8") as f:
+        nb = json.load(f)
+
+    updated = False
+    for cell in nb.get("cells", []):
+        src = cell.get("source", "")
+        if isinstance(src, list):
+            src_str = "".join(src)
+        else:
+            src_str = str(src)
+
+        if "payload_data =" in src_str:
+            new_src_str = re.sub(r'payload_data\s*=\s*"[^"]*"', f'payload_data = "{b64_payload}"', src_str)
+            cell["source"] = new_src_str
+            updated = True
+            break
+
+    if updated:
+        with open(notebook_path, "w", encoding="utf-8") as f:
+            json.dump(nb, f, indent=1, ensure_ascii=False)
+        print(f"✅ Đã cập nhật live payload mới nhất vào {notebook_path}!")
+    else:
+        print(f"⚠️ Không tìm thấy cell chứa 'payload_data =' trong {notebook_path}.")
+    return updated
+
+
 def push_kernel(user: str, key: str, notebook_path: str = "run_kaggle.ipynb", metadata_path: str = "kernel-metadata.json") -> bool:
     """Đẩy notebook lên Kaggle qua REST API."""
     print("=" * 72)
     print(f"🚀 [1/3] ĐẨY NOTEBOOK LÊN KAGGLE API ({user}/{KERNEL_SLUG})...")
     print("=" * 72)
+
+    # 1. Đóng gói mã nguồn mới nhất vào notebook trước khi đẩy
+    pack_and_update_run_notebook(notebook_path)
 
     if not os.path.exists(notebook_path):
         print(f"❌ Không tìm thấy file notebook: {notebook_path}")
@@ -159,12 +219,20 @@ def monitor_and_extract_url(user: str, key: str, timeout_seconds: int = 900) -> 
             with urllib.request.urlopen(ntfy_check_req, timeout=5) as ntfy_resp:
                 content = ntfy_resp.read().decode("utf-8").strip()
                 if content:
-                    for cline in content.splitlines():
+                    # Duyệt từ dòng mới nhất (cuối cùng) ngược lên
+                    for cline in reversed(content.splitlines()):
                         match_n = re.search(r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com", cline)
                         if match_n:
-                            public_url = match_n.group(0)
-                            print(f"[{time.strftime('%H:%M:%S')}] 📡 Đã bắt được Cloudflare URL từ kênh phát sóng: {public_url}")
-                            break
+                            cand_url = match_n.group(0)
+                            # Kiểm tra xem URL này có đang online thật không
+                            try:
+                                with urllib.request.urlopen(f"{cand_url}/health", timeout=3) as h_resp:
+                                    if h_resp.status == 200:
+                                        public_url = cand_url
+                                        print(f"[{time.strftime('%H:%M:%S')}] 📡 Đã xác nhận Cloudflare URL online: {public_url}")
+                                        break
+                            except Exception:
+                                pass
         except Exception:
             pass
 

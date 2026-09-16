@@ -11,6 +11,7 @@ Cung cấp toàn bộ các endpoint chuẩn của OpenAI cho:
 
 import base64
 import json
+import threading
 import time
 import uuid
 from typing import Optional
@@ -102,6 +103,7 @@ def create_app() -> FastAPI:
     # 1. 👁️ CHAT & VLM (Qwen / Llama-Vision...)
     # ==========================================================================
     # ==========================================================================
+    # ==========================================================================
     # 1. 👁️ CHAT & VLM (Qwen / Llama-Vision...)
     # ==========================================================================
     @app.post("/v1/chat/completions")
@@ -117,8 +119,12 @@ def create_app() -> FastAPI:
                 for token in vlm.chat_stream(
                     messages=req.messages,
                     max_tokens=req.max_tokens or 512,
-                    temperature=req.temperature or 0.7,
-                    top_p=req.top_p or 0.9,
+                    temperature=req.temperature if req.temperature is not None else 0.7,
+                    top_p=req.top_p if req.top_p is not None else 0.9,
+                    top_k=req.top_k,
+                    repetition_penalty=req.repetition_penalty,
+                    system_prompt=req.system_prompt,
+                    stop=req.stop,
                 ):
                     chunk = {
                         "id": req_id,
@@ -156,8 +162,12 @@ def create_app() -> FastAPI:
         res = vlm.chat(
             messages=req.messages,
             max_tokens=req.max_tokens or 512,
-            temperature=req.temperature or 0.7,
-            top_p=req.top_p or 0.9,
+            temperature=req.temperature if req.temperature is not None else 0.7,
+            top_p=req.top_p if req.top_p is not None else 0.9,
+            top_k=req.top_k,
+            repetition_penalty=req.repetition_penalty,
+            system_prompt=req.system_prompt,
+            stop=req.stop,
         )
 
         req_id = f"chatcmpl-{uuid.uuid4().hex}"
@@ -190,15 +200,25 @@ def create_app() -> FastAPI:
         model: Optional[str] = Form(None),
         language: Optional[str] = Form(None),
         prompt: Optional[str] = Form(None),
+        task: Optional[str] = Form("transcribe"),
+        temperature: Optional[float] = Form(0.0),
+        response_format: Optional[str] = Form("json"),
         authorization: Optional[str] = Header(None),
     ):
         verify_auth(authorization)
         stt = registry.get_stt()
         audio_content = await file.read()
-        res = stt.transcribe(audio_content, language=language, prompt=prompt)
+        res = stt.transcribe(
+            audio_content,
+            language=language,
+            prompt=prompt,
+            task=task or "transcribe",
+            temperature=temperature if temperature is not None else 0.0,
+        )
         return {
             "text": res["text"],
             "language": res.get("language"),
+            "task": task or "transcribe",
             "x_duration_seconds": res.get("duration_seconds"),
         }
 
@@ -212,6 +232,9 @@ def create_app() -> FastAPI:
         audio_bytes = tts.synthesize(
             text=req.input,
             voice=req.voice,
+            language=req.language,
+            speed=req.speed or 1.0,
+            sample_rate=req.sample_rate or 24000,
             response_format=req.response_format or "wav",
         )
         media_type = "audio/wav" if (req.response_format or "wav").lower() == "wav" else "audio/ogg"
@@ -225,21 +248,29 @@ def create_app() -> FastAPI:
         verify_auth(authorization)
         flux = registry.get_image()
 
-        # Nếu có image + mask_image: kích hoạt Inpainting
-        if req.image and req.mask_image:
+        steps_val = req.steps or req.num_inference_steps
+        guidance_val = req.guidance if req.guidance is not None else req.guidance_scale
+        mask_val = req.mask_image or req.mask
+
+        # Nếu có image + mask: kích hoạt Inpainting
+        if req.image and mask_val:
             if req.stream:
                 def sse_inpaint_stream():
                     yield ": keepalive\n\n"
-                    yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': req.steps or 4, 'progress': 0, 'status': 'preparing'})}\n\n"
+                    yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': steps_val or 4, 'progress': 0, 'status': 'preparing'})}\n\n"
                     try:
                         for ev in flux.inpaint_stream(
                             prompt=req.prompt,
                             image=req.image,
-                            mask_image=req.mask_image,
+                            mask_image=mask_val,
+                            negative_prompt=req.negative_prompt,
                             size=req.size or "1024x1024",
-                            steps=req.steps,
-                            guidance=req.guidance,
+                            width=req.width,
+                            height=req.height,
+                            steps=steps_val,
+                            guidance=guidance_val,
                             seed=req.seed,
+                            strength=req.strength,
                             model_variant=req.model,
                         ):
                             if ev.get("type") == "heartbeat":
@@ -266,11 +297,15 @@ def create_app() -> FastAPI:
             b64_str, elapsed = flux.inpaint(
                 prompt=req.prompt,
                 image=req.image,
-                mask_image=req.mask_image,
+                mask_image=mask_val,
+                negative_prompt=req.negative_prompt,
                 size=req.size or "1024x1024",
-                steps=req.steps,
-                guidance=req.guidance,
+                width=req.width,
+                height=req.height,
+                steps=steps_val,
+                guidance=guidance_val,
                 seed=req.seed,
+                strength=req.strength,
                 model_variant=req.model,
             )
             return {
@@ -283,14 +318,18 @@ def create_app() -> FastAPI:
         if req.stream:
             def sse_image_stream():
                 yield ": keepalive\n\n"
-                yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': req.steps or 4, 'progress': 0, 'status': 'preparing'})}\n\n"
+                yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': steps_val or 4, 'progress': 0, 'status': 'preparing'})}\n\n"
                 try:
                     for ev in flux.generate_stream(
                         prompt=req.prompt,
+                        negative_prompt=req.negative_prompt,
                         size=req.size or "1024x1024",
-                        steps=req.steps,
-                        guidance=req.guidance,
+                        width=req.width,
+                        height=req.height,
+                        steps=steps_val,
+                        guidance=guidance_val,
                         seed=req.seed,
+                        strength=req.strength,
                         model_variant=req.model,
                     ):
                         if ev.get("type") == "heartbeat":
@@ -316,10 +355,14 @@ def create_app() -> FastAPI:
 
         b64_str, elapsed = flux.generate(
             prompt=req.prompt,
+            negative_prompt=req.negative_prompt,
             size=req.size or "1024x1024",
-            steps=req.steps,
-            guidance=req.guidance,
+            width=req.width,
+            height=req.height,
+            steps=steps_val,
+            guidance=guidance_val,
             seed=req.seed,
+            strength=req.strength,
             model_variant=req.model,
         )
 
@@ -341,20 +384,26 @@ def create_app() -> FastAPI:
         verify_auth(authorization)
         flux = registry.get_image()
         mask_val = req.mask_image or req.mask
+        steps_val = req.steps or req.num_inference_steps
+        guidance_val = req.guidance if req.guidance is not None else req.guidance_scale
 
         if req.stream:
             def sse_edit_stream():
                 yield ": keepalive\n\n"
-                yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': req.steps or 4, 'progress': 0, 'status': 'preparing'})}\n\n"
+                yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': steps_val or 4, 'progress': 0, 'status': 'preparing'})}\n\n"
                 try:
                     for ev in flux.inpaint_stream(
                         prompt=req.prompt,
                         image=req.image,
                         mask_image=mask_val,
+                        negative_prompt=req.negative_prompt,
                         size=req.size or "1024x1024",
-                        steps=req.steps,
-                        guidance=req.guidance,
+                        width=req.width,
+                        height=req.height,
+                        steps=steps_val,
+                        guidance=guidance_val,
                         seed=req.seed,
+                        strength=req.strength,
                         model_variant=req.model,
                     ):
                         if ev.get("type") == "heartbeat":
@@ -382,10 +431,14 @@ def create_app() -> FastAPI:
             prompt=req.prompt,
             image=req.image,
             mask_image=mask_val,
+            negative_prompt=req.negative_prompt,
             size=req.size or "1024x1024",
-            steps=req.steps,
-            guidance=req.guidance,
+            width=req.width,
+            height=req.height,
+            steps=steps_val,
+            guidance=guidance_val,
             seed=req.seed,
+            strength=req.strength,
             model_variant=req.model,
         )
 
@@ -403,19 +456,26 @@ def create_app() -> FastAPI:
         verify_auth(authorization)
         wan = registry.get_video()
 
+        steps_val = req.steps or req.num_inference_steps
+        guidance_val = req.guidance if req.guidance is not None else req.guidance_scale
+
         # Image-to-Video (ITV)
         if req.image:
             if req.stream:
                 def sse_i2v_stream():
                     yield ": keepalive\n\n"
-                    yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': req.num_frames or 25, 'progress': 0, 'status': 'preparing'})}\n\n"
+                    yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': steps_val or 30, 'progress': 0, 'status': 'preparing'})}\n\n"
                     try:
                         for ev in wan.generate_i2v_stream(
                             prompt=req.prompt,
                             image=req.image,
-                            num_frames=req.num_frames or 25,
-                            width=req.width or 768,
-                            height=req.height or 512,
+                            negative_prompt=req.negative_prompt,
+                            num_frames=req.num_frames or wan.num_frames,
+                            width=req.width or wan.width,
+                            height=req.height or wan.height,
+                            fps=req.fps or 16,
+                            steps=steps_val,
+                            guidance=guidance_val,
                             seed=req.seed,
                             model_variant=req.model,
                         ):
@@ -436,7 +496,10 @@ def create_app() -> FastAPI:
                                 yield f"event: error\ndata: {json.dumps(ev)}\n\n"
                                 yield "data: [DONE]\n\n"
                     except Exception as e:
-                        yield f"event: error\ndata: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+                        import traceback
+                        tb = traceback.format_exc()
+                        logger.error(f"Error in sse_i2v_stream: {tb}")
+                        yield f"event: error\ndata: {json.dumps({'type': 'error', 'error': str(e), 'traceback': tb})}\n\n"
                         yield "data: [DONE]\n\n"
 
                 return StreamingResponse(sse_i2v_stream(), media_type="text/event-stream")
@@ -444,9 +507,13 @@ def create_app() -> FastAPI:
             video_bytes, elapsed = wan.generate_i2v(
                 prompt=req.prompt,
                 image=req.image,
-                num_frames=req.num_frames or 25,
-                width=req.width or 768,
-                height=req.height or 512,
+                negative_prompt=req.negative_prompt,
+                num_frames=req.num_frames or wan.num_frames,
+                width=req.width or wan.width,
+                height=req.height or wan.height,
+                fps=req.fps or 16,
+                steps=steps_val,
+                guidance=guidance_val,
                 seed=req.seed,
                 model_variant=req.model,
             )
@@ -461,13 +528,17 @@ def create_app() -> FastAPI:
         if req.stream:
             def sse_t2v_stream():
                 yield ": keepalive\n\n"
-                yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': req.num_frames or 25, 'progress': 0, 'status': 'preparing'})}\n\n"
+                yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': steps_val or 30, 'progress': 0, 'status': 'preparing'})}\n\n"
                 try:
                     for ev in wan.generate_stream(
                         prompt=req.prompt,
-                        num_frames=req.num_frames or 25,
-                        width=req.width or 768,
-                        height=req.height or 512,
+                        negative_prompt=req.negative_prompt,
+                        num_frames=req.num_frames or wan.num_frames,
+                        width=req.width or wan.width,
+                        height=req.height or wan.height,
+                        fps=req.fps or 16,
+                        steps=steps_val,
+                        guidance=guidance_val,
                         seed=req.seed,
                         model_variant=req.model,
                     ):
@@ -488,32 +559,43 @@ def create_app() -> FastAPI:
                             yield f"event: error\ndata: {json.dumps(ev)}\n\n"
                             yield "data: [DONE]\n\n"
                 except Exception as e:
-                    yield f"event: error\ndata: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+                    import traceback
+                    tb = traceback.format_exc()
+                    logger.error(f"Error in sse_t2v_stream: {tb}")
+                    yield f"event: error\ndata: {json.dumps({'type': 'error', 'error': str(e), 'traceback': tb})}\n\n"
                     yield "data: [DONE]\n\n"
 
             return StreamingResponse(sse_t2v_stream(), media_type="text/event-stream")
 
-        video_bytes, elapsed = wan.generate(
-            prompt=req.prompt,
-            num_frames=req.num_frames or 25,
-            width=req.width or 768,
-            height=req.height or 512,
-            seed=req.seed,
-            model_variant=req.model,
-        )
-
-        b64_video = base64.b64encode(video_bytes).decode("utf-8")
-        return {
-            "created": int(time.time()),
-            "data": [
-                {
-                    "b64_json": b64_video,
-                    "revised_prompt": req.prompt,
-                    "mime_type": "video/mp4",
-                }
-            ],
-            "x_inference_time_seconds": elapsed,
-        }
+        try:
+            video_bytes, elapsed = wan.generate(
+                prompt=req.prompt,
+                negative_prompt=req.negative_prompt,
+                num_frames=req.num_frames or wan.num_frames,
+                width=req.width or wan.width,
+                height=req.height or wan.height,
+                fps=req.fps or 16,
+                steps=steps_val,
+                guidance=guidance_val,
+                seed=req.seed,
+                model_variant=req.model,
+            )
+            b64_video = base64.b64encode(video_bytes).decode("utf-8")
+            return {
+                "created": int(time.time()),
+                "data": [
+                    {
+                        "b64_json": b64_video,
+                        "revised_prompt": req.prompt,
+                        "mime_type": "video/mp4",
+                    }
+                ],
+                "x_inference_time_seconds": elapsed,
+            }
+        except Exception as e:
+            import traceback
+            tb = traceback.format_exc()
+            raise HTTPException(status_code=500, detail={"error": str(e), "traceback": tb})
 
     @app.post("/v1/admin/shutdown")
     def admin_shutdown():
@@ -521,8 +603,8 @@ def create_app() -> FastAPI:
         def kill_soon():
             time.sleep(0.5)
             import os
-            os._exit(0)
+            os._exit(99)
         threading.Thread(target=kill_soon).start()
-        return {"status": "shutting_down", "message": "Kernel process is terminating"}
+        return {"status": "shutting_down", "message": "Kernel process is terminating cleanly (code 99)"}
 
     return app

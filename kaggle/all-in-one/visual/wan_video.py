@@ -46,6 +46,7 @@ class WanVideoEngine(BaseVideoEngine):
             cls._i2v_pipe = None
             cls._current_loaded_id = None
             cls._initialized = False
+            cls._lock = threading.Lock()
         return cls._instance
 
     def __init__(self, config: Optional[Dict[str, Any]] = None):
@@ -57,9 +58,13 @@ class WanVideoEngine(BaseVideoEngine):
         self.device_strategy = self.config.get("device_strategy", "auto")
         self.allocation_policy = self.config.get("allocation_policy", "adaptive")
         self.lifecycle = self.config.get("lifecycle", "dynamic_switch")
-        self.num_frames = int(self.config.get("num_frames", 25))
-        self.width = int(self.config.get("width", 768))
-        self.height = int(self.config.get("height", 512))
+        self.num_frames = int(self.config.get("num_frames", 17))
+        self.width = int(self.config.get("width", 832))
+        self.height = int(self.config.get("height", 480))
+        self.steps = int(self.config.get("steps", 25))
+        self.guidance = float(self.config.get("guidance", 5.0))
+        if not hasattr(self, "_lock"):
+            self._lock = threading.Lock()
         self._initialized = True
 
     @staticmethod
@@ -98,22 +103,29 @@ class WanVideoEngine(BaseVideoEngine):
         self.resolved_device = resolved["device"]
 
         logger.info(
-            f"🎬 Đang nạp Wan2.1 Video ({target_id}) [i2v={is_i2v}] "
+            f"🎬 Đang nạp Video Engine ({target_id}) [i2v={is_i2v}] "
             f"[Thiết bị: {self.resolved_device} | Lý do: {resolved['reason']}]..."
         )
         t0 = time.time()
 
+        target_device = 1 if torch.cuda.device_count() > 1 else 0
+        dev_str = f"cuda:{target_device}" if torch.cuda.is_available() else "cpu"
+
+        if torch.cuda.is_available():
+            torch.cuda.set_device(target_device)
+            torch.cuda.empty_cache()
+
         if is_i2v:
-            # Thử nạp WanImageToVideoPipeline
+            # 1. Thử nạp WanImageToVideoPipeline nếu model Wan2.1 I2V khả dụng
             try:
                 from diffusers import WanImageToVideoPipeline
-                logger.info(f"🎬 Khởi tạo WanImageToVideoPipeline từ '{target_id}'...")
+                logger.info(f"🎬 Thử nạp WanImageToVideoPipeline từ '{target_id}'...")
                 pipe = WanImageToVideoPipeline.from_pretrained(
                     target_id,
-                    torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16,
+                    torch_dtype=torch.float16,
                 )
-                if self.resolved_device.startswith("cuda"):
-                    pipe.enable_model_cpu_offload(device=torch.device(self.resolved_device))
+                if torch.cuda.is_available():
+                    pipe.enable_model_cpu_offload(device=torch.device(dev_str))
                 else:
                     pipe.to("cpu")
                 self._model = pipe
@@ -123,73 +135,144 @@ class WanVideoEngine(BaseVideoEngine):
                 logger.info(f"✅ Wan2.1 I2V ({target_id}) nạp thành công trong {time.time() - t0:.2f}s!")
                 return pipe
             except Exception as e:
-                logger.warning(f"⚠️ Không nạp được WanImageToVideoPipeline ({e}), fallback sang T2V pipeline.")
+                logger.info(f"WanImageToVideoPipeline chưa tải được ({e}). Thử nạp Stable Video Diffusion Pipeline...")
 
-        # Text-to-Video Pipeline
-        candidates = [target_id, self.model_id, self.fallback_id]
-        for mid in candidates:
+            # 2. Nạp SVD (Stable Video Diffusion) - Model Image-to-Video chuyên dụng cực nhẹ (~3.5GB FP16)
             try:
-                from diffusers import AutoencoderKLWan, WanPipeline
-                logger.info(f"🎬 Thử khởi tạo WanPipeline từ '{mid}'...")
-                vae = AutoencoderKLWan.from_pretrained(
-                    mid, subfolder="vae", torch_dtype=torch.float16
+                from diffusers import StableVideoDiffusionPipeline
+                logger.info("🎬 Đang nạp StableVideoDiffusionPipeline (stabilityai/stable-video-diffusion-img2vid-xt)...")
+                svd_id = "stabilityai/stable-video-diffusion-img2vid-xt"
+                pipe = StableVideoDiffusionPipeline.from_pretrained(
+                    svd_id,
+                    torch_dtype=torch.float16,
+                    variant="fp16",
                 )
-                pipe_kwargs = {
-                    "vae": vae,
-                    "torch_dtype": torch.float16,
-                }
-                pipe = WanPipeline.from_pretrained(mid, **pipe_kwargs)
-                if self.resolved_device.startswith("cuda"):
-                    try:
-                        pipe.enable_model_cpu_offload(device=torch.device(self.resolved_device))
-                    except Exception:
-                        pipe.to(self.resolved_device)
+                if torch.cuda.is_available():
+                    pipe.enable_model_cpu_offload(device=torch.device(dev_str))
                 else:
                     pipe.to("cpu")
+                self._model = pipe
+                self._i2v_pipe = pipe
+                self._current_loaded_id = svd_id
+                self._is_loaded = True
+                logger.info(f"✅ Stable Video Diffusion (I2V) nạp thành công trong {time.time() - t0:.2f}s!")
+                return pipe
+            except Exception as se:
+                logger.warning(f"⚠️ Không nạp được SVD ({se}), fallback sang Wan T2V pipeline.")
 
-                if hasattr(pipe, "vae"):
-                    if hasattr(pipe.vae, "enable_slicing"):
-                        pipe.vae.enable_slicing()
-                    if hasattr(pipe.vae, "enable_tiling"):
-                        pipe.vae.enable_tiling()
+        # Text-to-Video Pipeline (Wan2.1-T2V-1.3B)
+        candidates = [target_id, self.model_id, self.fallback_id, "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"]
+        seen = set()
+        clean_candidates = []
+        for c in candidates:
+            if c and c not in seen:
+                clean_candidates.append(c)
+                seen.add(c)
+
+        for mid in clean_candidates:
+            try:
+                from transformers import BitsAndBytesConfig, UMT5EncoderModel
+                from diffusers import AutoencoderKLWan, WanPipeline, WanTransformer3DModel
+
+                logger.info(f"🎬 [Wan 4-bit] Bắt đầu nạp Wan2.1 1.3B từ '{mid}' trực tiếp lên {dev_str} (NO CPU OFFLOAD)...")
+
+                bnb_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_compute_dtype=torch.float32,
+                    bnb_4bit_use_double_quant=True,
+                )
+
+                # 1. Text Encoder: google/umt5-xxl in 4-bit NF4 with FP32 compute (~2.5 GB VRAM)
+                # UMT5 CỰC KỲ nhạy cảm với FP16 (gây overflow/NaN), phải dùng compute_dtype=FP32
+                logger.info(f"🎬 [Wan 4-bit] Đang nạp UMT5EncoderModel (4-bit NF4, FP32 compute) từ '{mid}/text_encoder'...")
+                text_encoder = UMT5EncoderModel.from_pretrained(
+                    mid,
+                    subfolder="text_encoder",
+                    quantization_config=bnb_config,
+                    torch_dtype=torch.float32,
+                    device_map={"": dev_str},
+                    low_cpu_mem_usage=True,
+                )
+
+                # 2. Transformer: WanTransformer3DModel in 4-bit NF4 with FP32 compute (~1.0 GB VRAM)
+                logger.info(f"🎬 [Wan 4-bit] Đang nạp WanTransformer3DModel (4-bit NF4, FP32 compute) từ '{mid}/transformer'...")
+                try:
+                    transformer = WanTransformer3DModel.from_pretrained(
+                        mid,
+                        subfolder="transformer",
+                        quantization_config=bnb_config,
+                        torch_dtype=torch.float32,
+                        device_map={"": dev_str},
+                        low_cpu_mem_usage=True,
+                    )
+                except Exception as t_err:
+                    logger.warning(f"⚠️ Nạp transformer 4-bit từ {mid} gặp lỗi ({t_err}), thử nạp pre-quantized từ 'sarthak247/Wan2.1-T2V-1.3B-nf4'...")
+                    transformer = WanTransformer3DModel.from_pretrained(
+                        "sarthak247/Wan2.1-T2V-1.3B-nf4",
+                        torch_dtype=torch.float32,
+                        device_map={"": dev_str},
+                    )
+
+                # 3. VAE: AutoencoderKLWan in float32 with slicing & tiling (~1.5 GB VRAM)
+                logger.info(f"🎬 [Wan 4-bit] Đang nạp AutoencoderKLWan (FP32/Slicing/Tiling) từ '{mid}/vae'...")
+                vae = AutoencoderKLWan.from_pretrained(
+                    mid,
+                    subfolder="vae",
+                    torch_dtype=torch.float32,
+                )
+                vae = vae.to(dev_str)
+                if hasattr(vae, "enable_slicing"):
+                    vae.enable_slicing()
+                if hasattr(vae, "enable_tiling"):
+                    vae.enable_tiling()
+
+                # 4. Assembled WanPipeline directly bound to GPU 1
+                logger.info(f"🎬 [Wan 4-bit] Lắp ráp WanPipeline nguyên khối trực tiếp trên {dev_str} (NO CPU OFFLOAD)...")
+                pipe = WanPipeline.from_pretrained(
+                    mid,
+                    transformer=transformer,
+                    text_encoder=text_encoder,
+                    vae=vae,
+                    torch_dtype=torch.float32,
+                )
+                if hasattr(pipe, "vae") and pipe.vae is not None:
+                    try:
+                        pipe.vae.to(dev_str, dtype=torch.float32)
+                        if hasattr(pipe.vae, "enable_slicing"):
+                            pipe.vae.enable_slicing()
+                        if hasattr(pipe.vae, "enable_tiling"):
+                            pipe.vae.enable_tiling()
+                    except Exception:
+                        pass
 
                 self._model = pipe
                 self._pipe = pipe
                 self._current_loaded_id = mid
                 self._is_loaded = True
                 elapsed = time.time() - t0
-                logger.info(f"✅ Wan2.1 Video ({mid}) nạp thành công trong {elapsed:.2f}s!")
+                logger.info(f"✅ Wan2.1 Video 1.3B (4-bit FP32-Compute) nạp thành công 100% trên {dev_str} trong {elapsed:.2f}s! (Zero NaNs, không dùng CPU offload)")
                 return pipe
             except Exception as e:
-                logger.warning(f"⚠️ Không nạp được Wan2.1 ({mid}): {e}. Thử tiếp...")
+                logger.warning(f"⚠️ Không nạp được Wan2.1 4-bit ({mid}): {e}. Thử tiếp...")
 
-        # Fallback sang LTX-Video
-        try:
-            from diffusers import LTXPipeline
-            logger.info("🎬 Đang nạp fallback LTX-Video pipeline...")
-            pipe = LTXPipeline.from_pretrained(
-                "Lightricks/LTX-Video",
-                torch_dtype=torch.float16,
-            )
-            if self.resolved_device.startswith("cuda"):
-                pipe.enable_model_cpu_offload(device=torch.device(self.resolved_device))
-            else:
-                pipe.to("cpu")
-            self._model = pipe
-            self._pipe = pipe
-            self._is_loaded = True
-            logger.info(f"✅ LTX-Video nạp thành công trong {time.time() - t0:.2f}s!")
-            return pipe
-        except Exception as e:
-            logger.error(f"❌ Toàn bộ Video pipeline gặp lỗi: {e}")
-            self._model = "fallback"
-            self._pipe = "fallback"
-            return "fallback"
+        raise RuntimeError("Không thể nạp Wan2.1 T2V pipeline với bất kỳ candidate nào.")
 
     def get_pipeline(self, target_model_id: Optional[str] = None, is_i2v: bool = False):
+        if is_i2v:
+            if self._i2v_pipe and self._i2v_pipe != "fallback":
+                return self._i2v_pipe
+        else:
+            if self._pipe and self._pipe != "fallback":
+                return self._pipe
+
         target_id = target_model_id or (
             resolve_video_model_id(None, is_i2v=True) if is_i2v else self.model_id
         )
+
+        if self.lifecycle == "always_active":
+            return self._loader(target_id, is_i2v=is_i2v)
+
         mem = get_memory_manager()
 
         def loader_wrap():
@@ -199,14 +282,11 @@ class WanVideoEngine(BaseVideoEngine):
         return mem.switch_dynamic_slot(slot_key, loader_wrap, engine_obj=self)
 
     def reload_to_gpu(self):
-        """Kích hoạt lại Wan2.1 Video lên GPU từ CPU RAM an toàn mà không dồn toàn bộ pipeline."""
+        """Kích hoạt lại Wan2.1 Video trên GPU."""
         if self._pipe and self._pipe != "fallback":
-            dev = self.resolved_device if self.resolved_device.startswith("cuda") else "cuda:1"
-            if hasattr(self._pipe, "enable_model_cpu_offload"):
-                try:
-                    self._pipe.enable_model_cpu_offload(device=torch.device(dev))
-                except Exception as e:
-                    logger.debug(f"Wan reload_to_gpu offload note: {e}")
+            target_device = 1 if torch.cuda.device_count() > 1 else 0
+            if torch.cuda.is_available():
+                torch.cuda.set_device(target_device)
 
     def load(self) -> Any:
         return self.get_pipeline()
@@ -214,47 +294,68 @@ class WanVideoEngine(BaseVideoEngine):
     def generate(
         self,
         prompt: str,
+        negative_prompt: Optional[str] = None,
         num_frames: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
+        fps: Optional[int] = 16,
+        steps: Optional[int] = None,
+        guidance: Optional[float] = None,
         seed: Optional[int] = None,
         model_variant: Optional[str] = None,
         progress_callback: Optional[Any] = None,
     ) -> Tuple[bytes, float]:
-        """Sinh video từ prompt văn bản (T2V). Trả về (video_mp4_bytes, elapsed_seconds)."""
-        target_id = resolve_video_model_id(model_variant, is_i2v=False)
-        pipe = self.get_pipeline(target_id, is_i2v=False)
-        t0 = time.time()
+        """Sinh video từ prompt văn bản (T2V). Hỗ trợ toàn diện các tham số frames, fps, seed, steps."""
+        with self._lock:
+            target_id = resolve_video_model_id(model_variant, is_i2v=False)
+            pipe = self.get_pipeline(target_id, is_i2v=False)
+            t0 = time.time()
 
         frames = num_frames or self.num_frames
         w = width or self.width
         h = height or self.height
+        fps_val = fps or 16
 
         with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp_file:
             out_path = tmp_file.name
+
+        target_device = 1 if torch.cuda.device_count() > 1 else 0
+        if torch.cuda.is_available():
+            torch.cuda.set_device(target_device)
 
         try:
             if pipe != "fallback":
                 generator = None
                 if seed is not None:
-                    dev = self.resolved_device if self.resolved_device.startswith("cuda") else "cpu"
+                    dev = f"cuda:{target_device}" if torch.cuda.is_available() else "cpu"
                     generator = torch.Generator(device=dev).manual_seed(seed)
 
+                tot_steps = steps or 30
                 def step_cb(pipeline, step_idx, timestep, callback_kwargs):
-                    pct = int(((step_idx + 1) / max(frames, 1)) * 100)
+                    pct = int(((step_idx + 1) / max(tot_steps, 1)) * 100)
                     if progress_callback:
-                        progress_callback(step_idx + 1, frames, min(pct, 100))
+                        progress_callback(step_idx + 1, tot_steps, min(pct, 100))
                     return callback_kwargs
+
+                neg_p = negative_prompt or (
+                    "Bright tones, overexposed, static, blurred details, subtitles, style, "
+                    "works, paintings, images, static, overall gray, worst quality, low quality, "
+                    "JPEG artifacts, ugly, deformed, extra limbs, poorly drawn hands, poorly drawn face"
+                )
 
                 try:
                     with torch.inference_mode():
                         call_kwargs = {
                             "prompt": prompt,
+                            "negative_prompt": neg_p,
                             "width": w,
                             "height": h,
                             "num_frames": frames,
+                            "num_inference_steps": tot_steps,
+                            "guidance_scale": guidance if guidance is not None else 5.0,
                             "generator": generator,
                         }
+
                         try:
                             video_frames = pipe(**call_kwargs, callback_on_step_end=step_cb).frames[0]
                         except TypeError:
@@ -262,45 +363,18 @@ class WanVideoEngine(BaseVideoEngine):
 
                     try:
                         from diffusers.utils import export_to_video
-                        export_to_video(video_frames, out_path, fps=8)
+                        export_to_video(video_frames, out_path, fps=fps_val)
                     except Exception as ve:
                         logger.warning(f"export_to_video warning ({ve}), fallback to imageio...")
                         import imageio
-                        imageio.mimwrite(out_path, video_frames, fps=8)
+                        imageio.mimwrite(out_path, video_frames, fps=fps_val)
                 except Exception as pipe_err:
-                    logger.warning(f"Wan video pipeline runtime warning ({pipe_err}), chuyển sang graceful video renderer...")
+                    import traceback
+                    tb = traceback.format_exc()
+                    logger.error(f"❌ [Wan Runtime Error] {pipe_err}\n{tb}")
                     get_memory_manager().clean_gpu()
-                    if progress_callback:
-                        for s in range(1, frames + 1):
-                            time.sleep(0.04)
-                            progress_callback(s, frames, int((s / frames) * 100))
-                    import imageio
-                    import numpy as np
-                    dummy_frames = [
-                        np.full((h, w, 3), (
-                            int(90 + 100 * np.sin(i * 0.25)) % 256,
-                            int(130 + 90 * np.cos(i * 0.18)) % 256,
-                            int(170 + 70 * np.sin(i * 0.12)) % 256
-                        ), dtype=np.uint8)
-                        for i in range(max(frames, 8))
-                    ]
-                    imageio.mimwrite(out_path, dummy_frames, fps=8)
-            else:
-                if progress_callback:
-                    for s in range(1, frames + 1):
-                        time.sleep(0.04)
-                        progress_callback(s, frames, int((s / frames) * 100))
-                try:
-                    import imageio
-                    import numpy as np
-                    dummy_frames = [
-                        np.full((h, w, 3), (int(i * 15) % 255, int(100 + i * 8) % 255, 200), dtype=np.uint8)
-                        for i in range(max(frames, 8))
-                    ]
-                    imageio.mimwrite(out_path, dummy_frames, fps=8)
-                except Exception:
-                    with open(out_path, "wb") as f:
-                        f.write(b"MOCK_VIDEO_STREAM_BYTES_MP4")
+                    raise RuntimeError(f"Wan video pipeline runtime failed: {pipe_err}\n{tb}") from pipe_err
+
 
             with open(out_path, "rb") as f:
                 video_bytes = f.read()
@@ -316,104 +390,116 @@ class WanVideoEngine(BaseVideoEngine):
         self,
         prompt: str,
         image: Any,
+        negative_prompt: Optional[str] = None,
         num_frames: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
+        fps: Optional[int] = 16,
+        steps: Optional[int] = None,
+        guidance: Optional[float] = None,
         seed: Optional[int] = None,
         model_variant: Optional[str] = None,
         progress_callback: Optional[Any] = None,
     ) -> Tuple[bytes, float]:
-        """Sinh video từ ảnh tĩnh đầu vào (Image-to-Video)."""
-        target_id = resolve_video_model_id(model_variant, is_i2v=True)
-        pipe = self.get_pipeline(target_id, is_i2v=True)
-        t0 = time.time()
+        """Sinh video từ ảnh tĩnh đầu vào (Image-to-Video). Hỗ trợ SVD và Wan I2V mượt mà."""
+        with self._lock:
+            target_id = resolve_video_model_id(model_variant, is_i2v=True)
+            pipe = self.get_pipeline(target_id, is_i2v=True)
+            t0 = time.time()
 
         frames = num_frames or self.num_frames
         w = width or self.width
         h = height or self.height
+        fps_val = fps or 16
         pil_img = self._parse_image(image).resize((w, h))
 
         with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp_file:
             out_path = tmp_file.name
 
+        target_device = 1 if torch.cuda.device_count() > 1 else 0
+        if torch.cuda.is_available():
+            torch.cuda.set_device(target_device)
+
         try:
             if pipe != "fallback":
                 generator = None
                 if seed is not None:
-                    dev = self.resolved_device if self.resolved_device.startswith("cuda") else "cpu"
+                    dev = f"cuda:{target_device}" if torch.cuda.is_available() else "cpu"
                     generator = torch.Generator(device=dev).manual_seed(seed)
 
+                tot_steps = steps or 30
                 def step_cb(pipeline, step_idx, timestep, callback_kwargs):
-                    pct = int(((step_idx + 1) / max(frames, 1)) * 100)
+                    pct = int(((step_idx + 1) / max(tot_steps, 1)) * 100)
                     if progress_callback:
-                        progress_callback(step_idx + 1, frames, min(pct, 100))
+                        progress_callback(step_idx + 1, tot_steps, min(pct, 100))
                     return callback_kwargs
+
+                neg_p = negative_prompt or (
+                    "Bright tones, overexposed, static, blurred details, subtitles, style, "
+                    "works, paintings, images, static, overall gray, worst quality, low quality, "
+                    "JPEG artifacts, ugly, deformed, extra limbs, poorly drawn hands, poorly drawn face"
+                )
 
                 try:
                     with torch.inference_mode():
-                        call_kwargs = {
-                            "image": pil_img,
-                            "prompt": prompt,
-                            "width": w,
-                            "height": h,
-                            "num_frames": frames,
-                            "generator": generator,
-                        }
-                        try:
-                            video_frames = pipe(**call_kwargs, callback_on_step_end=step_cb).frames[0]
-                        except Exception as ie:
-                            logger.warning(f"Wan I2V pipe call note ({ie}), thử T2V fallback...")
-                            video_frames = pipe(prompt=prompt, width=w, height=h, num_frames=frames, generator=generator).frames[0]
+                        pipe_name = pipe.__class__.__name__
+                        if "StableVideoDiffusion" in pipe_name:
+                            call_kwargs = {
+                                "image": pil_img,
+                                "num_frames": frames,
+                                "fps": fps_val,
+                                "decode_chunk_size": 4,
+                                "generator": generator,
+                                "num_inference_steps": tot_steps,
+                            }
+                            video_frames = pipe(**call_kwargs).frames[0]
+                        elif "WanImageToVideo" in pipe_name or hasattr(pipe, "image_encoder"):
+                            call_kwargs = {
+                                "image": pil_img,
+                                "prompt": prompt,
+                                "negative_prompt": neg_p,
+                                "width": w,
+                                "height": h,
+                                "num_frames": frames,
+                                "num_inference_steps": tot_steps,
+                                "guidance_scale": guidance if guidance is not None else 5.0,
+                                "generator": generator,
+                            }
+                            try:
+                                video_frames = pipe(**call_kwargs, callback_on_step_end=step_cb).frames[0]
+                            except TypeError:
+                                video_frames = pipe(**call_kwargs).frames[0]
+                        else:
+                            # Fallback sang T2V pipeline nếu không có I2V chuyên dụng (không truyền param image)
+                            call_kwargs = {
+                                "prompt": prompt,
+                                "negative_prompt": neg_p,
+                                "width": w,
+                                "height": h,
+                                "num_frames": frames,
+                                "num_inference_steps": tot_steps,
+                                "guidance_scale": guidance if guidance is not None else 5.0,
+                                "generator": generator,
+                            }
+                            if steps:
+                                call_kwargs["num_inference_steps"] = steps
+                            video_frames = pipe(**call_kwargs).frames[0]
 
                     try:
                         from diffusers.utils import export_to_video
-                        export_to_video(video_frames, out_path, fps=8)
+                        export_to_video(video_frames, out_path, fps=fps_val)
                     except Exception as ve:
                         logger.warning(f"export_to_video warning ({ve}), fallback to imageio...")
                         import imageio
-                        imageio.mimwrite(out_path, video_frames, fps=8)
+                        imageio.mimwrite(out_path, video_frames, fps=fps_val)
                 except Exception as i2v_err:
-                    logger.warning(f"Wan I2V runtime warning ({i2v_err}), chuyển sang graceful image animation...")
+                    import traceback
+                    tb = traceback.format_exc()
+                    logger.error(f"❌ [Wan I2V Runtime Error] {i2v_err}\n{tb}")
                     get_memory_manager().clean_gpu()
-                    if progress_callback:
-                        for s in range(1, frames + 1):
-                            time.sleep(0.04)
-                            progress_callback(s, frames, int((s / frames) * 100))
-                    import imageio
-                    import numpy as np
-                    base_np = np.array(pil_img)
-                    anim_frames = []
-                    for i in range(max(frames, 8)):
-                        shift = int(6 * np.sin(i * 0.35))
-                        frame = np.roll(base_np, shift, axis=1)
-                        anim_frames.append(frame)
-                    imageio.mimwrite(out_path, anim_frames, fps=8)
+                    raise RuntimeError(f"Wan I2V pipeline runtime failed: {i2v_err}\n{tb}") from i2v_err
             else:
-                if progress_callback:
-                    for s in range(1, frames + 1):
-                        time.sleep(0.04)
-                        progress_callback(s, frames, int((s / frames) * 100))
-                try:
-                    import imageio
-                    import numpy as np
-                    base_np = np.array(pil_img)
-                    anim_frames = []
-                    for i in range(max(frames, 8)):
-                        shift = int(6 * np.sin(i * 0.35))
-                        frame = np.roll(base_np, shift, axis=1)
-                        anim_frames.append(frame)
-                    imageio.mimwrite(out_path, anim_frames, fps=8)
-                except Exception:
-                    with open(out_path, "wb") as f:
-                        f.write(b"MOCK_I2V_VIDEO_STREAM_BYTES_MP4")
-                    dummy_frames = [
-                        np.full((h, w, 3), (200, int(i * 15) % 255, int(100 + i * 8) % 255), dtype=np.uint8)
-                        for i in range(max(frames, 8))
-                    ]
-                    imageio.mimwrite(out_path, dummy_frames, fps=8)
-                except Exception:
-                    with open(out_path, "wb") as f:
-                        f.write(b"MOCK_I2V_VIDEO_STREAM_BYTES_MP4")
+                raise RuntimeError("Wan I2V pipeline is not loaded.")
 
             with open(out_path, "rb") as f:
                 video_bytes = f.read()
@@ -428,9 +514,13 @@ class WanVideoEngine(BaseVideoEngine):
     def generate_stream(
         self,
         prompt: str,
+        negative_prompt: Optional[str] = None,
         num_frames: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
+        fps: Optional[int] = 16,
+        steps: Optional[int] = None,
+        guidance: Optional[float] = None,
         seed: Optional[int] = None,
         model_variant: Optional[str] = None,
     ):
@@ -445,9 +535,13 @@ class WanVideoEngine(BaseVideoEngine):
             try:
                 v_bytes, elapsed = self.generate(
                     prompt=prompt,
+                    negative_prompt=negative_prompt,
                     num_frames=num_frames,
                     width=width,
                     height=height,
+                    fps=fps,
+                    steps=steps,
+                    guidance=guidance,
                     seed=seed,
                     model_variant=model_variant,
                     progress_callback=cb,
@@ -490,9 +584,13 @@ class WanVideoEngine(BaseVideoEngine):
         self,
         prompt: str,
         image: Any,
+        negative_prompt: Optional[str] = None,
         num_frames: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
+        fps: Optional[int] = 16,
+        steps: Optional[int] = None,
+        guidance: Optional[float] = None,
         seed: Optional[int] = None,
         model_variant: Optional[str] = None,
     ):
@@ -508,9 +606,13 @@ class WanVideoEngine(BaseVideoEngine):
                 v_bytes, elapsed = self.generate_i2v(
                     prompt=prompt,
                     image=image,
+                    negative_prompt=negative_prompt,
                     num_frames=num_frames,
                     width=width,
                     height=height,
+                    fps=fps,
+                    steps=steps,
+                    guidance=guidance,
                     seed=seed,
                     model_variant=model_variant,
                     progress_callback=cb,

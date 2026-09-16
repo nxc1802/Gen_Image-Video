@@ -18,10 +18,10 @@ import torch
 from transformers import AutoProcessor, BitsAndBytesConfig, TextIteratorStreamer
 
 try:
-    from transformers import AutoModelForImageTextToText as AutoVLMModel
+    from transformers import Qwen2_5_VLForConditionalGeneration as AutoVLMModel
 except ImportError:
     try:
-        from transformers import Qwen2_5_VLForConditionalGeneration as AutoVLMModel
+        from transformers import AutoModelForImageTextToText as AutoVLMModel
     except ImportError:
         from transformers import AutoModelForCausalLM as AutoVLMModel
 
@@ -93,29 +93,48 @@ class QwenVLMEngine(BaseVLMEngine):
                 "quantization_config": bnb_config if torch.cuda.is_available() else None,
                 "torch_dtype": torch.float16 if torch.cuda.is_available() else torch.float32,
                 "trust_remote_code": True,
+                "low_cpu_mem_usage": True,
             }
 
             # ⚖️ PHÂN BỔ ĐA GPU TỰ THÍCH ỨNG (ADAPTIVE WATERMARK SPLIT)
-            if resolved.get("is_dual_gpu") and resolved.get("max_memory"):
+            target_map = resolved.get("device_map") or resolved.get("device")
+            if isinstance(target_map, str) and target_map.startswith("cuda"):
+                # Ghim 100% model trọn vẹn trên GPU chỉ định (không truyền max_memory để tránh lỗi accelerate)
+                load_kwargs["device_map"] = {"": target_map}
+                logger.info(f"🎯 Ghim 100% VLM vào {target_map}")
+            elif resolved.get("max_memory"):
                 load_kwargs["device_map"] = "auto"
                 load_kwargs["max_memory"] = resolved["max_memory"]
                 logger.info(f"⚖️ Áp dụng max_memory tự thích ứng: {resolved['max_memory']}")
             else:
-                target_map = resolved.get("device_map") or resolved.get("device")
-                if isinstance(target_map, str) and target_map.startswith("cuda"):
-                    load_kwargs["device_map"] = {"": target_map}
-                else:
-                    load_kwargs["device_map"] = target_map
+                load_kwargs["device_map"] = target_map or "cuda:0"
 
-            self._model = AutoVLMModel.from_pretrained(
-                self.model_id,
-                **load_kwargs,
-            )
+            try:
+                self._model = AutoVLMModel.from_pretrained(
+                    self.model_id,
+                    **load_kwargs,
+                )
+            except Exception as e_init:
+                logger.warning(f"⚠️ Nạp với {self.model_id} gặp lỗi ({e_init}), thử nạp model nhẹ hơn Qwen/Qwen2.5-VL-3B-Instruct...")
+                fallback_id = "Qwen/Qwen2.5-VL-3B-Instruct"
+                self._processor = AutoProcessor.from_pretrained(
+                    fallback_id,
+                    trust_remote_code=True,
+                )
+                load_kwargs.pop("max_memory", None)
+                load_kwargs["device_map"] = "cuda:0" if torch.cuda.is_available() else "cpu"
+                self._model = AutoVLMModel.from_pretrained(
+                    fallback_id,
+                    **load_kwargs,
+                )
+                self.model_id = fallback_id
             self._is_loaded = True
             elapsed = time.time() - t0
             logger.info(f"✅ VLM ({self.model_id}) nạp thành công trong {elapsed:.2f}s!")
         except Exception as e:
-            logger.error(f"❌ Không thể nạp {self.model_id} ({e}), sử dụng fallback.")
+            import traceback
+            self._load_error = traceback.format_exc()
+            logger.error(f"❌ Không thể nạp {self.model_id} ({e})\n{self._load_error}, sử dụng fallback.")
             self._model = "fallback"
             self._processor = "fallback"
 
@@ -164,8 +183,12 @@ class QwenVLMEngine(BaseVLMEngine):
         max_tokens: int = 512,
         temperature: float = 0.7,
         top_p: float = 0.9,
+        top_k: int = 50,
+        repetition_penalty: float = 1.05,
+        system_prompt: Optional[str] = None,
+        stop: Optional[Any] = None,
     ) -> Dict[str, Any]:
-        """Xử lý chat đa phương thức chuẩn OpenAI."""
+        """Xử lý chat đa phương thức chuẩn OpenAI với đầy đủ tham số cấu hình."""
         model, processor = self.load_model()
         t0 = time.time()
 
@@ -173,12 +196,16 @@ class QwenVLMEngine(BaseVLMEngine):
             user_text = messages[-1].get("content", "") if messages else ""
             if isinstance(user_text, list):
                 user_text = " ".join([c.get("text", "") for c in user_text if isinstance(c, dict) and "text" in c])
-            mock_reply = f"[Mock VLM Response] Tôi đã nhận được yêu cầu: '{user_text[:80]}'."
+            err_msg = getattr(self, "_load_error", "Unknown error")
+            mock_reply = f"[Mock VLM Response] Yêu cầu: '{user_text[:60]}'. Lỗi nạp model: {err_msg[:1200]}"
             return {"text": mock_reply, "tokens": 20, "elapsed": round(time.time() - t0, 2)}
 
         # Chuyển đổi định dạng hội thoại cho Hugging Face
         qwen_messages = []
         raw_images = []
+
+        if system_prompt and not any(m.get("role") == "system" for m in messages):
+            qwen_messages.append({"role": "system", "content": system_prompt})
 
         for msg in messages:
             role = msg.get("role", "user")
@@ -230,13 +257,21 @@ class QwenVLMEngine(BaseVLMEngine):
                 torch.cuda.set_device(model_dev)
             inputs = {k: v.to(model_dev) if hasattr(v, "to") else v for k, v in inputs.items()}
 
+            gen_kwargs = {
+                "max_new_tokens": max_tokens,
+                "temperature": temperature if temperature > 0 else None,
+                "top_p": top_p if temperature > 0 else None,
+                "top_k": top_k if top_k and temperature > 0 else None,
+                "repetition_penalty": repetition_penalty if repetition_penalty > 1.0 else None,
+                "do_sample": (temperature > 0),
+            }
+            # Remove None values
+            gen_kwargs = {k: v for k, v in gen_kwargs.items() if v is not None}
+
             with torch.inference_mode():
                 output_ids = model.generate(
                     **inputs,
-                    max_new_tokens=max_tokens,
-                    temperature=temperature if temperature > 0 else None,
-                    top_p=top_p if temperature > 0 else None,
-                    do_sample=(temperature > 0),
+                    **gen_kwargs,
                 )
 
             generated_ids = [
@@ -270,6 +305,10 @@ class QwenVLMEngine(BaseVLMEngine):
         max_tokens: int = 512,
         temperature: float = 0.7,
         top_p: float = 0.9,
+        top_k: int = 50,
+        repetition_penalty: float = 1.05,
+        system_prompt: Optional[str] = None,
+        stop: Optional[Any] = None,
     ):
         """Xử lý chat đa phương thức với SSE Streaming từng token."""
         model, processor = self.load_model()
@@ -291,6 +330,9 @@ class QwenVLMEngine(BaseVLMEngine):
         # Chuẩn bị tin nhắn
         qwen_messages = []
         raw_images = []
+
+        if system_prompt and not any(m.get("role") == "system" for m in messages):
+            qwen_messages.append({"role": "system", "content": system_prompt})
 
         for msg in messages:
             role = msg.get("role", "user")
@@ -352,8 +394,11 @@ class QwenVLMEngine(BaseVLMEngine):
                 "max_new_tokens": max_tokens,
                 "temperature": temperature if temperature > 0 else None,
                 "top_p": top_p if temperature > 0 else None,
+                "top_k": top_k if top_k and temperature > 0 else None,
+                "repetition_penalty": repetition_penalty if repetition_penalty > 1.0 else None,
                 "do_sample": (temperature > 0),
             }
+            gen_kwargs = {k: v for k, v in gen_kwargs.items() if v is not None}
 
             def run_gen():
                 try:

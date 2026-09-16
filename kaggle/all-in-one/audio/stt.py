@@ -82,17 +82,24 @@ class STTEngine(BaseSTTEngine):
         audio_bytes: bytes,
         language: Optional[str] = None,
         prompt: Optional[str] = None,
+        task: Optional[str] = "transcribe",
+        temperature: Optional[float] = 0.0,
     ) -> Dict[str, Any]:
         """
         Nhận diện giọng nói từ mảng bytes âm thanh.
+        Hỗ trợ đa ngôn ngữ (EN, VI), chuyển ngữ (task='translate'), và kiểm soát temperature.
         Trả về kết quả chuẩn OpenAI transcription: {"text": "..."}
         """
         model = self.load_model()
 
+        lang_code = None
+        if language and language.lower() not in ("auto", "none", ""):
+            lang_code = "vi" if "vi" in language.lower() else "en"
+
         if model == "fallback":
             return {
                 "text": "Đây là kết quả nhận diện giọng nói thử nghiệm (Whisper Fallback Engine).",
-                "language": language or "vi",
+                "language": lang_code or "vi",
                 "duration_seconds": 0.5,
             }
 
@@ -105,19 +112,22 @@ class STTEngine(BaseSTTEngine):
             transcribe_options = {
                 "fp16": (self.resolved_device != "cpu"),
                 "verbose": False,
+                "task": task or "transcribe",
+                "temperature": temperature if temperature is not None else 0.0,
             }
-            if language:
-                transcribe_options["language"] = language
+            if lang_code:
+                transcribe_options["language"] = lang_code
             if prompt:
                 transcribe_options["initial_prompt"] = prompt
 
             result = model.transcribe(tmp_path, **transcribe_options)
             elapsed = time.time() - t0
 
-            logger.info(f"🎯 Nhận diện hoàn tất trong {elapsed:.2f}s: '{result.get('text', '')[:40]}...'")
+            detected_lang = result.get("language", lang_code or "auto")
+            logger.info(f"🎯 Nhận diện hoàn tất trong {elapsed:.2f}s [lang={detected_lang}, task={transcribe_options['task']}]: '{result.get('text', '')[:40]}...'")
             return {
                 "text": result.get("text", "").strip(),
-                "language": result.get("language", "auto"),
+                "language": detected_lang,
                 "duration_seconds": round(elapsed, 2),
             }
         finally:

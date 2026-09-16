@@ -47,7 +47,7 @@ DEFAULT_MODELS_CONFIG: Dict[str, Any] = {
         "device_strategy": "gpu_0",
     },
     "vlm": {
-        "id": "Qwen/Qwen2.5-VL-7B-Instruct",
+        "id": "Qwen/Qwen2.5-VL-3B-Instruct",
         "quantization": "4bit",
         "lifecycle": "always_active",
         "preload": True,

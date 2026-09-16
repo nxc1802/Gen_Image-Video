@@ -149,18 +149,15 @@ class MemoryManager:
 
             t0 = time.time()
 
-            # Trường hợp 2: Có một mô hình dynamic khác đang chiếm GPU -> Chuyển về CPU RAM
+            # Trường hợp 2: Có một mô hình dynamic khác đang chiếm GPU -> Giải phóng VRAM và RAM để tránh OOM
             if self.active_dynamic_slot and self.active_dynamic_slot != target_slot:
                 prev_slot = self.active_dynamic_slot
-                logger.info(f"🔄 [GPU ➔ RAM] Nhường VRAM: Chuyển '{prev_slot}' về CPU RAM...")
-                prev_model = self.dynamic_models.get(prev_slot)
-                if prev_model is not None:
-                    if hasattr(prev_model, "to"):
-                        try:
-                            prev_model.to("cpu")
-                        except Exception as e:
-                            logger.debug(f"Không thể chuyển {prev_slot} về CPU: {e}")
+                logger.info(f"🔄 [GPU ➔ RAM] Nhường VRAM: Giải phóng slot '{prev_slot}'...")
+                if prev_slot in self.dynamic_models:
+                    del self.dynamic_models[prev_slot]
                 self.clean_gpu()
+                import gc
+                gc.collect()
                 self.active_dynamic_slot = None
 
             # Trường hợp 3: Target đã có sẵn trong CPU RAM -> Đẩy lên GPU

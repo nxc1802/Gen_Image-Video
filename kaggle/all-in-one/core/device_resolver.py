@@ -187,8 +187,8 @@ class DeviceTopologyResolver:
         if strategy == "gpu_0":
             return {
                 "device": "cuda:0",
-                "device_map": None,
-                "max_memory": None,
+                "device_map": "auto",
+                "max_memory": {0: "13GiB"},
                 "is_dual_gpu": False,
                 "detected_size_b": detected_size,
                 "estimated_vram_gb": needed_gb,
@@ -196,10 +196,11 @@ class DeviceTopologyResolver:
             }
         elif strategy == "gpu_1":
             target = "cuda:1" if self.gpu_count > 1 else "cuda:0"
+            target_idx = 1 if self.gpu_count > 1 else 0
             return {
                 "device": target,
-                "device_map": None,
-                "max_memory": None,
+                "device_map": "auto",
+                "max_memory": {target_idx: "14GiB"},
                 "is_dual_gpu": False,
                 "detected_size_b": detected_size,
                 "estimated_vram_gb": needed_gb,
