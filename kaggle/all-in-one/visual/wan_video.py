@@ -228,14 +228,31 @@ class WanVideoEngine(BaseVideoEngine):
                     vae.enable_tiling()
 
                 # 4. Assembled WanPipeline directly bound to GPU 1
+                logger.info(f"🎬 [Wan 4-bit] Đang nạp tokenizer & scheduler từ '{mid}'...")
+                from diffusers.schedulers import FlowMatchEulerDiscreteScheduler
+                from transformers import AutoTokenizer
+
+                tokenizer = AutoTokenizer.from_pretrained(mid, subfolder="tokenizer")
+                scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained(mid, subfolder="scheduler")
+
                 logger.info(f"🎬 [Wan 4-bit] Lắp ráp WanPipeline nguyên khối trực tiếp trên {dev_str} (NO CPU OFFLOAD)...")
-                pipe = WanPipeline.from_pretrained(
-                    mid,
-                    transformer=transformer,
-                    text_encoder=text_encoder,
-                    vae=vae,
-                    torch_dtype=torch.float32,
-                )
+                try:
+                    pipe = WanPipeline(
+                        tokenizer=tokenizer,
+                        text_encoder=text_encoder,
+                        transformer=transformer,
+                        vae=vae,
+                        scheduler=scheduler,
+                    )
+                except Exception as init_err:
+                    logger.warning(f"WanPipeline direct init note ({init_err}), thử from_pretrained không ép dtype...")
+                    pipe = WanPipeline.from_pretrained(
+                        mid,
+                        transformer=transformer,
+                        text_encoder=text_encoder,
+                        vae=vae,
+                    )
+
                 if hasattr(pipe, "vae") and pipe.vae is not None:
                     try:
                         pipe.vae.to(dev_str, dtype=torch.float32)
@@ -254,7 +271,9 @@ class WanVideoEngine(BaseVideoEngine):
                 logger.info(f"✅ Wan2.1 Video 1.3B (4-bit FP32-Compute) nạp thành công 100% trên {dev_str} trong {elapsed:.2f}s! (Zero NaNs, không dùng CPU offload)")
                 return pipe
             except Exception as e:
-                logger.warning(f"⚠️ Không nạp được Wan2.1 4-bit ({mid}): {e}. Thử tiếp...")
+                import traceback
+                tb = traceback.format_exc()
+                logger.error(f"❌ [Wan 4-bit Loading Error on {mid}]: {e}\n{tb}")
 
         raise RuntimeError("Không thể nạp Wan2.1 T2V pipeline với bất kỳ candidate nào.")
 
