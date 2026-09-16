@@ -175,57 +175,54 @@ class WanVideoEngine(BaseVideoEngine):
                 from transformers import BitsAndBytesConfig, UMT5EncoderModel
                 from diffusers import AutoencoderKLWan, WanPipeline, WanTransformer3DModel
 
-                logger.info(f"🎬 [Wan 4-bit] Bắt đầu nạp Wan2.1 1.3B từ '{mid}' trực tiếp lên {dev_str} (NO CPU OFFLOAD)...")
+                logger.info(f"🎬 [Wan 1.3B Native FP16] Bắt đầu nạp Wan2.1 1.3B từ '{mid}' trực tiếp lên {dev_str} (NO CPU OFFLOAD)...")
 
-                bnb_config = BitsAndBytesConfig(
+                # Text Encoder: google/umt5-xxl in 4-bit NF4 with FP32 compute (~5.2 GB VRAM)
+                # Dùng bnb_4bit_compute_dtype=torch.float32 và torch_dtype=torch.float32 để triệt tiêu hoàn toàn lỗi tràn số (overflow/NaN) của T5 trong FP16!
+                bnb_config_text = BitsAndBytesConfig(
                     load_in_4bit=True,
                     bnb_4bit_quant_type="nf4",
-                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_compute_dtype=torch.float32,
                     bnb_4bit_use_double_quant=True,
                 )
 
-                # 1. Text Encoder: google/umt5-xxl in 4-bit NF4 (~2.5 GB VRAM)
-                # Dùng torch_dtype=torch.float16 để tránh phình 22GB (FP32) gây OOM
-                logger.info(f"🎬 [Wan 4-bit] Đang nạp UMT5EncoderModel (4-bit NF4) từ '{mid}/text_encoder'...")
+                # 1. Text Encoder: google/umt5-xxl
+                logger.info(f"🎬 [Wan] Đang nạp UMT5EncoderModel (4-bit NF4, FP32 compute & weights) từ '{mid}/text_encoder'...")
                 text_encoder = UMT5EncoderModel.from_pretrained(
                     mid,
                     subfolder="text_encoder",
-                    quantization_config=bnb_config,
-                    torch_dtype=torch.float16,
+                    quantization_config=bnb_config_text,
+                    torch_dtype=torch.float32,
                     device_map={"": dev_str},
                     low_cpu_mem_usage=True,
                 )
                 if torch.cuda.is_available():
                     torch.cuda.empty_cache()
 
-                # 2. Transformer: WanTransformer3DModel in 4-bit NF4 (~0.8 GB VRAM)
-                logger.info(f"🎬 [Wan 4-bit] Đang nạp WanTransformer3DModel (4-bit NF4) từ '{mid}/transformer'...")
+                # 2. Transformer: WanTransformer3DModel in native unquantized FP16 (~2.7 GB VRAM)
+                # Lưu ý: Model 1.3B chỉ có 1.36 tỷ tham số (~2.7GB FP16), hoàn toàn vừa vặn trong VRAM Tesla T4!
+                # KHÔNG lượng tử hóa 4-bit transformer vì bnb NF4 làm sụp đổ trường vector dòng chảy (flow matching trajectory),
+                # dẫn đến hiện tượng video bị xám đặc (grey static noise, std ~6.2).
+                logger.info(f"🎬 [Wan] Đang nạp WanTransformer3DModel (FP16 nguyên bản không lượng tử hóa, ~2.7GB) từ '{mid}/transformer'...")
                 transformer = WanTransformer3DModel.from_pretrained(
                     mid,
                     subfolder="transformer",
-                    quantization_config=bnb_config,
                     torch_dtype=torch.float16,
-                    device_map={"": dev_str},
-                    low_cpu_mem_usage=True,
-                )
+                ).to(dev_str)
                 if torch.cuda.is_available():
                     torch.cuda.empty_cache()
 
-                # 3. VAE: AutoencoderKLWan in float32 with slicing & tiling (~1.2 GB VRAM)
-                logger.info(f"🎬 [Wan 4-bit] Đang nạp AutoencoderKLWan (FP32/Slicing/Tiling) từ '{mid}/vae'...")
+                # 3. VAE: AutoencoderKLWan in float32 (~1.2 GB VRAM)
+                logger.info(f"🎬 [Wan] Đang nạp AutoencoderKLWan (FP32 nguyên bản) từ '{mid}/vae'...")
                 vae = AutoencoderKLWan.from_pretrained(
                     mid,
                     subfolder="vae",
                     torch_dtype=torch.float32,
                 )
                 vae = vae.to(dev_str)
-                if hasattr(vae, "enable_slicing"):
-                    vae.enable_slicing()
-                if hasattr(vae, "enable_tiling"):
-                    vae.enable_tiling()
 
                 # 4. Assembled WanPipeline directly bound to GPU 1
-                logger.info(f"🎬 [Wan 4-bit] Lắp ráp WanPipeline nguyên khối trực tiếp trên {dev_str} (NO CPU OFFLOAD)...")
+                logger.info(f"🎬 [Wan] Lắp ráp WanPipeline nguyên khối trực tiếp trên {dev_str} (NO CPU OFFLOAD)...")
                 try:
                     pipe = WanPipeline.from_pretrained(
                         mid,
@@ -234,12 +231,13 @@ class WanVideoEngine(BaseVideoEngine):
                         vae=vae,
                     )
                 except Exception as p_err:
-                    logger.warning(f"from_pretrained note ({p_err}), thử khởi tạo trực tiếp với UniPCMultistepScheduler...")
-                    from diffusers.schedulers import UniPCMultistepScheduler
+                    logger.warning(f"from_pretrained note ({p_err}), thử khởi tạo trực tiếp với FlowMatchEulerDiscreteScheduler...")
+                    from diffusers.schedulers import FlowMatchEulerDiscreteScheduler
                     from transformers import AutoTokenizer
 
                     tokenizer = AutoTokenizer.from_pretrained(mid, subfolder="tokenizer")
-                    scheduler = UniPCMultistepScheduler.from_pretrained(mid, subfolder="scheduler")
+                    base_sched = FlowMatchEulerDiscreteScheduler.from_pretrained(mid, subfolder="scheduler")
+                    scheduler = FlowMatchEulerDiscreteScheduler.from_config(base_sched.config, shift=3.0)
                     pipe = WanPipeline(
                         tokenizer=tokenizer,
                         text_encoder=text_encoder,
@@ -248,22 +246,28 @@ class WanVideoEngine(BaseVideoEngine):
                         scheduler=scheduler,
                     )
 
+                # 5. Cấu hình FlowMatchEulerDiscreteScheduler với shift=3.0 (chuẩn Flow Matching cho Wan2.1 1.3B 480P)
+                from diffusers.schedulers import FlowMatchEulerDiscreteScheduler
+                pipe.scheduler = FlowMatchEulerDiscreteScheduler.from_config(pipe.scheduler.config, shift=3.0)
+                logger.info("✅ Đã cấu hình FlowMatchEulerDiscreteScheduler (shift=3.0) chuẩn cho WanPipeline!")
+
                 if hasattr(pipe, "vae") and pipe.vae is not None:
                     try:
                         pipe.vae.to(dev_str, dtype=torch.float32)
-                        if hasattr(pipe.vae, "enable_slicing"):
-                            pipe.vae.enable_slicing()
                         if hasattr(pipe.vae, "enable_tiling"):
                             pipe.vae.enable_tiling()
-                    except Exception:
-                        pass
+                        if hasattr(pipe.vae, "enable_slicing"):
+                            pipe.vae.enable_slicing()
+                        logger.info("✅ Đã bật VAE enable_tiling() & enable_slicing() tối ưu VRAM decode!")
+                    except Exception as ve:
+                        logger.warning(f"vae setup note: {ve}")
 
                 self._model = pipe
                 self._pipe = pipe
                 self._current_loaded_id = mid
                 self._is_loaded = True
                 elapsed = time.time() - t0
-                logger.info(f"✅ Wan2.1 Video 1.3B (4-bit FP32-Compute) nạp thành công 100% trên {dev_str} trong {elapsed:.2f}s! (Zero NaNs, không dùng CPU offload)")
+                logger.info(f"✅ Wan2.1 Video 1.3B (Native FP16 Transformer + 4-bit FP32-Compute UMT5 + FlowMatchEuler) nạp thành công 100% trên {dev_str} trong {elapsed:.2f}s! (NO CPU OFFLOAD)")
                 return pipe
             except Exception as e:
                 import traceback
@@ -332,6 +336,7 @@ class WanVideoEngine(BaseVideoEngine):
         w = width or self.width
         h = height or self.height
         fps_val = fps or 16
+        tot_steps = steps or self.steps or 20
 
         with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp_file:
             out_path = tmp_file.name
@@ -347,11 +352,12 @@ class WanVideoEngine(BaseVideoEngine):
                     dev = f"cuda:{target_device}" if torch.cuda.is_available() else "cpu"
                     generator = torch.Generator(device=dev).manual_seed(seed)
 
-                tot_steps = steps or 30
                 def step_cb(pipeline, step_idx, timestep, callback_kwargs):
                     pct = int(((step_idx + 1) / max(tot_steps, 1)) * 100)
                     if progress_callback:
                         progress_callback(step_idx + 1, tot_steps, min(pct, 100))
+                    if step_idx + 1 >= tot_steps and torch.cuda.is_available():
+                        torch.cuda.empty_cache()
                     return callback_kwargs
 
                 neg_p = negative_prompt or (
@@ -377,6 +383,25 @@ class WanVideoEngine(BaseVideoEngine):
                             video_frames = pipe(**call_kwargs, callback_on_step_end=step_cb).frames[0]
                         except TypeError:
                             video_frames = pipe(**call_kwargs).frames[0]
+
+                        # Thống kê phân bố điểm ảnh để kiểm định chất lượng trực tiếp trong log
+                        try:
+                            import numpy as np
+                            if isinstance(video_frames, np.ndarray):
+                                f_mean = float(video_frames.mean())
+                                f_std = float(video_frames.std())
+                                logger.info(f"🎬 [T2V Frame Stats] shape={video_frames.shape}, min={video_frames.min():.2f}, max={video_frames.max():.2f}, mean={f_mean:.2f}, std={f_std:.2f}")
+                                if f_std < 10.0:
+                                    logger.warning(f"⚠️ [Low Quality Warning] Generated video has low std ({f_std:.2f}), frames may lack contrast!")
+                                else:
+                                    logger.info(f"🎉 [Quality Check Passed] std={f_std:.2f} confirms rich visual contrast and content!")
+                            elif isinstance(video_frames, list) and len(video_frames) > 0:
+                                arr0 = np.array(video_frames[0])
+                                f_mean = float(arr0.mean())
+                                f_std = float(arr0.std())
+                                logger.info(f"🎬 [T2V Frame Stats] {len(video_frames)} frames, frame0: mean={f_mean:.2f}, std={f_std:.2f}")
+                        except Exception as q_err:
+                            logger.debug(f"Frame stats note: {q_err}")
 
                     try:
                         from diffusers.utils import export_to_video
@@ -449,6 +474,8 @@ class WanVideoEngine(BaseVideoEngine):
                     pct = int(((step_idx + 1) / max(tot_steps, 1)) * 100)
                     if progress_callback:
                         progress_callback(step_idx + 1, tot_steps, min(pct, 100))
+                    if step_idx + 1 >= tot_steps and torch.cuda.is_available():
+                        torch.cuda.empty_cache()
                     return callback_kwargs
 
                 neg_p = negative_prompt or (
