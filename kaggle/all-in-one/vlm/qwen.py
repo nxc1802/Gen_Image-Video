@@ -102,7 +102,10 @@ class QwenVLMEngine(BaseVLMEngine):
                 logger.info(f"⚖️ Áp dụng max_memory tự thích ứng: {resolved['max_memory']}")
             else:
                 target_map = resolved.get("device_map") or resolved.get("device")
-                load_kwargs["device_map"] = target_map
+                if isinstance(target_map, str) and target_map.startswith("cuda"):
+                    load_kwargs["device_map"] = {"": target_map}
+                else:
+                    load_kwargs["device_map"] = target_map
 
             self._model = AutoVLMModel.from_pretrained(
                 self.model_id,
@@ -220,10 +223,12 @@ class QwenVLMEngine(BaseVLMEngine):
                     return_tensors="pt",
                 )
 
-            # Đưa input vào đúng device
-            target_device = self.resolved_device if self.resolved_device != "cpu" else "cpu"
-            if torch.cuda.is_available() and target_device != "cpu":
-                inputs = {k: v.to(target_device) if hasattr(v, "to") else v for k, v in inputs.items()}
+            # Đưa input vào đúng device của model
+            first_param = next(model.parameters(), None) if hasattr(model, "parameters") else None
+            model_dev = first_param.device if first_param is not None else torch.device(self.resolved_device if self.resolved_device != "cpu" else "cpu")
+            if hasattr(model_dev, "type") and model_dev.type == "cuda":
+                torch.cuda.set_device(model_dev)
+            inputs = {k: v.to(model_dev) if hasattr(v, "to") else v for k, v in inputs.items()}
 
             with torch.inference_mode():
                 output_ids = model.generate(
@@ -330,9 +335,11 @@ class QwenVLMEngine(BaseVLMEngine):
                     return_tensors="pt",
                 )
 
-            target_device = self.resolved_device if self.resolved_device != "cpu" else "cpu"
-            if torch.cuda.is_available() and target_device != "cpu":
-                inputs = {k: v.to(target_device) if hasattr(v, "to") else v for k, v in inputs.items()}
+            first_param = next(model.parameters(), None) if hasattr(model, "parameters") else None
+            model_dev = first_param.device if first_param is not None else torch.device(self.resolved_device if self.resolved_device != "cpu" else "cpu")
+            if hasattr(model_dev, "type") and model_dev.type == "cuda":
+                torch.cuda.set_device(model_dev)
+            inputs = {k: v.to(model_dev) if hasattr(v, "to") else v for k, v in inputs.items()}
 
             tokenizer = getattr(processor, "tokenizer", processor)
             streamer = TextIteratorStreamer(
@@ -348,7 +355,16 @@ class QwenVLMEngine(BaseVLMEngine):
                 "do_sample": (temperature > 0),
             }
 
-            generation_thread = threading.Thread(target=model.generate, kwargs=gen_kwargs)
+            def run_gen():
+                try:
+                    if hasattr(model_dev, "type") and model_dev.type == "cuda":
+                        torch.cuda.set_device(model_dev)
+                    with torch.inference_mode():
+                        model.generate(**gen_kwargs)
+                except Exception as th_e:
+                    logger.error(f"Lỗi generate thread VLM: {th_e}")
+
+            generation_thread = threading.Thread(target=run_gen)
             generation_thread.start()
 
             for new_text in streamer:

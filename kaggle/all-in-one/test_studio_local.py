@@ -47,6 +47,8 @@ def parse_sse_events(response: requests.Response):
         if raw_line is None:
             continue
         line = raw_line.strip()
+        if line.startswith(":"):
+            continue
         if not line:
             if data_lines:
                 data_str = "\n".join(data_lines)
@@ -334,7 +336,10 @@ class StudioTester:
                     step = data.get("step")
                     total = data.get("total_steps")
                     pct = data.get("progress")
-                    print(f"   ⏳ [FLUX Progress] Bước {step}/{total} ({pct}%)")
+                    if data.get("status") == "preparing" or step == 0:
+                        print(f"   ⏳ [FLUX] Đang khởi tạo mô hình và kết nối VRAM...")
+                    else:
+                        print(f"   ⏳ [FLUX Progress] Bước {step}/{total} ({pct}%)")
                 elif ev_type == "complete" and isinstance(data, dict):
                     items = data.get("data", [])
                     if items and "b64_json" in items[0]:
@@ -424,7 +429,10 @@ class StudioTester:
                     step = data.get("step")
                     total = data.get("total_steps")
                     pct = data.get("progress")
-                    print(f"   ⏳ [Inpaint Progress] Bước {step}/{total} ({pct}%)")
+                    if data.get("status") == "preparing" or step == 0:
+                        print(f"   ⏳ [Inpaint] Đang khởi tạo Inpainting pipeline và VRAM...")
+                    else:
+                        print(f"   ⏳ [Inpaint Progress] Bước {step}/{total} ({pct}%)")
                 elif ev_type == "complete" and isinstance(data, dict):
                     items = data.get("data", [])
                     if items and "b64_json" in items[0]:
@@ -490,7 +498,10 @@ class StudioTester:
                     step = data.get("step")
                     total = data.get("total_steps")
                     pct = data.get("progress")
-                    print(f"   ⏳ [Video Progress] Khử nhiễu bước {step}/{total} ({pct}%)")
+                    if data.get("status") == "preparing" or step == 0:
+                        print(f"   ⏳ [Video] Đang khởi tạo Wan2.1 Video pipeline và bộ đệm...")
+                    else:
+                        print(f"   ⏳ [Video Progress] Khử nhiễu bước {step}/{total} ({pct}%)")
                 elif ev_type == "complete" and isinstance(data, dict):
                     items = data.get("data", [])
                     if items and "b64_json" in items[0]:
@@ -570,7 +581,10 @@ class StudioTester:
                     step = data.get("step")
                     total = data.get("total_steps")
                     pct = data.get("progress")
-                    print(f"   ⏳ [ITV Progress] Bước {step}/{total} ({pct}%)")
+                    if data.get("status") == "preparing" or step == 0:
+                        print(f"   ⏳ [ITV] Đang khởi tạo Wan2.1 ITV pipeline và bộ đệm...")
+                    else:
+                        print(f"   ⏳ [ITV Progress] Bước {step}/{total} ({pct}%)")
                 elif ev_type == "complete" and isinstance(data, dict):
                     items = data.get("data", [])
                     if items and "b64_json" in items[0]:

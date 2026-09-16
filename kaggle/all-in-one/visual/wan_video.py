@@ -186,7 +186,7 @@ class WanVideoEngine(BaseVideoEngine):
         def loader_wrap():
             return self._loader(target_id, is_i2v=is_i2v)
 
-        slot_key = "wan_video_i2v" if is_i2v else "wan_video"
+        slot_key = "video"
         return mem.switch_dynamic_slot(slot_key, loader_wrap, engine_obj=self)
 
     def load(self) -> Any:
@@ -408,10 +408,13 @@ class WanVideoEngine(BaseVideoEngine):
         th.start()
 
         while True:
-            item = q.get()
-            if item is None:
-                break
-            yield item
+            try:
+                item = q.get(timeout=2.0)
+                if item is None:
+                    break
+                yield item
+            except queue.Empty:
+                yield {"type": "heartbeat"}
 
         th.join()
         if result_holder.get("success"):
@@ -468,10 +471,13 @@ class WanVideoEngine(BaseVideoEngine):
         th.start()
 
         while True:
-            item = q.get()
-            if item is None:
-                break
-            yield item
+            try:
+                item = q.get(timeout=2.0)
+                if item is None:
+                    break
+                yield item
+            except queue.Empty:
+                yield {"type": "heartbeat"}
 
         th.join()
         if result_holder.get("success"):

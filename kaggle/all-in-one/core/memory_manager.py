@@ -123,6 +123,16 @@ class MemoryManager:
             self.always_active_models[slot_name] = model_instance
             logger.info(f"📌 [Pinned VRAM] Mô hình '{slot_name}' đã được ghim thường trực (always_active).")
 
+    SLOT_ALIASES = {
+        "flux": "image",
+        "flux_image": "image",
+        "wan": "video",
+        "wan_video": "video",
+        "wan_video_i2v": "video",
+        "t2v": "video",
+        "i2v": "video",
+    }
+
     def switch_dynamic_slot(self, target_slot: str, loader_fn: Callable[[], Any], engine_obj: Optional[Any] = None) -> Any:
         """
         Điều phối hoán đổi mô hình dynamic_switch giữa CPU RAM và GPU VRAM qua bus PCIe:
@@ -130,6 +140,7 @@ class MemoryManager:
         2. Nếu slot khác đang trên GPU: Chuyển slot cũ về CPU RAM, dọn cache VRAM.
         3. Đưa target_slot lên GPU từ RAM (hoặc nạp lần đầu nếu chưa có).
         """
+        target_slot = self.SLOT_ALIASES.get(target_slot.lower(), target_slot.lower())
         with self.operation_lock:
             # Trường hợp 1: Đang sẵn sàng trên GPU
             if self.active_dynamic_slot == target_slot and target_slot in self.dynamic_models:

@@ -111,6 +111,7 @@ def create_app() -> FastAPI:
 
         if req.stream:
             def sse_generator():
+                yield ": keepalive\n\n"
                 created_ts = int(time.time())
                 req_id = f"chatcmpl-{uuid.uuid4().hex}"
                 for token in vlm.chat_stream(
@@ -228,29 +229,37 @@ def create_app() -> FastAPI:
         if req.image and req.mask_image:
             if req.stream:
                 def sse_inpaint_stream():
-                    for ev in flux.inpaint_stream(
-                        prompt=req.prompt,
-                        image=req.image,
-                        mask_image=req.mask_image,
-                        size=req.size or "1024x1024",
-                        steps=req.steps,
-                        guidance=req.guidance,
-                        seed=req.seed,
-                        model_variant=req.model,
-                    ):
-                        if ev["type"] == "progress":
-                            yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
-                        elif ev["type"] == "complete":
-                            res_payload = {
-                                "created": int(time.time()),
-                                "data": [{"b64_json": ev["b64_json"], "revised_prompt": req.prompt}],
-                                "x_inference_time_seconds": ev["elapsed"],
-                            }
-                            yield f"event: complete\ndata: {json.dumps(res_payload)}\n\n"
-                            yield "data: [DONE]\n\n"
-                        elif ev["type"] == "error":
-                            yield f"event: error\ndata: {json.dumps(ev)}\n\n"
-                            yield "data: [DONE]\n\n"
+                    yield ": keepalive\n\n"
+                    yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': req.steps or 4, 'progress': 0, 'status': 'preparing'})}\n\n"
+                    try:
+                        for ev in flux.inpaint_stream(
+                            prompt=req.prompt,
+                            image=req.image,
+                            mask_image=req.mask_image,
+                            size=req.size or "1024x1024",
+                            steps=req.steps,
+                            guidance=req.guidance,
+                            seed=req.seed,
+                            model_variant=req.model,
+                        ):
+                            if ev.get("type") == "heartbeat":
+                                yield ": keepalive\n\n"
+                            elif ev["type"] == "progress":
+                                yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
+                            elif ev["type"] == "complete":
+                                res_payload = {
+                                    "created": int(time.time()),
+                                    "data": [{"b64_json": ev["b64_json"], "revised_prompt": req.prompt}],
+                                    "x_inference_time_seconds": ev["elapsed"],
+                                }
+                                yield f"event: complete\ndata: {json.dumps(res_payload)}\n\n"
+                                yield "data: [DONE]\n\n"
+                            elif ev["type"] == "error":
+                                yield f"event: error\ndata: {json.dumps(ev)}\n\n"
+                                yield "data: [DONE]\n\n"
+                    except Exception as e:
+                        yield f"event: error\ndata: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+                        yield "data: [DONE]\n\n"
 
                 return StreamingResponse(sse_inpaint_stream(), media_type="text/event-stream")
 
@@ -273,6 +282,8 @@ def create_app() -> FastAPI:
         # Text-to-Image tiêu chuẩn
         if req.stream:
             def sse_image_stream():
+                yield ": keepalive\n\n"
+                yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': req.steps or 4, 'progress': 0, 'status': 'preparing'})}\n\n"
                 try:
                     for ev in flux.generate_stream(
                         prompt=req.prompt,
@@ -282,7 +293,9 @@ def create_app() -> FastAPI:
                         seed=req.seed,
                         model_variant=req.model,
                     ):
-                        if ev["type"] == "progress":
+                        if ev.get("type") == "heartbeat":
+                            yield ": keepalive\n\n"
+                        elif ev["type"] == "progress":
                             yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
                         elif ev["type"] == "complete":
                             res_payload = {
@@ -331,6 +344,8 @@ def create_app() -> FastAPI:
 
         if req.stream:
             def sse_edit_stream():
+                yield ": keepalive\n\n"
+                yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': req.steps or 4, 'progress': 0, 'status': 'preparing'})}\n\n"
                 try:
                     for ev in flux.inpaint_stream(
                         prompt=req.prompt,
@@ -342,7 +357,9 @@ def create_app() -> FastAPI:
                         seed=req.seed,
                         model_variant=req.model,
                     ):
-                        if ev["type"] == "progress":
+                        if ev.get("type") == "heartbeat":
+                            yield ": keepalive\n\n"
+                        elif ev["type"] == "progress":
                             yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
                         elif ev["type"] == "complete":
                             res_payload = {
@@ -390,6 +407,8 @@ def create_app() -> FastAPI:
         if req.image:
             if req.stream:
                 def sse_i2v_stream():
+                    yield ": keepalive\n\n"
+                    yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': req.num_frames or 25, 'progress': 0, 'status': 'preparing'})}\n\n"
                     try:
                         for ev in wan.generate_i2v_stream(
                             prompt=req.prompt,
@@ -400,7 +419,9 @@ def create_app() -> FastAPI:
                             seed=req.seed,
                             model_variant=req.model,
                         ):
-                            if ev["type"] == "progress":
+                            if ev.get("type") == "heartbeat":
+                                yield ": keepalive\n\n"
+                            elif ev["type"] == "progress":
                                 yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
                             elif ev["type"] == "complete":
                                 b64_vid = base64.b64encode(ev["video_bytes"]).decode("utf-8")
@@ -439,6 +460,8 @@ def create_app() -> FastAPI:
         # Text-to-Video (T2V)
         if req.stream:
             def sse_t2v_stream():
+                yield ": keepalive\n\n"
+                yield f"event: progress\ndata: {json.dumps({'step': 0, 'total_steps': req.num_frames or 25, 'progress': 0, 'status': 'preparing'})}\n\n"
                 try:
                     for ev in wan.generate_stream(
                         prompt=req.prompt,
@@ -448,7 +471,9 @@ def create_app() -> FastAPI:
                         seed=req.seed,
                         model_variant=req.model,
                     ):
-                        if ev["type"] == "progress":
+                        if ev.get("type") == "heartbeat":
+                            yield ": keepalive\n\n"
+                        elif ev["type"] == "progress":
                             yield f"event: progress\ndata: {json.dumps(ev)}\n\n"
                         elif ev["type"] == "complete":
                             b64_vid = base64.b64encode(ev["video_bytes"]).decode("utf-8")

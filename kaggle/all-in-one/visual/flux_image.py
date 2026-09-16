@@ -172,7 +172,7 @@ class FluxImageEngine(BaseImageEngine):
             logger.info(f"🔄 Đổi biến thể FLUX từ {self._current_loaded_id} sang {target_id}")
             self._pipe = None
 
-        return mem.switch_dynamic_slot("flux", loader_wrap, engine_obj=self)
+        return mem.switch_dynamic_slot("image", loader_wrap, engine_obj=self)
 
     def load(self) -> Any:
         return self.get_pipeline()
@@ -368,10 +368,13 @@ class FluxImageEngine(BaseImageEngine):
         th.start()
 
         while True:
-            item = q.get()
-            if item is None:
-                break
-            yield item
+            try:
+                item = q.get(timeout=2.0)
+                if item is None:
+                    break
+                yield item
+            except queue.Empty:
+                yield {"type": "heartbeat"}
 
         th.join()
         if result_holder.get("success"):
@@ -430,10 +433,13 @@ class FluxImageEngine(BaseImageEngine):
         th.start()
 
         while True:
-            item = q.get()
-            if item is None:
-                break
-            yield item
+            try:
+                item = q.get(timeout=2.0)
+                if item is None:
+                    break
+                yield item
+            except queue.Empty:
+                yield {"type": "heartbeat"}
 
         th.join()
         if result_holder.get("success"):
