@@ -515,4 +515,14 @@ def create_app() -> FastAPI:
             "x_inference_time_seconds": elapsed,
         }
 
+    @app.post("/v1/admin/shutdown")
+    def admin_shutdown():
+        """Dừng kernel server an toàn."""
+        def kill_soon():
+            time.sleep(0.5)
+            import os
+            os._exit(0)
+        threading.Thread(target=kill_soon).start()
+        return {"status": "shutting_down", "message": "Kernel process is terminating"}
+
     return app
