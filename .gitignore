@@ -18,6 +18,16 @@ __marimo__/
 .DS_Store
 Thumbs.db
 
+# Secrets & Environment
+.env
+*.env
+
+# Media outputs & test artifacts
+test_outputs/
+*.mp4
+*.wav
+!kaggle/all-in-one/test_outputs/tts_output.wav
+
 # Large generated assets & logs
 *.log
 /tmp/

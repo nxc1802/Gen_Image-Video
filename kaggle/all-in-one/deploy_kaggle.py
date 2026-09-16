@@ -66,7 +66,7 @@ def pack_and_update_run_notebook(notebook_path: str = "run_kaggle.ipynb") -> boo
         for root, dirs, files in os.walk(curr_dir):
             dirs[:] = [d for d in dirs if d not in (".git", "__pycache__", "test_outputs", "checkpoints", ".ipynb_checkpoints")]
             for f in files:
-                if (f.endswith((".py", ".yaml", ".txt")) or f == ".env") and not f.startswith("deploy_") and not f.startswith("build_") and not f.startswith("diffusers_") and f != "public_url.txt":
+                if (f.endswith((".py", ".yaml", ".txt")) or f == ".env") and not f.startswith("deploy_") and not f.startswith("build_") and f != "public_url.txt":
                     full_p = os.path.join(root, f)
                     rel_p = os.path.relpath(full_p, curr_dir)
                     tar.add(full_p, arcname=rel_p)
