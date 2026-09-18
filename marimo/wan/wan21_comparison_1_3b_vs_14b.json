@@ -1,0 +1,60 @@
+{
+  "prompt": "A close-up cinematic shot of a young woman in a soft knitted cream sweater sitting by a sunlit wooden cafe table, gently holding a steaming ceramic mug with both hands, taking a slow delicate sip and looking out the rainy window with a calm natural smile, soft warm morning lighting, raindrops on window glass, shallow depth of field, photorealistic 8k, fluid realistic subtle motion",
+  "config": {
+    "width": 832,
+    "height": 480,
+    "frames": 17,
+    "fps": 16,
+    "steps": 10,
+    "guidance_scale": 5.0,
+    "seed": 42
+  },
+  "models": {
+    "wan21_1_3b": {
+      "model_id": "Wan-AI/Wan2.1-T2V-1.3B-Diffusers",
+      "model_tag": "Wan2.1 1.3B (Everyday Benchmark)",
+      "parameters_b": 1.3,
+      "output_file": "wan21_1_3b_everyday.mp4",
+      "file_size_kb": 332.5,
+      "timing": {
+        "load_model_s": 4.29,
+        "text_encode_s": 1.47,
+        "swap_to_cpu_s": 6.69,
+        "denoise_s": 3.82,
+        "export_s": 0.65,
+        "total_inference_s": 12.63
+      },
+      "vram_gb": {
+        "baseline_allocated": 0.009,
+        "static_after_swap": 2.898,
+        "text_encoder_peak": 13.53,
+        "post_swap_allocated": 2.901,
+        "denoise_peak_allocated": 3.656,
+        "denoise_peak_reserved": 4.24
+      }
+    },
+    "wan21_14b": {
+      "model_id": "Wan-AI/Wan2.1-T2V-14B-Diffusers",
+      "model_tag": "Wan2.1 14B (Everyday Benchmark)",
+      "parameters_b": 14.3,
+      "output_file": "wan21_14b_everyday.mp4",
+      "file_size_kb": 400.4,
+      "timing": {
+        "load_model_s": 9.33,
+        "text_encode_s": 1.5,
+        "swap_to_cpu_s": 5.82,
+        "denoise_s": 20.39,
+        "export_s": 0.57,
+        "total_inference_s": 28.28
+      },
+      "vram_gb": {
+        "baseline_allocated": 0.009,
+        "static_after_swap": 26.993,
+        "text_encoder_peak": 37.624,
+        "post_swap_allocated": 26.997,
+        "denoise_peak_allocated": 27.838,
+        "denoise_peak_reserved": 28.283
+      }
+    }
+  }
+}

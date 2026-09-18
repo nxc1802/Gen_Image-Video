@@ -26,59 +26,83 @@ models:
     init_target: "cpu"
     device_strategy: "auto"
 
-  # 👁️ 3. Vision-Language Model (VLM / Qwen2.5-VL)
-  # - Model nhỏ (<= 8B như Qwen 3B / 7B 4-bit): 1 GPU (GPU 0 hoặc GPU 1)
-  # - Model lớn (>= 14B như Qwen 14B / 26B): 2 GPU chia tải động
+  # 👁️ 3. Vision-Language Model (VLM / Qwen3.8-27B GGUF)
+  # - Định dạng: GGUF (Unsloth Dynamic V3.0 UD-Q4_K_M) kèm Vision mmproj-F16
+  # - Phân bổ Dual-GPU: Tận dụng trọn vẹn 2x Tesla T4 (Layer-Splitting 50-50 qua PCIe)
   vlm:
-    id: "Qwen/Qwen2.5-VL-3B-Instruct"
-    quantization: "4bit"
+    id: "nguynxuncngde180528/qwen38-27b-vlm-gguf"
+    fallback_id: "Qwen/Qwen2.5-VL-3B-Instruct"
+    format: "gguf"
+    model_file: "Qwen3.8-27B-UD-Q4_K_M.gguf"
+    mmproj_file: "mmproj-F16.gguf"
+    quantization: "q4_k_m"
     precision: "fp16"
-    lifecycle: "dynamic_switch"    # Hoán đổi động
-    preload: false                 # Khởi động không nạp VRAM
+    lifecycle: "dynamic_switch"    # Hoán đổi động với 30GB CPU RAM khi chạy FLUX/Wan
+    preload: false                 # Khởi động không nạp VRAM (Lazy load hoặc nạp theo request)
     init_target: "cpu"
-    allocation_policy: "adaptive"  # 1 GPU nếu nhỏ, 2 GPU nếu lớn
-    device_strategy: "auto"
-    max_tokens: 512
+    allocation_policy: "dual_gpu"  # Bắt buộc chia 2 GPU (Layer-split trên 2x Tesla T4 16GB)
+    device_strategy: "dual_gpu"
+    gpu_count: 2
+    gpu_split: [0.5, 0.5]
+    n_ctx: 4096
+    n_gpu_layers: -1               # Offload 100% tầng lên 2 GPU
+    max_tokens: 1024
     temperature: 0.7
 
-  # 🖼️ 4. Text-to-Image & Inpainting (FLUX.1 SOTA FP16)
-  # - Model nhỏ (FLUX schnell 4-bit): 1 GPU
-  # - Model lớn (FLUX dev FP16 / full): 2 GPU chia tải động
+  # 🖼️ 4. Text-to-Image & Inpainting (FLUX.2 Klein SOTA GGUF + Qwen3-4B Text Encoder)
+  # - Kiến trúc Flow Matching Transformer 4B siêu tốc (4 steps distillation)
+  # - Toàn bộ pipeline (< 5GB) nạp gọn gàng trên 1 GPU đơn (Zero CPU Offload, Zero OOM)
   image:
-    id: "black-forest-labs/FLUX.1-schnell"
-    default_variant: "schnell"
+    id: "unsloth/FLUX.2-klein-4B-GGUF"
+    default_variant: "klein_4b"
+    model_file: "flux-2-klein-4b-Q4_K_M.gguf"
+    text_encoder_repo: "unsloth/Qwen3-4B-GGUF"
+    text_encoder_file: "Qwen3-4B-Q4_K_M.gguf"
     variants:
-      schnell: "black-forest-labs/FLUX.1-schnell"
-      dev: "black-forest-labs/FLUX.1-dev"
-    quantization: "4bit"
+      klein_4b: "unsloth/FLUX.2-klein-4B-GGUF"
+      4b: "unsloth/FLUX.2-klein-4B-GGUF"
+      klein_9b: "unsloth/FLUX.2-klein-9B-GGUF"
+      9b: "unsloth/FLUX.2-klein-9B-GGUF"
+      dev: "black-forest-labs/FLUX.2-dev"
+    quantization: "q4_k_m"
     precision: "fp16"
     lifecycle: "dynamic_switch"
-    preload: false
+    preload: false                 # Tắt preload image
     init_target: "cpu"
-    allocation_policy: "adaptive"  # 1 GPU cho schnell, 2 GPU cho dev
-    device_strategy: "auto"
+    allocation_policy: "single_gpu"
+    device_strategy: "single_gpu"
     steps: 4
-    guidance: 0.0
+    guidance: 1.0
 
-  # 🎬 5. Text-to-Video & Image-to-Video (Wan2.1 SOTA FP16)
+  # 🎬 5. Text-to-Video & Image-to-Video (Wan2.2 SOTA FP16)
   video:
-    id: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
-    default_variant: "1.3b"
+    id: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+    default_variant: "ti2v_5b"
     fallback_id: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
     variants:
+      ti2v_5b: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+      5b: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+      t2v_a14b: "Wan-AI/Wan2.2-T2V-A14B-Diffusers"
+      a14b: "Wan-AI/Wan2.2-T2V-A14B-Diffusers"
+      i2v_a14b: "Wan-AI/Wan2.2-I2V-A14B-Diffusers"
+      ti2v_5b_22: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+      t2v_a14b_22: "Wan-AI/Wan2.2-T2V-A14B-Diffusers"
+      i2v_a14b_22: "Wan-AI/Wan2.2-I2V-A14B-Diffusers"
       t2v_1_3b: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
       t2v_14b: "Wan-AI/Wan2.1-T2V-14B-Diffusers"
       i2v_14b: "Wan-AI/Wan2.1-I2V-14B-480P-Diffusers"
+    quantization: "4bit"
     precision: "fp16"
     lifecycle: "dynamic_switch"
-    preload: false
-    init_target: "cpu"
+    preload: true                  # Preload Wan2.2-5B lên GPU sẵn sàng test
+    init_target: "gpu"
     allocation_policy: "adaptive"
     device_strategy: "auto"
     num_frames: 17
     width: 832
     height: 480
-    steps: 25
+    steps: 20
     guidance: 5.0
+
 
 

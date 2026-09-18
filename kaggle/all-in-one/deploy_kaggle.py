@@ -37,8 +37,8 @@ def load_env_file():
 
 load_env_file()
 
-DEFAULT_KAGGLE_USER = os.environ.get("KAGGLE_USERNAME", "nguynxuncngde180528")
-DEFAULT_KAGGLE_KEY = os.environ.get("KAGGLE_KEY", "KGAT_8cf30e03c2129179e5e0870f50b86773")
+DEFAULT_KAGGLE_USER = os.environ.get("KAGGLE_USERNAME", "")
+DEFAULT_KAGGLE_KEY = os.environ.get("KAGGLE_KEY", "")
 KERNEL_SLUG = "kaggle-all-in-one-studio"
 
 
@@ -66,7 +66,7 @@ def pack_and_update_run_notebook(notebook_path: str = "run_kaggle.ipynb") -> boo
         for root, dirs, files in os.walk(curr_dir):
             dirs[:] = [d for d in dirs if d not in (".git", "__pycache__", "test_outputs", "checkpoints", ".ipynb_checkpoints")]
             for f in files:
-                if (f.endswith((".py", ".yaml", ".txt")) or f == ".env") and not f.startswith("deploy_") and not f.startswith("build_") and f != "public_url.txt":
+                if f.endswith((".py", ".yaml", ".txt", ".json")) and f != ".env" and not f.startswith("deploy_") and not f.startswith("build_") and f != "public_url.txt" and not f.endswith("-metadata.json"):
                     full_p = os.path.join(root, f)
                     rel_p = os.path.relpath(full_p, curr_dir)
                     tar.add(full_p, arcname=rel_p)
@@ -113,7 +113,8 @@ def push_kernel(user: str, key: str, notebook_path: str = "run_kaggle.ipynb", me
     print("=" * 72)
 
     # 1. Đóng gói mã nguồn mới nhất vào notebook trước khi đẩy
-    pack_and_update_run_notebook(notebook_path)
+    if notebook_path == "run_kaggle.ipynb":
+        pack_and_update_run_notebook(notebook_path)
 
     if not os.path.exists(notebook_path):
         print(f"❌ Không tìm thấy file notebook: {notebook_path}")
@@ -128,7 +129,8 @@ def push_kernel(user: str, key: str, notebook_path: str = "run_kaggle.ipynb", me
             meta = json.load(f)
 
     title = meta.get("title", "Kaggle All in One Studio")
-    if slug != KERNEL_SLUG:
+    meta_id = meta.get("id", "")
+    if slug != KERNEL_SLUG and (not meta_id or slug != meta_id.split("/")[-1]):
         title = f"{title} V2"
     is_private = meta.get("is_private", "true")
     if isinstance(is_private, str):
@@ -322,12 +324,39 @@ def main():
     parser.add_argument("--push-only", action="store_true", help="Chỉ đẩy kernel, không đợi")
     parser.add_argument("--monitor-only", action="store_true", help="Chỉ theo dõi kernel đang chạy và bắt URL")
     parser.add_argument("--status-only", action="store_true", help="Chỉ kiểm tra trạng thái")
+    parser.add_argument("--build-wheels", action="store_true", help="Build và đẩy Kaggle Wheels Builder kernel để cập nhật dataset wheels")
+    parser.add_argument("--notebook", default="run_kaggle.ipynb", help="Notebook file path")
+    parser.add_argument("--meta", default="kernel-metadata.json", help="Metadata file path")
     parser.add_argument("--timeout", type=int, default=900, help="Thời gian chờ tối đa (giây)")
     args = parser.parse_args()
 
     if args.status_only:
-        st = get_kernel_status(args.user, args.key, slug=args.slug)
-        print(f"Kernel Status ({args.slug}):", json.dumps(st, indent=2))
+        slug = "kaggle-wheels-builder" if args.build_wheels else args.slug
+        st = get_kernel_status(args.user, args.key, slug=slug)
+        print(f"Kernel Status ({slug}):", json.dumps(st, indent=2))
+        return
+
+    if args.build_wheels:
+        import subprocess
+        print("🔨 [Wheels Builder] Đang tái tạo run_wheels_builder.ipynb...")
+        subprocess.run([sys.executable, "build_wheels_notebook.py"], check=True)
+        ok = push_kernel(args.user, args.key, notebook_path="run_wheels_builder.ipynb", metadata_path="wheels-metadata.json", slug="kaggle-wheels-builder")
+        if not ok:
+            sys.exit(1)
+        if not args.push_only:
+            print("\n⏳ Đang theo dõi tiến trình đóng gói Wheels trên Kaggle...")
+            deadline = time.time() + args.timeout
+            while time.time() < deadline:
+                st = get_kernel_status(args.user, args.key, slug="kaggle-wheels-builder")
+                status = st.get("status")
+                print(f"[{time.strftime('%H:%M:%S')}] 🔄 Wheels Builder Status: {status}")
+                if status == "complete":
+                    print("🎉 Kaggle Studio Wheels dataset đã được build và xuất bản thành công!")
+                    break
+                elif status == "error":
+                    print(f"❌ Lỗi khi build wheels: {st.get('failureMessage')}")
+                    sys.exit(1)
+                time.sleep(15)
         return
 
     if args.monitor_only:
@@ -336,7 +365,7 @@ def main():
             sys.exit(2)
         return
 
-    ok = push_kernel(args.user, args.key, slug=args.slug)
+    ok = push_kernel(args.user, args.key, notebook_path=args.notebook, metadata_path=args.meta, slug=args.slug)
     if not ok:
         sys.exit(1)
 

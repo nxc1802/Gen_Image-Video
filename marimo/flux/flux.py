@@ -36,17 +36,19 @@ def _():
 
     # Tự động cài đặt diffusers nếu môi trường mới chưa có
     try:
-        from diffusers import FluxPipeline
+        from diffusers import Flux2KleinPipeline, FluxPipeline
     except ImportError:
-        subprocess.run([sys.executable, "-m", "pip", "install", "-q", "diffusers", "transformers", "accelerate", "sentencepiece", "protobuf"])
+        subprocess.run([sys.executable, "-m", "pip", "install", "-q", "diffusers", "transformers", "accelerate", "sentencepiece", "protobuf", "gguf"])
         try:
-            from diffusers import FluxPipeline
+            from diffusers import Flux2KleinPipeline, FluxPipeline
         except ImportError:
+            Flux2KleinPipeline = None
             FluxPipeline = None
 
     worker_state = {"running": False, "thread": None}
 
     return (
+        Flux2KleinPipeline,
         FluxPipeline,
         Image,
         Optional,
@@ -108,25 +110,25 @@ def _(mo, torch):
 @app.cell
 def _():
     # =========================================================================
-    # ⚙️ 1. CẤU HÌNH MÔ HÌNH FLUX.1 (CHỈNH SỬA TRỰC TIẾP BIẾN TẠI ĐÂY)
+    # ⚙️ 1. CẤU HÌNH MÔ HÌNH FLUX.2 (CHỈNH SỬA TRỰC TIẾP BIẾN TẠI ĐÂY)
     # =========================================================================
-    # Biến thể: "black-forest-labs/FLUX.1-schnell" (4 steps, Apache 2.0, không cần token)
-    #           "black-forest-labs/FLUX.1-dev"     (28 steps, chi tiết cao, cần token)
-    MODEL_ID = "black-forest-labs/FLUX.1-schnell"
+    # Biến thể: "black-forest-labs/FLUX.2-klein-4B" (4 steps distillation, Apache 2.0)
+    #           "unsloth/FLUX.2-klein-4B-GGUF"     (GGUF 4-bit)
+    #           "black-forest-labs/FLUX.2-dev"          (Bản dev tương lai)
+    MODEL_ID = "black-forest-labs/FLUX.2-klein-4B"
 
     # Chiến lược VRAM: "full_gpu" (nhanh nhất) hoặc "cpu_offload" (tiết kiệm VRAM)
     VRAM_MODE = "full_gpu"
 
-    # Hugging Face Token (Đã điền sẵn token có quyền truy cập FLUX.1)
-    HF_TOKEN = os.environ.get("HF_TOKEN") or ("hf_" + "zTCysSCpYtoKHhsAsyBSpQQVMospAnyQdl")
-
-
+    # Hugging Face Token (Hỗ trợ truy cập các repo có gate hoặc private)
+    HF_TOKEN = os.environ.get("HF_TOKEN", "")
 
     return HF_TOKEN, MODEL_ID, VRAM_MODE
 
 
 @app.cell
 def _(
+    Flux2KleinPipeline,
     FluxPipeline,
     HF_TOKEN,
     MODEL_ID,
@@ -141,11 +143,12 @@ def _(
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
 
-    _dtype = torch.bfloat16 if gpu_info.get("bf16", False) else torch.float32
+    _dtype = torch.bfloat16 if gpu_info.get("bf16", False) else torch.float16
 
     with mo.status.spinner(title=f"Đang nạp {MODEL_ID} vào VRAM ({_dtype})..."):
         try:
-            _pipe = FluxPipeline.from_pretrained(
+            PipeClass = Flux2KleinPipeline if ("klein" in MODEL_ID.lower() and Flux2KleinPipeline is not None) else FluxPipeline
+            _pipe = PipeClass.from_pretrained(
                 MODEL_ID,
                 torch_dtype=_dtype,
                 token=HF_TOKEN or None,

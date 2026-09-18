@@ -3,7 +3,7 @@
 > - 👁️ **VLM:** Qwen3.8 26B (4-bit AWQ / GGUF Q4)
 > - 🎙️ **STT:** faster-whisper-large-v3-turbo
 > - 🔊 **TTS:** Kokoro-82M
-> - 🖼️ **GenImage:** FLUX.1-schnell (NF4 qua `diffusers` + `bitsandbytes`)
+> - 🖼️ **GenImage:** FLUX.2-klein-4B (Q4_K_M GGUF DiT + Qwen3-4B Q4_K_M GGUF Text Encoder + AutoencoderKLFlux2)
 > - 🎬 **GenVideo:** Wan2.1-1.3B
 > - ⚡ **Gateway:** Tương thích 100% chuẩn OpenAI API (Chat, Audio, Images, Videos)
 
@@ -13,7 +13,7 @@
 
 | Tài Nguyên Kaggle | Thông số | Đánh giá & Ràng buộc |
 | :--- | :--- | :--- |
-| **GPU VRAM** | 2x Tesla T4 (16GB mỗi card = 32GB) | Không gộp tự động; cần phân bổ tải đều 2 GPU (Tensor/Pipeline Parallelism). |
+| **GPU VRAM** | 2x Tesla T4 (16GB mỗi card = 32GB) | Không gộp tự động; phân bổ tải linh hoạt (Tensor/Pipeline Parallelism hoặc Dynamic Worker). |
 | **Kiến trúc GPU** | Turing (Compute Capability 7.5) | Không có FP8 phần cứng $\rightarrow$ Tối ưu vượt trội với **INT8 và 4-bit (NF4, AWQ, GGUF)**. |
 | **System RAM** | 30 GB CPU RAM | Cực kỳ dồi dào, đóng vai trò **Bộ nhớ trung gian (Fast Cache)** để tráo model trong 1.5 giây. |
 | **Ổ cứng (Disk)** | 73 GB SSD | Dư sức chứa trọng số của cả 5 mô hình nén (~22 GB tổng cộng). |
@@ -49,8 +49,9 @@ $$\text{Voice/Text Input (STT)} \longrightarrow \text{Tư duy & Thị giác (VLM
 │                                                                         │
 │  [TRẠNG THÁI 2: KHI CÓ LỆNH SINH ẢNH HOẶC SINH VIDEO]                    │
 │  • Offload tạm Nửa 2 VLM sang 30GB RAM hệ thống (~1.5s qua PCIe)        │
-│  • Nạp FLUX.1-schnell NF4 (~8.5GB) HOẶC Wan2.1-1.3B (~9.5GB)           │
-│  • Thực thi render ảnh (10-15s) hoặc video (40-60s)                     │
+│  • Nạp FLUX.2-klein-4B GGUF (~5.2GB) HOẶC Wan2.1-1.3B (~9.5GB)         │
+│    (Chạy 100% Pipeline trên 1 GPU duy nhất, Zero CPU Offload, Zero OOM) │
+│  • Thực thi render ảnh (4-8s) hoặc video (40-60s)                        │
 │  • Đưa Nửa 2 VLM trở lại GPU 1 sau khi trả kết quả                      │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -72,9 +73,12 @@ $$\text{Voice/Text Input (STT)} \longrightarrow \text{Tư duy & Thị giác (VLM
 * Mô hình thị giác & suy luận ngôn ngữ mạnh mẽ dòng Qwen.
 * Dùng bản lượng tử hoá 4-bit để vừa vặn ngân sách, phân bổ chia đôi qua 2 card T4 (~7.5GB mỗi GPU).
 
-### 4. 🖼️ GenImage: `FLUX.1-schnell` (4-bit NF4)
-* Mô hình tạo ảnh SOTA của Black Forest Labs.
-* Ở bản NF4 (`bitsandbytes`), toàn bộ Transformer + T5-XXL + VAE nằm trọn trong **~8.5 GB VRAM**, render ảnh 1024x1024 chỉ trong 4 bước (~12-15s trên T4).
+### 4. 🖼️ GenImage: `FLUX.2-klein-4B` (Q4_K_M GGUF)
+* Thế hệ mới nhất của dòng FLUX từ Black Forest Labs và Unsloth.
+* DiT Transformer: `flux-2-klein-4b-Q4_K_M.gguf` (~2.43 GB).
+* Text Encoder: `Qwen3-4B-Q4_K_M.gguf` (~2.33 GB) thay thế hoàn toàn T5-XXL FP16 nặng 9.6GB của FLUX.1.
+* VAE: `AutoencoderKLFlux2` (~160 MB).
+* Tổng trọng số tĩnh: **~4.92 GB VRAM**, chạy trọn vẹn 100% Pipeline trên 1 GPU đơn mà không cần CPU offload, loại bỏ hoàn toàn nguy cơ OOM. Render 1024x1024 chỉ trong 4 bước distillation (~4-8s).
 
 ### 5. 🎬 GenVideo: `Wan2.1-1.3B`
 * Mô hình sinh video điện ảnh mới nhất từ Alibaba.
@@ -91,7 +95,8 @@ Tất cả dịch vụ được thống nhất dưới một FastAPI Server duy 
 | `/v1/chat/completions` | Trò chuyện, thị giác (VLM) | POST | Qwen 26B | 4-bit Dual-GPU |
 | `/v1/audio/transcriptions` | Nhận diện giọng nói (STT) | POST | Whisper-large-v3-turbo | **Full FP16** |
 | `/v1/audio/speech` | Đọc văn bản thành tiếng (TTS) | POST | Kokoro-82M | **Full FP16** |
-| `/v1/images/generations` | Tạo ảnh chất lượng cao | POST | FLUX.1-schnell | NF4 |
+| `/v1/images/generations` | Tạo ảnh chất lượng cao | POST | FLUX.2-klein-4B | Q4_K_M GGUF |
+| `/v1/images/edits` | Inpainting & Chỉnh sửa ảnh | POST | FLUX.2-klein-4B | Q4_K_M GGUF |
 | `/v1/videos/generations` | Tạo video chuyển động | POST | Wan2.1-1.3B | FP8 / NF4 |
 | `/v1/models` | Liệt kê các model khả dụng | GET | System Registry | JSON |
 
@@ -121,7 +126,7 @@ kaggle/all-in-one/
 │   └── qwen.py                 # Qwen 26B 4-bit (Phân bổ đều qua GPU 0 và GPU 1)
 ├── visual/
 │   ├── __init__.py
-│   ├── flux_image.py           # FLUX.1-schnell (NF4 trên GPU 1)
+│   ├── flux_image.py           # FLUX.2-klein-4B GGUF (Single GPU 1)
 │   └── wan_video.py            # Wan2.1-1.3B (trên GPU 1)
 ├── server/
 │   ├── __init__.py

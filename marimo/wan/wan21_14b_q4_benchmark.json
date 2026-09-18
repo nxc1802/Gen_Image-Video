@@ -1,0 +1,77 @@
+{
+  "timestamp": 1789726850.8235457,
+  "model_id": "Wan-AI/Wan2.1-T2V-14B-Diffusers",
+  "model_name": "Wan2.1-T2V-14B (4-bit NF4 Quantized)",
+  "quantization": {
+    "method": "bitsandbytes",
+    "type": "nf4",
+    "compute_dtype": "bfloat16"
+  },
+  "config": {
+    "width": 1280,
+    "height": 720,
+    "frames": 33,
+    "fps": 16,
+    "steps": 30,
+    "cfg": 6.0,
+    "seed": 42
+  },
+  "load_time_s": 11.55,
+  "static_vram_gb": 7.851,
+  "prompts": [
+    {
+      "prompt_id": "p1_cafe",
+      "title": "Chân dung đời thường & Biểu cảm",
+      "prompt": "A close-up cinematic shot of a young woman in a soft knitted cream sweater sitting by a sunlit wooden cafe table, gently holding a steaming ceramic mug with both hands, taking a slow delicate sip and looking out the rainy window with a calm natural smile, soft warm morning lighting, raindrops on window glass, shallow depth of field, photorealistic 8k, fluid realistic subtle motion",
+      "file": "wan21_14b_q4_opt_p1_cafe.mp4",
+      "size_kb": 936.3,
+      "timing": {
+        "text_encode_s": 1.59,
+        "swap_s": 6.23,
+        "denoise_s": 348.98,
+        "export_s": 1.03,
+        "total_s": 357.83
+      },
+      "vram_gb": {
+        "peak_allocated": 11.341,
+        "peak_reserved": 13.086
+      }
+    },
+    {
+      "prompt_id": "p2_puppy",
+      "title": "Động vật & Chi tiết sợi lông / Ánh sáng tự nhiên",
+      "prompt": "A cute golden retriever puppy sitting on vibrant green grass in a sunlit park, tilting its head curiously with wide eyes, soft wind rustling its golden fur, warm afternoon golden hour sunlight, macro cinematic 4k, fluid lifelike subtle motion",
+      "file": "wan21_14b_q4_opt_p2_puppy.mp4",
+      "size_kb": 610.2,
+      "timing": {
+        "text_encode_s": 2.31,
+        "swap_s": 6.58,
+        "denoise_s": 349.02,
+        "export_s": 0.96,
+        "total_s": 358.86
+      },
+      "vram_gb": {
+        "peak_allocated": 11.341,
+        "peak_reserved": 13.381
+      }
+    },
+    {
+      "prompt_id": "p3_dragon",
+      "title": "Điện ảnh hoành tráng & Hiệu ứng ánh sáng phức tạp",
+      "prompt": "A magnificent mechanical golden dragon soaring gracefully through misty neon thunderstorm clouds above a cyberpunk metropolis at dusk, cinematic camera tracking, volumetric lightning flashes, 4k ultra-detailed, photorealistic fluid motion, vivid reflections",
+      "file": "wan21_14b_q4_opt_p3_dragon.mp4",
+      "size_kb": 3466.5,
+      "timing": {
+        "text_encode_s": 2.35,
+        "swap_s": 6.58,
+        "denoise_s": 348.87,
+        "export_s": 1.28,
+        "total_s": 359.08
+      },
+      "vram_gb": {
+        "peak_allocated": 11.341,
+        "peak_reserved": 13.361
+      }
+    }
+  ]
+}

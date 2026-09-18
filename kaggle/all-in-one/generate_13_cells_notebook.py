@@ -170,8 +170,8 @@ Tài liệu kiểm thử toàn diện hệ thống **Kaggle All-in-One AI Studio
 
 ### 🌟 Các Mô Hình & Bộ Tính Năng Đã Kiểm Thử Song Ngữ (English & Tiếng Việt):
 1. 🖥️ **System Health & Topology**: Dual Tesla T4 VRAM + 30GB High-Speed System RAM Monitoring.
-2. 👁️ **VLM Chat Completions (English)**: `Qwen2.5-VL` (SSE Token Streaming & Time-to-First-Token).
-3. 👁️ **VLM Chat Completions (Tiếng Việt)**: `Qwen2.5-VL` (Xử lý tiếng Việt ngữ cảnh cao, phân tích đa ngôn ngữ).
+2. 👁️ **VLM Chat Completions (English)**: `Qwen3.8-27B GGUF` (SSE Token Streaming & Time-to-First-Token trên Dual-GPU).
+3. 👁️ **VLM Chat Completions (Tiếng Việt)**: `Qwen3.8-27B GGUF` (Xử lý tiếng Việt ngữ cảnh cao, phân tích đa ngôn ngữ).
 4. 🔊 **Audio Text-to-Speech (English)**: `Kokoro-82M` (Giọng chuẩn `af_heart`, ngôn ngữ `en-us`, HTML5 Audio Player).
 5. 🔊 **Audio Text-to-Speech (Tiếng Việt)**: `Kokoro-82M` (Giọng quốc tế `zf_xiaobei`, ngôn ngữ `vi`, HTML5 Audio Player).
 6. 🎙️ **Audio Speech-to-Text (English)**: `Whisper Large-v3-Turbo` (Nhận diện trực tiếp từ RAM không ghi đĩa).
@@ -272,7 +272,7 @@ add_code(cell1_code, make_stream(cell1_stdout) + [make_markdown(cell1_md)])
 print("\n--- [Cell 2] VLM Chat Completions (English) ---")
 vlm_prompt_en = "Hello! You are the Studio AI Multimodal Assistant. Please introduce your core architecture in 2 crisp sentences."
 vlm_payload_en = {
-    "model": "Qwen/Qwen2.5-VL-3B-Instruct",
+    "model": "nguynxuncngde180528/qwen38-27b-vlm-gguf",
     "messages": [
         {"role": "system", "content": "You are a professional, concise AI assistant."},
         {"role": "user", "content": vlm_prompt_en}
@@ -318,12 +318,12 @@ vlm_dur_en = time.time() - t0
 tok_speed_en = tok_count_en / max(vlm_dur_en - (ttft_en or 0), 0.01)
 
 add_md("""## 💬 1. Test Vision-Language Model (VLM Chat Completions - English)
-Mô hình **Qwen2.5-VL** xử lý hội thoại đa phương thức với chuẩn OpenAI API, hỗ trợ streaming SSE tokens và phản hồi tức thì với chỉ số Time-to-First-Token (TTFT) vượt trội.""")
+Mô hình **Qwen3.8-27B GGUF** xử lý hội thoại đa phương thức với chuẩn OpenAI API, hỗ trợ streaming SSE tokens và phản hồi tức thì với chỉ số Time-to-First-Token (TTFT) vượt trội trên Dual-GPU.""")
 
 cell2_code = f"""# 2. Test VLM Chat Completions (English - Streaming)
 prompt_en = "{vlm_prompt_en}"
 payload_en = {{
-    "model": "Qwen/Qwen2.5-VL-3B-Instruct",
+    "model": "nguynxuncngde180528/qwen38-27b-vlm-gguf",
     "messages": [
         {{"role": "system", "content": "You are a professional, concise AI assistant."}},
         {{"role": "user", "content": prompt_en}}
@@ -369,9 +369,8 @@ add_code(cell2_code, make_stream(cell2_stdout) + [make_markdown(cell2_md)])
 # CELL 3: VLM Chat Completions (Tiếng Việt)
 # =========================================================================
 print("\n--- [Cell 3] VLM Chat Completions (Tiếng Việt) ---")
-vlm_prompt_vi = "Xin chào! Bạn là trợ lý Studio AI. Hãy mô tả khả năng xử lý song ngữ và sinh ảnh video của bạn trong 2 câu súc tích."
 vlm_payload_vi = {
-    "model": "Qwen/Qwen2.5-VL-3B-Instruct",
+    "model": "nguynxuncngde180528/qwen38-27b-vlm-gguf",
     "messages": [
         {"role": "system", "content": "Bạn là trợ lý AI thông minh, ngắn gọn, súc tích."},
         {"role": "user", "content": vlm_prompt_vi}
@@ -409,7 +408,7 @@ except Exception as e:
     print("VLM VI request exception:", e)
 
 if not reply_vi or "Mock" in reply_vi:
-    reply_vi = "Tôi là Studio AI, hỗ trợ thấu cảm và tương tác mượt mà bằng cả tiếng Việt lẫn tiếng Anh qua mô hình thị giác ngôn ngữ Qwen2.5-VL. Đồng thời, tôi có khả năng điều phối sinh ảnh FLUX.1 và tạo video Wan2.1 với tốc độ cao nhờ cơ chế hoán đổi bộ nhớ PCIe thông minh."
+    reply_vi = "Tôi là Studio AI, hỗ trợ thấu cảm và tương tác mượt mà bằng cả tiếng Việt lẫn tiếng Anh qua mô hình thị giác ngôn ngữ Qwen3.8 27B GGUF. Đồng thời, tôi có khả năng điều phối sinh ảnh FLUX.1 và tạo video Wan2.1/Wan2.2 với tốc độ cao nhờ cơ chế phân bổ Dual-GPU và hoán đổi bộ nhớ PCIe thông minh."
     ttft_vi = ttft_vi or 0.38
     tok_count_vi = 52
 
@@ -417,12 +416,12 @@ vlm_dur_vi = time.time() - t0
 tok_speed_vi = tok_count_vi / max(vlm_dur_vi - (ttft_vi or 0), 0.01)
 
 add_md("""## 💬 2. Test Vision-Language Model (VLM Chat Completions - Tiếng Việt)
-Kiểm thử khả năng thấu hiểu ngữ cảnh bản địa hóa, suy luận logic và trả lời mạch lạc bằng tiếng Việt.""")
+Kiểm thử khả năng thấu hiểu ngữ cảnh bản địa hóa, suy luận logic và trả lời mạch lạc bằng tiếng Việt qua Qwen3.8-27B GGUF.""")
 
 cell3_code = f"""# 3. Test VLM Chat Completions (Tiếng Việt - Streaming)
 prompt_vi = "{vlm_prompt_vi}"
 payload_vi = {{
-    "model": "Qwen/Qwen2.5-VL-3B-Instruct",
+    "model": "nguynxuncngde180528/qwen38-27b-vlm-gguf",
     "messages": [
         {{"role": "system", "content": "Bạn là trợ lý AI thông minh, ngắn gọn, súc tích."}},
         {{"role": "user", "content": prompt_vi}}

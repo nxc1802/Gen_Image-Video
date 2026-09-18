@@ -1,0 +1,227 @@
+{
+  "hardware": {
+    "device_name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "compute_capability": "12.0",
+    "total_vram_mb": 97251.75,
+    "total_vram_gb": 94.97,
+    "bf16_supported": true,
+    "pytorch_version": "2.11.0+cu130"
+  },
+  "components_vram": {
+    "text_encoder_umt5": {
+      "name": "UMT5-XXL Text Encoder",
+      "param_vram_mb": 10835.48,
+      "param_vram_gb": 10.58,
+      "dtype": "torch.bfloat16"
+    },
+    "transformer_3d": {
+      "name": "WanTransformer3D (30 DiT Blocks)",
+      "param_vram_mb": 2713.49,
+      "param_vram_gb": 2.65,
+      "dtype": "torch.float32"
+    },
+    "vae_3d": {
+      "name": "AutoencoderKLWan (Spatiotemporal 3D VAE)",
+      "param_vram_mb": 242.03,
+      "param_vram_gb": 0.24,
+      "dtype": "torch.bfloat16"
+    },
+    "total_weights_mb": 13790.99,
+    "total_weights_gb": 13.47
+  },
+  "config": {
+    "model_id": "Wan-AI/Wan2.1-T2V-1.3B-Diffusers",
+    "resolution": "832x480",
+    "num_frames": 17,
+    "num_steps": 25,
+    "guidance_scale": 5.0,
+    "fps": 16,
+    "dtype": "torch.bfloat16"
+  },
+  "performance": {
+    "text_encode_sec": 0.09,
+    "denoise_sec": 8.04,
+    "steps_per_sec": 3.11,
+    "frames_per_sec": 2.11,
+    "export_sec": 0.49,
+    "total_sec": 15.17,
+    "output_video_file": "wan21_benchmark_832x480_17f.mp4",
+    "output_video_size_kb": 137.0
+  },
+  "stages_vram": [
+    {
+      "timestamp": 1789701827.7673864,
+      "stage": "0. Baseline (GPU Idle)",
+      "category": "Init",
+      "details": "Trước khi nạp bất kỳ model nào vào GPU",
+      "allocated_mb": 9.12,
+      "reserved_mb": 22.0,
+      "peak_allocated_mb": 9.12
+    },
+    {
+      "timestamp": 1789701832.2025774,
+      "stage": "0.1 Pipeline Khởi Tạo (Host RAM)",
+      "category": "Model Load",
+      "details": "Nạp cấu trúc mô hình trên CPU",
+      "allocated_mb": 9.12,
+      "reserved_mb": 22.0,
+      "peak_allocated_mb": 9.12
+    },
+    {
+      "timestamp": 1789701834.0809746,
+      "stage": "0.2 Toàn Bộ Pipeline Đã Lên GPU VRAM",
+      "category": "Model Load",
+      "details": "Text Encoder + Transformer3D + VAE trên cuda:0",
+      "allocated_mb": 13803.61,
+      "reserved_mb": 14074.0,
+      "peak_allocated_mb": 13803.61
+    },
+    {
+      "timestamp": 1789701834.0816526,
+      "stage": "0.3 Kích Hoạt VAE Tiling & Slicing",
+      "category": "Model Load",
+      "details": "Bật Spatiotemporal Tiling & Slicing cho VAE",
+      "allocated_mb": 13803.61,
+      "reserved_mb": 14074.0,
+      "peak_allocated_mb": 13803.61
+    },
+    {
+      "timestamp": 1789701834.0865278,
+      "stage": "1.0 VRAM Trước Khi Mã Hóa Prompt",
+      "category": "Text Encoder",
+      "details": "Trạng thái sẵn sàng cho text encoding",
+      "allocated_mb": 13803.61,
+      "reserved_mb": 14074.0,
+      "peak_allocated_mb": 13803.61
+    },
+    {
+      "timestamp": 1789701834.1804447,
+      "stage": "1.1 Hoàn Tất UMT5-XXL Forward Pass",
+      "category": "Text Encoder",
+      "details": "Embeddings Shape: [1, 226, 4096] trong 0.09s",
+      "allocated_mb": 17514.65,
+      "reserved_mb": 17802.0,
+      "peak_allocated_mb": 17518.18
+    },
+    {
+      "timestamp": 1789701834.1809525,
+      "stage": "2.0 Khởi Tạo 3D Gaussian Noise Latents",
+      "category": "Latent Prep",
+      "details": "Latents Shape: [1, 16, 5, 60, 104] (0.95 MB)",
+      "allocated_mb": 17515.6,
+      "reserved_mb": 17802.0,
+      "peak_allocated_mb": 17515.6
+    },
+    {
+      "timestamp": 1789701834.181248,
+      "stage": "3.0 Bắt Đầu Denoising Loop",
+      "category": "Denoising",
+      "details": "25 Steps Euler Flow Match, Guidance: 5.0",
+      "allocated_mb": 17515.6,
+      "reserved_mb": 17802.0,
+      "peak_allocated_mb": 17515.6
+    },
+    {
+      "timestamp": 1789701842.2263143,
+      "stage": "3.1 Hoàn Tất Denoising Loop",
+      "category": "Denoising",
+      "details": "25 steps trong 8.04s (3.11 it/s)",
+      "allocated_mb": 17521.69,
+      "reserved_mb": 18864.0,
+      "peak_allocated_mb": 18293.48
+    },
+    {
+      "timestamp": 1789701842.227077,
+      "stage": "4.0 Sau Khi Giải Mã VAE",
+      "category": "VAE Decode",
+      "details": "Khung hình RGB: 17 frames (832x480)",
+      "allocated_mb": 17521.69,
+      "reserved_mb": 18864.0,
+      "peak_allocated_mb": 18293.48
+    },
+    {
+      "timestamp": 1789701842.7162867,
+      "stage": "5.0 Xuất File Video MP4 Hoàn Tất",
+      "category": "Export",
+      "details": "File: wan21_benchmark_832x480_17f.mp4 (137.0 KB) trong 0.49s",
+      "allocated_mb": 17521.69,
+      "reserved_mb": 18864.0,
+      "peak_allocated_mb": 17521.69
+    },
+    {
+      "timestamp": 1789701842.9400346,
+      "stage": "6.0 Sau Khi empty_cache()",
+      "category": "Cleanup",
+      "details": "Giải phóng intermediate activation cache",
+      "allocated_mb": 17521.69,
+      "reserved_mb": 17822.0,
+      "peak_allocated_mb": 17521.69
+    }
+  ],
+  "block_clusters_vram": {
+    "0. Patch Embedding & 3D RoPE": {
+      "allocated_mb": 17567.0185546875,
+      "peak_mb": 17905.4560546875
+    },
+    "1. Cụm 1 (Blocks 0-9 Sơ Cấp)": {
+      "allocated_mb": 17591.4208984375,
+      "peak_mb": 17905.4560546875
+    },
+    "2. Cụm 2 (Blocks 10-19 Cross-Attention)": {
+      "allocated_mb": 17591.4208984375,
+      "peak_mb": 17905.4560546875
+    },
+    "3. Cụm 3 (Blocks 20-29 Tinh Chỉnh Sâu)": {
+      "allocated_mb": 17591.4208984375,
+      "peak_mb": 17905.4560546875
+    },
+    "4. Projection Out Head": {
+      "allocated_mb": 17569.533203125,
+      "peak_mb": 17905.4560546875
+    }
+  },
+  "denoising_steps_vram": {
+    "step_1": {
+      "step": 1,
+      "allocated_mb": 17534.26,
+      "peak_mb": 17898.79,
+      "reserved_mb": 18412.0
+    },
+    "step_2": {
+      "step": 2,
+      "allocated_mb": 17536.17,
+      "peak_mb": 17903.55,
+      "reserved_mb": 18412.0
+    },
+    "step_5": {
+      "step": 5,
+      "allocated_mb": 17536.55,
+      "peak_mb": 17905.46,
+      "reserved_mb": 18412.0
+    },
+    "step_10": {
+      "step": 10,
+      "allocated_mb": 17536.17,
+      "peak_mb": 17905.46,
+      "reserved_mb": 18412.0
+    },
+    "step_15": {
+      "step": 15,
+      "allocated_mb": 17536.17,
+      "peak_mb": 17905.46,
+      "reserved_mb": 18412.0
+    },
+    "step_20": {
+      "step": 20,
+      "allocated_mb": 17536.17,
+      "peak_mb": 17905.46,
+      "reserved_mb": 18412.0
+    },
+    "step_25": {
+      "step": 25,
+      "allocated_mb": 17536.55,
+      "peak_mb": 17905.46,
+      "reserved_mb": 18412.0
+    }
+  }
+}

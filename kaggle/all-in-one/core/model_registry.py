@@ -56,11 +56,11 @@ class ModelRegistry:
         return self._engines["image"]
 
     def get_video(self) -> BaseVideoEngine:
-        """Lấy Video Engine (Wan2.1 / Video Diffusion)."""
+        """Lấy Video Engine (Wan2.1 / Wan2.2 Video Diffusion)."""
         if "video" not in self._engines:
-            from visual.wan_video import WanVideoEngine
+            from visual import get_wan_engine
             vid_cfg = MODELS_CONFIG.get("video", {})
-            self._engines["video"] = WanVideoEngine(vid_cfg)
+            self._engines["video"] = get_wan_engine(vid_cfg)
         return self._engines["video"]
 
     def get_stt(self) -> BaseSTTEngine:

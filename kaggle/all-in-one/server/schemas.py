@@ -27,7 +27,7 @@ class ChatCompletionRequest(BaseModel):
 class ImageGenerationRequest(BaseModel):
     prompt: str
     negative_prompt: Optional[str] = None
-    model: Optional[str] = "schnell"
+    model: Optional[str] = "flux-2-klein-4b"
     n: Optional[int] = 1
     size: Optional[str] = "512x512"
     width: Optional[int] = None
@@ -51,7 +51,7 @@ class ImageEditRequest(BaseModel):
     image: str                         # Base64 data URI hoặc image URL
     mask: Optional[str] = None         # Chuẩn OpenAI param 'mask'
     mask_image: Optional[str] = None   # Alias thuận tiện 'mask_image'
-    model: Optional[str] = "schnell"
+    model: Optional[str] = "flux-2-klein-4b"
     n: Optional[int] = 1
     size: Optional[str] = "512x512"
     width: Optional[int] = None

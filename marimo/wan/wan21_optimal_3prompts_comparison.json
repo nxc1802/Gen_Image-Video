@@ -1,0 +1,145 @@
+{
+  "timestamp": 1789723280.1810117,
+  "wan21_1_3b": {
+    "model_id": "Wan-AI/Wan2.1-T2V-1.3B-Diffusers",
+    "model_name": "Wan2.1-T2V-1.3B (Optimal 480P)",
+    "config": {
+      "width": 832,
+      "height": 480,
+      "frames": 33,
+      "fps": 16,
+      "steps": 15,
+      "cfg": 5.0,
+      "seed": 42
+    },
+    "load_time_s": 4.58,
+    "static_vram_gb": 2.898,
+    "prompts": [
+      {
+        "prompt_id": "p1_cafe",
+        "title": "Chân dung đời thường & Biểu cảm",
+        "prompt": "A close-up cinematic shot of a young woman in a soft knitted cream sweater sitting by a sunlit wooden cafe table, gently holding a steaming ceramic mug with both hands, taking a slow delicate sip and looking out the rainy window with a calm natural smile, soft warm morning lighting, raindrops on window glass, shallow depth of field, photorealistic 8k, fluid realistic subtle motion",
+        "file": "wan21_1_3b_opt_p1_cafe.mp4",
+        "size_kb": 242.1,
+        "timing": {
+          "text_encode_s": 1.53,
+          "swap_s": 6.81,
+          "denoise_s": 11.88,
+          "export_s": 0.61,
+          "total_s": 20.83
+        },
+        "vram_gb": {
+          "peak_allocated": 3.714,
+          "peak_reserved": 4.238
+        }
+      },
+      {
+        "prompt_id": "p2_puppy",
+        "title": "Động vật & Chi tiết sợi lông / Ánh sáng tự nhiên",
+        "prompt": "A cute golden retriever puppy sitting on vibrant green grass in a sunlit park, tilting its head curiously with wide eyes, soft wind rustling its golden fur, warm afternoon golden hour sunlight, macro cinematic 4k, fluid lifelike subtle motion",
+        "file": "wan21_1_3b_opt_p2_puppy.mp4",
+        "size_kb": 347.2,
+        "timing": {
+          "text_encode_s": 1.98,
+          "swap_s": 6.81,
+          "denoise_s": 11.79,
+          "export_s": 0.56,
+          "total_s": 21.15
+        },
+        "vram_gb": {
+          "peak_allocated": 3.714,
+          "peak_reserved": 4.238
+        }
+      },
+      {
+        "prompt_id": "p3_dragon",
+        "title": "Điện ảnh hoành tráng & Hiệu ứng ánh sáng phức tạp",
+        "prompt": "A magnificent mechanical golden dragon soaring gracefully through misty neon thunderstorm clouds above a cyberpunk metropolis at dusk, cinematic camera tracking, volumetric lightning flashes, 4k ultra-detailed, photorealistic fluid motion, vivid reflections",
+        "file": "wan21_1_3b_opt_p3_dragon.mp4",
+        "size_kb": 460.9,
+        "timing": {
+          "text_encode_s": 1.79,
+          "swap_s": 6.81,
+          "denoise_s": 11.79,
+          "export_s": 0.62,
+          "total_s": 21.0
+        },
+        "vram_gb": {
+          "peak_allocated": 3.714,
+          "peak_reserved": 4.238
+        }
+      }
+    ]
+  },
+  "wan21_14b": {
+    "model_id": "Wan-AI/Wan2.1-T2V-14B-Diffusers",
+    "model_name": "Wan2.1-T2V-14B (Optimal 720P HD)",
+    "config": {
+      "width": 1280,
+      "height": 720,
+      "frames": 33,
+      "fps": 16,
+      "steps": 30,
+      "cfg": 6.0,
+      "seed": 42
+    },
+    "load_time_s": 9.39,
+    "static_vram_gb": 26.993,
+    "prompts": [
+      {
+        "prompt_id": "p1_cafe",
+        "title": "Chân dung đời thường & Biểu cảm",
+        "prompt": "A close-up cinematic shot of a young woman in a soft knitted cream sweater sitting by a sunlit wooden cafe table, gently holding a steaming ceramic mug with both hands, taking a slow delicate sip and looking out the rainy window with a calm natural smile, soft warm morning lighting, raindrops on window glass, shallow depth of field, photorealistic 8k, fluid realistic subtle motion",
+        "file": "wan21_14b_opt_p1_cafe.mp4",
+        "size_kb": 873.2,
+        "timing": {
+          "text_encode_s": 1.45,
+          "swap_s": 5.84,
+          "denoise_s": 347.68,
+          "export_s": 0.94,
+          "total_s": 355.91
+        },
+        "vram_gb": {
+          "peak_allocated": 30.482,
+          "peak_reserved": 32.188
+        }
+      },
+      {
+        "prompt_id": "p2_puppy",
+        "title": "Động vật & Chi tiết sợi lông / Ánh sáng tự nhiên",
+        "prompt": "A cute golden retriever puppy sitting on vibrant green grass in a sunlit park, tilting its head curiously with wide eyes, soft wind rustling its golden fur, warm afternoon golden hour sunlight, macro cinematic 4k, fluid lifelike subtle motion",
+        "file": "wan21_14b_opt_p2_puppy.mp4",
+        "size_kb": 569.7,
+        "timing": {
+          "text_encode_s": 1.8,
+          "swap_s": 6.32,
+          "denoise_s": 347.62,
+          "export_s": 0.9,
+          "total_s": 356.64
+        },
+        "vram_gb": {
+          "peak_allocated": 30.482,
+          "peak_reserved": 32.463
+        }
+      },
+      {
+        "prompt_id": "p3_dragon",
+        "title": "Điện ảnh hoành tráng & Hiệu ứng ánh sáng phức tạp",
+        "prompt": "A magnificent mechanical golden dragon soaring gracefully through misty neon thunderstorm clouds above a cyberpunk metropolis at dusk, cinematic camera tracking, volumetric lightning flashes, 4k ultra-detailed, photorealistic fluid motion, vivid reflections",
+        "file": "wan21_14b_opt_p3_dragon.mp4",
+        "size_kb": 2300.2,
+        "timing": {
+          "text_encode_s": 1.73,
+          "swap_s": 6.27,
+          "denoise_s": 347.43,
+          "export_s": 1.1,
+          "total_s": 356.54
+        },
+        "vram_gb": {
+          "peak_allocated": 30.482,
+          "peak_reserved": 32.447
+        }
+      }
+    ]
+  }
+}

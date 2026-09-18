@@ -8,7 +8,16 @@
   "enable_gpu": "true",
   "enable_tpu": "false",
   "enable_internet": "true",
-  "dataset_sources": [],
+  "dataset_sources": [
+    "nguynxuncngde180528/wan22-ti2v-5b-gguf",
+    "nguynxuncngde180528/wan22-t2v-a14b-gguf",
+    "nguynxuncngde180528/wan22-i2v-a14b-gguf",
+    "nguynxuncngde180528/qwen38-27b-vlm-gguf",
+    "nguynxuncngde180528/umt5-xxl-encoder-gguf",
+    "nguynxuncngde180528/flux2-klein-4b-gguf",
+    "nguynxuncngde180528/qwen3-4b-gguf",
+    "nguynxuncngde180528/kaggle-studio-wheels"
+  ],
   "competition_sources": [],
   "kernel_sources": [],
   "model_sources": []

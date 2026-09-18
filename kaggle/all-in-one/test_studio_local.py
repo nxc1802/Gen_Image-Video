@@ -6,8 +6,8 @@ Kiểm tra tự động toàn bộ tính năng và endpoint của Studio AI qua 
 2. VLM Chat Completions (SSE Streaming & TTFT)
 3. Audio Text-to-Speech (Kokoro-82M WAV)
 4. Audio Speech-to-Text (Whisper Turbo Transcription)
-5. FLUX.1 Text-to-Image (SSE Diffusion Step Progress)
-6. FLUX.1 Image Inpainting (Masked Editing with SSE Progress)
+5. FLUX.2 Text-to-Image (SSE Diffusion Step Progress)
+6. FLUX.2 Image Inpainting (Masked Editing with SSE Progress)
 7. Wan2.1 Text-to-Video (SSE Video Step Progress)
 8. Wan2.1 Image-to-Video (ITV with SSE Step Progress)
 9. Internal Memory Transition & RAM-VRAM Swapping Verification
@@ -300,15 +300,15 @@ class StudioTester:
             return None
 
     # =========================================================================
-    # CHECK 4: FLUX.1 Image Generation with SSE Diffusion Progress
+    # CHECK 4: FLUX.2 Image Generation with SSE Diffusion Progress
     # =========================================================================
     def test_flux_image_generation(self) -> Optional[str]:
         print("\n" + "=" * 78)
-        print("🖼️ [TEST 4] FLUX.1 IMAGE GENERATION (SSE DIFFUSION STEP PROGRESS)")
+        print("🖼️ [TEST 4] FLUX.2 IMAGE GENERATION (SSE DIFFUSION STEP PROGRESS)")
         print("=" * 78)
         prompt = "A cinematic studio portrait of a futuristic robotic cat with glowing turquoise neon lines, 8k resolution"
         payload = {
-            "model": "schnell",
+            "model": "flux-2-klein-4b",
             "prompt": prompt,
             "size": "512x512",
             "steps": 4,
@@ -356,24 +356,24 @@ class StudioTester:
                 with open(img_path, "wb") as f:
                     f.write(img_data)
                 print(f"✅ Tạo ảnh thành công sau {total_time:.2f}s! Đã lưu: {img_path}")
-                self.record_result("Image Gen FLUX.1 (schnell)", True, total_time, f"Saved: {img_path}")
+                self.record_result("Image Gen FLUX.2 (flux-2-klein-4b)", True, total_time, f"Saved: {img_path}")
                 return img_path
             else:
                 print(f"⚠️ Không nhận được ảnh từ SSE stream sau {total_time:.2f}s.")
-                self.record_result("Image Gen FLUX.1 (schnell)", False, total_time, "No image received")
+                self.record_result("Image Gen FLUX.2 (flux-2-klein-4b)", False, total_time, "No image received")
                 return None
         except Exception as e:
             total_time = time.time() - t0
             print(f"❌ Lỗi tạo ảnh FLUX: {e}")
-            self.record_result("Image Gen FLUX.1 (schnell)", False, total_time, str(e))
+            self.record_result("Image Gen FLUX.2 (flux-2-klein-4b)", False, total_time, str(e))
             return None
 
     # =========================================================================
-    # CHECK 5: FLUX.1 Masked Inpainting with SSE Progress
+    # CHECK 5: FLUX.2 Masked Inpainting with SSE Progress
     # =========================================================================
     def test_flux_inpainting(self, base_img_path: Optional[str] = None):
         print("\n" + "=" * 78)
-        print("🎨 [TEST 5] FLUX.1 MASKED INPAINTING (IMAGE EDIT WITH SSE PROGRESS)")
+        print("🎨 [TEST 5] FLUX.2 MASKED INPAINTING (IMAGE EDIT WITH SSE PROGRESS)")
         print("=" * 78)
 
         # Tạo ảnh gốc và mặt nạ nếu chưa có
@@ -399,7 +399,7 @@ class StudioTester:
 
         prompt = "A glowing golden cyber medal in the center"
         payload = {
-            "model": "schnell",
+            "model": "flux-2-klein-4b",
             "prompt": prompt,
             "image": f"data:image/png;base64,{base_b64}",
             "mask_image": f"data:image/png;base64,{mask_b64}",
@@ -448,16 +448,16 @@ class StudioTester:
                 with open(out_path, "wb") as f:
                     f.write(img_data)
                 print(f"✅ Inpainting thành công sau {total_time:.2f}s! Đã lưu: {out_path}")
-                self.record_result("Inpainting FLUX.1", True, total_time, f"Saved: {out_path}")
+                self.record_result("Inpainting FLUX.2", True, total_time, f"Saved: {out_path}")
                 return out_path
             else:
                 print(f"⚠️ Không nhận được ảnh inpainting sau {total_time:.2f}s.")
-                self.record_result("Inpainting FLUX.1", False, total_time, "No image received")
+                self.record_result("Inpainting FLUX.2", False, total_time, "No image received")
                 return None
         except Exception as e:
             total_time = time.time() - t0
             print(f"❌ Lỗi Inpainting: {e}")
-            self.record_result("Inpainting FLUX.1", False, total_time, str(e))
+            self.record_result("Inpainting FLUX.2", False, total_time, str(e))
             return None
 
     # =========================================================================
@@ -700,10 +700,10 @@ def main():
     # 4. Whisper STT
     tester.test_audio_stt(wav_path)
 
-    # 5. FLUX.1 Image Generation (SSE)
+    # 5. FLUX.2 Image Generation (SSE)
     img_path = tester.test_flux_image_generation()
 
-    # 6. FLUX.1 Inpainting (SSE)
+    # 6. FLUX.2 Inpainting (SSE)
     tester.test_flux_inpainting(img_path)
 
     # 7. Wan2.1 T2V (SSE)

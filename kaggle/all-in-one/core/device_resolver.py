@@ -74,11 +74,13 @@ class DeviceTopologyResolver:
 
         detected_b = self.extract_param_size_billions(model_id)
 
-        # Image Gen (FLUX.1 Schnell: ~12B DiT + 4.8B T5 = ~17B)
+        # Image Gen (FLUX.2 Klein: 4B DiT + 4B Qwen3 = ~8B total params in Q4_K_M -> ~5.2 GB total)
         if task_lower in ("image", "flux", "visual_image"):
-            if quantization == "4bit":
-                return 11.5  # 4-bit NF4 Transformer + T5
-            return 24.0
+            if "9b" in model_id.lower():
+                return 9.5 if quantization in ("4bit", "q4_k_m") else 18.0
+            if quantization in ("4bit", "q4_k_m"):
+                return 5.2  # 4-bit GGUF FLUX.2 Klein 4B + Qwen3 4B Text Encoder + VAE
+            return 12.0
 
         # Video Gen (Wan 14B / Wan 1.3B)
         if task_lower in ("video", "wan", "visual_video"):

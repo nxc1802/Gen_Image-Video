@@ -11,6 +11,7 @@ Cung cấp toàn bộ các endpoint chuẩn của OpenAI cho:
 
 import base64
 import json
+import logging
 import threading
 import time
 import uuid
@@ -18,6 +19,8 @@ from typing import Optional
 from fastapi import FastAPI, File, Form, Header, HTTPException, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+
+logger = logging.getLogger("StudioServer")
 
 from config import API_KEY, FLUX_VARIANTS, VIDEO_VARIANTS
 from core.memory_manager import get_memory_manager
@@ -86,11 +89,15 @@ def create_app() -> FastAPI:
             })
         # Bổ sung các model aliases / variants
         model_items.extend([
-            {"id": "flux-1-schnell", "object": "model", "owned_by": "black-forest-labs", "type": "image"},
-            {"id": "flux-1-dev", "object": "model", "owned_by": "black-forest-labs", "type": "image"},
+            {"id": "flux-2-klein-4b", "object": "model", "owned_by": "unsloth", "type": "image"},
+            {"id": "flux-2-klein-9b", "object": "model", "owned_by": "unsloth", "type": "image"},
+            {"id": "flux-2-dev", "object": "model", "owned_by": "black-forest-labs", "type": "image"},
             {"id": "wan-2.1-1.3b", "object": "model", "owned_by": "wan-ai", "type": "video"},
             {"id": "wan-2.1-14b", "object": "model", "owned_by": "wan-ai", "type": "video"},
             {"id": "wan-2.1-i2v", "object": "model", "owned_by": "wan-ai", "type": "video_i2v"},
+            {"id": "wan-2.2-5b", "object": "model", "owned_by": "wan-ai", "type": "video"},
+            {"id": "wan-2.2-a14b", "object": "model", "owned_by": "wan-ai", "type": "video"},
+            {"id": "wan-2.2-i2v", "object": "model", "owned_by": "wan-ai", "type": "video_i2v"},
             {"id": "whisper-large-v3-turbo", "object": "model", "owned_by": "openai", "type": "stt"},
             {"id": "kokoro-82m", "object": "model", "owned_by": "hexgrad", "type": "tts"},
         ])

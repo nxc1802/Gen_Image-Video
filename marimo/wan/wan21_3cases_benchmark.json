@@ -1,0 +1,47 @@
+[
+  {
+    "case": "Test Case 1: Ultra-Low VRAM Config",
+    "resolution": "832x480",
+    "frames": 17,
+    "fps": 16,
+    "duration_sec": 1.06,
+    "steps": 10,
+    "denoise_sec": 4.14,
+    "total_sec": 12.83,
+    "steps_per_sec": 2.42,
+    "peak_vram_gb": 3.66,
+    "reserved_vram_gb": 4.21,
+    "file_size_mb": 0.17,
+    "file_name": "wan21_testcase1_ultralow_832x480.mp4"
+  },
+  {
+    "case": "Test Case 2: Balanced Production Config",
+    "resolution": "1280x720",
+    "frames": 33,
+    "fps": 24,
+    "duration_sec": 1.38,
+    "steps": 10,
+    "denoise_sec": 26.34,
+    "total_sec": 35.82,
+    "steps_per_sec": 0.38,
+    "peak_vram_gb": 4.44,
+    "reserved_vram_gb": 5.35,
+    "file_size_mb": 0.84,
+    "file_name": "wan21_testcase2_balanced_720p_33f.mp4"
+  },
+  {
+    "case": "Test Case 3: Extreme High-Res 4K Config",
+    "resolution": "3840x2160",
+    "frames": 17,
+    "fps": 32,
+    "duration_sec": 0.53,
+    "steps": 10,
+    "denoise_sec": 338.09,
+    "total_sec": 352.25,
+    "steps_per_sec": 0.03,
+    "peak_vram_gb": 10.57,
+    "reserved_vram_gb": 14.02,
+    "file_size_mb": 10.93,
+    "file_name": "wan21_testcase3_extreme_4k_32fps.mp4"
+  }
+]

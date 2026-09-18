@@ -42,7 +42,7 @@ def run_bridge_server(supabase_url: str, supabase_key: str, host: str = "0.0.0.0
 
     class ImageGenRequest(BaseModel):
         prompt: str
-        model: Optional[str] = "flux-1-dev"
+        model: Optional[str] = "flux-2-klein-4b"
         n: Optional[int] = 1
         size: Optional[str] = "1024x1024"
         response_format: Optional[str] = "b64_json"
@@ -52,15 +52,16 @@ def run_bridge_server(supabase_url: str, supabase_key: str, host: str = "0.0.0.0
 
     @api_app.get("/health")
     def health():
-        return {"status": "ok", "service": "FLUX.1 Supabase Bridge", "supabase": supabase_url}
+        return {"status": "ok", "service": "FLUX.2 Supabase Bridge", "supabase": supabase_url}
 
     @api_app.get("/v1/models")
     def list_models():
         return {
             "object": "list",
             "data": [
-                {"id": "flux-1-dev", "object": "model", "owned_by": "black-forest-labs"},
-                {"id": "flux-1-schnell", "object": "model", "owned_by": "black-forest-labs"},
+                {"id": "flux-2-klein-4b", "object": "model", "owned_by": "unsloth"},
+                {"id": "flux-2-klein-9b", "object": "model", "owned_by": "unsloth"},
+                {"id": "flux-2-dev", "object": "model", "owned_by": "black-forest-labs"},
                 {"id": "dall-e-3", "object": "model", "owned_by": "openai-alias"},
             ],
         }
