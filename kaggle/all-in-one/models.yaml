@@ -61,11 +61,10 @@ models:
     guidance: 0.0
 
   # 🎬 5. Text-to-Video & Image-to-Video (Wan2.1 SOTA FP16)
-  # - Người dùng chỉ định: 2 GPU (GPU 0 cho UMT5 text_encoder, GPU 1 cho Transformer + VAE)
   video:
     id: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
     default_variant: "1.3b"
-    fallback_id: "sarthak247/Wan2.1-T2V-1.3B-nf4"
+    fallback_id: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
     variants:
       t2v_1_3b: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
       t2v_14b: "Wan-AI/Wan2.1-T2V-14B-Diffusers"
@@ -74,11 +73,12 @@ models:
     lifecycle: "dynamic_switch"
     preload: false
     init_target: "cpu"
-    device_strategy: "dual_gpu"    # Người dùng quyết định: 2 GPU
-    gpu_count: 2                   # GPU 0: Text Encoder (UMT5), GPU 1: Transformer + VAE
+    allocation_policy: "adaptive"
+    device_strategy: "auto"
     num_frames: 17
     width: 832
     height: 480
     steps: 25
     guidance: 5.0
+
 
