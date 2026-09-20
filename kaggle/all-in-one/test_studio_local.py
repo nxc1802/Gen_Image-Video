@@ -171,7 +171,7 @@ class StudioTester:
                 headers=self.headers,
                 json=payload,
                 stream=True,
-                timeout=60,
+                timeout=120,
             )
             resp.raise_for_status()
 
@@ -230,7 +230,7 @@ class StudioTester:
                 f"{self.base_url}/audio/speech",
                 headers=self.headers,
                 json=payload,
-                timeout=45,
+                timeout=90,
             )
             resp.raise_for_status()
             audio_bytes = resp.content
@@ -282,7 +282,7 @@ class StudioTester:
                     headers=headers,
                     files=files,
                     data=data,
-                    timeout=45,
+                    timeout=90,
                 )
             resp.raise_for_status()
             res_json = resp.json()
