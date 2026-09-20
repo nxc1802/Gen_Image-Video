@@ -160,10 +160,10 @@ class MemoryManager:
 
     def switch_dynamic_slot(self, target_slot: str, loader_fn: Callable[[], Any], engine_obj: Optional[Any] = None) -> Any:
         """
-        Điều phối hoán đổi mô hình dynamic_switch giữa CPU RAM và GPU VRAM qua bus PCIe:
+        Điều phối chế độ hoạt động độc lập (Giai đoạn 1: Isolated Exclusive Mode):
         1. Nếu target_slot đang tích cực trên GPU: Trả về tức thì (Zero latency).
-        2. Nếu slot khác đang trên GPU: Chuyển slot cũ về CPU RAM, dọn cache VRAM.
-        3. Đưa target_slot lên GPU từ RAM (hoặc nạp lần đầu nếu chưa có).
+        2. Nếu slot khác đang trên GPU: Giải phóng hoàn toàn mọi model cũ (Clean-Slate).
+        3. Nạp duy nhất target_slot vào GPU với 100% tài nguyên sạch sẽ (Zero Residual).
         """
         target_slot = self.SLOT_ALIASES.get(target_slot.lower(), target_slot.lower())
         with self.operation_lock:
@@ -172,53 +172,27 @@ class MemoryManager:
 
             # Trường hợp 1: Đang sẵn sàng trên GPU
             if self.active_dynamic_slot == target_slot and target_slot in self.dynamic_models:
-                logger.debug(f"✨ [PCIe Fast-Swap] Slot '{target_slot}' đã sẵn sàng trên GPU (Zero latency).")
+                logger.debug(f"✨ [Isolated Mode] Slot '{target_slot}' đã sẵn sàng trên GPU (Zero latency).")
                 return self.dynamic_models[target_slot]
 
             t0 = time.time()
 
-            # Trường hợp 2: Có một mô hình dynamic khác đang chiếm GPU -> Giải phóng VRAM và RAM để tránh OOM
+            # Trường hợp 2: Có một mô hình khác đang chiếm GPU -> Giải phóng triệt để toàn bộ (Clean-Slate)
             if self.active_dynamic_slot and self.active_dynamic_slot != target_slot:
                 prev_slot = self.active_dynamic_slot
-                logger.info(f"🔄 [GPU ➔ RAM] Nhường VRAM: Giải phóng slot '{prev_slot}'...")
-                prev_engine = self.registered_engines.get(prev_slot)
-                if prev_engine and hasattr(prev_engine, "release_from_gpu"):
-                    try:
-                        prev_engine.release_from_gpu()
-                    except Exception as re:
-                        logger.warning(f"Lỗi giải phóng {prev_slot}: {re}")
-                if prev_slot in self.dynamic_models:
-                    del self.dynamic_models[prev_slot]
-                self.clean_gpu()
-                import gc
-                gc.collect()
+                logger.info(f"🔄 [Clean-Slate] Nhường GPU: Giải phóng toàn bộ model cũ ({prev_slot})...")
+                for slot_name, eng in list(self.registered_engines.items()):
+                    if hasattr(eng, "release_from_gpu"):
+                        try:
+                            eng.release_from_gpu()
+                        except Exception as re:
+                            logger.warning(f"Lỗi giải phóng {slot_name}: {re}")
+                self.dynamic_models.clear()
                 self.active_dynamic_slot = None
-
-            # Trường hợp 3: Target đã có sẵn trong CPU RAM -> Đẩy lên GPU
-            if target_slot in self.dynamic_models:
-                logger.info(f"⚡ [RAM ➔ GPU] Kích hoạt '{target_slot}' từ CPU RAM qua bus PCIe (Zero Disk I/O)...")
                 self.clean_gpu()
-                model = self.dynamic_models[target_slot]
-                dev = "cuda:1" if torch.cuda.device_count() > 1 else "cuda:0"
-                if engine_obj and hasattr(engine_obj, "reload_to_gpu"):
-                    engine_obj.reload_to_gpu()
-                elif hasattr(model, "enable_model_cpu_offload") and torch.cuda.is_available():
-                    try:
-                        model.enable_model_cpu_offload(device=torch.device(dev))
-                    except Exception as e:
-                        logger.debug(f"Pipeline enable_model_cpu_offload note: {e}")
-                elif hasattr(model, "to") and torch.cuda.is_available():
-                    try:
-                        model.to(dev)
-                    except Exception as e:
-                        logger.debug(f"Model to CUDA note: {e}")
-                self.active_dynamic_slot = target_slot
-                elapsed = time.time() - t0
-                logger.info(f"✨ [PCIe Fast-Swap] '{target_slot}' sẵn sàng trên GPU sau {elapsed:.2f}s!")
-                return model
 
-            # Trường hợp 4: Nạp lần đầu (Cold Start)
-            logger.info(f"🚀 [Cold Start] Khởi tạo '{target_slot}' lần đầu vào bộ nhớ...")
+            # Trường hợp 3: Nạp mô hình mục tiêu vào GPU sạch sẽ
+            logger.info(f"🚀 [Isolated Cold Start] Khởi tạo '{target_slot}' độc quyền vào GPU...")
             self.clean_gpu()
             model = loader_fn()
             self.dynamic_models[target_slot] = model

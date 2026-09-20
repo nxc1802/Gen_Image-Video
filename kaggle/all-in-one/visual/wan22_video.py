@@ -456,14 +456,17 @@ class Wan22VideoEngine(BaseVideoEngine):
         return self._tokenizer, self._text_encoder
 
     def release_from_gpu(self):
-        """Giải phóng hoàn toàn Wan2.2 khỏi GPU VRAM khi nhường chỗ cho Image/VLM."""
-        logger.info("🧹 [RAM ➔ CPU] Giải phóng Wan2.2 khỏi GPU...")
-        for obj in [self._transformer_1, self._transformer_2, self._vae, self._text_encoder]:
-            if obj is not None and hasattr(obj, "to"):
-                try:
-                    obj.to("cpu")
-                except Exception:
-                    pass
+        """Giải phóng triệt để Wan2.2 khỏi GPU VRAM và RAM (Giai đoạn 1: Clean-Slate)."""
+        logger.info("🧹 [Clean-Slate] Giải phóng Wan2.2 khỏi GPU...")
+        with self._lock:
+            self._pipeline = None
+            self._transformer_1 = None
+            self._transformer_2 = None
+            self._vae = None
+            self._text_encoder = None
+            self._tokenizer = None
+            self._scheduler = None
+            self._is_loaded = False
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
@@ -605,13 +608,14 @@ class Wan22VideoEngine(BaseVideoEngine):
                     from diffusers import GGUFQuantizationConfig
                     q_cfg = GGUFQuantizationConfig(compute_dtype=compute_dtype)
                     cfg_dir = components.get("config_dir") or self.resolved_model_path
+                    trans_cfg_dir = os.path.join(cfg_dir, "transformer") if (cfg_dir and os.path.exists(os.path.join(cfg_dir, "transformer", "config.json"))) else cfg_dir
                     gc.collect()
                     if torch.cuda.is_available():
                         torch.cuda.empty_cache()
                     try:
                         self._transformer_1 = WanTransformer3DModel.from_single_file(
                             t_file,
-                            config=cfg_dir,
+                            config=trans_cfg_dir,
                             quantization_config=q_cfg,
                             torch_dtype=compute_dtype,
                             device_map=target_dev if target_dev != "cpu" else None,
@@ -622,7 +626,7 @@ class Wan22VideoEngine(BaseVideoEngine):
                         try:
                             self._transformer_1 = WanTransformer3DModel.from_single_file(
                                 t_file,
-                                config=cfg_dir,
+                                config=trans_cfg_dir,
                                 quantization_config=q_cfg,
                                 torch_dtype=compute_dtype,
                             )

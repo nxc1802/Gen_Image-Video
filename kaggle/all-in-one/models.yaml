@@ -11,18 +11,18 @@ models:
   stt:
     id: "openai/whisper-large-v3-turbo"
     precision: "fp16"
-    lifecycle: "dynamic_switch"    # Hoán đổi động, không chiếm VRAM vĩnh viễn
-    preload: false                 # Khởi động không nạp VRAM
+    lifecycle: "isolated_exclusive" # Giai đoạn 1: Độc lập tuyệt đối
+    preload: false                  # Khởi động không nạp VRAM
     init_target: "cpu"
-    device_strategy: "auto"        # Tự động chọn GPU trống
+    device_strategy: "auto"
 
   # 🔊 2. Text-to-Speech (Kokoro-82M FP16)
   tts:
     id: "hexgrad/Kokoro-82M"
     voice: "af_heart"
     precision: "fp16"
-    lifecycle: "dynamic_switch"    # Hoán đổi động, không chiếm VRAM vĩnh viễn
-    preload: false                 # Khởi động không nạp VRAM
+    lifecycle: "isolated_exclusive" # Giai đoạn 1: Độc lập tuyệt đối
+    preload: false                  # Khởi động không nạp VRAM
     init_target: "cpu"
     device_strategy: "auto"
 
@@ -37,15 +37,15 @@ models:
     mmproj_file: "mmproj-F16.gguf"
     quantization: "q4_k_m"
     precision: "fp16"
-    lifecycle: "dynamic_switch"    # Hoán đổi động với 30GB CPU RAM khi chạy FLUX/Wan
-    preload: false                 # Khởi động không nạp VRAM (Lazy load hoặc nạp theo request)
+    lifecycle: "isolated_exclusive" # Giai đoạn 1: Độc lập tuyệt đối
+    preload: false                  # Khởi động không nạp VRAM
     init_target: "cpu"
-    allocation_policy: "dual_gpu"  # Bắt buộc chia 2 GPU (Layer-split trên 2x Tesla T4 16GB)
+    allocation_policy: "dual_gpu"   # Bắt buộc chia 2 GPU (Layer-split trên 2x Tesla T4 16GB)
     device_strategy: "dual_gpu"
     gpu_count: 2
     gpu_split: [0.5, 0.5]
     n_ctx: 4096
-    n_gpu_layers: -1               # Offload 100% tầng lên 2 GPU
+    n_gpu_layers: -1                # Offload 100% tầng lên 2 GPU
     max_tokens: 1024
     temperature: 0.7
 
@@ -66,8 +66,8 @@ models:
       dev: "black-forest-labs/FLUX.2-dev"
     quantization: "q4_k_m"
     precision: "fp16"
-    lifecycle: "dynamic_switch"
-    preload: false                 # Tắt preload image
+    lifecycle: "isolated_exclusive"
+    preload: false                  # Tắt preload image
     init_target: "cpu"
     allocation_policy: "single_gpu"
     device_strategy: "single_gpu"
@@ -93,9 +93,9 @@ models:
       i2v_14b: "Wan-AI/Wan2.1-I2V-14B-480P-Diffusers"
     quantization: "4bit"
     precision: "fp16"
-    lifecycle: "dynamic_switch"
-    preload: true                  # Preload Wan2.2-5B lên GPU sẵn sàng test
-    init_target: "gpu"
+    lifecycle: "isolated_exclusive"
+    preload: false                  # Tắt preload video, nạp khi có request
+    init_target: "cpu"
     allocation_policy: "adaptive"
     device_strategy: "auto"
     num_frames: 17

@@ -57,6 +57,23 @@ class BaseModelEngine(ABC):
             except Exception as e:
                 logger.debug(f"Reload to GPU skipped for {self.model_id}: {e}")
 
+    def release_from_gpu(self):
+        """Giải phóng hoàn toàn mô hình khỏi GPU VRAM và RAM (Giai đoạn 1: Clean-Slate)."""
+        logger.info(f"🧹 [{self.model_id}] Đang giải phóng khỏi GPU VRAM và RAM...")
+        self._model = None
+        self._is_loaded = False
+        import gc
+        gc.collect()
+        try:
+            import torch
+            if torch.cuda.is_available():
+                for i in range(torch.cuda.device_count()):
+                    with torch.cuda.device(i):
+                        torch.cuda.empty_cache()
+                        torch.cuda.ipc_collect()
+        except Exception:
+            pass
+
     @property
     def is_loaded(self) -> bool:
         return self._is_loaded

@@ -198,6 +198,7 @@ class Flux2ImageEngine(BaseImageEngine):
                         te_dir or str(Path(te_gguf).parent),
                         gguf_file=te_fname,
                         torch_dtype=torch.float16,
+                        device_map=dev_str if torch.cuda.is_available() else None,
                         low_cpu_mem_usage=True,
                     )
                 except Exception as te_e:
@@ -210,16 +211,18 @@ class Flux2ImageEngine(BaseImageEngine):
                         base_repo,
                         subfolder="text_encoder",
                         torch_dtype=torch.float16,
+                        device_map=dev_str if torch.cuda.is_available() else None,
                         low_cpu_mem_usage=True,
                     )
                 except Exception:
                     text_encoder = AutoModelForCausalLM.from_pretrained(
                         "Qwen/Qwen3-4B",
                         torch_dtype=torch.float16,
+                        device_map=dev_str if torch.cuda.is_available() else None,
                         low_cpu_mem_usage=True,
                     )
 
-            if torch.cuda.is_available():
+            if torch.cuda.is_available() and hasattr(text_encoder, "to") and not hasattr(text_encoder, "hf_device_map"):
                 text_encoder = text_encoder.to(dev_obj)
 
             # 2. Nạp Transformer (FLUX.2 Klein 4B)
