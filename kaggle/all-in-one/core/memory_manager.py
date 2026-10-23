@@ -17,7 +17,7 @@ import time
 from typing import Any, Callable, Dict, Optional, Set
 import torch
 
-from config import MODELS_CONFIG
+import config
 
 logger = logging.getLogger("MemoryOrchestrator")
 
@@ -73,8 +73,23 @@ class MemoryManager:
                         logger.warning(f"Lỗi khi giải phóng engine {slot_name}: {e}")
             self.dynamic_models.clear()
             self.active_dynamic_slot = None
+            try:
+                from .comfyui_manager import free_all_comfyui_vram
+                free_all_comfyui_vram()
+            except Exception:
+                pass
+            try:
+                from audio.audio_manager import get_audio_service_manager
+                get_audio_service_manager().free_vram()
+            except Exception:
+                pass
+            try:
+                from embedding.embedding_service import get_embedding_service_manager
+                get_embedding_service_manager().free_vram()
+            except Exception:
+                pass
             self.clean_gpu()
-            logger.info("✨ [Clean All VRAM] Đã dọn sạch hoàn toàn VRAM trên toàn bộ GPU!")
+            logger.info("✨ [Clean All VRAM] Đã dọn sạch hoàn toàn VRAM trên toàn bộ GPU (kèm ComfyUI, Audio & Embedding cache)!")
 
     @staticmethod
     def get_system_ram() -> Dict[str, Any]:
@@ -115,12 +130,22 @@ class MemoryManager:
                 allocated = torch.cuda.memory_allocated(i) / (1024 ** 3)
                 reserved = torch.cuda.memory_reserved(i) / (1024 ** 3)
                 total = torch.cuda.get_device_properties(i).total_memory / (1024 ** 3)
+                hw_used = reserved
+                hw_free = total - reserved
+                try:
+                    free_b, total_b = torch.cuda.mem_get_info(i)
+                    hw_free = free_b / (1024 ** 3)
+                    hw_used = (total_b - free_b) / (1024 ** 3)
+                except Exception:
+                    pass
                 gpus[f"gpu_{i}"] = {
                     "name": torch.cuda.get_device_name(i),
                     "allocated_gb": round(allocated, 2),
                     "reserved_gb": round(reserved, 2),
+                    "hardware_used_gb": round(hw_used, 2),
+                    "hardware_free_gb": round(hw_free, 2),
                     "total_gb": round(total, 2),
-                    "free_gb": round(total - reserved, 2),
+                    "free_gb": round(hw_free, 2),
                 }
             stats["gpus"] = gpus
             # Backward compatibility for legacy flat keys
@@ -142,8 +167,14 @@ class MemoryManager:
     SLOT_ALIASES = {
         "stt": "stt",
         "whisper": "stt",
+        "qwen_asr": "stt",
+        "qwen3_asr": "stt",
         "tts": "tts",
         "kokoro": "tts",
+        "qwen_tts": "tts",
+        "qwen3_tts": "tts",
+        "xtts": "tts",
+        "xtts_v2": "tts",
         "vlm": "vlm",
         "qwen": "vlm",
         "chat": "vlm",
@@ -220,7 +251,7 @@ class MemoryManager:
         logger.info("🚀 [Startup Warmup] Bắt đầu khởi tạo các mô hình theo cấu hình models.yaml...")
         logger.info("=" * 70)
 
-        for task, cfg in MODELS_CONFIG.items():
+        for task, cfg in config.MODELS_CONFIG.items():
             is_preload = cfg.get("preload", False)
             init_target = cfg.get("init_target", "gpu").lower()
             lifecycle = cfg.get("lifecycle", "dynamic_switch").lower()

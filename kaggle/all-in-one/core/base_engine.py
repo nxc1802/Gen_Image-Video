@@ -307,3 +307,50 @@ class BaseTTSEngine(BaseModelEngine):
 
     def infer(self, *args, **kwargs) -> Any:
         return self.synthesize(*args, **kwargs)
+
+
+# ==============================================================================
+# 6. TEMPLATE CHO EMBEDDING (TEXT & MULTIMODAL)
+# ==============================================================================
+class BaseEmbeddingEngine(BaseModelEngine):
+    """Template chuẩn cho Text & Multimodal Embedding (Qwen3-Embedding, Qwen3-VL-Embedding...)."""
+
+    @abstractmethod
+    def embed(
+        self,
+        inputs: List[Any],
+        model: Optional[str] = None,
+        dimensions: Optional[int] = None,
+    ) -> List[List[float]]:
+        """
+        Tạo vector nhúng cho danh sách text hoặc media inputs.
+        Trả về list các vector float.
+        """
+        pass
+
+    def infer(self, *args, **kwargs) -> Any:
+        return self.embed(*args, **kwargs)
+
+
+# ==============================================================================
+# 7. TEMPLATE CHO RERANKING (TEXT & MULTIMODAL)
+# ==============================================================================
+class BaseRerankEngine(BaseModelEngine):
+    """Template chuẩn cho Reranking (Qwen3-Reranker, Qwen3-VL-Reranker...)."""
+
+    @abstractmethod
+    def rerank(
+        self,
+        query: str,
+        documents: List[Any],
+        top_n: Optional[int] = None,
+        model: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Đánh giá và sắp xếp lại tài liệu theo độ liên quan với query.
+        Trả về list dict: [{"index": int, "relevance_score": float, "document": Any}]
+        """
+        pass
+
+    def infer(self, *args, **kwargs) -> Any:
+        return self.rerank(*args, **kwargs)

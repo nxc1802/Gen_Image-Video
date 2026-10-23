@@ -1,0 +1,18 @@
+{
+  "id": "cuongnguyen1802/kaggle-vlm-studio",
+  "title": "Kaggle VLM AI Studio",
+  "code_file": "run_vlm.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [
+    "cuongnguyen1802/kaggle-vlm-wheels",
+    "cuongnguyen1802/qwen38-27b-gguf"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

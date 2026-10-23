@@ -9,10 +9,8 @@ venv/
 .venv/
 ENV/
 
-# Jupyter / Marimo
+# Jupyter
 .ipynb_checkpoints/
-.marimo/
-__marimo__/
 
 # System & OS
 .DS_Store
@@ -21,18 +19,30 @@ Thumbs.db
 # Secrets & Environment
 .env
 *.env
+!.env.example
 
-# Media outputs & test artifacts
+# Runtime & Generated Outputs
 test_outputs/
+benchmark_outputs/
+public_url.txt
+current_url.txt
+*.active_colab_account*.txt
 *.mp4
 *.wav
-!kaggle/all-in-one/test_outputs/tts_output.wav
-
-# Large generated assets & logs
+!kaggle/all-in-one/audio/default_speaker.wav
 *.log
-/tmp/
 *.png
 *.jpg
 *.jpeg
 *.webp
-!flux_generated_sample.png
+/tmp/
+
+# Node / Next.js
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

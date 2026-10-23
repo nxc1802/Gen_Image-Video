@@ -1,0 +1,164 @@
+# ==============================================================================
+# 🧬 Kaggle Embedding & Rerank AI Studio Configuration (Dedicated Embedding Mode)
+# ==============================================================================
+# Hardware Allocation Strategy (Dual-GPU Tesla T4 32GB VRAM):
+# - GPU 0 (cuda:0) - 3 Model Dòng Text:
+#   * Qwen3-Embedding-0.6B & Qwen3-Reranker-0.6B (~0.76 GB)
+#   * Qwen3-Embedding-4B & Qwen3-Reranker-4B (~4.76 GB)
+#   * Qwen3-Embedding-8B & Qwen3-Reranker-8B (~9.04 GB)
+#   Total estimated VRAM: ~9.5 GB to 14.5 GB / 16 GB (An toàn, Zero OOM)
+# - GPU 1 (cuda:1) - 2 Model Dòng Vision-Language (VL):
+#   * Qwen3-VL-Embedding-2B & Qwen3-VL-Reranker-2B (~2.96 GB)
+#   * Qwen3-VL-Embedding-8B & Qwen3-VL-Reranker-8B (~10.69 GB)
+#   Total estimated VRAM: ~10.7 GB / 16 GB (An toàn, Zero OOM)
+# - Runtime: Official llama-server / llama_cpp với lượng tử hóa Q4_K_M 100%
+# ==============================================================================
+
+models:
+  # ----------------------------------------------------------------------------
+  # 1. TEXT EMBEDDING MODELS (GPU 0)
+  # ----------------------------------------------------------------------------
+  embedding_0_6b:
+    id: "Qwen/Qwen3-Embedding-0.6B"
+    hf_repo: "mradermacher/Qwen3-Embedding-0.6B-GGUF"
+    model_file: "Qwen3-Embedding-0.6B.Q4_K_M.gguf"
+    quantization: "q4_k_m"
+    format: "gguf"
+    device: "cuda:0"
+    device_strategy: "single"
+    dimensions: 1024
+    max_tokens: 8192
+    lifecycle: "always_active"
+    preload: true
+    init_target: "gpu"
+
+  embedding_4b:
+    id: "Qwen/Qwen3-Embedding-4B"
+    hf_repo: "Qwen/Qwen3-Embedding-4B-GGUF"
+    model_file: "Qwen3-Embedding-4B-Q4_K_M.gguf"
+    quantization: "q4_k_m"
+    format: "gguf"
+    device: "cuda:0"
+    device_strategy: "single"
+    dimensions: 2560
+    max_tokens: 8192
+    lifecycle: "always_active"
+    preload: false
+    init_target: "cpu"
+
+  embedding_8b:
+    id: "Qwen/Qwen3-Embedding-8B"
+    hf_repo: "Qwen/Qwen3-Embedding-8B-GGUF"
+    model_file: "Qwen3-Embedding-8B-Q4_K_M.gguf"
+    quantization: "q4_k_m"
+    format: "gguf"
+    device: "cuda:0"
+    device_strategy: "single"
+    dimensions: 4096
+    max_tokens: 8192
+    lifecycle: "always_active"
+    preload: false
+    init_target: "cpu"
+
+  # ----------------------------------------------------------------------------
+  # 2. TEXT RERANKER MODELS (GPU 0)
+  # ----------------------------------------------------------------------------
+  reranker_0_6b:
+    id: "Qwen/Qwen3-Reranker-0.6B"
+    hf_repo: "mradermacher/Qwen3-Reranker-0.6B-GGUF"
+    model_file: "Qwen3-Reranker-0.6B.Q4_K_M.gguf"
+    quantization: "q4_k_m"
+    format: "gguf"
+    device: "cuda:0"
+    device_strategy: "single"
+    max_tokens: 8192
+    lifecycle: "always_active"
+    preload: true
+    init_target: "gpu"
+
+  reranker_4b:
+    id: "Qwen/Qwen3-Reranker-4B"
+    hf_repo: "mradermacher/Qwen3-Reranker-4B-GGUF"
+    model_file: "Qwen3-Reranker-4B.Q4_K_M.gguf"
+    quantization: "q4_k_m"
+    format: "gguf"
+    device: "cuda:0"
+    device_strategy: "single"
+    max_tokens: 8192
+    lifecycle: "always_active"
+    preload: false
+    init_target: "cpu"
+
+  reranker_8b:
+    id: "Qwen/Qwen3-Reranker-8B"
+    hf_repo: "mradermacher/Qwen3-Reranker-8B-GGUF"
+    model_file: "Qwen3-Reranker-8B.Q4_K_M.gguf"
+    quantization: "q4_k_m"
+    format: "gguf"
+    device: "cuda:0"
+    device_strategy: "single"
+    max_tokens: 8192
+    lifecycle: "always_active"
+    preload: false
+    init_target: "cpu"
+
+  # ----------------------------------------------------------------------------
+  # 3. VISION-LANGUAGE (MULTIMODAL) EMBEDDING & RERANKER (GPU 1: VL-2B & VL-8B)
+  # ----------------------------------------------------------------------------
+  vl_embedding_2b:
+    id: "Qwen/Qwen3-VL-Embedding-2B"
+    hf_repo: "mradermacher/Qwen3-VL-Embedding-2B-GGUF"
+    model_file: "Qwen3-VL-Embedding-2B.Q4_K_M.gguf"
+    mmproj_file: "Qwen3-VL-Embedding-2B.mmproj-Q8_0.gguf"
+    quantization: "q4_k_m"
+    format: "gguf"
+    device: "cuda:1"
+    device_strategy: "single"
+    dimensions: 1536
+    max_tokens: 4096
+    lifecycle: "dynamic_switch"
+    preload: false
+    init_target: "cpu"
+
+  vl_reranker_2b:
+    id: "Qwen/Qwen3-VL-Reranker-2B"
+    hf_repo: "mradermacher/Qwen3-VL-Reranker-2B-GGUF"
+    model_file: "Qwen3-VL-Reranker-2B.Q4_K_M.gguf"
+    mmproj_file: "Qwen3-VL-Reranker-2B.mmproj-Q8_0.gguf"
+    quantization: "q4_k_m"
+    format: "gguf"
+    device: "cuda:1"
+    device_strategy: "single"
+    max_tokens: 4096
+    lifecycle: "dynamic_switch"
+    preload: false
+    init_target: "cpu"
+
+  vl_embedding_8b:
+    id: "Qwen/Qwen3-VL-Embedding-8B"
+    hf_repo: "mradermacher/Qwen3-VL-Embedding-8B-GGUF"
+    model_file: "Qwen3-VL-Embedding-8B.Q4_K_M.gguf"
+    mmproj_file: "Qwen3-VL-Embedding-8B.mmproj-Q8_0.gguf"
+    quantization: "q4_k_m"
+    format: "gguf"
+    device: "cuda:1"
+    device_strategy: "single"
+    dimensions: 3584
+    max_tokens: 4096
+    lifecycle: "always_active"
+    preload: false
+    init_target: "cpu"
+
+  vl_reranker_8b:
+    id: "Qwen/Qwen3-VL-Reranker-8B"
+    hf_repo: "mradermacher/Qwen3-VL-Reranker-8B-GGUF"
+    model_file: "Qwen3-VL-Reranker-8B.Q4_K_M.gguf"
+    mmproj_file: "Qwen3-VL-Reranker-8B.mmproj-Q8_0.gguf"
+    quantization: "q4_k_m"
+    format: "gguf"
+    device: "cuda:1"
+    device_strategy: "single"
+    max_tokens: 4096
+    lifecycle: "always_active"
+    preload: false
+    init_target: "cpu"

@@ -97,6 +97,8 @@ class QwenVLMEngine(BaseVLMEngine):
         if cls._instance is None:
             cls._instance = super(QwenVLMEngine, cls).__new__(cls)
             cls._llm = None
+            cls._llama_server_proc = None
+            cls._llama_server_url = None
             cls._model = None
             cls._processor = None
             cls._is_gguf = False
@@ -117,33 +119,451 @@ class QwenVLMEngine(BaseVLMEngine):
         self.n_gpu_layers = int(self.config.get("n_gpu_layers", -1))
         self.gpu_split = self.config.get("gpu_split", VLM_GPU_SPLIT)
         self.lifecycle = self.config.get("lifecycle", "dynamic_switch")
+        self.llama_server_port = int(os.environ.get("LLAMA_SERVER_PORT", 8081))
 
         self._llm = None
+        self._llama_server_proc = None
+        self._llama_server_url = None
         self._model = None
         self._processor = None
         self._is_gguf = False
         self._initialized = True
         self._lock = threading.Lock()
+        self._current_spec_mode = os.environ.get("VLM_SPEC_MODE") or self.config.get("spec_mode", "mtp")
 
         logger.info(
             f"👁️ Khởi tạo QwenVLMEngine: id={self.model_id} | format={self.format} | "
             f"policy={self.allocation_policy} | split={self.gpu_split} | ctx={self.n_ctx}"
         )
 
-    def _load_gguf_backend(self, paths: Dict[str, Any]) -> bool:
-        """Nạp Qwen3.8-27B GGUF qua llama-cpp-python với Dual-GPU Layer-Splitting."""
-        if not _LLAMA_CPP_AVAILABLE:
-            logger.warning("⚠️ llama-cpp-python chưa được cài đặt trong môi trường hiện tại.")
+    def _find_llama_server_bin(self) -> Optional[str]:
+        """Tìm binary llama-server từ bản build chính thức ggml-org/llama.cpp."""
+        import shutil
+        import glob
+        candidates = [
+            os.environ.get("LLAMA_SERVER_BIN", ""),
+            "/tmp/llama-cpp/llama-b11184/llama-server",
+            "/tmp/llama-cpp/llama-server",
+            "/tmp/llama-cpp/build/bin/llama-server",
+        ]
+        for g in glob.glob("/tmp/llama-cpp/**/llama-server", recursive=True):
+            candidates.append(g)
+        for g in glob.glob("/tmp/**/llama-server", recursive=True):
+            candidates.append(g)
+        which_bin = shutil.which("llama-server")
+        if which_bin:
+            candidates.append(which_bin)
+
+        for c in candidates:
+            if c and os.path.isfile(c) and os.access(c, os.X_OK):
+                return c
+        return None
+
+    def _stop_llama_server(self):
+        """Dừng tiến trình llama-server nếu đang chạy."""
+        if self._llama_server_proc is not None:
+            try:
+                logger.info("🛑 Đang dừng tiến trình llama-server...")
+                self._llama_server_proc.terminate()
+                self._llama_server_proc.wait(timeout=5)
+            except Exception:
+                try:
+                    self._llama_server_proc.kill()
+                except Exception:
+                    pass
+            self._llama_server_proc = None
+        self._llama_server_url = None
+
+    def _load_llama_server_backend(self, bin_path: str, model_file: str, mmproj_file: Optional[str]) -> bool:
+        """
+        Khởi chạy llama-server chính thức (ggml-org/llama.cpp b11184+) hỗ trợ đầy đủ
+        Qwen3.8-27B GGUF + libmtmd mmproj-Q8_0, Multi-GPU Layer-Split, Flash Attention & KV Cache Q4_0.
+        """
+        import subprocess
+        self._stop_llama_server()
+        gpu_count = torch.cuda.device_count() if torch.cuda.is_available() else 0
+
+        if self.n_ctx >= 65536 and (not self.gpu_split or self.gpu_split == [0.5, 0.5]):
+            split_str = "0.54,0.46"
+            logger.info(f"⚖️ [VRAM Auto-Balance for {self.n_ctx} ctx] Adjusting tensor split to {split_str}")
+        else:
+            split_str = ",".join(str(x) for x in (self.gpu_split or [0.5, 0.5]))
+
+        cmd = [
+            bin_path,
+            "-m", str(model_file),
+            "-c", str(self.n_ctx),
+            "-np", "1",
+            "-ngl", "999" if (torch.cuda.is_available() and self.n_gpu_layers < 0) else str(max(0, self.n_gpu_layers)),
+            "--flash-attn", "on" if torch.cuda.is_available() else "off",
+            "--cache-type-k", "q4_0",
+            "--cache-type-v", "q4_0",
+            "--host", "127.0.0.1",
+            "--port", str(self.llama_server_port),
+        ]
+
+        # RoPE Scaling (YaRN):
+        # - Qwen 3.8 / Qwen 2.5 thế hệ mới có native context 262,144 tokens (256K).
+        # - Chỉ kích hoạt YaRN khi vượt quá native context (> 262,144). Ví dụ tại 1M (1,048,576 tokens) là YaRN x 4.
+        # - Nhánh 32K (32,768) chỉ dành cho các model Qwen cũ (legacy) có native context 32K.
+        is_legacy_qwen = any(leg in str(self.model_id).lower() for leg in ["qwen1", "qwen-1", "qwen1.5", "qwen2-"]) and "2.5" not in str(self.model_id)
+        native_ctx = 32768 if is_legacy_qwen else 262144
+
+        if self.n_ctx > native_ctx:
+            scale_factor = self.n_ctx / float(native_ctx)
+            logger.info(
+                f"🌀 [YaRN RoPE Scaling] Context={self.n_ctx} > Native={native_ctx}. "
+                f"YaRN Scale={scale_factor:.2f}x (yarn-orig-ctx={native_ctx})"
+            )
+            cmd.extend([
+                "--rope-scaling", "yarn",
+                "--rope-scale", f"{scale_factor:.2f}",
+                "--yarn-orig-ctx", str(native_ctx),
+            ])
+        else:
+            logger.info(f"⚡ [Native Context] Context={self.n_ctx} <= Native={native_ctx} (Vận hành chuẩn Native RoPE, không can thiệp nội suy)")
+
+        if mmproj_file and os.path.exists(mmproj_file):
+            cmd.extend(["--mmproj", str(mmproj_file), "--mmproj-offload"])
+
+        if torch.cuda.is_available() and gpu_count >= 2 and (self.allocation_policy == "dual_gpu" or self.device_strategy == "dual_gpu"):
+            cmd.extend(["--split-mode", "layer", "--tensor-split", split_str])
+        elif torch.cuda.is_available():
+            cmd.extend(["--split-mode", "none"])
+
+        # ═══ Speculative Decoding: MTP / DFlash / Both ═══
+        spec_mode = getattr(self, "_current_spec_mode", "mtp")
+        model_dir = os.path.dirname(str(model_file))
+
+        if spec_mode == "mtp":
+            mtp_file = self._find_spec_model(model_dir, "mtp")
+            if mtp_file:
+                logger.info(f"⚡ [Spec Decoding: MTP] Thay thế model chính bằng bản MTP: {mtp_file}")
+                # Model MTP chứa sẵn các MTP heads bên trong trọng số
+                for i, c in enumerate(cmd):
+                    if c == "-m" and i + 1 < len(cmd):
+                        cmd[i + 1] = str(mtp_file)
+                        break
+                cmd.extend(["--spec-type", "draft-mtp", "--spec-draft-n-max", "3"])
+            else:
+                logger.warning("⚠️ MTP model không tìm thấy, quay về baseline")
+
+        elif spec_mode == "dflash":
+            dflash_file = self._find_spec_model(model_dir, "dflash")
+            if dflash_file:
+                logger.info(f"⚡ [Spec Decoding: DFlash] Draft model: {dflash_file}")
+                cmd.extend([
+                    "--model-draft", str(dflash_file),
+                    "--n-gpu-layers-draft", "999",
+                    "--spec-type", "draft-dflash",
+                    "--spec-draft-n-max", "15",
+                ])
+            else:
+                logger.warning("⚠️ DFlash draft model not found, falling back to baseline")
+
+        elif spec_mode == "both":
+            mtp_file = self._find_spec_model(model_dir, "mtp")
+            dflash_file = self._find_spec_model(model_dir, "dflash")
+            if dflash_file and mtp_file:
+                logger.info(f"⚡ [Spec Decoding: Both] Testing DFlash + MTP combo: draft={dflash_file}")
+                cmd.extend([
+                    "--model-draft", str(dflash_file),
+                    "--n-gpu-layers-draft", "999",
+                    "--spec-type", "draft-dflash,draft-mtp",
+                    "--spec-draft-n-max", "15",
+                ])
+            elif dflash_file:
+                cmd.extend([
+                    "--model-draft", str(dflash_file),
+                    "--n-gpu-layers-draft", "999",
+                    "--spec-type", "draft-dflash",
+                    "--spec-draft-n-max", "15",
+                ])
+            else:
+                logger.warning("⚠️ Draft models not found for both mode, falling back to baseline")
+
+        else:
+            # baseline or unknown: check legacy env var
+            draft_file = os.environ.get("VLM_DRAFT_PATH") or self.config.get("draft_model_file")
+            if draft_file:
+                if not os.path.isabs(draft_file):
+                    cand_draft = os.path.join(model_dir, draft_file)
+                    if os.path.exists(cand_draft):
+                        draft_file = cand_draft
+                if os.path.exists(draft_file):
+                    logger.info(f"⚡ [Speculative Decoding] Draft Model: {draft_file}")
+                    cmd.extend([
+                        "--model-draft", str(draft_file),
+                        "--n-gpu-layers-draft", "999",
+                        "--cache-type-k-draft", "q4_0",
+                        "--cache-type-v-draft", "q4_0",
+                    ])
+
+        env = os.environ.copy()
+        bin_dir = os.path.dirname(os.path.abspath(bin_path))
+        import glob as _glob
+        import shutil as _shutil
+
+        # Gom toàn bộ thư viện .so (bao gồm cudart/cublas và libggml-*) về cùng bin_dir và noble-libs
+        target_so_dirs = [bin_dir]
+        for nd in ["/tmp/noble-libs/usr/lib/x86_64-linux-gnu", "/tmp/noble-libs/lib/x86_64-linux-gnu"]:
+            if os.path.isdir(nd):
+                target_so_dirs.append(nd)
+        for so_file in _glob.glob("/tmp/llama-cpp/**/*.so*", recursive=True):
+            for t_dir in target_so_dirs:
+                target_so = os.path.join(t_dir, os.path.basename(so_file))
+                if not os.path.exists(target_so):
+                    try:
+                        _shutil.copy2(so_file, target_so, follow_symlinks=False)
+                    except Exception:
+                        pass
+
+        ld_paths = [bin_dir, "/tmp/llama-cpp", "/usr/local/cuda/lib64", "/usr/local/nvidia/lib64", "/usr/lib/x86_64-linux-gnu", "/lib/x86_64-linux-gnu"]
+        for so_file in _glob.glob("/tmp/llama-cpp/**/*.so*", recursive=True):
+            so_dir = os.path.dirname(so_file)
+            if so_dir not in ld_paths:
+                ld_paths.insert(0, so_dir)
+        if env.get("LD_LIBRARY_PATH"):
+            ld_paths.append(env["LD_LIBRARY_PATH"])
+        env["LD_LIBRARY_PATH"] = ":".join(ld_paths)
+        env["GGML_BACKEND_DIR"] = bin_dir
+
+        # Nếu môi trường Kaggle là Ubuntu 22.04 (GLIBC 2.35) và đã giải nén thư viện Ubuntu 24.04
+        # tại /tmp/noble-libs (GLIBC 2.39 + GLIBCXX 3.4.32), copy ld-linux-x86-64.so.2 trực tiếp vào bin_dir
+        # để readlink("/proc/self/exe") của ggml_backend_load_all() trỏ đúng về bin_dir chứa libggml-cuda.so!
+        noble_lds = [
+            p for p in [
+                "/tmp/noble-libs/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+                "/tmp/noble-libs/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+            ]
+            if os.path.exists(p)
+        ]
+        if not noble_lds:
+            noble_lds = _glob.glob("/tmp/noble-libs/**/ld-linux-x86-64.so.2", recursive=True)
+        if noble_lds:
+            noble_ld_real = os.path.realpath(noble_lds[0])
+            local_ld = os.path.join(bin_dir, "ld-linux-x86-64.so.2")
+            try:
+                if not os.path.exists(local_ld):
+                    _shutil.copy2(noble_ld_real, local_ld)
+                    os.chmod(local_ld, 0o755)
+            except Exception:
+                local_ld = noble_lds[0]
+
+            noble_lib_dirs = []
+            for d in [
+                "/tmp/noble-libs/lib/x86_64-linux-gnu",
+                "/tmp/noble-libs/usr/lib/x86_64-linux-gnu",
+            ]:
+                if os.path.isdir(d) and d not in noble_lib_dirs:
+                    noble_lib_dirs.append(d)
+            for d in ld_paths:
+                if d and d not in noble_lib_dirs:
+                    noble_lib_dirs.append(d)
+            cmd = [local_ld, "--library-path", ":".join(noble_lib_dirs)] + cmd
+
+        log_path = "/tmp/llama_server_qwen38.log"
+        self._last_cmd = " ".join(cmd)
+        logger.info(f"🚀 [llama-server Dual-GPU] Khởi chạy (cwd={bin_dir}): {self._last_cmd}")
+        try:
+            from tunnel.cloudflare import notify_ntfy_debug
+            notify_ntfy_debug(f"[VLM] Starting llama-server (split={split_str})...")
+        except Exception:
+            notify_ntfy_debug = lambda m: None
+        t0 = time.time()
+        try:
+            log_file = open(log_path, "w", encoding="utf-8")
+            self._llama_server_proc = subprocess.Popen(
+                cmd,
+                cwd=bin_dir,
+                stdout=log_file,
+                stderr=subprocess.STDOUT,
+                env=env,
+            )
+            base_url = f"http://127.0.0.1:{self.llama_server_port}"
+            deadline = time.time() + 420.0
+            last_dbg_time = time.time()
+            while time.time() < deadline:
+                if self._llama_server_proc.poll() is not None:
+                    with open(log_path, "r", encoding="utf-8", errors="replace") as rf:
+                        err_tail = "".join(rf.readlines()[-50:])
+                    self._last_error = f"llama-server exited with code {self._llama_server_proc.returncode}: {err_tail}"
+                    logger.error(f"❌ {self._last_error}")
+                    notify_ntfy_debug(f"[VLM] ERROR llama-server exited ({self._llama_server_proc.returncode}): {err_tail[-300:]}")
+                    self._llama_server_proc = None
+                    return False
+
+                if time.time() - last_dbg_time > 30:
+                    last_dbg_time = time.time()
+                    try:
+                        with open(log_path, "r", encoding="utf-8", errors="replace") as rf:
+                            lines = [ln.strip() for ln in rf.readlines() if ln.strip()]
+                            tail = lines[-1] if lines else "loading..."
+                        notify_ntfy_debug(f"[VLM {int(time.time()-t0)}s] {tail[-120:]}")
+                    except Exception:
+                        pass
+
+                try:
+                    resp = requests.get(f"{base_url}/health", timeout=2)
+                    if resp.status_code == 200:
+                        self._llama_server_url = base_url
+                        self._llm = "llama_server"
+                        self._is_gguf = True
+                        self._is_loaded = True
+                        self._last_error = None
+                        elapsed = time.time() - t0
+                        logger.info(
+                            f"✅ [llama-server Dual-GPU] Qwen3.8-27B GGUF + mmproj-Q8_0 sẵn sàng sau {elapsed:.2f}s "
+                            f"(2xT4 Layer-Split={split_str}, Flash-Attn=ON, KV-Cache=Q4_0)!"
+                        )
+                        notify_ntfy_debug(f"[VLM] SUCCESS llama-server ready in {elapsed:.1f}s!")
+                        return True
+                except Exception:
+                    pass
+                time.sleep(2.0)
+
+            self._last_error = "Timeout 420s waiting for llama-server /health"
+            logger.error(f"❌ {self._last_error}")
+            notify_ntfy_debug(f"[VLM] ERROR: {self._last_error}")
+            self._stop_llama_server()
+            return False
+        except Exception as e:
+            self._last_error = str(e)
+            logger.error(f"❌ Lỗi khởi chạy llama-server: {e}", exc_info=True)
+            notify_ntfy_debug(f"[VLM] EXCEPTION: {e}")
+            self._stop_llama_server()
             return False
 
+    def _find_spec_model(self, model_dir: str, prefix: str) -> Optional[str]:
+        """Find MTP or DFlash GGUF model file by prefix in model_dir/Colab Drive/Kaggle or auto-download from HuggingFace."""
+        import glob as _glob
+        from config import COLAB_MODELS_DIR
+        search_dirs = [model_dir]
+        for p in [
+            COLAB_MODELS_DIR,
+            "/content/models",
+            "/kaggle/input/qwen38-27b-gguf",
+            "/kaggle/input",
+            "/tmp/hf_cache",
+            "/kaggle/working",
+        ]:
+            if p and os.path.isdir(p) and p not in search_dirs:
+                search_dirs.append(p)
+        for sd in search_dirs:
+            for f in sorted(_glob.glob(os.path.join(sd, "**", f"{prefix}*.gguf"), recursive=True)):
+                logger.info(f"🔍 Found {prefix} spec model: {f}")
+                return f
+
+        # If not found locally, download from official Hugging Face repo
+        hf_repo = "ggml-org/Qwen3.8-27B-GGUF"
+        filename = f"{prefix}-Qwen3.8-27B-Q4_0.gguf"
+        logger.info(f"⬇️ {prefix} model not found locally. Auto-downloading {filename} from {hf_repo}...")
+        try:
+            from huggingface_hub import hf_hub_download
+            cache_dir = COLAB_MODELS_DIR if os.path.isdir(COLAB_MODELS_DIR) else "/tmp/hf_cache"
+            os.makedirs(cache_dir, exist_ok=True)
+            dl_path = hf_hub_download(repo_id=hf_repo, filename=filename, local_dir=cache_dir)
+            logger.info(f"✅ Successfully downloaded {prefix} spec model to {dl_path}")
+            return dl_path
+        except Exception as e:
+            logger.error(f"❌ Failed to download {filename} from HF ({hf_repo}): {e}")
+            return None
+
+    def reconfigure_spec_mode(
+        self,
+        spec_mode: Optional[str] = None,
+        n_ctx: Optional[int] = None,
+        tensor_split: Optional[str] = None,
+    ) -> dict:
+        """Stop current llama-server, restart with a different speculative decoding mode and/or context length."""
+        valid_modes = ("baseline", "mtp", "dflash", "both")
+        if spec_mode and spec_mode not in valid_modes:
+            return {"error": f"Invalid spec_mode '{spec_mode}'. Valid: {valid_modes}"}
+
+        with self._lock:
+            old_mode = getattr(self, "_current_spec_mode", "mtp")
+            old_ctx = getattr(self, "n_ctx", 4096)
+            if spec_mode:
+                self._current_spec_mode = spec_mode
+            if n_ctx is not None:
+                self.n_ctx = int(n_ctx)
+            if tensor_split:
+                self.gpu_split = [float(x.strip()) for x in tensor_split.split(",")]
+
+            new_mode = getattr(self, "_current_spec_mode", "mtp")
+            new_ctx = getattr(self, "n_ctx", 4096)
+            logger.info(f"🔄 [Reconfigure] Switching: mode={old_mode}→{new_mode}, n_ctx={old_ctx}→{new_ctx}, split={self.gpu_split}")
+
+            self._is_loaded = False
+            self._stop_llama_server()
+
+            # Re-resolve model paths and restart
+            paths = resolve_vlm_model_paths(self.model_id)
+            model_file = paths.get("model_file")
+            mmproj_file = paths.get("mmproj_file")
+
+            if not model_file or not os.path.exists(model_file):
+                return {"error": f"Cannot find main model file for {self.model_id}"}
+
+            llama_server_bin = self._find_llama_server_bin()
+            if not llama_server_bin:
+                return {"error": "Cannot find llama-server binary"}
+
+            t0 = time.time()
+            success = self._load_llama_server_backend(llama_server_bin, str(model_file), mmproj_file)
+            elapsed = round(time.time() - t0, 2)
+
+            return {
+                "status": "ok" if success else "error",
+                "spec_mode": new_mode,
+                "n_ctx": new_ctx,
+                "gpu_split": self.gpu_split,
+                "startup_seconds": elapsed,
+                "is_loaded": self._is_loaded,
+                "last_cmd": getattr(self, "_last_cmd", None),
+                "last_error": getattr(self, "_last_error", None),
+            }
+
+    def get_diagnostics(self) -> Dict[str, Any]:
+        """Trả về thông tin chẩn đoán chi tiết của VLM Engine phục vụ /health."""
+        from pathlib import Path
+        from config import COLAB_MODELS_DIR
+        gguf_list = []
+        for root_p in [Path(COLAB_MODELS_DIR), Path("/content/models"), Path("/kaggle/input"), Path("/tmp/hf_cache")]:
+            if root_p.exists():
+                for f in root_p.rglob("*.gguf"):
+                    gguf_list.append(str(f))
+        log_tail = ""
+        if os.path.exists("/tmp/llama_server_qwen38.log"):
+            try:
+                with open("/tmp/llama_server_qwen38.log", "r", encoding="utf-8", errors="replace") as rf:
+                    log_tail = "".join(rf.readlines()[-30:])
+            except Exception:
+                pass
+        return {
+            "spec_mode": getattr(self, "_current_spec_mode", "mtp"),
+            "n_ctx": getattr(self, "n_ctx", 4096),
+            "is_loaded": getattr(self, "_is_loaded", False),
+            "is_gguf": getattr(self, "_is_gguf", False),
+            "llama_server_url": getattr(self, "_llama_server_url", None),
+            "llama_server_bin": self._find_llama_server_bin(),
+            "resolved_paths": resolve_vlm_model_paths(self.model_id),
+            "discovered_ggufs": gguf_list,
+            "last_cmd": getattr(self, "_last_cmd", None),
+            "last_error": getattr(self, "_last_error", None),
+            "llama_server_log_tail": log_tail,
+        }
+
+    def _load_gguf_backend(self, paths: Dict[str, Any]) -> bool:
+        """Nạp Qwen3.8-27B GGUF ưu tiên qua llama-server (b11184+) hoặc llama-cpp-python với Dual-GPU Layer-Splitting."""
         model_file = paths.get("model_file")
         mmproj_file = paths.get("mmproj_file")
 
         # Nếu chưa có file cục bộ, thử tải từ HF Hub
         if not model_file or not os.path.exists(model_file):
             hf_repo = paths.get("hf_repo_id", self.model_id)
-            exp_model = paths.get("expected_model_file", "Qwen3.8-27B-UD-Q4_K_M.gguf")
-            exp_mmproj = paths.get("expected_mmproj_file", "mmproj-F16.gguf")
+            exp_model = paths.get("expected_model_file", "Qwen3.8-27B-Q4_K_M.gguf")
+            exp_mmproj = paths.get("expected_mmproj_file", "mmproj-Qwen3.8-27B-Q8_0.gguf")
             logger.info(f"⏳ File GGUF chưa có cục bộ, kiểm tra tải từ Hugging Face ({hf_repo})...")
             try:
                 from huggingface_hub import hf_hub_download
@@ -157,6 +577,18 @@ class QwenVLMEngine(BaseVLMEngine):
                 return False
 
         if not model_file or not os.path.exists(model_file):
+            return False
+
+        # Ưu tiên 1: Sử dụng binary llama-server chính thức (hỗ trợ kiến trúc qwen38 + libmtmd + speculative decoding)
+        llama_server_bin = self._find_llama_server_bin()
+        if llama_server_bin:
+            if self._load_llama_server_backend(llama_server_bin, str(model_file), mmproj_file):
+                return True
+            logger.warning("⚠️ llama-server không khởi động được, thử fallback sang llama-cpp-python...")
+
+        # Ưu tiên 2: Sử dụng llama-cpp-python
+        if not _LLAMA_CPP_AVAILABLE:
+            logger.warning("⚠️ llama-cpp-python chưa được cài đặt trong môi trường hiện tại.")
             return False
 
         t0 = time.time()
@@ -174,13 +606,32 @@ class QwenVLMEngine(BaseVLMEngine):
             "verbose": False,
         }
 
-        # Cấu hình Dual-GPU Layer Splitting
-        if gpu_count >= 2:
-            llama_params["tensor_split"] = self.gpu_split
-            llama_params["split_mode"] = 1  # 1 = LLAMA_SPLIT_MODE_LAYER
-            logger.info(f"⚖️ [Dual-GPU Layer-Splitting] tensor_split={self.gpu_split} | split_mode=LAYER")
-        elif gpu_count == 1:
-            logger.info("🎯 [Single-GPU] Nạp trọn vẹn vào GPU 0")
+        # Cấu hình Multi-GPU Layer Split & KV Cache Q4
+        if torch.cuda.is_available():
+            if gpu_count >= 2 and (self.allocation_policy == "dual_gpu" or self.device_strategy == "dual_gpu"):
+                try:
+                    import llama_cpp
+                    split_mode_layer = getattr(llama_cpp, "LLAMA_SPLIT_MODE_LAYER", 1)
+                except Exception:
+                    split_mode_layer = 1
+                llama_params["split_mode"] = split_mode_layer
+                llama_params["tensor_split"] = self.gpu_split or [0.5, 0.5]
+                logger.info(f"🎯 [Dual-GPU Layer-Split] Phân bổ qua 2 GPU: split={llama_params['tensor_split']}, mode=LAYER (toàn bộ trên GPU)")
+            else:
+                llama_params["main_gpu"] = 0
+                if gpu_count >= 2:
+                    llama_params["tensor_split"] = [1.0, 0.0]
+                logger.info("🎯 [Single-GPU] Nạp VLM trọn vẹn vào GPU 0 (cuda:0)")
+
+        # Cấu hình KV Cache Q4 (cả K và V) theo yêu cầu kiến trúc
+        try:
+            import llama_cpp
+            q4_0_type = getattr(llama_cpp, "GGML_TYPE_Q4_0", 2)
+        except Exception:
+            q4_0_type = 2
+        llama_params["type_k"] = q4_0_type
+        llama_params["type_v"] = q4_0_type
+        logger.info(f"⚡ [KV Cache Quantization] Cấu hình Q4_0 cho cả K ({q4_0_type}) và V ({q4_0_type})")
 
         if chat_handler is not None:
             llama_params["chat_handler"] = chat_handler
@@ -188,8 +639,10 @@ class QwenVLMEngine(BaseVLMEngine):
         try:
             try:
                 self._llm = Llama(**llama_params)
-            except TypeError:
-                llama_params.pop("flash_attn", None)
+            except TypeError as te:
+                logger.warning(f"⚠️ Thử lại khởi tạo Llama không dùng một số tham số nâng cao: {te}")
+                for param in ["flash_attn", "type_k", "type_v", "split_mode"]:
+                    llama_params.pop(param, None)
                 self._llm = Llama(**llama_params)
             self._is_gguf = True
             self._is_loaded = True
@@ -222,12 +675,16 @@ class QwenVLMEngine(BaseVLMEngine):
 
         bnb_config = None
         if torch.cuda.is_available() and BitsAndBytesConfig is not None:
-            bnb_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_compute_dtype=torch.float16,
-                bnb_4bit_use_double_quant=True,
-            )
+            try:
+                import bitsandbytes as _bnb  # noqa: F401
+                bnb_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_use_double_quant=True,
+                )
+            except ImportError:
+                bnb_config = None
 
         try:
             self._processor = AutoProcessor.from_pretrained(target_id, trust_remote_code=True)
@@ -278,9 +735,11 @@ class QwenVLMEngine(BaseVLMEngine):
         """Giải phóng hoàn toàn VLM Qwen khỏi GPU VRAM về CPU/RAM phục vụ PCIe Fast-Swap."""
         logger.info("🧹 Giải phóng VLM Qwen khỏi GPU VRAM...")
         with self._lock:
+            self._stop_llama_server()
             if self._llm is not None:
                 try:
-                    self._llm.close()
+                    if hasattr(self._llm, "close"):
+                        self._llm.close()
                 except Exception:
                     pass
                 self._llm = None
@@ -375,21 +834,98 @@ class QwenVLMEngine(BaseVLMEngine):
     def chat(
         self,
         messages: List[Dict[str, Any]],
-        max_tokens: int = 1024,
+        max_tokens: int = 4096,
         temperature: float = 0.7,
         top_p: float = 0.9,
         top_k: int = 50,
         repetition_penalty: float = 1.05,
         system_prompt: Optional[str] = None,
         stop: Optional[Any] = None,
+        enable_thinking: Optional[bool] = None,
+        tools: Optional[List[Dict[str, Any]]] = None,
+        tool_choice: Optional[Any] = None,
+        response_format: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
-        """Xử lý chat đa phương thức chuẩn OpenAI REST API."""
+        """Xử lý chat đa phương thức chuẩn OpenAI REST API, hỗ trợ Tool Calling & Structured Outputs."""
         self.load_model()
         t0 = time.time()
         formatted_messages = self._prepare_openai_messages(messages, system_prompt)
 
-        # 1. Thực thi trên GGUF Llama Backend (Qwen3.8-27B)
-        if self._is_gguf and self._llm is not None:
+        # 1A. Thực thi trên llama-server Backend (Qwen3.8-27B + libmtmd)
+        if self._is_gguf and self._llama_server_url:
+            try:
+                payload = {
+                    "messages": formatted_messages,
+                    "max_tokens": max_tokens,
+                    "temperature": temperature if temperature > 0 else 0.0,
+                    "top_p": top_p if temperature > 0 else 1.0,
+                    "repeat_penalty": repetition_penalty,
+                    "stream": False,
+                    "chat_template_kwargs": {"enable_thinking": bool(enable_thinking)},
+                }
+                if top_k:
+                    payload["top_k"] = top_k
+                if stop:
+                    payload["stop"] = stop
+                if tools:
+                    payload["tools"] = tools
+                if tool_choice:
+                    payload["tool_choice"] = tool_choice
+                if response_format:
+                    payload["response_format"] = response_format
+
+                resp = requests.post(
+                    f"{self._llama_server_url}/v1/chat/completions",
+                    json=payload,
+                    timeout=300,
+                )
+                resp.raise_for_status()
+                data = resp.json()
+                choice = data["choices"][0]
+                msg_obj = choice["message"]
+                content_text = msg_obj.get("content") or ""
+                reasoning_text = msg_obj.get("reasoning_content") or ""
+                tool_calls = msg_obj.get("tool_calls")
+                finish_reason = choice.get("finish_reason") or ("tool_calls" if tool_calls else "stop")
+
+                if "<think>" in content_text and "</think>" in content_text:
+                    import re as _re
+                    m = _re.search(r"<think>(.*?)</think>", content_text, flags=_re.DOTALL)
+                    if m:
+                        if not reasoning_text:
+                            reasoning_text = m.group(1).strip()
+                        content_text = _re.sub(r"<think>.*?</think>", "", content_text, flags=_re.DOTALL).strip()
+                text = content_text or reasoning_text or ""
+                usage = data.get("usage", {})
+                timings = data.get("timings", {})
+                tokens = usage.get("completion_tokens", timings.get("predicted_n", len(text.split())))
+                prompt_tokens = usage.get("prompt_tokens", timings.get("prompt_n", 0))
+                elapsed = time.time() - t0
+                tps = timings.get("predicted_per_second") or (tokens / max(elapsed, 0.01))
+                logger.info(
+                    f"✨ [llama-server Qwen3.8-27B] Sinh {tokens} tokens trong {elapsed:.2f}s "
+                    f"(Decode: {tps:.2f} tok/s | Prompt: {prompt_tokens} tokens)"
+                )
+                return {
+                    "text": text.strip(),
+                    "reasoning_content": reasoning_text.strip() if enable_thinking else "",
+                    "tool_calls": tool_calls,
+                    "finish_reason": finish_reason,
+                    "tokens": tokens,
+                    "prompt_tokens": prompt_tokens,
+                    "elapsed": round(elapsed, 2),
+                    "tokens_per_second": round(float(tps), 2),
+                }
+            except Exception as e_srv:
+                logger.error(f"Lỗi suy luận llama-server: {e_srv}", exc_info=True)
+                return {
+                    "text": f"Lỗi suy luận llama-server: {str(e_srv)}",
+                    "tokens": 0,
+                    "elapsed": round(time.time() - t0, 2),
+                }
+
+        # 1B. Thực thi trên GGUF llama-cpp-python Backend
+        if self._is_gguf and self._llm is not None and self._llm != "llama_server":
             try:
                 gen_params = {
                     "messages": formatted_messages,
@@ -507,20 +1043,107 @@ class QwenVLMEngine(BaseVLMEngine):
     def chat_stream(
         self,
         messages: List[Dict[str, Any]],
-        max_tokens: int = 1024,
+        max_tokens: int = 4096,
         temperature: float = 0.7,
         top_p: float = 0.9,
         top_k: int = 50,
         repetition_penalty: float = 1.05,
         system_prompt: Optional[str] = None,
         stop: Optional[Any] = None,
+        enable_thinking: Optional[bool] = None,
+        tools: Optional[List[Dict[str, Any]]] = None,
+        tool_choice: Optional[Any] = None,
+        response_format: Optional[Dict[str, Any]] = None,
     ):
-        """Xử lý chat đa phương thức với SSE Streaming từng token."""
+        """Xử lý chat đa phương thức với SSE Streaming từng token, hỗ trợ Tool Calling."""
         self.load_model()
         formatted_messages = self._prepare_openai_messages(messages, system_prompt)
 
-        # 1. GGUF Llama Streaming
-        if self._is_gguf and self._llm is not None:
+        # 1A. llama-server SSE Streaming
+        if self._is_gguf and self._llama_server_url:
+            try:
+                payload = {
+                    "messages": formatted_messages,
+                    "max_tokens": max_tokens,
+                    "temperature": temperature if temperature > 0 else 0.0,
+                    "top_p": top_p if temperature > 0 else 1.0,
+                    "repeat_penalty": repetition_penalty,
+                    "stream": True,
+                    "stream_options": {"include_usage": True},
+                    "timings_per_token": True,
+                    "chat_template_kwargs": {"enable_thinking": bool(enable_thinking)},
+                }
+                if top_k:
+                    payload["top_k"] = top_k
+                if stop:
+                    payload["stop"] = stop
+                if tools:
+                    payload["tools"] = tools
+                if tool_choice:
+                    payload["tool_choice"] = tool_choice
+                if response_format:
+                    payload["response_format"] = response_format
+
+                with requests.post(
+                    f"{self._llama_server_url}/v1/chat/completions",
+                    json=payload,
+                    stream=True,
+                    timeout=1800,
+                ) as resp:
+                    resp.raise_for_status()
+                    resp.encoding = "utf-8"
+                    import json as _json
+                    for raw_line in resp.iter_lines(decode_unicode=False):
+                        if not raw_line:
+                            continue
+                        line = (
+                            raw_line.decode("utf-8", errors="replace").strip()
+                            if isinstance(raw_line, (bytes, bytearray))
+                            else str(raw_line).strip()
+                        )
+                        if line.startswith("data:"):
+                            data_str = line[5:].strip()
+                            if data_str == "[DONE]":
+                                break
+                            try:
+                                chunk = _json.loads(data_str)
+                                choices = chunk.get("choices") or []
+                                finish_reason = None
+                                if choices:
+                                    finish_reason = choices[0].get("finish_reason")
+                                if chunk.get("usage") or chunk.get("timings") or finish_reason:
+                                    yield {
+                                        "_meta": {
+                                            "usage": chunk.get("usage"),
+                                            "timings": chunk.get("timings"),
+                                            "finish_reason": finish_reason,
+                                        }
+                                    }
+                                if choices:
+                                    delta = choices[0].get("delta", {})
+                                    c_tok = delta.get("content") or ""
+                                    r_tok = delta.get("reasoning_content") or ""
+                                    t_calls = delta.get("tool_calls")
+                                    if t_calls:
+                                        yield {"tool_calls": t_calls}
+                                    if r_tok:
+                                        if enable_thinking:
+                                            yield {"reasoning_content": r_tok}
+                                        elif not c_tok:
+                                            # Fallback if model emitted reasoning when thinking wasn't requested
+                                            yield {"content": r_tok}
+                                    if c_tok:
+                                        yield {"content": c_tok}
+                            except Exception:
+                                pass
+                return
+            except Exception as e_srv_st:
+                logger.error(f"Lỗi stream llama-server: {e_srv_st}")
+                yield f"\n[Lỗi stream llama-server: {str(e_srv_st)}]"
+                return
+
+        # 1B. GGUF llama-cpp-python Streaming
+        if self._is_gguf and self._llm is not None and self._llm != "llama_server":
             try:
                 gen_params = {
                     "messages": formatted_messages,

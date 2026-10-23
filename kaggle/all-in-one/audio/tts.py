@@ -1,8 +1,10 @@
 """
-🔊 Text-to-Speech (TTS) Module: Kokoro Adapter
+🔊 Text-to-Speech (TTS) Module: Qwen3-TTS & XTTS-v2 Vietnamese (với AudioService Gateway)
+================================================================================
 Kế thừa BaseTTSEngine:
-- Chạy ở BẢN FULL FP16 (Không Quantize) trên GPU 0.
-- Tuân thủ lifecycle always_active (thường trực 100% trong VRAM, không bao giờ bị dọn).
+- Engine Multilingual & VoiceDesign chính: Qwen3-TTS 1.7B
+- Engine chuyên biệt tiếng Việt + Voice Cloning: XTTS-v2 Vietnamese
+- Phục vụ qua FastAPI Audio Service daemon trên GPU 0 (cuda:0)
 """
 
 import io
@@ -15,8 +17,8 @@ import torch
 
 from config import TTS_MODEL_ID, TTS_CONFIG, DEVICE_AUDIO, TTS_VOICE
 from core.base_engine import BaseTTSEngine
-from core.device_resolver import get_device_resolver
 from core.memory_manager import get_memory_manager
+from .audio_manager import get_audio_service_manager
 
 logger = logging.getLogger("TTSEngine")
 
@@ -27,7 +29,6 @@ class TTSEngine(BaseTTSEngine):
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super(TTSEngine, cls).__new__(cls)
-            cls._instance._pipeline = None
             cls._instance._initialized = False
         return cls._instance
 
@@ -35,149 +36,142 @@ class TTSEngine(BaseTTSEngine):
         if getattr(self, "_initialized", False):
             return
         super().__init__(config or TTS_CONFIG)
-        self.model_id = self.config.get("id", TTS_MODEL_ID)
+        self.model_id = self.config.get("id", "Qwen/Qwen3-TTS-12Hz-1.7B-Base")
+        self.xtts_model_id = self.config.get("xtts_id", "thivux/XTTS-v2-vietnamse")
         self.device_strategy = self.config.get("device_strategy", "gpu_0")
         self.lifecycle = self.config.get("lifecycle", "always_active")
-        self.default_voice = self.config.get("voice", TTS_VOICE)
+        self.default_voice = self.config.get("voice", "default")
+        self.audio_manager = get_audio_service_manager()
         self._initialized = True
 
-    def _normalize_vietnamese(self, text: str) -> str:
-        """
-        Chuẩn hóa văn bản tiếng Việt sang dạng ký tự Latinh tối ưu ngữ âm cho Kokoro.
-        Ngăn chặn triệt để hiện tượng phonemizer bị lỗi văng mã unicode ('Letter 1EB5N...').
-        """
-        import unicodedata
-        import re
-
-        # Ánh xạ chữ Đ/đ riêng trước khi phân rã unicode
-        trans_map = {
-            "đ": "d", "Đ": "D",
-            "“": '"', "”": '"', "’": "'", "‘": "'",
-            "–": "-", "—": "-",
-        }
-        for k, v in trans_map.items():
-            text = text.replace(k, v)
-
-        # Phân rã NFKD để tách các dấu thanh (diacritics) ra khỏi nguyên âm
-        nfkd = unicodedata.normalize("NFKD", text)
-        cleaned = "".join(c for c in nfkd if unicodedata.category(c) != "Mn")
-
-        # Chuẩn hóa khoảng trắng thừa
-        cleaned = re.sub(r"\s+", " ", cleaned).strip()
-        return cleaned
-
     def release_from_gpu(self):
-        """Giải phóng Kokoro TTS khỏi GPU VRAM về CPU/RAM."""
-        logger.info("🧹 Giải phóng Kokoro TTS khỏi GPU VRAM...")
-        if self._pipeline is not None and self._pipeline != "fallback":
-            self._pipeline = None
-            self._is_loaded = False
+        """Giải phóng TTS khỏi GPU VRAM."""
+        logger.info("🧹 Giải phóng TTS khỏi GPU VRAM...")
+        self.audio_manager.free_vram()
+        self._is_loaded = False
         import gc
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
-    def _actual_loader(self):
-        resolver = get_device_resolver()
-        resolved = resolver.resolve(
-            task="tts",
-            model_id=self.model_id,
-            requested_strategy=self.device_strategy,
-            precision="fp16",
-            config=self.config,
-        )
-        self.resolved_device = resolved["device"]
-
-        logger.info(f"🔊 Đang nạp TTS Kokoro-82M ở BẢN FULL FP16 vào {self.resolved_device}...")
-        t0 = time.time()
-
-        try:
-            target_idx = 0
-            if "cuda:" in self.resolved_device:
-                try:
-                    target_idx = int(self.resolved_device.split(":")[1])
-                except Exception:
-                    pass
-            if torch.cuda.is_available():
-                torch.cuda.set_device(target_idx)
-            from kokoro import KPipeline
-            self._pipeline = KPipeline(lang_code="a")
-            self._is_loaded = True
-            elapsed = time.time() - t0
-            logger.info(f"✅ TTS Kokoro-82M nạp thành công trong {elapsed:.2f}s!")
-        except Exception as e:
-            logger.warning(f"⚠️ Kokoro package chưa cài đặt sẵn hoặc tải lỗi ({e}), chuyển sang fallback engine.")
-            self._pipeline = "fallback"
-
-        return self._pipeline
-
-    def load_pipeline(self):
-        mem = get_memory_manager()
-        return mem.switch_dynamic_slot("tts", self._actual_loader, engine_obj=self)
-
     def load(self) -> Any:
-        return self.load_pipeline()
+        """Đảm bảo Audio Service daemon sẵn sàng."""
+        if not self.audio_manager.is_running():
+            self.audio_manager.start_service()
+        self._is_loaded = True
+        return self.audio_manager
 
     def synthesize(
         self,
         text: str,
         voice: Optional[str] = None,
-        language: Optional[str] = None,
+        language: Optional[str] = "vi",
         speed: float = 1.0,
         sample_rate: int = 24000,
         response_format: str = "wav",
+        speaker_wav: Optional[str] = None,
+        voice_description: Optional[str] = None,
+        prompt_audio: Optional[str] = None,
+        ref_text: Optional[str] = None,
+        x_vector_only_mode: Optional[bool] = None,
+        engine: Optional[str] = None,
+        model: Optional[str] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        top_k: Optional[int] = None,
+        repetition_penalty: Optional[float] = None,
+        length_penalty: Optional[float] = None,
+        max_new_tokens: Optional[int] = None,
+        gpt_cond_len: Optional[int] = None,
+        max_ref_len: Optional[int] = None,
+        sound_norm_refs: Optional[bool] = None,
+        enable_text_splitting: Optional[bool] = None,
     ) -> bytes:
         """
         Đọc văn bản thành audio bytes (WAV/OGG) chuẩn OpenAI /v1/audio/speech.
-        Hỗ trợ cả tiếng Anh và tiếng Việt, tùy biến voice, speed, sample_rate.
+        Hỗ trợ:
+        1. Qwen3-TTS 1.7B: Đa ngôn ngữ, VoiceDesign, CustomVoice, Zero-shot voice cloning.
+        2. XTTS-v2 Vietnamese: Chuyên biệt giọng đọc tiếng Việt + Cross-language voice cloning.
+        3. Kokoro-82M: Engine dự phòng.
         """
-        pipe = self.load_pipeline()
-        selected_voice = voice or self.default_voice
+        self.load()
         t0 = time.time()
+        target_model = model or engine or ""
 
-        # Kiểm tra ngôn ngữ: nếu là tiếng Việt hoặc có chứa ký tự tiếng Việt, thực hiện phonetic normalization
-        is_vietnamese = (language and language.lower().startswith("vi")) or any(
-            c in "àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđĐ"
-            for c in text
+        # Kiểm tra nếu chỉ định Kokoro cụ thể
+        if "kokoro" in target_model.lower():
+            try:
+                from kokoro import KPipeline
+                pipe = KPipeline(lang_code="a")
+                generator = pipe(text, voice=voice or "af_heart", speed=speed)
+                chunks = [audio for _, _, audio in generator]
+                if chunks:
+                    full_audio = np.concatenate(chunks)
+                    buf = io.BytesIO()
+                    sf.write(buf, full_audio, sample_rate, format="WAV")
+                    return buf.getvalue()
+            except Exception as e:
+                logger.warning(f"Kokoro fallback gặp lỗi: {e}, tiếp tục chuyển sang Qwen3-TTS/XTTS.")
+
+        # Định tuyến thông minh giữa XTTS-v2 và Qwen3-TTS
+        target = target_model.lower()
+        if not target and voice:
+            if "xtts" in voice.lower():
+                target = "xtts"
+            elif "qwen" in voice.lower():
+                target = "qwen"
+            elif "kokoro" in voice.lower():
+                target = "kokoro"
+
+        is_xtts = (
+            "xtts" in target
+            or (not target and bool(speaker_wav) and (not language or language.lower() in ("vi", "vietnamese")))
         )
 
-        processed_text = self._normalize_vietnamese(text) if is_vietnamese else text
-        speed_val = max(0.25, min(4.0, float(speed)))
-        target_sr = sample_rate or 24000
-
-        if pipe != "fallback":
-            try:
-                generator = pipe(
-                    processed_text,
-                    voice=selected_voice,
-                    speed=speed_val,
-                    split_pattern=r"\n+",
-                )
-                audio_chunks = []
-                for _, _, audio in generator:
-                    audio_chunks.append(audio)
-
-                if audio_chunks:
-                    full_audio = np.concatenate(audio_chunks)
-                else:
-                    full_audio = np.zeros(target_sr, dtype=np.float32)
-            except Exception as e:
-                logger.error(f"Lỗi khi sinh âm thanh bằng Kokoro: {e}")
-                full_audio = np.zeros(target_sr, dtype=np.float32)
+        if is_xtts:
+            audio_bytes = self.audio_manager.synthesize_xtts(
+                text=text,
+                language=language or "vi",
+                speaker_wav=speaker_wav or prompt_audio,
+                speed=speed,
+                sample_rate=sample_rate,
+                response_format=response_format,
+                temperature=temperature,
+                length_penalty=length_penalty,
+                repetition_penalty=repetition_penalty,
+                top_k=top_k,
+                top_p=top_p,
+                gpt_cond_len=gpt_cond_len,
+                max_ref_len=max_ref_len,
+                sound_norm_refs=sound_norm_refs,
+                enable_text_splitting=enable_text_splitting,
+            )
+            eng_name = "XTTS-v2 Vietnamese"
         else:
-            duration = max(1.0, len(processed_text) * 0.08 / speed_val)
-            t = np.linspace(0, duration, int(target_sr * duration), False)
-            full_audio = 0.1 * np.sin(2 * np.pi * 440 * t).astype(np.float32)
-
-        buffer = io.BytesIO()
-        sf_format = "WAV" if response_format.lower() in ("wav", "audio/wav") else "OGG"
-        sf.write(buffer, full_audio, target_sr, format=sf_format)
-        audio_bytes = buffer.getvalue()
+            audio_bytes = self.audio_manager.synthesize_qwen(
+                text=text,
+                language=language or "vi",
+                voice=voice or self.default_voice,
+                voice_description=voice_description,
+                prompt_audio=prompt_audio,
+                speaker_wav=speaker_wav,
+                ref_text=ref_text,
+                x_vector_only_mode=x_vector_only_mode,
+                speed=speed,
+                sample_rate=sample_rate,
+                response_format=response_format,
+                temperature=temperature,
+                top_p=top_p,
+                top_k=top_k,
+                repetition_penalty=repetition_penalty,
+                max_new_tokens=max_new_tokens,
+            )
+            eng_name = "Qwen3-TTS 1.7B"
 
         elapsed = time.time() - t0
         logger.info(
-            f"🎶 Sinh giọng nói thành công trong {elapsed:.2f}s "
-            f"(lang={'vi' if is_vietnamese else 'en'}, voice={selected_voice}, speed={speed_val}, {len(audio_bytes)} bytes)"
+            f"🎶 [{eng_name}] Sinh giọng nói thành công trong {elapsed:.2f}s "
+            f"(lang={language}, {len(audio_bytes)} bytes)"
         )
         return audio_bytes
 

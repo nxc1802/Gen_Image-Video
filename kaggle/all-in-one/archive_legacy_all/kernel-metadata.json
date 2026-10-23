@@ -1,0 +1,28 @@
+{
+  "id": "cuongnguyen1802/kaggle-all-in-one-studio",
+  "title": "Kaggle All in One Studio",
+  "code_file": "run_kaggle.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [
+    "cuongnguyen1802/kaggle-speech-wheels",
+    "cuongnguyen1802/kaggle-vlm-wheels",
+    "cuongnguyen1802/kaggle-image-video-wheels",
+    "nguynxuncngde180528/qwen3-asr-1-7b",
+    "nguynxuncngde180528/qwen3-tts-1-7b",
+    "nguynxuncngde180528/xtts-v2-vietnamese",
+    "cuongnguyen1802/qwen38-27b-gguf",
+    "nguynxuncngde180528/qwen-image-2-1-gguf",
+    "nguynxuncngde180528/wan22-ti2v-5b-gguf",
+    "nguynxuncngde180528/umt5-xxl-encoder-gguf",
+    "nguynxuncngde180528/wan22-t2v-a14b-gguf",
+    "nguynxuncngde180528/wan22-i2v-a14b-gguf"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

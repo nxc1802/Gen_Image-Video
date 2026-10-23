@@ -1,84 +1,96 @@
 # ==============================================================================
-# 🎨 Kaggle All-in-One AI Studio: RAM-First Dynamic Memory Architecture
-# - Toàn bộ model ban đầu chỉ nằm trong CPU RAM (Zero initial VRAM)
-# - Chỉ khi có request mới nạp vào VRAM và dọn dẹp các model khác
-# - Hỗ trợ 2 chế độ: 1-GPU (cho model nhỏ) và 2-GPU (cho model lớn)
-# - Chuẩn hóa toàn bộ model sang FP16 / BF16
+# 🎨 Kaggle All-in-One AI Studio: Dual-GPU Service Separation Architecture
+# - GPU 0 (cuda:0): STT (Whisper), TTS (Kokoro), VLM (Qwen) - Tương tác Real-time
+# - GPU 1 (cuda:1): Visual Studio (ComfyUI Backend) - Qwen-Image 2.1 & Wan2.2 Video
+#   -> Loại bỏ hoàn toàn cơ chế MultiGPU splitting cho 1 model để tránh OOM.
+#   -> ComfyUI tự quản lý Offload & Dynamic VRAM giữa CPU RAM <-> GPU 1.
+# - Toàn bộ hyperparameter được truyền động từ API chứ không hardcode.
 # ==============================================================================
 
 models:
-  # 🎙️ 1. Speech-to-Text (Whisper Turbo FP16)
+  # 🎙️ 1. Speech-to-Text (Qwen3-ASR 1.7B Multilingual / Vietnamese trên GPU 0)
   stt:
-    id: "openai/whisper-large-v3-turbo"
+    id: "Qwen/Qwen3-ASR-1.7B"
+    fallback_id: "openai/whisper-large-v3-turbo"
     precision: "fp16"
-    lifecycle: "isolated_exclusive" # Giai đoạn 1: Độc lập tuyệt đối
-    preload: false                  # Khởi động không nạp VRAM
+    backend: "audio_service"
+    lifecycle: "isolated_exclusive"
+    preload: false
     init_target: "cpu"
-    device_strategy: "auto"
+    device: "cuda:0"
+    device_strategy: "single"
 
-  # 🔊 2. Text-to-Speech (Kokoro-82M FP16)
+  # 🔊 2. Text-to-Speech (Qwen3-TTS 1.7B Multilingual & XTTS-v2 Vietnamese trên GPU 0)
   tts:
-    id: "hexgrad/Kokoro-82M"
-    voice: "af_heart"
+    id: "Qwen/Qwen3-TTS-12Hz-1.7B-Base"
+    xtts_id: "thivux/XTTS-v2-vietnamse"
+    fallback_id: "hexgrad/Kokoro-82M"
+    voice: "default"
     precision: "fp16"
-    lifecycle: "isolated_exclusive" # Giai đoạn 1: Độc lập tuyệt đối
-    preload: false                  # Khởi động không nạp VRAM
+    backend: "audio_service"
+    lifecycle: "isolated_exclusive"
+    preload: false
     init_target: "cpu"
-    device_strategy: "auto"
+    device: "cuda:0"
+    device_strategy: "single"
 
-  # 👁️ 3. Vision-Language Model (VLM / Qwen3.8-27B GGUF)
-  # - Định dạng: GGUF (Unsloth Dynamic V3.0 UD-Q4_K_M) kèm Vision mmproj-F16
-  # - Phân bổ Dual-GPU: Tận dụng trọn vẹn 2x Tesla T4 (Layer-Splitting 50-50 qua PCIe)
+  # 👁️ 3. Vision-Language Model (VLM / Qwen3.8-27B GGUF trên Dual-GPU 2x T4 16GB)
   vlm:
-    id: "nguynxuncngde180528/qwen38-27b-vlm-gguf"
+    id: "cuongnguyen1802/qwen38-27b-gguf"
     fallback_id: "Qwen/Qwen2.5-VL-3B-Instruct"
     format: "gguf"
-    model_file: "Qwen3.8-27B-UD-Q4_K_M.gguf"
-    mmproj_file: "mmproj-F16.gguf"
+    model_file: "Qwen3.8-27B-Q4_K_M.gguf"
+    mmproj_file: "mmproj-Qwen3.8-27B-Q8_0.gguf"
     quantization: "q4_k_m"
     precision: "fp16"
-    lifecycle: "isolated_exclusive" # Giai đoạn 1: Độc lập tuyệt đối
-    preload: false                  # Khởi động không nạp VRAM
-    init_target: "cpu"
-    allocation_policy: "dual_gpu"   # Bắt buộc chia 2 GPU (Layer-split trên 2x Tesla T4 16GB)
+    lifecycle: "dynamic_switch"
+    preload: true
+    init_target: "gpu"
+    allocation_policy: "dual_gpu"
     device_strategy: "dual_gpu"
     gpu_count: 2
     gpu_split: [0.5, 0.5]
     n_ctx: 4096
-    n_gpu_layers: -1                # Offload 100% tầng lên 2 GPU
+    n_gpu_layers: -1
     max_tokens: 1024
     temperature: 0.7
 
-  # 🖼️ 4. Text-to-Image & Inpainting (FLUX.2 Klein SOTA GGUF + Qwen3-4B Text Encoder)
-  # - Kiến trúc Flow Matching Transformer 4B siêu tốc (4 steps distillation)
-  # - Toàn bộ pipeline (< 5GB) nạp gọn gàng trên 1 GPU đơn (Zero CPU Offload, Zero OOM)
+  # 🖼️ 4. Text-to-Image & Inpainting (Qwen-Image-2.1 GGUF qua ComfyUI trên GPU 0)
   image:
-    id: "unsloth/FLUX.2-klein-4B-GGUF"
-    default_variant: "klein_4b"
-    model_file: "flux-2-klein-4b-Q4_K_M.gguf"
-    text_encoder_repo: "unsloth/Qwen3-4B-GGUF"
-    text_encoder_file: "Qwen3-4B-Q4_K_M.gguf"
+    id: "abenzerps/Qwen-Image-2.1-GGUF"
+    default_variant: "qwen_image_21"
+    backend: "comfyui"
+    device: "cuda:0"
+    gpu_device: 0
+    device_strategy: "single"
+    model_file: "qwen-image-2.1-Q4_K_M.gguf"
+    clip_file: "qwen3vl_8b_fp8_scaled.safetensors"
+    vae_file: "qwen_image_2.1_vae_bf16.safetensors"
     variants:
-      klein_4b: "unsloth/FLUX.2-klein-4B-GGUF"
-      4b: "unsloth/FLUX.2-klein-4B-GGUF"
-      klein_9b: "unsloth/FLUX.2-klein-9B-GGUF"
-      9b: "unsloth/FLUX.2-klein-9B-GGUF"
-      dev: "black-forest-labs/FLUX.2-dev"
+      qwen_image_21: "abenzerps/Qwen-Image-2.1-GGUF"
+      2.1: "abenzerps/Qwen-Image-2.1-GGUF"
+      qwen: "abenzerps/Qwen-Image-2.1-GGUF"
     quantization: "q4_k_m"
     precision: "fp16"
     lifecycle: "isolated_exclusive"
-    preload: false                  # Tắt preload image
+    preload: false
     init_target: "cpu"
-    allocation_policy: "single_gpu"
-    device_strategy: "single_gpu"
-    steps: 4
+    width: 1280
+    height: 720
+    steps: 20
     guidance: 1.0
+    sampler_name: "euler"
+    scheduler: "simple"
 
-  # 🎬 5. Text-to-Video & Image-to-Video (Wan2.2 SOTA FP16)
+  # 🎬 5. Text-to-Video & Image-to-Video (Wan2.2 TI2V & A14B MoE qua ComfyUI trên GPU 1)
   video:
     id: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
     default_variant: "ti2v_5b"
-    fallback_id: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
+    fallback_id: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+    backend: "comfyui"
+    device: "cuda:1"
+    gpu_device: 1
+    device_strategy: "single"
     variants:
       ti2v_5b: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
       5b: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
@@ -88,21 +100,87 @@ models:
       ti2v_5b_22: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
       t2v_a14b_22: "Wan-AI/Wan2.2-T2V-A14B-Diffusers"
       i2v_a14b_22: "Wan-AI/Wan2.2-I2V-A14B-Diffusers"
-      t2v_1_3b: "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
-      t2v_14b: "Wan-AI/Wan2.1-T2V-14B-Diffusers"
-      i2v_14b: "Wan-AI/Wan2.1-I2V-14B-480P-Diffusers"
+      minimax_h3: "Comfy-Org/MiniMax-H3"
     quantization: "4bit"
     precision: "fp16"
     lifecycle: "isolated_exclusive"
-    preload: false                  # Tắt preload video, nạp khi có request
+    preload: false
     init_target: "cpu"
-    allocation_policy: "adaptive"
-    device_strategy: "auto"
     num_frames: 17
     width: 832
     height: 480
     steps: 20
     guidance: 5.0
+    shift: 8.0
+    fps: 24
+
+  minimax:
+    id: "Comfy-Org/MiniMax-H3"
+    default_variant: "minimax_h3"
+    backend: "comfyui"
+    device: "cuda:1"
+    gpu_device: 1
+    device_strategy: "single"
+    model_file: "MiniMax-H3-FL2VA-Q4_K_M.gguf"
+    clip_file: "qwen3_vl_32b_q4_k_m.gguf"
+    video_vae_file: "minimax_h3_video_vae_fp16.safetensors"
+    audio_vae_file: "minimax_h3_audio_vae_fp32.safetensors"
+    variants:
+      minimax_h3: "Comfy-Org/MiniMax-H3"
+      h3: "Comfy-Org/MiniMax-H3"
+      fl2va: "Comfy-Org/MiniMax-H3"
+    quantization: "q4_k_m"
+    precision: "fp16"
+    lifecycle: "isolated_exclusive"
+    preload: false
+    init_target: "cpu"
+    num_frames: 33
+    width: 768
+    height: 448
+    steps: 14
+    guidance: 1.0
+    shift: 8.0
+    fps: 24
+    enable_audio: false
+    sampler_name: "euler"
+    scheduler: "simple"
 
 
+  # 🧬 6. Text & Multimodal Embedding (Qwen3-Embedding & Qwen3-VL-Embedding)
+  embedding:
+    id: "Qwen/Qwen3-Embedding-0.6B"
+    fallback_id: "Qwen/Qwen3-Embedding-4B"
+    format: "gguf"
+    quantization: "q4_k_m"
+    backend: "llama_cpp"
+    lifecycle: "always_active"
+    preload: false
+    init_target: "cpu"
+    device: "cuda:0"
+    device_strategy: "single"
+    dimensions: 1024
+    variants:
+      0.6b: "Qwen/Qwen3-Embedding-0.6B"
+      4b: "Qwen/Qwen3-Embedding-4B"
+      8b: "Qwen/Qwen3-Embedding-8B"
+      vl_2b: "Qwen/Qwen3-VL-Embedding-2B"
+      vl_8b: "Qwen/Qwen3-VL-Embedding-8B"
 
+  # 🎯 7. Text & Multimodal Reranking (Qwen3-Reranker & Qwen3-VL-Reranker)
+  rerank:
+    id: "Qwen/Qwen3-Reranker-0.6B"
+    fallback_id: "Qwen/Qwen3-Reranker-4B"
+    format: "gguf"
+    quantization: "q4_k_m"
+    backend: "llama_cpp"
+    lifecycle: "always_active"
+    preload: false
+    init_target: "cpu"
+    device: "cuda:0"
+    device_strategy: "single"
+    variants:
+      0.6b: "Qwen/Qwen3-Reranker-0.6B"
+      4b: "Qwen/Qwen3-Reranker-4B"
+      8b: "Qwen/Qwen3-Reranker-8B"
+      vl_2b: "Qwen/Qwen3-VL-Reranker-2B"
+      vl_8b: "Qwen/Qwen3-VL-Reranker-8B"

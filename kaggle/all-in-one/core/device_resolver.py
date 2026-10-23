@@ -67,20 +67,24 @@ class DeviceTopologyResolver:
         Ước lượng dung lượng VRAM cần thiết (GB) cho mô hình (trọng số + buffer tính toán / KV cache).
         """
         task_lower = task.lower()
-        if task_lower in ("stt", "whisper"):
+        if task_lower in ("stt", "whisper", "asr", "qwen_asr"):
+            if "1.7" in model_id or "qwen" in model_id.lower():
+                return 3.4  # Qwen3-ASR 1.7B FP16
             return 1.8  # Whisper large-v3-turbo FP16
-        if task_lower in ("tts", "kokoro"):
+        if task_lower in ("tts", "kokoro", "qwen_tts", "xtts"):
+            if "xtts" in model_id.lower():
+                return 2.0  # XTTS-v2 Vietnamese
+            if "1.7" in model_id or "qwen" in model_id.lower():
+                return 3.5  # Qwen3-TTS 1.7B FP16
             return 0.35  # Kokoro 82M FP16
 
         detected_b = self.extract_param_size_billions(model_id)
 
-        # Image Gen (FLUX.2 Klein: 4B DiT + 4B Qwen3 = ~8B total params in Q4_K_M -> ~5.2 GB total)
-        if task_lower in ("image", "flux", "visual_image"):
-            if "9b" in model_id.lower():
-                return 9.5 if quantization in ("4bit", "q4_k_m") else 18.0
+        # Image Gen (Qwen-Image-2.1 GGUF + Qwen3-VL 8B: Dual-GPU split)
+        if task_lower in ("image", "qwen_image", "flux", "visual_image"):
             if quantization in ("4bit", "q4_k_m"):
-                return 5.2  # 4-bit GGUF FLUX.2 Klein 4B + Qwen3 4B Text Encoder + VAE
-            return 12.0
+                return 11.5  # Qwen-Image-2.1 DiT (~8.5GB) + VAE + buffer trên GPU 1
+            return 18.0
 
         # Video Gen (Wan 14B / Wan 1.3B)
         if task_lower in ("video", "wan", "visual_video"):
@@ -186,6 +190,20 @@ class DeviceTopologyResolver:
             }
 
         # 2. ƯU TIÊN TUYỆT ĐỐI CẤU HÌNH NGƯỜI DÙNG CHỈ ĐỊNH (Config-Driven, No Auto-Predict)
+        target_dev = cfg.get("device")
+        if target_dev in ("cuda:0", "cuda:1", "cpu"):
+            target_idx = 1 if (target_dev == "cuda:1" and self.gpu_count > 1) else 0
+            actual_dev = "cpu" if (target_dev == "cpu" or not self.cuda_available) else f"cuda:{target_idx}"
+            return {
+                "device": actual_dev,
+                "device_map": None,
+                "max_memory": None,
+                "is_dual_gpu": False,
+                "detected_size_b": detected_size,
+                "estimated_vram_gb": needed_gb,
+                "reason": f"Chỉ định cứng theo config device: {actual_dev}."
+            }
+
         gpu_count_cfg = cfg.get("gpu_count")
         if gpu_count_cfg == 2 or strategy in ("dual_gpu", "2_gpu", "split"):
             return {
@@ -197,7 +215,7 @@ class DeviceTopologyResolver:
                 "estimated_vram_gb": needed_gb,
                 "reason": "Người dùng chỉ định rõ ràng chế độ 2 GPU trong config (dual_gpu / gpu_count: 2)."
             }
-        elif gpu_count_cfg == 1 or strategy in ("single_gpu", "1_gpu"):
+        elif gpu_count_cfg == 1 or strategy in ("single", "single_gpu", "1_gpu"):
             target_idx = 1 if (preferred_device == "gpu_1" and self.gpu_count > 1) else 0
             return {
                 "device": f"cuda:{target_idx}",

@@ -8,15 +8,32 @@ from pathlib import Path
 
 def build_notebook(models: list = None):
     curr_dir = Path(__file__).parent
-    py_script_path = curr_dir / "download_models_to_dataset.py"
-    
-    if models is None:
-        models = ["flux2_klein_4b", "qwen3_4b"]
+    import os
+    env_file = curr_dir / ".env"
+    env_vars = {}
+    if env_file.exists():
+        with open(env_file, "r", encoding="utf-8") as f:
+            for line in f:
+                if "=" in line and not line.strip().startswith("#"):
+                    k, v = line.strip().split("=", 1)
+                    env_vars[k.strip()] = v.strip().strip("'\"")
 
+    kaggle_user = env_vars.get("KAGGLE_USERNAME", os.environ.get("KAGGLE_USERNAME", "nguynxuncngde180528"))
+    kaggle_key = env_vars.get("KAGGLE_KEY", os.environ.get("KAGGLE_KEY", ""))
+    hf_token = env_vars.get("HF_TOKEN", os.environ.get("HF_TOKEN", ""))
+
+    if models is None:
+        models = ["qwen_image_21", "qwen3_vl_8b"]
+
+    py_script_path = curr_dir / "download_models_to_dataset.py"
     with open(py_script_path, "r", encoding="utf-8") as f:
         py_code = f.read()
 
-    run_cmds = "\n".join([f"!python3 download_models_to_dataset.py --model={m}" for m in models])
+    if models == ["all"]:
+        run_cmds = "!python3 download_models_to_dataset.py --all"
+    else:
+        run_cmds = "\n".join([f"!python3 download_models_to_dataset.py --model={m}" for m in models])
+
 
     cells = [
         {
@@ -79,6 +96,7 @@ def build_notebook(models: list = None):
                 "                    os.environ.setdefault(k.strip(), v.strip().strip('\"\\''))\n",
                 "    except Exception:\n",
                 "        pass\n",
+                f"os.environ.setdefault('KAGGLE_USERNAME', '{kaggle_user}')\n",
                 "os.environ['HF_HUB_ENABLE_HF_TRANSFER'] = '1'\n",
                 "print('✅ Credentials và môi trường đã sẵn sàng!')"
             ]
@@ -132,4 +150,14 @@ def build_notebook(models: list = None):
     print(f"✅ Đã tạo metadata: {meta_path}")
 
 if __name__ == "__main__":
-    build_notebook()
+    import sys
+    target_models = None
+    for arg in sys.argv[1:]:
+        if arg.startswith("--models="):
+            target_models = [m.strip() for m in arg.split("=", 1)[1].split(",") if m.strip()]
+        elif arg.startswith("--model="):
+            target_models = [arg.split("=", 1)[1].strip()]
+        elif arg == "--all":
+            target_models = ["all"]
+    build_notebook(target_models)
+

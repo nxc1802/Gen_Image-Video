@@ -51,7 +51,7 @@ def get_auth_header(user: str, key: str) -> str:
     return f"Basic {base64.b64encode(cred).decode('ascii')}"
 
 
-def push_downloader_kernel(user: str, key: str, slug: str = DOWNLOADER_SLUG) -> bool:
+def push_downloader_kernel(user: str, key: str, slug: str = DOWNLOADER_SLUG, models: list = None) -> bool:
     """Đóng gói và đẩy notebook tải model lên Kaggle qua REST API."""
     print("=" * 76)
     print(f"🚀 [1/3] ĐẨY NOTEBOOK DOWNLOADER LÊN KAGGLE ({user}/{slug})...")
@@ -60,7 +60,7 @@ def push_downloader_kernel(user: str, key: str, slug: str = DOWNLOADER_SLUG) -> 
     # 1. Sinh lại notebook và metadata mới nhất
     try:
         from build_downloader_notebook import build_notebook
-        build_notebook()
+        build_notebook(models=models)
     except Exception as e:
         print(f"⚠️ Không thể chạy build_downloader_notebook: {e}")
 
@@ -125,6 +125,82 @@ def push_downloader_kernel(user: str, key: str, slug: str = DOWNLOADER_SLUG) -> 
     except Exception as e:
         print(f"❌ Lỗi kết nối Kaggle API: {e}")
         return False
+
+
+def push_wheels_kernel(user: str, key: str, slug: str = "kaggle-wheels-builder") -> bool:
+    """Đóng gói và đẩy notebook biên dịch wheel lên Kaggle qua REST API."""
+    print("=" * 76)
+    print(f"🛠️ [1/3] ĐẨY NOTEBOOK WHEELS BUILDER LÊN KAGGLE ({user}/{slug})...")
+    print("=" * 76)
+
+    try:
+        from build_wheels_notebook import build_notebook
+        build_notebook()
+    except Exception as e:
+        print(f"⚠️ Không thể chạy build_wheels_notebook: {e}")
+
+    notebook_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "run_wheels_builder.ipynb")
+    metadata_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wheels-metadata.json")
+
+    if not os.path.exists(notebook_path):
+        print(f"❌ Không tìm thấy file notebook: {notebook_path}")
+        return False
+
+    with open(notebook_path, "r", encoding="utf-8") as f:
+        nb_content = f.read()
+
+    meta = {}
+    if os.path.exists(metadata_path):
+        with open(metadata_path, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+
+    title = meta.get("title", "Kaggle Wheels Builder")
+    is_private = meta.get("is_private", "true")
+    if isinstance(is_private, str):
+        is_private = is_private.lower() == "true"
+
+    payload = {
+        "slug": f"{user}/{slug}",
+        "newTitle": title,
+        "text": nb_content,
+        "language": meta.get("language", "python"),
+        "kernelType": meta.get("kernel_type", "notebook"),
+        "isPrivate": is_private,
+        "enableGpu": True,
+        "enableInternet": True,
+        "datasetDataSources": meta.get("dataset_sources", []),
+        "competitionDataSources": meta.get("competition_sources", []),
+        "kernelDataSources": meta.get("kernel_sources", []),
+        "modelDataSources": meta.get("model_sources", []),
+    }
+
+    url = "https://www.kaggle.com/api/v1/kernels/push"
+    headers = {
+        "Authorization": get_auth_header(user, key),
+        "Content-Type": "application/json",
+    }
+
+    req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if data.get("hasError"):
+                print(f"❌ Lỗi từ Kaggle API: {data.get('error') or data.get('errorNullable')}")
+                return False
+            v_num = data.get("versionNumberNullable") or data.get("versionNumber")
+            print(f"✅ Đẩy Wheels Builder Kernel thành công! Version: {v_num}")
+            print(f"🔗 URL Kernel: {data.get('url', f'https://www.kaggle.com/code/{user}/{slug}')}")
+            return True
+
+    except urllib.error.HTTPError as he:
+        body = he.read().decode("utf-8", errors="replace")
+        print(f"❌ Lỗi HTTP khi đẩy Kernel ({he.code}): {body}")
+        return False
+    except Exception as e:
+        print(f"❌ Lỗi kết nối Kaggle API: {e}")
+        return False
+
 
 
 def get_kernel_status(user: str, key: str, slug: str = DOWNLOADER_SLUG) -> dict:
@@ -222,10 +298,12 @@ def monitor_downloader_kernel(user: str, key: str, slug: str = DOWNLOADER_SLUG, 
 
 
 def main():
-    parser = argparse.ArgumentParser(description="🚀 Kaggle Model Downloader Deployer")
+    parser = argparse.ArgumentParser(description="🚀 Kaggle Model Downloader & Wheels Deployer")
     parser.add_argument("--user", default=DEFAULT_KAGGLE_USER, help="Kaggle username")
     parser.add_argument("--key", default=DEFAULT_KAGGLE_KEY, help="Kaggle API Key")
     parser.add_argument("--slug", default=DOWNLOADER_SLUG, help="Kernel slug")
+    parser.add_argument("--target", choices=["models", "wheels", "all"], default="models", help="Target task: models, wheels, or all")
+    parser.add_argument("--models", default="stt_whisper,tts_kokoro", help="Comma-separated model IDs (e.g. stt_whisper,tts_kokoro, or 'all')")
     parser.add_argument("--push-only", action="store_true", help="Chỉ đẩy kernel, không đợi")
     parser.add_argument("--monitor-only", action="store_true", help="Chỉ theo dõi kernel")
     parser.add_argument("--list-datasets", action="store_true", help="Liệt kê danh sách dataset hiện có")
@@ -241,24 +319,45 @@ def main():
             print(f"    URL: https://www.kaggle.com/datasets/{d.get('ref')}")
         return
 
-    if args.monitor_only:
-        ok = monitor_downloader_kernel(args.user, args.key, slug=args.slug, timeout_seconds=args.timeout)
+    selected_models = [m.strip() for m in args.models.split(",") if m.strip()]
+
+    # 1. Wheels build & push
+    if args.target in ("wheels", "all"):
+        wheels_slug = "kaggle-wheels-builder"
+        if args.monitor_only:
+            ok = monitor_downloader_kernel(args.user, args.key, slug=wheels_slug, timeout_seconds=args.timeout)
+            if not ok:
+                sys.exit(1)
+        else:
+            ok = push_wheels_kernel(args.user, args.key, slug=wheels_slug)
+            if not ok:
+                sys.exit(1)
+            if not args.push_only:
+                ok = monitor_downloader_kernel(args.user, args.key, slug=wheels_slug, timeout_seconds=args.timeout)
+                if not ok:
+                    sys.exit(1)
+
+    # 2. Models download & push
+    if args.target in ("models", "all"):
+        if args.monitor_only:
+            ok = monitor_downloader_kernel(args.user, args.key, slug=args.slug, timeout_seconds=args.timeout)
+            if not ok:
+                sys.exit(1)
+            return
+
+        ok = push_downloader_kernel(args.user, args.key, slug=args.slug, models=selected_models)
         if not ok:
             sys.exit(1)
-        return
 
-    ok = push_downloader_kernel(args.user, args.key, slug=args.slug)
-    if not ok:
-        sys.exit(1)
+        if not args.push_only:
+            ok = monitor_downloader_kernel(args.user, args.key, slug=args.slug, timeout_seconds=args.timeout)
+            
+            # Sau khi hoàn tất, hiển thị danh sách dataset mới
+            print("\n🔍 Kiểm tra danh sách Dataset sau khi chạy:")
+            datasets = list_user_datasets(args.user, args.key)
+            for d in datasets:
+                print(f"  ✨ https://www.kaggle.com/datasets/{d.get('ref')} ({d.get('title')})")
 
-    if not args.push_only:
-        ok = monitor_downloader_kernel(args.user, args.key, slug=args.slug, timeout_seconds=args.timeout)
-        
-        # Sau khi hoàn tất, hiển thị danh sách dataset mới
-        print("\n🔍 Kiểm tra danh sách Dataset sau khi chạy:")
-        datasets = list_user_datasets(args.user, args.key)
-        for d in datasets:
-            print(f"  ✨ https://www.kaggle.com/datasets/{d.get('ref')} ({d.get('title')})")
 
 
 if __name__ == "__main__":

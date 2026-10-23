@@ -1,0 +1,17 @@
+{
+  "id": "cuongnguyen1802/kaggle-embedding-studio",
+  "title": "Kaggle Embedding & Rerank AI Studio",
+  "code_file": "run_embedding.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [
+    "cuongnguyen1802/kaggle-vlm-wheels"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

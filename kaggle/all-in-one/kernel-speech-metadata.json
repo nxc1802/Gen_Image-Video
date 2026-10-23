@@ -1,0 +1,20 @@
+{
+  "id": "cuongnguyen1802/kaggle-speech-ai-studio",
+  "title": "Kaggle Speech AI Studio",
+  "code_file": "run_speech.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [
+    "cuongnguyen1802/kaggle-speech-wheels",
+    "nguynxuncngde180528/qwen3-asr-1-7b",
+    "nguynxuncngde180528/qwen3-tts-1-7b",
+    "nguynxuncngde180528/xtts-v2-vietnamese"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}
