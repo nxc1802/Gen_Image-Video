@@ -86,6 +86,8 @@ export interface ModelManifest {
   version?: string;
   status: "full" | "partial" | "planned";
   coverage_percent?: number;
+  validation_status?: "pending_live" | "contract_verified" | "live_verified";
+  validation_notes?: string | null;
   hardware: ModelHardware;
   capabilities: Record<string, boolean>;
   limits?: {
