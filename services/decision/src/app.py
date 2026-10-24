@@ -2,6 +2,7 @@
 services/decision/src/app.py
 FastAPI application for the Factory v4 Decision Engine Subsystem (Port 8082).
 """
+import os
 import logging
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI
@@ -34,7 +35,11 @@ app = FastAPI(
 app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        origin.strip()
+        for origin in os.environ.get("FACTORY_CORS_ORIGINS", "http://localhost:3000").split(",")
+        if origin.strip()
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
