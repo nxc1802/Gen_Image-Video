@@ -5,7 +5,7 @@ import sys
 import time
 import urllib.request
 
-PORT = int(__import__("os").environ.get("IMAGE_COMFYUI_PORT", "8188"))
+PORT = int(__import__("os").environ.get("IMAGE_SERVICE_PORT", "8188"))
 
 def _wait_ready(proc: subprocess.Popen, timeout: float = 180.0) -> None:
     deadline = time.time() + timeout
