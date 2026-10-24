@@ -7,6 +7,7 @@ Implements Features 36-39:
 - POST /v1/frame_interpolation (F38)
 - POST /v1/audio_enhancement (F39)
 """
+import os
 import argparse
 import sys
 from pathlib import Path
@@ -47,7 +48,11 @@ app = FastAPI(
 app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        origin.strip()
+        for origin in os.environ.get("FACTORY_CORS_ORIGINS", "http://localhost:3000").split(",")
+        if origin.strip()
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
