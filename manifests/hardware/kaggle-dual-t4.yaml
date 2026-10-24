@@ -21,7 +21,8 @@ gpus:
       - vision-service
       - decision-service
       - embed-service
-      - speech-service
+      
+      - rerank-service- speech-service
       - image-service
 
   - index: 1
