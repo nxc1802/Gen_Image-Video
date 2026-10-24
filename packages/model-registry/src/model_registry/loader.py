@@ -3,6 +3,7 @@ packages/model-registry/src/model_registry/loader.py
 Manifest Loader for Factory v4
 """
 from pathlib import Path
+import os
 from typing import Dict, List, Optional
 import yaml
 
@@ -25,7 +26,7 @@ class ManifestLoader:
             return services
         for p in sorted(list(svc_dir.glob("*.yaml")) + list(svc_dir.glob("*.yml"))):
             with open(p, "r", encoding="utf-8") as f:
-                data = yaml.safe_load(f)
+                data = yaml.safe_load(os.path.expandvars(f.read()))
             if data:
                 sm = ServiceManifest.model_validate(data)
                 services[sm.metadata.id] = sm
@@ -38,7 +39,7 @@ class ManifestLoader:
             return models
         for p in sorted(list(mod_dir.glob("*.yaml")) + list(mod_dir.glob("*.yml"))):
             with open(p, "r", encoding="utf-8") as f:
-                data = yaml.safe_load(f)
+                data = yaml.safe_load(os.path.expandvars(f.read()))
             if data:
                 mm = ModelManifest.model_validate(data)
                 models[mm.metadata.id] = mm
@@ -51,7 +52,7 @@ class ManifestLoader:
             return caps
         for p in sorted(list(cap_dir.glob("*.yaml")) + list(cap_dir.glob("*.yml"))):
             with open(p, "r", encoding="utf-8") as f:
-                data = yaml.safe_load(f)
+                data = yaml.safe_load(os.path.expandvars(f.read()))
             if data:
                 cm = CapabilityManifest.model_validate(data)
                 caps[cm.id] = cm
@@ -64,7 +65,7 @@ class ManifestLoader:
             return topologies
         for p in sorted(list(hw_dir.glob("*.yaml")) + list(hw_dir.glob("*.yml"))):
             with open(p, "r", encoding="utf-8") as f:
-                data = yaml.safe_load(f)
+                data = yaml.safe_load(os.path.expandvars(f.read()))
             if data:
                 hm = HardwareTopologyManifest.model_validate(data)
                 topologies[hm.id] = hm
