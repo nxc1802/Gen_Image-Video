@@ -32,7 +32,7 @@ class TextServiceConfig(BaseModel):
     port: int = 8080
     static_domain: str = "text.ai.example.com"
     protocol: str = "http"
-    cors_origins: List[str] = Field(default_factory=lambda: ["*"])
+    cors_origins: List[str] = Field(default_factory=lambda: ["http://localhost:3000"])
     model: TextModelConfig = Field(default_factory=TextModelConfig)
     hardware: TextHardwareConfig = Field(default_factory=TextHardwareConfig)
 
