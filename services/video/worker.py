@@ -58,6 +58,8 @@ class VideoWorkerDaemon:
     def _get_http_client(self) -> httpx.AsyncClient:
         if self._http_client is not None:
             return self._http_client
+        if not self.config.api_key:
+            raise RuntimeError("FACTORY_API_KEY is required for worker-to-Control-Plane authentication.")
         headers = {
             "Authorization": f"Bearer {self.config.api_key}",
             "Content-Type": "application/json",
@@ -175,8 +177,6 @@ class VideoWorkerDaemon:
             worker_id=self.config.worker_id,
             active_job_id=job_id,
             lease_token=lease_token,
-            gpu_utilization_percent=0.0,
-            vram_used_mb=0.0,
         )
         resp = await client.post(f"/v1/workers/{self.config.worker_id}/heartbeat", json=hb.model_dump(mode="json"))
         resp.raise_for_status()
@@ -320,9 +320,14 @@ class VideoWorkerDaemon:
             await self.fail_job(client, job_id, "JOB_CANCELLED", "Job was cancelled by user.", request_id=job.request_id, retryable=False)
         except Exception as e:
             logger.error(f"Error processing video job {job_id}: {e}")
-            err_msg = str(e).split("\n")[0]
-            err_msg = re.sub(r"/Volumes/[A-Za-z0-9_/:-]+", "[sanitized_path]", err_msg)
-            await self.fail_job(client, job_id, "INTERNAL_ERROR", f"Video generation failed: {err_msg}", request_id=job.request_id, retryable=False)
+            await self.fail_job(
+                client,
+                job_id,
+                "SERVICE_UNAVAILABLE",
+                "Video generation backend failed. Inspect correlated worker logs.",
+                request_id=job.request_id,
+                retryable=True,
+            )
 
         finally:
             hb_task.cancel()
