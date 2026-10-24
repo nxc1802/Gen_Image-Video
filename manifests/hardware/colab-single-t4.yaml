@@ -14,6 +14,8 @@ gpus:
     name: "NVIDIA Tesla T4"
     total_vram_gb: 15.0
     max_allocatable_vram_gb: 14.2
+    admission_mode: exclusive
+    max_concurrent_services: 1
     assigned_services:
       - text-service
       - image-service
