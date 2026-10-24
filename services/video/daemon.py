@@ -22,7 +22,7 @@ class ComfyUIVideoDaemon:
         self.config = config
         self.client = ComfyUIVideoClient(
             host=config.comfy_host,
-            port=config.port,
+            port=config.internal_comfy_port,
         )
         self.process: Optional[subprocess.Popen] = None
 
@@ -48,7 +48,7 @@ class ComfyUIVideoDaemon:
             "python",
             str(self.config.comfy_dir / "main.py"),
             "--port",
-            str(self.config.port),
+            str(self.config.internal_comfy_port),
             "--cuda-device",
             str(self.config.gpu_device),
             "--listen",
@@ -60,7 +60,7 @@ class ComfyUIVideoDaemon:
         env = os.environ.copy()
         env["CUDA_VISIBLE_DEVICES"] = str(self.config.gpu_device)
 
-        logger.info(f"Starting ComfyUI Video daemon on port {self.config.port}: {' '.join(cmd)}")
+        logger.info(f"Starting ComfyUI Video daemon on internal port {self.config.internal_comfy_port}: {' '.join(cmd)}")
         try:
             self.process = subprocess.Popen(
                 cmd,
@@ -69,7 +69,7 @@ class ComfyUIVideoDaemon:
                 stderr=subprocess.PIPE,
             )
         except FileNotFoundError as e:
-            logger.warning(f"Could not launch ComfyUI binary directly ({e}). Simulation mode enabled.")
+            raise RuntimeError("ComfyUI executable could not be launched; simulation fallback is disabled.") from e
 
     def stop(self) -> None:
         if self.process and self.is_alive():
