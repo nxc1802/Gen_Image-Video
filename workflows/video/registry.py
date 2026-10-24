@@ -70,39 +70,35 @@ class VideoWorkflowRegistry:
         return copy.deepcopy(self._cache[template_key])
 
     def get_workflow_for_task(self, model: str, task: str) -> Dict[str, Any]:
-        """Selects and returns the appropriate workflow template based on model and task."""
+        """Return only workflows genuinely implemented by the requested model family."""
         model_lower = (model or "").lower()
-        is_minimax = "minimax" in model_lower or "h3" in model_lower
         canonical_task = TASK_ALIASES.get(task, task)
 
-        if is_minimax:
-            if canonical_task in ("text_to_video", "t2v"):
-                return self.get_template("minimax_t2va")
-            elif canonical_task in ("image_to_video", "i2v"):
-                return self.get_template("minimax_i2va")
-            elif canonical_task in ("first_last_frame_to_video", "fl2v"):
-                return self.get_template("minimax_fl2va")
-            elif canonical_task in ("video_with_audio", "with_audio"):
-                return self.get_template("minimax_t2va")
-            elif canonical_task in ("reference_conditioning", "ref2va"):
-                return self.get_template("minimax_ref2va")
-            else:
-                return self.get_template("minimax_t2va")
+        if "minimax" in model_lower or "h3" in model_lower:
+            mapping = {
+                "text_to_video": "minimax_t2va",
+                "image_to_video": "minimax_i2va",
+                "first_last_frame_to_video": "minimax_fl2va",
+                "video_with_audio": "minimax_t2va",
+                "reference_conditioning": "minimax_ref2va",
+            }
+        elif "wan" in model_lower:
+            mapping = {
+                "text_to_video": "wan_t2v_a14b",
+                "image_to_video": "wan_i2v_a14b",
+                "first_last_frame_to_video": "wan_fl2v",
+                "video_extension": "wan_extension",
+            }
         else:
-            # Wan2.2 family
-            if canonical_task in ("text_to_video", "t2v"):
-                return self.get_template("wan_t2v_a14b")
-            elif canonical_task in ("image_to_video", "i2v"):
-                return self.get_template("wan_i2v_a14b")
-            elif canonical_task in ("first_last_frame_to_video", "fl2v"):
-                return self.get_template("wan_fl2v")
-            elif canonical_task in ("video_extension", "extension"):
-                return self.get_template("wan_extension")
-            elif canonical_task in ("video_with_audio", "with_audio"):
-                # Fallback to minimax for video_with_audio if requested
-                return self.get_template("minimax_t2va")
-            else:
-                return self.get_template("wan_t2v_a14b")
+            raise KeyError(f"Unknown video model family: {model}")
+
+        template = mapping.get(canonical_task)
+        if template is None:
+            raise KeyError(
+                f"Task '{canonical_task}' is not implemented for model '{model}'. "
+                "Cross-model workflow fallback is forbidden."
+            )
+        return self.get_template(template)
 
     def get_workflow(self, model: str, task: Optional[str] = None) -> Dict[str, Any]:
         """Unified accessor for video workflow templates by model and task (or task only)."""
