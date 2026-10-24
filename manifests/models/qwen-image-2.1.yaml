@@ -12,9 +12,6 @@ weights:
   components:
     clip: "qwen3vl_8b_fp8_scaled.safetensors"
     vae: "qwen_image_2.1_vae_bf16.safetensors"
-    inpaint_adapter: "qwen_image_inpaint_adapter.safetensors"
-    controlnet_pose: "qwen_image_control_pose.safetensors"
-    controlnet_depth: "qwen_image_control_depth.safetensors"
   format: gguf
   quantization: q4_k_m
   default_precision: bf16
@@ -26,18 +23,26 @@ hardware:
 
 capabilities:
   text_to_image: true
-  image_to_image: true
-  inpaint: true
-  outpaint: true
-  instruction_edit: true
-  reference_image: true
-  multi_reference: true
-  control_pose: true
-  control_depth: true
+  image_to_image: false
+  inpaint: false
+  outpaint: false
+  instruction_edit: false
+  reference_image: false
+  multi_reference: false
+  control_pose: false
+  control_depth: false
 
-status: full
-coverage_percent: 100.0
-missing_capabilities: []
+status: partial
+coverage_percent: 11.11
+missing_capabilities:
+  - image_to_image
+  - inpaint
+  - outpaint
+  - instruction_edit
+  - reference_image
+  - multi_reference
+  - control_pose
+  - control_depth
 
 limits:
   max_width: 2048
