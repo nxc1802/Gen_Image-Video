@@ -3,6 +3,7 @@ services/music/server.py
 FastAPI standalone service daemon for Music Subsystem (port 8001, static domain music.ai.example.com).
 Integrates with ACE-Step 1.5 async REST server.
 """
+import os
 import argparse
 import sys
 from pathlib import Path
@@ -40,7 +41,11 @@ app = FastAPI(
 app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        origin.strip()
+        for origin in os.environ.get("FACTORY_CORS_ORIGINS", "http://localhost:3000").split(",")
+        if origin.strip()
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
