@@ -1,230 +1,125 @@
 """
-services/decision/src/vllm_adapter.py
-Client adapter for upstream vLLM Decision routing and evaluation endpoint
-supporting OpenAI Chat Completions logprobs API.
+Strict adapter to vLLM's native OpenAI-compatible Decisions API.
+
+This module translates the legacy single-task Factory request into one native
+/v1/decisions question. All probabilities/scores come from vLLM; there are no
+hand-written lexical, probability, or midpoint fallbacks.
 """
-import math
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
+
 import httpx
-from factory_contracts.errors import ModelUnavailableError
-from services.decision.src.calibration import evaluate_score_calibration
-from services.decision.src.schemas import (
-    DecisionChoiceResponse,
-    DecisionPredicateResponse,
-    DecisionRequest,
-    DecisionScoreResponse,
-    DecisionTask,
-)
+
+from factory_contracts.errors import InvalidRequestError, ModelUnavailableError
+from services.decision.src.schemas import DecisionRequest, DecisionTask
 
 
 class VLLMDecisionAdapter:
-    """Client adapter for upstream vLLM decision model endpoints."""
-
-    def __init__(self, upstream_url: Optional[str] = None, timeout: float = 15.0):
+    def __init__(self, upstream_url: Optional[str] = None, timeout: float = 60.0):
         self.upstream_url = (
             upstream_url
             or os.environ.get("VLLM_DECISION_URL")
             or os.environ.get("DECISION_UPSTREAM_URL")
-        )
+            or ""
+        ).rstrip("/")
+        self.api_key = os.environ.get("VLLM_DECISION_API_KEY") or os.environ.get("FACTORY_API_KEY", "")
         self.timeout = timeout
 
     @property
     def is_configured(self) -> bool:
-        return bool(self.upstream_url and self.upstream_url.strip())
+        return bool(self.upstream_url)
 
-    def evaluate(
-        self, request: DecisionRequest
-    ) -> Optional[DecisionPredicateResponse | DecisionChoiceResponse | DecisionScoreResponse]:
-        """Dispatches request to upstream vLLM server if configured."""
-        if not self.is_configured:
-            return None
-
+    def _question(self, request: DecisionRequest) -> Dict[str, Any]:
         task = (request.task or "").strip().lower()
         if task == DecisionTask.PREDICATE.value:
-            return self._evaluate_predicate_vllm(request)
-        elif task == DecisionTask.CHOICE.value:
-            return self._evaluate_choice_vllm(request)
-        elif task == DecisionTask.SCORE.value:
-            return self._evaluate_score_vllm(request)
-        return None
+            if not request.hypothesis or not request.hypothesis.strip():
+                raise InvalidRequestError("Task 'predicate' requires 'hypothesis'.")
+            return {
+                "type": "predicate",
+                "name": "decision",
+                "instructions": request.hypothesis.strip(),
+            }
 
-    def _evaluate_predicate_vllm(self, request: DecisionRequest) -> DecisionPredicateResponse:
-        url = f"{self.upstream_url.rstrip('/')}/v1/chat/completions"
-        prompt = (
-            f"Context: {request.context}\n"
-            f"Hypothesis: {request.hypothesis}\n"
-            "Is the hypothesis true or false given the context? Respond with 'true' or 'false'."
-        )
+        if task == DecisionTask.CHOICE.value:
+            choices = request.choices or []
+            if len(choices) < 2:
+                raise InvalidRequestError("Task 'choice' requires at least two choices.")
+            if len(choices) > 26:
+                raise InvalidRequestError("Native vLLM Decisions supports at most 26 choices.")
+            return {
+                "type": "choice",
+                "name": "decision",
+                "instructions": "Select the choice that best matches the input context.",
+                "choices": [{"value": choice} for choice in choices],
+            }
+
+        if task == DecisionTask.SCORE.value:
+            scale = request.scale or [0.0, 1.0]
+            if len(scale) != 2 or scale[0] >= scale[1]:
+                raise InvalidRequestError("Task 'score' requires scale [min, max] with min < max.")
+            # Native Decisions scores ordered discrete levels. Ten evenly spaced
+            # labels preserve the requested numeric range without inventing a score.
+            lo, hi = float(scale[0]), float(scale[1])
+            levels = [
+                {"label": f"{lo + (hi - lo) * i / 9.0:.6g}"}
+                for i in range(10)
+            ]
+            return {
+                "type": "score",
+                "name": "decision",
+                "instructions": f"Score the input on the requested range [{lo}, {hi}].",
+                "levels": levels,
+            }
+
+        raise InvalidRequestError(f"Unknown decision task '{request.task}'.")
+
+    def evaluate(self, request: DecisionRequest) -> Dict[str, Any]:
+        if not self.is_configured:
+            raise ModelUnavailableError(
+                message="Native vLLM Decisions backend is not configured.",
+                details={"required_env": "VLLM_DECISION_URL"},
+            )
+
         payload = {
             "model": request.model,
-            "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 1,
-            "logprobs": True,
-            "top_logprobs": 5,
+            "input": request.context,
+            "questions": [self._question(request)],
         }
+        headers = {"Content-Type": "application/json"}
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
 
         try:
             with httpx.Client(timeout=self.timeout) as client:
-                resp = client.post(url, json=payload)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    choice = data["choices"][0]
-                    content_logprobs = choice.get("logprobs", {}).get("content", [{}])[0].get("top_logprobs", [])
-
-                    lp_true = -9.0
-                    lp_false = -9.0
-                    for token_info in content_logprobs:
-                        token = token_info.get("token", "").strip().lower()
-                        lp = token_info.get("logprob", -9.0)
-                        if token == "true":
-                            lp_true = max(lp_true, lp)
-                        elif token == "false":
-                            lp_false = max(lp_false, lp)
-
-                    # Compute normalized probabilities
-                    exp_true = math.exp(lp_true)
-                    exp_false = math.exp(lp_false)
-                    total_exp = exp_true + exp_false
-                    if total_exp > 0:
-                        p_true = exp_true / total_exp
-                    else:
-                        p_true = 0.50
-
-                    p_false = 1.0 - p_true
-                    decision = bool(p_true >= 0.5)
-                    confidence = round(p_true if decision else p_false, 4)
-
-                    return DecisionPredicateResponse(
-                        task="predicate",
-                        decision=decision,
-                        confidence=confidence,
-                        logprobs={
-                            "true": round(math.log(max(1e-9, p_true)), 4),
-                            "false": round(math.log(max(1e-9, p_false)), 4),
-                        },
-                    )
-                elif resp.status_code == 503:
+                response = client.post(
+                    f"{self.upstream_url}/v1/decisions",
+                    headers=headers,
+                    json=payload,
+                )
+                if response.status_code >= 400:
                     raise ModelUnavailableError(
-                        message="Upstream decision model is offline.",
-                        details={"model": request.model, "status_code": 503},
+                        message="Native vLLM Decisions backend rejected the request.",
+                        details={"status_code": response.status_code, "model": request.model},
                     )
-                else:
-                    raise ModelUnavailableError(
-                        message=f"Upstream decision service returned error: {resp.status_code}",
-                        details={"model": request.model, "status_code": resp.status_code},
-                    )
-        except (httpx.ConnectError, httpx.TimeoutException) as exc:
+                data = response.json()
+        except ModelUnavailableError:
+            raise
+        except (httpx.HTTPError, ValueError) as exc:
             raise ModelUnavailableError(
-                message="Upstream decision service unavailable.",
-                details={"model": request.model, "error": str(exc)},
-            )
+                message="Native vLLM Decisions backend is unavailable.",
+                details={"error_type": type(exc).__name__, "model": request.model},
+            ) from exc
 
-    def _evaluate_choice_vllm(self, request: DecisionRequest) -> DecisionChoiceResponse:
-        url = f"{self.upstream_url.rstrip('/')}/v1/chat/completions"
-        choices = request.choices or []
-        prompt = (
-            f"Context: {request.context}\n"
-            f"Candidate Choices: {', '.join(choices)}\n"
-            "Select the single best candidate choice that matches the context."
-        )
-        payload = {
-            "model": request.model,
-            "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 10,
+        answers = data.get("answers")
+        if not isinstance(answers, list) or not answers:
+            raise ModelUnavailableError(
+                message="Native vLLM Decisions backend returned no answers.",
+                details={"model": request.model},
+            )
+        return {
+            "task": request.task,
+            "answer": answers[0],
+            "usage": data.get("usage"),
+            "id": data.get("id"),
+            "model": data.get("model", request.model),
         }
-
-        try:
-            with httpx.Client(timeout=self.timeout) as client:
-                resp = client.post(url, json=payload)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    output_text = data["choices"][0]["message"]["content"].strip()
-                    # Match to candidate choices
-                    best_choice = choices[0]
-                    for c in choices:
-                        if c.lower() in output_text.lower():
-                            best_choice = c
-                            break
-
-                    # Distribute Softmax probabilities
-                    prob_dict: Dict[str, float] = {}
-                    for c in choices:
-                        if c == best_choice:
-                            prob_dict[c] = round(0.70 + 0.20 / len(choices), 4)
-                        else:
-                            prob_dict[c] = round((1.0 - (0.70 + 0.20 / len(choices))) / max(1, len(choices) - 1), 4)
-
-                    diff = round(1.0 - sum(prob_dict.values()), 6)
-                    prob_dict[best_choice] = round(prob_dict[best_choice] + diff, 6)
-
-                    return DecisionChoiceResponse(
-                        task="choice",
-                        selected_choice=best_choice,
-                        probabilities=prob_dict,
-                    )
-                elif resp.status_code == 503:
-                    raise ModelUnavailableError(
-                        message="Upstream decision model is offline.",
-                        details={"model": request.model, "status_code": 503},
-                    )
-                else:
-                    raise ModelUnavailableError(
-                        message=f"Upstream decision service returned error: {resp.status_code}",
-                        details={"model": request.model, "status_code": resp.status_code},
-                    )
-        except (httpx.ConnectError, httpx.TimeoutException) as exc:
-            raise ModelUnavailableError(
-                message="Upstream decision service unavailable.",
-                details={"model": request.model, "error": str(exc)},
-            )
-
-    def _evaluate_score_vllm(self, request: DecisionRequest) -> DecisionScoreResponse:
-        url = f"{self.upstream_url.rstrip('/')}/v1/chat/completions"
-        scale = request.scale or [0.0, 1.0]
-        prompt = (
-            f"Context: {request.context}\n"
-            f"Rate the overall quality/priority on a continuous scale from {scale[0]} to {scale[1]}. "
-            "Output only a single floating-point number."
-        )
-        payload = {
-            "model": request.model,
-            "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 10,
-        }
-
-        try:
-            with httpx.Client(timeout=self.timeout) as client:
-                resp = client.post(url, json=payload)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    output_text = data["choices"][0]["message"]["content"].strip()
-                    try:
-                        raw_val = float(output_text)
-                    except ValueError:
-                        raw_val = (scale[0] + scale[1]) / 2.0
-
-                    bounded_score = max(scale[0], min(scale[1], raw_val))
-                    normalized_base = (bounded_score - scale[0]) / max(1e-6, scale[1] - scale[0])
-                    calib = evaluate_score_calibration(normalized_base)
-
-                    return DecisionScoreResponse(
-                        task="score",
-                        score=round(bounded_score, 4),
-                        calibration_metrics=calib,
-                    )
-                elif resp.status_code == 503:
-                    raise ModelUnavailableError(
-                        message="Upstream decision model is offline.",
-                        details={"model": request.model, "status_code": 503},
-                    )
-                else:
-                    raise ModelUnavailableError(
-                        message=f"Upstream decision service returned error: {resp.status_code}",
-                        details={"model": request.model, "status_code": resp.status_code},
-                    )
-        except (httpx.ConnectError, httpx.TimeoutException) as exc:
-            raise ModelUnavailableError(
-                message="Upstream decision service unavailable.",
-                details={"model": request.model, "error": str(exc)},
-            )
