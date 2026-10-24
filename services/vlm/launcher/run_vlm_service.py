@@ -28,6 +28,14 @@ def main() -> None:
 
     _require_binary("vllm")
     os.environ["CUDA_VISIBLE_DEVICES"] = str(config.hardware.gpu_device_index)
+    os.environ["VLLM_MEDIA_URL_ALLOW_REDIRECTS"] = "0"
+    media_domains = [
+        d.strip() for d in os.environ.get("FACTORY_MEDIA_ALLOWED_DOMAINS", "").split(",") if d.strip()
+    ]
+    if not media_domains:
+        raise RuntimeError(
+            "FACTORY_MEDIA_ALLOWED_DOMAINS is required for VLM serving to prevent SSRF."
+        )
 
     cmd = [
         "vllm", "serve", config.model.name,
@@ -40,6 +48,8 @@ def main() -> None:
         "--allowed-methods", "*",
         "--allowed-headers", "*",
     ]
+    cmd.extend(["--allowed-media-domains", *media_domains])
+
     quant = (config.model.quantization or "").strip().lower()
     if quant and quant != "none":
         cmd.extend(["--quantization", quant])
