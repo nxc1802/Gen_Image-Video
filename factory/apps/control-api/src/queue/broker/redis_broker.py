@@ -20,6 +20,8 @@ class RedisQueueBroker(BaseQueueBroker):
 
     async def initialize(self) -> None:
         self.client = redis.from_url(self.redis_url, decode_responses=True)
+        # Fail startup immediately if Redis is unreachable or credentials are invalid.
+        await self.client.ping()
 
     async def close(self) -> None:
         if self.client:
