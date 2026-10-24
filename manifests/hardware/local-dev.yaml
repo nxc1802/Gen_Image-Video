@@ -14,6 +14,8 @@ gpus:
     name: "NVIDIA RTX 4090"
     total_vram_gb: 24.0
     max_allocatable_vram_gb: 23.0
+    admission_mode: exclusive
+    max_concurrent_services: 1
     assigned_services:
       - text-service
       - vision-service
