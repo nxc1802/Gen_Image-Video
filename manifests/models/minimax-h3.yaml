@@ -21,14 +21,18 @@ hardware:
   allocation_policy: single_gpu
 
 capabilities:
-  text_to_video: true
-  image_to_video: true
-  first_last_frame_to_video: true
-  video_with_audio: true
+  text_to_video: false
+  image_to_video: false
+  first_last_frame_to_video: false
+  video_with_audio: false
 
-status: full
-coverage_percent: 100.0
-missing_capabilities: []
+status: partial
+coverage_percent: 0.0
+missing_capabilities:
+  - text_to_video
+  - image_to_video
+  - first_last_frame_to_video
+  - video_with_audio
 
 limits:
   max_width: 1280
