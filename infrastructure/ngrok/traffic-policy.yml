@@ -1,30 +1,32 @@
-# Ngrok Edge Traffic Policy Configuration for Factory v4
-inbound:
-  - name: "Enforce HTTPS redirect"
-    actions:
-      - type: "redirect"
+# Factory v4 policy for services that enforce Bearer auth themselves.
+# Raw unauthenticated native APIs must use traffic-policy-raw.yml instead.
+on_http_request:
+  - actions:
+      - type: rate-limit
         config:
-          to: "https://${req.host}${req.url.path}"
-          status_code: 301
-        when: "req.headers['x-forwarded-proto'] == 'http'"
-
-  - name: "Edge Rate Limiting"
-    actions:
-      - type: "rate-limit"
-        config:
-          name: "global-edge-limit"
+          name: "factory-api-limit"
           algorithm: "sliding_window"
           capacity: 120
           rate: "60s"
           bucket_key:
             - "conn.client_ip"
 
-  - name: "Restrict Admin Endpoints to Internal Subnets"
+      - type: owasp-crs-request
+        config:
+          on_error: continue
+          process_body: true
+
+  - expressions:
+      - "actions.ngrok.owasp_crs_request.decision == 'deny'"
     actions:
-      - type: "custom-response"
+      - type: deny
+
+  - expressions:
+      - "req.url.path.startsWith('/v1/admin/') && !conn.client_ip.inRanges(['127.0.0.1/32', '10.0.0.0/8', '192.168.0.0/16'])"
+    actions:
+      - type: custom-response
         config:
           status_code: 403
           content: '{"error":{"code":"FORBIDDEN","message":"Access to admin endpoints is restricted."}}'
           headers:
             Content-Type: "application/json"
-        when: "req.url.path.startsWith('/v1/admin/') && !conn.client_ip.inRanges(['127.0.0.1/32', '10.0.0.0/8', '192.168.0.0/16'])"
