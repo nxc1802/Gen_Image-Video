@@ -1,0 +1,32 @@
+# Security policy for raw native APIs that do not implement Factory Bearer auth.
+# Create ngrok vault 'factory-v4' with secret 'raw-api-password' before launch.
+on_http_request:
+  - expressions:
+      - "req.method != 'OPTIONS'"
+    actions:
+      - type: basic-auth
+        config:
+          realm: "Factory v4 Native API"
+          credentials:
+            - "factory:${secrets.get('factory-v4', 'raw-api-password')}"
+          enforce: true
+
+  - actions:
+      - type: rate-limit
+        config:
+          name: "factory-native-api-limit"
+          algorithm: "sliding_window"
+          capacity: 60
+          rate: "60s"
+          bucket_key:
+            - "conn.client_ip"
+
+      - type: owasp-crs-request
+        config:
+          on_error: continue
+          process_body: true
+
+  - expressions:
+      - "actions.ngrok.owasp_crs_request.decision == 'deny'"
+    actions:
+      - type: deny
