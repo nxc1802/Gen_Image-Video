@@ -169,18 +169,28 @@ async def stream_transcription_chunk(payload: Dict[str, Any]):
 @app.websocket("/v1/audio/transcriptions/ws")
 async def websocket_transcription_stream(
     websocket: WebSocket,
-    token: Optional[str] = Query(None),
     model: str = Query("qwen3-asr"),
 ):
     auth_config = getattr(websocket.app.state, "auth_config", None) or load_auth_config()
     expected_key = getattr(auth_config, "api_key", None)
     jwt_secret = getattr(auth_config, "jwt_secret", None)
 
-    # Fallback to Authorization header if query param is empty
+    token: Optional[str] = None
+    auth_header = websocket.headers.get("authorization", "")
+    if auth_header.lower().startswith("bearer "):
+        token = auth_header[7:].strip()
     if not token:
-        auth_header = websocket.headers.get("authorization", "")
-        if auth_header.lower().startswith("bearer "):
-            token = auth_header[7:].strip()
+        protocols = [
+            item.strip()
+            for item in websocket.headers.get("sec-websocket-protocol", "").split(",")
+            if item.strip()
+        ]
+        bearer_protocol = next(
+            (item for item in protocols if item.startswith("factory-bearer.")),
+            None,
+        )
+        if bearer_protocol:
+            token = bearer_protocol[len("factory-bearer."):]
 
     authenticated = False
     if expected_key and token and secrets.compare_digest(token, expected_key):
