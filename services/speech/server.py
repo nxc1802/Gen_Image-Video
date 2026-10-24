@@ -16,6 +16,7 @@ import secrets
 import sys
 import uuid
 from pathlib import Path
+from urllib.parse import urlparse
 from typing import Any, Dict, Optional
 
 # Bootstrap workspace package search paths
@@ -45,6 +46,24 @@ from services.speech.tts.engine import TTSEngine
 from services.text.src.multimodal import validate_url_security
 
 logger = logging.getLogger(__name__)
+
+
+def validate_factory_asset_url(url: str) -> None:
+    """Require remote speech references to be pre-ingested Factory-owned assets."""
+    validate_url_security(url)
+    hostname = (urlparse(url).hostname or "").lower()
+    allowed = {
+        host.strip().lower()
+        for host in os.environ.get("FACTORY_ASSET_ALLOWED_HOSTS", "").split(",")
+        if host.strip()
+    }
+    s3_host = (urlparse(os.environ.get("S3_PUBLIC_ENDPOINT_URL", "")).hostname or "").lower()
+    if s3_host:
+        allowed.add(s3_host)
+    if not hostname or hostname not in allowed:
+        raise InvalidRequestError(
+            "Remote speech media must be ingested through Factory Asset Service before use."
+        )
 
 app = FastAPI(
     title="Factory v4 Speech Service",
@@ -132,7 +151,7 @@ async def create_transcription(request: Request):
         if not audio_url:
             raise InvalidRequestError("Audio input 'audio_url' is required when submitting JSON.")
 
-        validate_url_security(audio_url)
+        validate_factory_asset_url(audio_url)
 
         res = asr_engine.transcribe(
             audio_url=audio_url,
@@ -251,7 +270,7 @@ async def websocket_transcription_stream(
 # Feature 17: Forced Alignment
 @app.post("/v1/audio/alignments", dependencies=[Depends(verify_bearer_token)])
 async def forced_alignment(req: AlignmentRequest):
-    validate_url_security(req.audio_url)
+    validate_factory_asset_url(req.audio_url)
     return forced_aligner.align(audio_url=req.audio_url, transcript_text=req.transcript_text)
 
 
@@ -259,7 +278,7 @@ async def forced_alignment(req: AlignmentRequest):
 @app.post("/v1/audio/speech", dependencies=[Depends(verify_bearer_token)])
 async def synthesize_speech(req: SpeechRequest):
     if req.reference_audio_url:
-        validate_url_security(req.reference_audio_url)
+        validate_factory_asset_url(req.reference_audio_url)
     wav_bytes = tts_engine.synthesize(
         text=req.input,
         voice=req.voice,
