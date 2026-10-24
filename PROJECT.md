@@ -1,7 +1,7 @@
 # Project: Factory v4 Refactoring (Kaggle AI Studio)
 
 ## Architecture
-Factory v4 refactors the monolithic Kaggle AI Studio v3.5 into a decoupled, production-grade AI Factory where a dedicated **Control Plane** (`factory/apps/control-api/`) manages authentication, job lifecycle, service/model registry, storage, and telemetry without inference, while individual AI subsystems run natively on their optimal serving frameworks behind fixed ngrok static domains with end-to-end security and a two-tier queue architecture.
+Factory v4 refactors the monolithic Kaggle AI Studio v3.5 into a decoupled, production-oriented AI Factory where a dedicated **Control Plane** (`factory/apps/control-api/`) manages authentication, job lifecycle, service/model registry, storage, and telemetry without inference, while individual AI subsystems run natively on their optimal serving frameworks behind fixed ngrok static domains with end-to-end security and a two-tier queue architecture.
 
 ### Decoupled Subsystems & Frameworks:
 - **Control Plane** (`factory/apps/control-api/`): FastAPI, PostgreSQL (job state, leases, retries), Redis (events, pub/sub, locks), MinIO/S3 (signed URLs), OpenTelemetry.
@@ -24,6 +24,8 @@ Factory v4 refactors the monolithic Kaggle AI Studio v3.5 into a decoupled, prod
 ---
 
 ## Feature Inventory
+> **Capability status rule:** the feature inventory below is the target product surface, not a claim that every model currently implements every item. `manifests/models/*.yaml` is the runtime source of truth; `status: partial` and false capability flags must be honored by the Control Plane and Studio.
+
 
 Every feature discovered in the Survey Phase is assigned to an implementation milestone.
 
@@ -78,11 +80,11 @@ Every feature discovered in the Survey Phase is assigned to an implementation mi
 
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| M1 | Foundation & Security (Waves 0, 1, 2) | Archive legacy v3.5 into `legacy/v3/`, establish Factory v4 directory tree, implement declarative schemas (`ServiceManifest`, `ModelManifest`, `CapabilityManifest`, Unified Error Contract), edge ngrok static domain definitions, mandatory Bearer token auth across all endpoints with zero bypass, remove `x-target-base-url` & credential forwarding, Asset Service SSRF protection, sanitized error responses. | none | DONE |
-| M2 | Two-Tier Queue & Factory Job Lifecycle (Wave 3) | Tier 1 native engine concurrency, Tier 2 PostgreSQL + Redis factory job manager, state machine (`CREATED` -> `QUEUED` -> `ADMITTED` -> `RUNNING` -> `STREAMING` -> `SUCCEEDED` / `FAILED` / `CANCELLED` / `RETRYING`), worker leasing, heartbeats, dead-job recovery, multi-modal streaming (SSE tokens, WS audio, SSE/WS progress), S3 storage with signed URLs, OpenTelemetry tracing. | M1 | DONE |
-| M3 | Core AI Subsystem Migration (Waves 4 & 5) | Text & VLM vLLM service, dedicated vLLM `/v1/decisions` service, Speech Qwen3-ASR & Qwen3-TTS services, Embedding & Rerank real vLLM/TEI service (503 fail-fast, zero fake vectors), ComfyUI GPU 0 Image daemon & workflow registry, ComfyUI GPU 1 Video daemon & workflow registry, ACE-Step 1.5 music REST integration, Media Enhancement service. | M1, M2 | DONE |
-| M4 | Factory Studio Web Dynamic Console (Wave 6) | Overhaul Next.js 15 / React 19 Studio Web into dynamic Operations Console & API Explorer reading backend manifests, live Telemetry & Streaming Inspectors, Job Dashboard, API Code Generator. | M1, M2, M3 | IN_PROGRESS |
-| M5 | Final Milestone: E2E Test Suite Pass & Adversarial Hardening (Waves 7 & 8) | Phase 1: 100% pass of E2E Test Suite published by E2E Testing Track (Tiers 1-4). Phase 2: Adversarial Coverage Hardening (Tier 5 white-box challenger loop). 100 concurrent requests stress test and worker reboot recovery verification. | M1, M2, M3, M4, TEST_READY | PLANNED |
+| M1 | Foundation & Security (Waves 0, 1, 2) | Archive legacy v3.5, contracts, fixed ngrok domains, mandatory app auth, raw-native edge auth, SSRF protection, sanitized errors, strict CORS. | none | IMPLEMENTED — LIVE SECURITY VALIDATION PENDING |
+| M2 | Two-Tier Queue & Factory Job Lifecycle (Wave 3) | PostgreSQL + Redis lifecycle, atomic worker leases, heartbeats, reaper/retry, SSE/WS events, S3 storage and telemetry. Production now fails fast instead of downgrading to SQLite/memory/local storage. | M1 | IMPLEMENTED — LOAD/FAILOVER VALIDATION PENDING |
+| M3 | Core AI Subsystem Migration (Waves 4 & 5) | Text/VLM/Decision/Embedding/Rerank use native vLLM, Music exposes native ACE-Step, Image/Video launch native ComfyUI, Speech uses vLLM/vLLM-Omni. Fake inference fallbacks are prohibited. Advanced Image/Video, multimodal embedding, forced alignment and enhancement remain capability-gated until real workflows/backends pass live validation. | M1, M2 | PARTIAL — CORE NATIVE SERVING IMPLEMENTED |
+| M4 | Factory Studio Web Dynamic Console (Wave 6) | Dynamic Operations Console/API Explorer, live telemetry/streaming inspection, Job Dashboard and code generation. UI must respect manifest capability status and never invent credentials. | M1, M2, M3 | IN_PROGRESS — BUILD GATED BY CI |
+| M5 | Live Certification & Adversarial Hardening (Waves 7 & 8) | Real GPU inference, real ngrok/Postgres/Redis/S3 deployment, 100+ concurrent submissions, worker crash/reboot recovery, streaming reconnect and security probes. Contract simulation alone cannot satisfy this milestone. | M1, M2, M3, M4 | PLANNED |
 
 ---
 
