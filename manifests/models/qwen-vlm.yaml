@@ -21,6 +21,7 @@ hardware:
 
 capabilities:
   image_chat: true
+  responses_api: true
   video_chat: true
   visual_grounding: true
   document_qa: true
@@ -28,6 +29,8 @@ capabilities:
 status: full
 coverage_percent: 100.0
 missing_capabilities: []
+validation_status: pending_live
+validation_notes: "Native vLLM multimodal serving is wired with media-domain allowlisting; live GPU validation pending."
 
 limits:
   max_context_tokens: 16384
