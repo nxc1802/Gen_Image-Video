@@ -38,12 +38,15 @@ async def lifespan(app: FastAPI):
 
     # 1. Initialize Storage Provider
     storage_config = load_storage_config()
-    if storage_config.storage_backend == "s3" and storage_config.s3_endpoint_url:
-        try:
-            storage_provider = S3StorageProvider(storage_config)
-        except Exception:
-            storage_provider = LocalStorageProvider(storage_config)
+    environment = os.environ.get("ENVIRONMENT", os.environ.get("FACTORY_ENV", "development")).lower()
+    if storage_config.storage_backend == "s3":
+        if not storage_config.s3_endpoint_url:
+            raise RuntimeError("S3_ENDPOINT_URL is required when STORAGE_BACKEND=s3.")
+        # Do not hide S3/MinIO failures by silently switching persistence.
+        storage_provider = S3StorageProvider(storage_config)
     else:
+        if environment == "production":
+            raise RuntimeError("Local artifact storage is forbidden in production; configure S3/MinIO.")
         storage_provider = LocalStorageProvider(storage_config)
     app.state.storage_provider = storage_provider
 
