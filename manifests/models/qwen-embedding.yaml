@@ -8,7 +8,9 @@ metadata:
   version: "1.0.0"
 
 weights:
-  primary_checkpoint: "Qwen/Qwen-Embedding-0.6B"
+  primary_checkpoint: "Qwen/Qwen3-Embedding-0.6B"
+  components:
+    reranker: "Qwen/Qwen3-Reranker-0.6B"
   format: safetensors
   quantization: none
   default_precision: fp16
@@ -21,12 +23,13 @@ hardware:
 
 capabilities:
   text_embedding: true
-  multimodal_embedding: true
+  multimodal_embedding: false
   reranking: true
 
-status: full
-coverage_percent: 100.0
-missing_capabilities: []
+status: partial
+coverage_percent: 66.67
+missing_capabilities:
+  - multimodal_embedding
 
 limits:
   max_context_tokens: 8192
