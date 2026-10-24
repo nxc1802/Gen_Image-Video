@@ -103,77 +103,39 @@ async def health_check():
 @app.post("/v1/image_super_resolution", dependencies=[Depends(verify_bearer_token)])
 async def super_resolve_image(req: ImageSRRequest):
     validate_url_security(req.image_url)
-    res = image_sr.process(req.model_dump())
-    art_id = res["artifact_id"]
-    s3_url = f"https://s3.ai.example.com/assets/{art_id}.png"
-    art = ArtifactReference(
-        artifact_id=art_id,
-        type="image",
-        mime_type="image/png",
-        size_bytes=res["size_bytes"],
-        storage_path=f"artifacts/enhancement/{art_id}.png",
-        url=s3_url,
-        download_url=s3_url,
-        sha256=res["sha256"],
-    )
-    return {"status": "completed", "artifact": art.model_dump(mode="json")}
+    return {"status": "completed", "artifact": _artifact_from_backend(image_sr.process(req.model_dump()))}
 
 
 @app.post("/v1/video_super_resolution", dependencies=[Depends(verify_bearer_token)])
 async def super_resolve_video(req: VideoSRRequest):
     validate_url_security(req.video_url)
-    res = video_sr.process(req.model_dump())
-    art_id = res["artifact_id"]
-    s3_url = f"https://s3.ai.example.com/assets/{art_id}.mp4"
-    art = ArtifactReference(
-        artifact_id=art_id,
-        type="video",
-        mime_type="video/mp4",
-        size_bytes=res["size_bytes"],
-        storage_path=f"artifacts/enhancement/{art_id}.mp4",
-        url=s3_url,
-        download_url=s3_url,
-        sha256=res["sha256"],
-    )
-    return {"status": "completed", "artifact": art.model_dump(mode="json")}
+    return {"status": "completed", "artifact": _artifact_from_backend(video_sr.process(req.model_dump()))}
 
 
 @app.post("/v1/frame_interpolation", dependencies=[Depends(verify_bearer_token)])
 async def interpolate_frames(req: InterpolationRequest):
     validate_url_security(req.video_url)
-    res = interpolation.process(req.model_dump())
-    art_id = res["artifact_id"]
-    s3_url = f"https://s3.ai.example.com/assets/{art_id}.mp4"
-    art = ArtifactReference(
-        artifact_id=art_id,
-        type="video",
-        mime_type="video/mp4",
-        size_bytes=res["size_bytes"],
-        storage_path=f"artifacts/enhancement/{art_id}.mp4",
-        url=s3_url,
-        download_url=s3_url,
-        sha256=res["sha256"],
-    )
-    return {"status": "completed", "artifact": art.model_dump(mode="json")}
+    return {"status": "completed", "artifact": _artifact_from_backend(interpolation.process(req.model_dump()))}
 
 
 @app.post("/v1/audio_enhancement", dependencies=[Depends(verify_bearer_token)])
 async def enhance_audio(req: AudioEnhanceRequest):
     validate_url_security(req.audio_url)
-    res = audio_enhance.process(req.model_dump())
-    art_id = res["artifact_id"]
-    s3_url = f"https://s3.ai.example.com/assets/{art_id}.wav"
+    return {"status": "completed", "artifact": _artifact_from_backend(audio_enhance.process(req.model_dump()))}
+
+
+def _artifact_from_backend(res: Dict[str, Any]) -> Dict[str, Any]:
     art = ArtifactReference(
-        artifact_id=art_id,
-        type="audio",
-        mime_type="audio/wav",
+        artifact_id=res["artifact_id"],
+        type=res["type"],
+        mime_type=res["mime_type"],
         size_bytes=res["size_bytes"],
-        storage_path=f"artifacts/enhancement/{art_id}.wav",
-        url=s3_url,
-        download_url=s3_url,
+        storage_path=res["storage_path"],
+        url=res["download_url"],
+        download_url=res["download_url"],
         sha256=res["sha256"],
     )
-    return {"status": "completed", "artifact": art.model_dump(mode="json")}
+    return art.model_dump(mode="json")
 
 
 def main():
