@@ -20,7 +20,7 @@ def main() -> None:
         raise RuntimeError("Python executable is unavailable.")
 
     os.environ["CUDA_VISIBLE_DEVICES"] = os.environ.get("IMAGE_CUDA_VISIBLE_DEVICES", "0")
-    port = os.environ.get("IMAGE_COMFYUI_PORT", "8188")
+    port = os.environ.get("IMAGE_SERVICE_PORT", "8188")
     cmd = [
         sys.executable,
         str(main_py),
