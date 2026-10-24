@@ -283,8 +283,8 @@ export class StudioApiClient {
     const hostPort = this.baseUrl.replace(/^https?:\/\//, "");
     const authToken = token || this.apiKey;
     if (!authToken) throw new Error("A Bearer token is required for WebSocket connections.");
-    const wsUrl = `${wsProto}://${hostPort}/v1/jobs/${encodeURIComponent(jobId)}/ws?token=${encodeURIComponent(authToken)}`;
-    return new WebSocket(wsUrl);
+    const wsUrl = `${wsProto}://${hostPort}/v1/jobs/${encodeURIComponent(jobId)}/ws`;
+    return new WebSocket(wsUrl, ["factory-v4", `factory-bearer.${authToken}`]);
   }
 
   // ==========================================
