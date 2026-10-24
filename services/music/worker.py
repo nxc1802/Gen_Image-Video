@@ -59,10 +59,11 @@ class MusicWorker:
         self.worker_id = worker_id
         self.control_plane_url = (
             control_plane_url
+            or os.environ.get("CONTROL_PLANE_URL")
             or os.environ.get("FACTORY_BASE_URL")
-            or "https://jobs.ai.example.com"
+            or "http://127.0.0.1:8000"
         ).rstrip("/")
-        self.api_key = api_key or os.environ.get("FACTORY_API_KEY", "sk-factory-test-token-valid")
+        self.api_key = api_key or os.environ.get("FACTORY_API_KEY", "")
         self.gpu_device = gpu_device
         self.lease_duration = lease_duration
         self.client = ACEStepClient()
@@ -72,6 +73,8 @@ class MusicWorker:
 
     @property
     def auth_headers(self) -> dict:
+        if not self.api_key:
+            raise RuntimeError("FACTORY_API_KEY is required for Music worker authentication.")
         return {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
@@ -83,7 +86,7 @@ class MusicWorker:
             worker_id=self.worker_id,
             subsystem="music",
             supported_models=["ace-step-1.5"],
-            supported_tasks=["text_to_music", "lyrics_to_music", "audio_to_audio"],
+            supported_tasks=["text_to_music", "lyrics_to_music"],
             gpu_device=self.gpu_device,
             lease_duration_seconds=self.lease_duration,
         )
@@ -110,8 +113,6 @@ class MusicWorker:
             worker_id=self.worker_id,
             active_job_id=self._active_job_id,
             lease_token=self._active_lease_token,
-            gpu_utilization_percent=60.0,
-            vram_used_mb=4200.0,
         )
         try:
             await http_client.post(
@@ -165,11 +166,54 @@ class MusicWorker:
                 progress_callback=on_progress,
             )
 
-            artifact = ACEStepAdapter.create_artifact_reference(result)
-            comp_req = JobCompletionRequest(
-                artifacts=[artifact],
-                inference_duration_ms=result.get("inference_duration_ms", 12500.0),
+            # Persist the actual generated audio through Factory Storage.
+            audio_bytes = result["audio_bytes"]
+            filename = result["filename"]
+            mime_type = result["mime_type"]
+            presign_resp = await http_client.post(
+                f"{self.control_plane_url}/v1/storage/upload-url",
+                headers=self.auth_headers,
+                json={
+                    "subsystem": "music",
+                    "job_id": job.job_id,
+                    "artifact_name": filename,
+                    "mime_type": mime_type,
+                    "max_size_bytes": len(audio_bytes),
+                },
+                timeout=10.0,
             )
+            presign_resp.raise_for_status()
+            presign = presign_resp.json()
+            async with httpx.AsyncClient(timeout=300.0, follow_redirects=False) as upload_client:
+                put_resp = await upload_client.put(
+                    presign["upload_url"],
+                    content=audio_bytes,
+                    headers=presign.get("headers") or {"Content-Type": mime_type},
+                )
+                put_resp.raise_for_status()
+
+            download_resp = await http_client.post(
+                f"{self.control_plane_url}/v1/storage/download-url",
+                headers=self.auth_headers,
+                json={"storage_path": presign["storage_path"], "filename": filename},
+                timeout=10.0,
+            )
+            download_resp.raise_for_status()
+            download_url = download_resp.json()["download_url"]
+
+            from factory_contracts.jobs.job_contract import ArtifactReference
+            import uuid
+            artifact = ArtifactReference(
+                artifact_id=f"art-{uuid.uuid4()}",
+                type="audio",
+                mime_type=mime_type,
+                size_bytes=result["size_bytes"],
+                storage_path=presign["storage_path"],
+                url=download_url,
+                download_url=download_url,
+                sha256=result["sha256"],
+            )
+            comp_req = JobCompletionRequest(artifacts=[artifact])
 
             res = await http_client.post(
                 f"{self.control_plane_url}/v1/jobs/{job.job_id}/complete",
@@ -187,8 +231,8 @@ class MusicWorker:
             logger.error(f"Execution error on job {job.job_id}: {e}")
             fail_req = JobFailureRequest(
                 error=ErrorDetail(
-                    code=ErrorCode.INTERNAL_ERROR,
-                    message=f"Music generation failed: {str(e)}",
+                    code=ErrorCode.SERVICE_UNAVAILABLE,
+                    message="Music generation backend failed. Inspect correlated worker logs.",
                     request_id=job.request_id,
                 ),
                 retryable=True,
