@@ -1,25 +1,53 @@
 """
-services/decision/launcher/run_decision_service.py
-CLI runner for the Decision Routing Engine.
+Native vLLM launcher for the Factory v4 Decision subsystem.
+
+Current vLLM exposes /v1/decisions for supported generation architectures.
+No local heuristic fallback is started by this launcher.
 """
 import argparse
-import uvicorn
+import os
+import shutil
+
 from services.decision.src.config import load_decision_config
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Run Factory v4 Decision Routing Engine")
-    parser.add_argument("--port", type=int, default=8082, help="Port to listen on (default: 8082)")
-    parser.add_argument("--host", type=str, default="0.0.0.0", help="Host interface (default: 0.0.0.0)")
-    parser.add_argument("--reload", action="store_true", help="Enable hot reloading")
+def _require_binary(name: str) -> None:
+    if shutil.which(name) is None:
+        raise RuntimeError(f"Required executable '{name}' is not installed or not on PATH.")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Run Factory v4 Decision subsystem with native vLLM")
+    parser.add_argument("--port", type=int, default=None)
+    parser.add_argument("--host", type=str, default=None)
     args = parser.parse_args()
 
     config = load_decision_config()
-    port = args.port or config.port
     host = args.host or config.host
+    port = args.port or config.port
+    api_key = os.environ.get("FACTORY_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError("FACTORY_API_KEY is required before exposing the decision service.")
 
-    print(f"🚀 Starting Factory v4 Decision Engine on {host}:{port} (Domain: {config.static_domain})")
-    uvicorn.run("services.decision.src.app:app", host=host, port=port, reload=args.reload)
+    _require_binary("vllm")
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(config.hardware.gpu_device_index)
+
+    cmd = [
+        "vllm", "serve", config.model.name,
+        "--host", host,
+        "--port", str(port),
+        "--served-model-name", config.model.alias,
+        "--max-model-len", str(config.model.max_context_tokens),
+        "--api-key", api_key,
+        "--allowed-origins", os.environ.get("FACTORY_CORS_ORIGINS", "http://localhost:3000"),
+        "--allowed-methods", "*",
+        "--allowed-headers", "*",
+    ]
+    quant = (config.model.quantization or "").strip().lower()
+    if quant and quant != "none":
+        cmd.extend(["--quantization", quant])
+
+    os.execvp(cmd[0], cmd)
 
 
 if __name__ == "__main__":
