@@ -41,6 +41,18 @@ class S3StorageProvider(StorageProvider):
             region_name=config.s3_region,
             config=self.client_config,
         )
+        # SigV4 signs the Host header. If clients reach storage through a public
+        # hostname, presign directly against that hostname instead of rewriting a
+        # URL after signing (which invalidates the signature).
+        presign_endpoint = config.s3_public_endpoint_url or config.s3_endpoint_url
+        self.presign_client = boto3.client(
+            "s3",
+            endpoint_url=presign_endpoint,
+            aws_access_key_id=config.s3_access_key,
+            aws_secret_access_key=config.s3_secret_key,
+            region_name=config.s3_region,
+            config=self.client_config,
+        )
         self._ensure_bucket_exists()
 
     def _ensure_bucket_exists(self) -> None:
@@ -81,14 +93,13 @@ class S3StorageProvider(StorageProvider):
             "Key": key,
             "ContentType": mime_type,
         }
-        url = self.client.generate_presigned_url(
+        url = self.presign_client.generate_presigned_url(
             ClientMethod="put_object",
             Params=params,
             ExpiresIn=expires_in_seconds,
         )
-        remapped_url = self._remap_public_url(url)
         return PresignedUpload(
-            upload_url=remapped_url,
+            upload_url=url,
             method="PUT",
             headers={"Content-Type": mime_type},
             storage_path=key,
@@ -110,12 +121,12 @@ class S3StorageProvider(StorageProvider):
         if filename:
             params["ResponseContentDisposition"] = f'attachment; filename="{filename}"'
 
-        url = self.client.generate_presigned_url(
+        url = self.presign_client.generate_presigned_url(
             ClientMethod="get_object",
             Params=params,
             ExpiresIn=expires_in_seconds,
         )
-        return self._remap_public_url(url)
+        return url
 
     async def upload_bytes(
         self,
