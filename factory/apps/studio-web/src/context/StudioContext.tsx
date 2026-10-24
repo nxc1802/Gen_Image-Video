@@ -21,8 +21,7 @@ import { cleanGatewayUrl } from "@/lib/utils";
 
 const DEFAULT_CONTROL_URL =
   process.env.NEXT_PUBLIC_CONTROL_API_URL || "http://localhost:8000";
-const DEFAULT_API_KEY =
-  process.env.NEXT_PUBLIC_API_KEY || "sk-factory-studio";
+const DEFAULT_API_KEY = process.env.NEXT_PUBLIC_API_KEY || "";
 
 interface StudioContextValue {
   activeView: StudioViewId;
@@ -175,7 +174,7 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   const saveConnectionSettings = useCallback(
     async (newUrl: string, newKey: string) => {
       const cleanedUrl = cleanGatewayUrl(newUrl, DEFAULT_CONTROL_URL);
-      const cleanedKey = newKey.trim() || DEFAULT_API_KEY;
+      const cleanedKey = newKey.trim();
 
       setGatewayUrl(cleanedUrl);
       setApiKey(cleanedKey);
