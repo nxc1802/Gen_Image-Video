@@ -22,4 +22,3 @@ hardware:
 cors_origins:
   - "https://studio.ai.example.com"
   - "http://localhost:3000"
-  - "*"
