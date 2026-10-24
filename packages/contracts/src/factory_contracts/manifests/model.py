@@ -12,6 +12,12 @@ class ModelStatus(str, Enum):
     PARTIAL = "partial"
 
 
+class ModelValidationStatus(str, Enum):
+    PENDING_LIVE = "pending_live"
+    CONTRACT_VERIFIED = "contract_verified"
+    LIVE_VERIFIED = "live_verified"
+
+
 class ModelWeightFormat(str, Enum):
     SAFETENSORS = "safetensors"
     GGUF = "gguf"
@@ -103,6 +109,11 @@ class ModelManifest(BaseModel):
         default_factory=list,
         description="List of capabilities not backed by checkpoints/workflows"
     )
+    validation_status: ModelValidationStatus = Field(
+        default=ModelValidationStatus.PENDING_LIVE,
+        description="Runtime certification state; independent from workflow/checkpoint coverage.",
+    )
+    validation_notes: Optional[str] = Field(default=None)
     limits: ModelLimitsSpec = Field(default_factory=ModelLimitsSpec)
 
     @model_validator(mode="after")
