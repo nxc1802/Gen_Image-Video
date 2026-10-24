@@ -69,7 +69,7 @@ tunnels:
 
   music:
     proto: http
-    addr: 8001
+    addr: 8008
     domain: "${NGROK_DOMAIN_MUSIC}"
     traffic_policy_file: "./traffic-policy.yml"
 
