@@ -21,7 +21,8 @@ import { cleanGatewayUrl } from "@/lib/utils";
 
 const DEFAULT_CONTROL_URL =
   process.env.NEXT_PUBLIC_CONTROL_API_URL || "http://localhost:8000";
-const DEFAULT_API_KEY = process.env.NEXT_PUBLIC_API_KEY || "";
+// Never embed a production credential in a NEXT_PUBLIC_* build variable.
+const DEFAULT_API_KEY = "";
 
 interface StudioContextValue {
   activeView: StudioViewId;
