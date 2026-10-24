@@ -1,10 +1,10 @@
 # TEST_READY: Factory v4 E2E Test Suite Specification & Coverage Report
 
-**Status:** COMPLETE & VERIFIED  
+**Status:** CONTRACT SUITE VERIFIED — LIVE GPU CERTIFICATION PENDING  
 **Framework:** `pytest` (v9.1.1)  
 **Execution Environment:** macOS / Linux / Python 3.10+  
 **Total Automated Tests:** 468  
-**Pass Rate:** 100% (468/468 passed in 0.29s)  
+**Contract Simulation Pass Rate:** 100% (468/468 in the recorded run; not a live inference result)  
 **Authoritative Specification:** `/Volumes/WorkSpace/Factory/Gen_Image:Video/Refactor.md`  
 **Master Plan & Feature Inventory:** `/Volumes/WorkSpace/Project/Gen_Image:Video/PROJECT.md`  
 **Test Infrastructure Guide:** `/Volumes/WorkSpace/Project/Gen_Image:Video/TEST_INFRA.md`  
@@ -13,7 +13,7 @@
 
 ## 1. Executive Summary
 
-The Factory v4 End-to-End (E2E) Test Suite has been authored, verified, and published under `tests/e2e/`. Built strictly as an **opaque-box testing framework**, the suite validates 100% of the 42 inventoried features across all subsystems (Control Plane, Registry, Asset Service, Text, VLM, Decision, Speech, Embedding/Rerank, Image, Video, Music, Enhancement, Studio Web) over standardized external network contracts (HTTP REST, SSE, WebSocket, and S3 URLs).
+The Factory v4 contract test suite is published under `tests/e2e/`. In its default mode it validates API behavior against a deterministic `FactoryContractServer`; it does **not** prove that real GPU models, ngrok, PostgreSQL, Redis or S3 are operational. The suite covers the target contracts across all subsystems (Control Plane, Registry, Asset Service, Text, VLM, Decision, Speech, Embedding/Rerank, Image, Video, Music, Enhancement, Studio Web) over standardized external network contracts (HTTP REST, SSE, WebSocket, and S3 URLs).
 
 The test suite operates in dual mode:
 1. **Contract Simulation Mode (Default):** Blazingly fast in-process contract verification running against `FactoryContractServer` via `httpx.MockTransport`, ensuring 100% deterministic CI execution without requiring live GPUs.
@@ -29,7 +29,7 @@ The test suite operates in dual mode:
 | **Tier 2** | **Boundary & Corner Cases** | $\ge 5$ tests per feature (210 tests) | **218** | **100% PASS** |
 | **Tier 3** | **Cross-Feature Interactions** | $\ge 20$ pairwise workflow tests | **25** | **100% PASS** |
 | **Tier 4** | **Real-World Scenarios** | $\ge 15$ end-to-end multi-modal journeys | **15** | **100% PASS** |
-| **Total** | **Full Verification Suite** | $\ge 450$ automated tests | **468** | **100% PASS** |
+| **Total** | **Contract Simulation Suite** | $\ge 450$ automated tests | **468** | **100% PASS** |
 
 ---
 
@@ -117,9 +117,14 @@ pytest tests/e2e -v
 
 ## 5. Verification Sign-Off
 
-- **Test Suite Pass Rate:** 100% (468 passed, 0 failed, 0 errors, 0 skips)
+- **Contract Simulation:** recorded 468 passed. This is not production certification.
 - **Execution Speed:** 0.29s for 468 tests
-- **Sanitization Checks:** Verified 0 stack traces, 0 filesystem paths, and 0 unhandled exceptions across all error responses.
-- **SSRF Defense:** Verified 19 private/loopback/cloud metadata IP vectors blocked.
-- **Fail-Fast Compliance:** Verified 503 fail-fast on failing models; 0 deterministic fake vectors or heuristic mock classifications.
+- **Sanitization Checks:** verified against the contract simulation; repeat against the live deployment before release.
+- **SSRF Defense:** contract vectors exist; live DNS-rebinding and redirect tests remain a release gate.
+- **Fail-Fast Compliance:** source and CI gates prohibit known fake-inference fallbacks; live unavailable-model behavior remains a release gate.
 - **Handoff Artifact:** Ready for orchestrator and Milestone validation gates.
+
+
+## Live-certification warning
+
+Do not use the 468 contract tests or the historical 1,065-test commit message as evidence that Factory v4 is production-ready. Release certification requires the real-infrastructure gates in `LIVE_VALIDATION.md`, including native model inference, GPU OOM/admission tests, fixed-domain reconnect, durable queue failover, artifact integrity, and real streaming reconnect.
