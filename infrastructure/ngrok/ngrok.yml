@@ -4,6 +4,9 @@ agent:
   metadata: "factory-v4-edge"
   web_addr: "127.0.0.1:4040"
 
+# Application-authenticated services use traffic-policy.yml.
+# Raw native APIs without their own Bearer auth (ComfyUI) use
+# traffic-policy-raw.yml, which requires ngrok Basic Auth backed by vault secret.
 tunnels:
   control_plane:
     proto: http
@@ -16,42 +19,62 @@ tunnels:
     addr: 3000
     domain: "${NGROK_DOMAIN_STUDIO}"
 
-  text_vlm:
+  text:
     proto: http
     addr: 8080
     domain: "${NGROK_DOMAIN_TEXT}"
+    traffic_policy_file: "./traffic-policy.yml"
+
+  vision:
+    proto: http
+    addr: 8081
+    domain: "${NGROK_DOMAIN_VISION}"
+    traffic_policy_file: "./traffic-policy.yml"
 
   decision:
     proto: http
     addr: 8082
-    domain: "decision.ai.example.com"
+    domain: "${NGROK_DOMAIN_DECISION}"
+    traffic_policy_file: "./traffic-policy.yml"
 
   embedding:
     proto: http
     addr: 8083
-    domain: "embed.ai.example.com"
+    domain: "${NGROK_DOMAIN_EMBEDDING}"
+    traffic_policy_file: "./traffic-policy.yml"
+
+  rerank:
+    proto: http
+    addr: 8084
+    domain: "${NGROK_DOMAIN_RERANK}"
+    traffic_policy_file: "./traffic-policy.yml"
 
   image_comfyui:
     proto: http
     addr: 8188
     domain: "${NGROK_DOMAIN_IMAGE}"
+    traffic_policy_file: "./traffic-policy-raw.yml"
 
   video_comfyui:
     proto: http
     addr: 8189
     domain: "${NGROK_DOMAIN_VIDEO}"
+    traffic_policy_file: "./traffic-policy-raw.yml"
 
   speech:
     proto: http
     addr: 8288
     domain: "${NGROK_DOMAIN_SPEECH}"
+    traffic_policy_file: "./traffic-policy.yml"
 
   music:
     proto: http
     addr: 8001
     domain: "${NGROK_DOMAIN_MUSIC}"
+    traffic_policy_file: "./traffic-policy.yml"
 
   enhancement:
     proto: http
     addr: 8002
-    domain: "enhance.ai.example.com"
+    domain: "${NGROK_DOMAIN_ENHANCEMENT}"
+    traffic_policy_file: "./traffic-policy.yml"
