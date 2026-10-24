@@ -32,7 +32,7 @@ class VlmServiceConfig(BaseModel):
     port: int = 8081
     static_domain: str = "vision.ai.example.com"
     protocol: str = "http"
-    cors_origins: List[str] = Field(default_factory=lambda: ["*"])
+    cors_origins: List[str] = Field(default_factory=lambda: ["http://localhost:3000"])
     model: VlmModelConfig = Field(default_factory=VlmModelConfig)
     hardware: VlmHardwareConfig = Field(default_factory=VlmHardwareConfig)
 
