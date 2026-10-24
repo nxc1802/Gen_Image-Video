@@ -21,16 +21,18 @@ hardware:
 capabilities:
   text_to_video: true
   image_to_video: true
-  first_last_frame_to_video: false
-  video_extension: false
+  first_last_frame_to_video: true
+  video_extension: true
   video_with_audio: false
+  reference_conditioning: false
 
 status: partial
-coverage_percent: 40.0
+coverage_percent: 66.67
 missing_capabilities:
-  - first_last_frame_to_video
-  - video_extension
   - video_with_audio
+  - reference_conditioning
+validation_status: pending_live
+validation_notes: "Wan workflows exist for T2V/I2V/FL2V/extension; audio/reference tasks must not cross-route to another model."
 
 limits:
   max_width: 1280
