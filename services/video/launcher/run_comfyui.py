@@ -13,7 +13,7 @@ def main() -> None:
         raise RuntimeError(f"ComfyUI main.py not found at {main_py}. Set COMFYUI_DIR.")
 
     os.environ["CUDA_VISIBLE_DEVICES"] = os.environ.get("VIDEO_CUDA_VISIBLE_DEVICES", "1")
-    port = os.environ.get("VIDEO_COMFYUI_PORT", "8189")
+    port = os.environ.get("VIDEO_SERVICE_PORT", "8189")
     cmd = [
         sys.executable,
         str(main_py),
