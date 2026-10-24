@@ -3,6 +3,7 @@ factory/apps/control-api/src/main.py
 Factory v4 Control Plane API Server Entrypoint
 """
 from contextlib import asynccontextmanager
+import os
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -96,7 +97,14 @@ app.add_middleware(RequestIDMiddleware)
 app.add_middleware(TelemetryTracingMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://studio.factory.domain", "*"],
+    allow_origins=[
+        origin.strip()
+        for origin in os.environ.get(
+            "FACTORY_CORS_ORIGINS",
+            "http://localhost:3000",
+        ).split(",")
+        if origin.strip()
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
