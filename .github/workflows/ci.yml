@@ -1,0 +1,73 @@
+name: Factory v4 CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install uv
+        run: python -m pip install --disable-pip-version-check uv
+      - name: Resolve workspace
+        run: uv sync --all-packages
+      - name: Compile Python sources
+        run: uv run python -m compileall -q factory packages services
+      - name: Validate manifests
+        run: uv run factory-manifest validate --path manifests
+      - name: Guard against fake inference and insecure regressions
+        run: |
+          uv run python - <<'PY'
+          from pathlib import Path
+
+          roots = [Path("services"), Path("factory")]
+          forbidden = {
+              "_project_token_hyperplane": "pseudo embedding fallback",
+              "interim_vocabulary": "canned ASR transcript",
+              "_generate_png_image": "synthetic image enhancement",
+              "_generate_mp4_container": "synthetic video enhancement",
+              'allow_origins=["*"]': "wildcard credentialed CORS",
+              "sk-factory-studio": "hardcoded frontend API token",
+              "raw_val = (scale[0] + scale[1]) / 2.0": "invented decision midpoint",
+          }
+          failures = []
+          for root in roots:
+              for path in root.rglob("*"):
+                  if not path.is_file() or path.suffix not in {".py", ".ts", ".tsx", ".js", ".mjs"}:
+                      continue
+                  text = path.read_text(encoding="utf-8", errors="ignore")
+                  for needle, reason in forbidden.items():
+                      if needle in text:
+                          failures.append(f"{path}: {reason} ({needle})")
+          if failures:
+              raise SystemExit("Forbidden regression(s):\n" + "\n".join(failures))
+          PY
+      - name: Contract tests
+        run: uv run pytest tests/e2e -q
+
+  studio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: factory/apps/studio-web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: factory/apps/studio-web/package-lock.json
+      - run: npm ci
+      - run: npm run build
