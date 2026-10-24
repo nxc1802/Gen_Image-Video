@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 
 from factory_auth import verify_bearer_token, load_auth_config, decode_jwt_token
 from factory_contracts.jobs.job_contract import FactoryJob, JobSubmissionRequest, JobState
-from factory_contracts.errors import InvalidRequestError, NotFoundError
+from factory_contracts.errors import FactoryError, InvalidRequestError, NotFoundError
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
 from factory.apps.control_api.src.storage.threshold import (
     DEPRECATION_HEADERS,
@@ -35,6 +35,106 @@ def get_lifecycle_manager(request: Request) -> JobLifecycleManager:
     return manager
 
 
+SERVICE_IDS = {
+    "text": "text-service",
+    "vlm": "vision-service",
+    "vision": "vision-service",
+    "decision": "decision-service",
+    "embedding": "embed-service",
+    "embed": "embed-service",
+    "speech": "speech-service",
+    "image": "image-service",
+    "video": "video-service",
+    "music": "music-service",
+    "enhancement": "enhancement-service",
+}
+
+TASK_CAPABILITY_ALIASES = {
+    "predicate": "predicate_evaluation",
+    "choice": "choice_routing",
+    "score": "score_ranking",
+    "embeddings": "text_embedding",
+    "embedding": "text_embedding",
+    "rerank": "reranking",
+    "transcription": "speech_to_text",
+    "speech_to_text": "speech_to_text",
+    "tts": "text_to_speech",
+    "text_to_speech": "text_to_speech",
+    "reference_conditioning": "reference_image",
+    "reference": "reference_image",
+    "fl2v": "first_last_frame_to_video",
+    "extension": "video_extension",
+}
+
+
+def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> None:
+    loader = getattr(request.app.state, "manifest_loader", None)
+    if loader is None:
+        raise FactoryError(
+            message="Model registry is unavailable.",
+            code="SERVICE_UNAVAILABLE",
+            status_code=503,
+        )
+    models = loader.load_models()
+    model = models.get(req.model)
+    if model is None:
+        raise InvalidRequestError(
+            message=f"Unknown model '{req.model}'.",
+            details={"model": req.model},
+        )
+
+    expected_service_id = SERVICE_IDS.get(req.service)
+    if expected_service_id is None or model.metadata.service_id != expected_service_id:
+        raise FactoryError(
+            message=f"Model '{req.model}' is not registered for service '{req.service}'.",
+            code="CAPABILITY_NOT_SUPPORTED",
+            status_code=400,
+            details={
+                "model": req.model,
+                "requested_service": req.service,
+                "registered_service_id": model.metadata.service_id,
+            },
+        )
+
+    task = str(req.task or "").strip()
+    capability = TASK_CAPABILITY_ALIASES.get(task, task)
+
+    if req.service == "image":
+        if task in {"reference_conditioning", "reference"}:
+            refs = req.inputs.get("reference_image_urls")
+            capability = "multi_reference" if isinstance(refs, list) and len(refs) > 1 else "reference_image"
+        elif task == "controlnet":
+            control_type = str(req.inputs.get("control_type", "pose")).lower()
+            capability = {
+                "pose": "control_pose",
+                "depth": "control_depth",
+            }.get(control_type, f"control_{control_type}")
+
+    if req.service == "video":
+        capability = {
+            "t2v": "text_to_video",
+            "i2v": "image_to_video",
+            "fl2v": "first_last_frame_to_video",
+            "extension": "video_extension",
+            "with_audio": "video_with_audio",
+            "ref2va": "reference_conditioning",
+        }.get(task, capability)
+
+    supported = model.capabilities.get(capability)
+    if supported is not True:
+        raise FactoryError(
+            message=f"Task '{task}' is not supported by model '{req.model}'.",
+            code="CAPABILITY_NOT_SUPPORTED",
+            status_code=400,
+            details={
+                "model": req.model,
+                "task": task,
+                "capability": capability,
+                "validation_status": model.validation_status.value,
+            },
+        )
+
+
 @router.post("", status_code=status.HTTP_201_CREATED, dependencies=[Depends(verify_bearer_token)])
 async def submit_job(
     req: JobSubmissionRequest,
@@ -43,10 +143,13 @@ async def submit_job(
 ):
     request_id = getattr(request.state, "request_id", None) or request.headers.get("x-request-id") or "req-unknown"
     
-    # 1. Enforce strict 1MB threshold against inline Base64
+    # 1. Enforce model/service/task compatibility before consuming queue capacity.
+    _validate_job_capability(req, request)
+
+    # 2. Enforce strict 1MB threshold against inline Base64
     enforce_payload_thresholds(req.inputs, request_id=request_id)
 
-    # 2. Submit job through Lifecycle Manager
+    # 3. Submit job through Lifecycle Manager
     job, created = await manager.submit_job(req, request_id=request_id)
 
     headers = {}
