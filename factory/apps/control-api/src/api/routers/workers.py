@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import ValidationError
 
 from factory_auth import verify_bearer_token
+from factory_contracts.errors import ForbiddenError
 from factory_contracts.jobs.worker_contract import (
     JobCompletionRequest,
     JobFailureRequest,
@@ -19,6 +20,13 @@ from factory.apps.control_api.src.queue.leasing import LeaseCoordinator
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
 
 router = APIRouter(prefix="/v1", tags=["Workers"])
+
+
+async def verify_worker_identity(user: dict = Depends(verify_bearer_token)) -> dict:
+    role = str(user.get("role", "")).lower()
+    if role not in {"worker", "admin"}:
+        raise ForbiddenError("Worker control endpoints require role 'worker' or 'admin'.")
+    return user
 
 
 def get_lease_coordinator(request: Request) -> LeaseCoordinator:
@@ -35,7 +43,7 @@ def get_lifecycle_manager(request: Request) -> JobLifecycleManager:
     return manager
 
 
-@router.post("/jobs/lease", response_model=WorkerLeaseResponse, dependencies=[Depends(verify_bearer_token)])
+@router.post("/jobs/lease", response_model=WorkerLeaseResponse, dependencies=[Depends(verify_worker_identity)])
 async def lease_job(
     req: WorkerLeaseRequest,
     coordinator: LeaseCoordinator = Depends(get_lease_coordinator),
@@ -45,7 +53,7 @@ async def lease_job(
     return resp
 
 
-@router.post("/workers/{worker_id}/heartbeat", response_model=WorkerHeartbeatResponse, dependencies=[Depends(verify_bearer_token)])
+@router.post("/workers/{worker_id}/heartbeat", response_model=WorkerHeartbeatResponse, dependencies=[Depends(verify_worker_identity)])
 async def worker_heartbeat(
     worker_id: str,
     req: WorkerHeartbeatRequest,
@@ -58,7 +66,7 @@ async def worker_heartbeat(
     return resp
 
 
-@router.post("/jobs/{job_id}/progress", dependencies=[Depends(verify_bearer_token)])
+@router.post("/jobs/{job_id}/progress", dependencies=[Depends(verify_worker_identity)])
 async def update_job_progress(
     job_id: str,
     req: ProgressUpdateRequest,
@@ -69,7 +77,7 @@ async def update_job_progress(
     return {"status": "acknowledged", "job_id": job.job_id}
 
 
-@router.post("/jobs/{job_id}/complete", dependencies=[Depends(verify_bearer_token)])
+@router.post("/jobs/{job_id}/complete", dependencies=[Depends(verify_worker_identity)])
 async def complete_job(
     job_id: str,
     req: JobCompletionRequest,
@@ -80,7 +88,7 @@ async def complete_job(
     return {"status": "completed", "job_id": job.job_id}
 
 
-@router.post("/jobs/{job_id}/fail", dependencies=[Depends(verify_bearer_token)])
+@router.post("/jobs/{job_id}/fail", dependencies=[Depends(verify_worker_identity)])
 async def fail_job(
     job_id: str,
     req: JobFailureRequest,
