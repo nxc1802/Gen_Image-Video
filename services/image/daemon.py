@@ -22,7 +22,7 @@ class ComfyUIDaemon:
         self.config = config
         self.client = ComfyUIClient(
             host=config.comfy_host,
-            port=config.port,
+            port=config.internal_comfy_port,
         )
         self.process: Optional[subprocess.Popen] = None
 
@@ -49,7 +49,7 @@ class ComfyUIDaemon:
             "python",
             str(self.config.comfy_dir / "main.py"),
             "--port",
-            str(self.config.port),
+            str(self.config.internal_comfy_port),
             "--cuda-device",
             str(self.config.gpu_device),
             "--listen",
@@ -61,7 +61,7 @@ class ComfyUIDaemon:
         env = os.environ.copy()
         env["CUDA_VISIBLE_DEVICES"] = str(self.config.gpu_device)
 
-        logger.info(f"Starting ComfyUI Image daemon on port {self.config.port}: {' '.join(cmd)}")
+        logger.info(f"Starting ComfyUI Image daemon on internal port {self.config.internal_comfy_port}: {' '.join(cmd)}")
         try:
             self.process = subprocess.Popen(
                 cmd,
@@ -70,7 +70,7 @@ class ComfyUIDaemon:
                 stderr=subprocess.PIPE,
             )
         except FileNotFoundError as e:
-            logger.warning(f"Could not launch ComfyUI binary directly ({e}). Simulation mode enabled.")
+            raise RuntimeError("ComfyUI executable could not be launched; simulation fallback is disabled.") from e
 
     def stop(self) -> None:
         """Gracefully terminates ComfyUI subprocess."""
