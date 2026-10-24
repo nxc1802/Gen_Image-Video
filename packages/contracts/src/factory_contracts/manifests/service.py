@@ -61,7 +61,7 @@ class NetworkSpec(BaseModel):
     internal_port: int = Field(..., ge=1024, le=65535, description="Local listening port on worker host")
     protocol: ProtocolType = Field(default=ProtocolType.HTTP, description="Primary network protocol")
     auth_required: bool = Field(default=True, description="Enforce authentication at ingress")
-    cors_origins: List[str] = Field(default_factory=lambda: ["*"], description="Allowed CORS origins")
+    cors_origins: List[str] = Field(default_factory=lambda: ["http://localhost:3000"], description="Allowed CORS origins")
 
     @field_validator("auth_required")
     @classmethod
