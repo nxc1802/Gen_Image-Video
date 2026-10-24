@@ -32,7 +32,7 @@ class DecisionSettings(BaseModel):
     port: int = 8082
     static_domain: str = "decision.ai.example.com"
     protocol: str = "http"
-    cors_origins: List[str] = Field(default_factory=lambda: ["*"])
+    cors_origins: List[str] = Field(default_factory=lambda: ["http://localhost:3000"])
     model: DecisionModelConfig = Field(default_factory=DecisionModelConfig)
     hardware: DecisionHardwareConfig = Field(default_factory=DecisionHardwareConfig)
 
