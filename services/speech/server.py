@@ -8,6 +8,7 @@ Implements Features 15-18:
 - POST /v1/audio/alignments
 - POST /v1/audio/speech
 """
+import os
 import argparse
 import json
 import logging
@@ -55,7 +56,11 @@ app = FastAPI(
 app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        origin.strip()
+        for origin in os.environ.get("FACTORY_CORS_ORIGINS", "http://localhost:3000").split(",")
+        if origin.strip()
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
