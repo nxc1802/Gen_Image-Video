@@ -37,9 +37,10 @@ export class StudioApiClient {
     if (isJson) {
       h["Content-Type"] = "application/json";
     }
-    // Enforce mandatory Bearer token header across all requests
-    const token = this.apiKey || "sk-factory-studio";
-    h["Authorization"] = `Bearer ${token}`;
+    // Protected endpoints require a user-supplied token; never invent one client-side.
+    if (this.apiKey) {
+      h["Authorization"] = `Bearer ${this.apiKey}`;
+    }
 
     if (extra) {
       Object.assign(h, extra);
@@ -280,7 +281,8 @@ export class StudioApiClient {
   getJobWebSocket(jobId: string, token?: string): WebSocket {
     const wsProto = this.baseUrl.startsWith("https") ? "wss" : "ws";
     const hostPort = this.baseUrl.replace(/^https?:\/\//, "");
-    const authToken = token || this.apiKey || "sk-factory-studio";
+    const authToken = token || this.apiKey;
+    if (!authToken) throw new Error("A Bearer token is required for WebSocket connections.");
     const wsUrl = `${wsProto}://${hostPort}/v1/jobs/${encodeURIComponent(jobId)}/ws?token=${encodeURIComponent(authToken)}`;
     return new WebSocket(wsUrl);
   }
@@ -301,7 +303,7 @@ export class StudioApiClient {
       method: "POST",
       headers: {
         // Don't set Content-Type header so browser adds boundary
-        Authorization: `Bearer ${this.apiKey || "sk-factory-studio"}`,
+        ...(this.apiKey ? { Authorization: `Bearer ${this.apiKey}` } : {}),
       },
       body: formData,
     });
