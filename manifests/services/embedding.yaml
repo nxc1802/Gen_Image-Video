@@ -28,7 +28,7 @@ framework:
 
 hardware:
   gpu_required: true
-  gpu_device_index: 0
+  gpu_device_index: 1
   min_vram_gb: 4.0
   min_ram_gb: 8.0
   cuda_version_min: "12.1"
