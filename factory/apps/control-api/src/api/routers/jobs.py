@@ -239,7 +239,19 @@ async def websocket_job_stream(
 
     # --- Authenticate WebSocket Connection ---
     auth_config = getattr(websocket.app.state, "auth_config", None) or load_auth_config()
-    raw_token = websocket.query_params.get("token") or websocket.headers.get("authorization")
+    raw_token = websocket.headers.get("authorization")
+    if not raw_token:
+        protocols = [
+            item.strip()
+            for item in websocket.headers.get("sec-websocket-protocol", "").split(",")
+            if item.strip()
+        ]
+        bearer_protocol = next(
+            (item for item in protocols if item.startswith("factory-bearer.")),
+            None,
+        )
+        if bearer_protocol:
+            raw_token = bearer_protocol[len("factory-bearer."):]
 
     if not raw_token:
         # Close with 1008 Policy Violation (Unauthorized)
@@ -273,6 +285,7 @@ async def websocket_job_stream(
     async def _on_cancel(jid: str):
         await manager.cancel_job(jid)
 
+    # The browser authenticates in Sec-WebSocket-Protocol so secrets never appear in URLs.
     await ws_hub.handle_stream(
         websocket=websocket,
         job_id=job_id,
