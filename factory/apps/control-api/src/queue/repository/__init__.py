@@ -27,6 +27,13 @@ def get_job_repository(
     env = os.environ.get("ENVIRONMENT", os.environ.get("FACTORY_ENV", "development")).lower()
     be = (backend or os.environ.get("FACTORY_DB_BACKEND", "postgres" if env == "production" else "sqlite")).lower().strip()
     url = db_url or os.environ.get("DATABASE_URL")
+    if not url and all(os.environ.get(k) for k in ("POSTGRES_HOST", "POSTGRES_DB", "POSTGRES_USER", "POSTGRES_PASSWORD")):
+        host = os.environ["POSTGRES_HOST"]
+        port = os.environ.get("POSTGRES_PORT", "5432")
+        user = os.environ["POSTGRES_USER"]
+        password = os.environ["POSTGRES_PASSWORD"]
+        database = os.environ["POSTGRES_DB"]
+        url = f"postgresql://{user}:{password}@{host}:{port}/{database}"
 
     if be == "postgres":
         if not url:
