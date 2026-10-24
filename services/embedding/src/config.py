@@ -32,7 +32,7 @@ class EmbeddingSettings(BaseModel):
     port: int = 8083
     static_domain: str = "embed.ai.example.com"
     protocol: str = "http"
-    cors_origins: List[str] = Field(default_factory=lambda: ["*"])
+    cors_origins: List[str] = Field(default_factory=lambda: ["http://localhost:3000"])
     model: EmbeddingModelConfig = Field(default_factory=EmbeddingModelConfig)
     hardware: EmbeddingHardwareConfig = Field(default_factory=EmbeddingHardwareConfig)
 
