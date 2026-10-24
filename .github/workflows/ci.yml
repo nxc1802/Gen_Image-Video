@@ -39,12 +39,21 @@ jobs:
               "_generate_mp4_container": "synthetic video enhancement",
               'allow_origins=["*"]': "wildcard credentialed CORS",
               "sk-factory-studio": "hardcoded frontend API token",
+              "sk-factory-test-token-valid": "hardcoded runtime test credential",
               "raw_val = (scale[0] + scale[1]) / 2.0": "invented decision midpoint",
+              "gpu_utilization_percent=60.0": "fabricated GPU telemetry",
+              "gpu_utilization_percent=55.0": "fabricated GPU telemetry",
+              "vram_used_mb=4200.0": "fabricated VRAM telemetry",
+              "vram_used_mb=3500.0": "fabricated VRAM telemetry",
+              "mock_png =": "mock image artifact fallback",
+              "mock_mp4 =": "mock video artifact fallback",
           }
           failures = []
           for root in roots:
               for path in root.rglob("*"):
                   if not path.is_file() or path.suffix not in {".py", ".ts", ".tsx", ".js", ".mjs"}:
+                      continue
+                  if "tests" in path.parts:
                       continue
                   text = path.read_text(encoding="utf-8", errors="ignore")
                   for needle, reason in forbidden.items():
