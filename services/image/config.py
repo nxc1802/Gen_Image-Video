@@ -17,12 +17,12 @@ class ImageServiceConfig:
     control_api_url: str = field(
         default_factory=lambda: os.environ.get("CONTROL_PLANE_URL") or os.environ.get("FACTORY_BASE_URL", "http://127.0.0.1:8000")
     )
-    api_key: str = field(default_factory=lambda: os.environ.get("FACTORY_API_KEY", "sk-factory-test-token-valid"))
+    api_key: str = field(default_factory=lambda: os.environ.get("FACTORY_API_KEY", ""))
     comfy_dir: Path = field(default_factory=lambda: Path(os.environ.get("COMFYUI_DIR", "ComfyUI")))
     input_dir: Path = field(default_factory=lambda: Path(os.environ.get("COMFYUI_INPUT_DIR", "ComfyUI/input")))
     output_dir: Path = field(default_factory=lambda: Path(os.environ.get("COMFYUI_OUTPUT_DIR", "ComfyUI/output")))
     s3_bucket: str = field(default_factory=lambda: os.environ.get("S3_BUCKET_NAME", "factory-artifacts"))
-    s3_public_url: str = field(default_factory=lambda: os.environ.get("S3_PUBLIC_ENDPOINT_URL", "https://s3.ai.example.com"))
+    s3_public_url: str = field(default_factory=lambda: os.environ.get("S3_PUBLIC_ENDPOINT_URL", ""))
     lease_duration_seconds: int = 300
     heartbeat_interval_seconds: int = 30
     poll_interval_seconds: float = 2.0
