@@ -27,6 +27,8 @@ capabilities:
 status: full
 coverage_percent: 100.0
 missing_capabilities: []
+validation_status: pending_live
+validation_notes: "Native /v1/decisions is wired; calibration and throughput require live validation."
 
 limits:
   max_context_tokens: 8192
