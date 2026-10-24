@@ -21,13 +21,15 @@ hardware:
 capabilities:
   text_to_video: true
   image_to_video: true
-  first_last_frame_to_video: true
-  video_extension: true
+  first_last_frame_to_video: false
+  video_extension: false
   video_with_audio: false
 
 status: partial
-coverage_percent: 80.0
+coverage_percent: 40.0
 missing_capabilities:
+  - first_last_frame_to_video
+  - video_extension
   - video_with_audio
 
 limits:
