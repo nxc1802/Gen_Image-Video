@@ -1,0 +1,25 @@
+service_id: embed-service
+name: "vLLM / TEI Vector Embedding & Rerank Daemon"
+host: "0.0.0.0"
+port: 8083
+static_domain: "embed.ai.example.com"
+protocol: "http"
+
+model:
+  embedding_name: "Qwen/Qwen-Embedding-0.6B"
+  embedding_alias: "qwen-embedding-8b"
+  rerank_name: "Qwen/Qwen-Rerank-0.6B"
+  rerank_alias: "qwen-rerank-8b"
+  dimensions: 1024
+  max_context_tokens: 8192
+
+hardware:
+  gpu_required: true
+  gpu_device_index: 1
+  min_vram_gb: 4.0
+  allocation_policy: "single_gpu"
+
+cors_origins:
+  - "https://studio.ai.example.com"
+  - "http://localhost:3000"
+  - "*"

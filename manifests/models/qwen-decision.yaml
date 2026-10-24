@@ -1,0 +1,32 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-decision
+  family: qwen-decision
+  display_name: "Qwen 2.5 Decision Router"
+  service_id: decision-service
+  version: "1.0.0"
+
+weights:
+  primary_checkpoint: "Qwen/Qwen2.5-3B-Instruct"
+  format: safetensors
+  quantization: none
+  default_precision: bf16
+
+hardware:
+  min_vram_gb: 6.0
+  context_window: 8192
+  preferred_gpu: t4
+  allocation_policy: single_gpu
+
+capabilities:
+  predicate_evaluation: true
+  choice_routing: true
+  score_ranking: true
+
+status: full
+coverage_percent: 100.0
+missing_capabilities: []
+
+limits:
+  max_context_tokens: 8192

@@ -1,0 +1,26 @@
+apiVersion: factory.ai/v1
+kind: HardwareTopologyManifest
+id: local-dev
+name: "Local Development Workstation Profile"
+environment: local
+
+host:
+  cpu_cores: 8
+  system_ram_gb: 32.0
+  storage_temp_gb: 100.0
+
+gpus:
+  - index: 0
+    name: "NVIDIA RTX 4090"
+    total_vram_gb: 24.0
+    max_allocatable_vram_gb: 23.0
+    assigned_services:
+      - text-service
+      - vision-service
+      - decision-service
+      - embed-service
+      - speech-service
+      - image-service
+      - video-service
+      - music-service
+      - enhancement-service

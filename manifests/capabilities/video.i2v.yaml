@@ -1,0 +1,58 @@
+apiVersion: factory.ai/v1
+kind: CapabilityManifest
+id: video.i2v
+subsystem: video
+display_name: "Image to Video Generation"
+description: "Animates a still source image into video sequence"
+
+inputs:
+  - name: image_url
+    type: image_url
+    description: "Source frame to animate"
+    required: true
+  - name: prompt
+    type: string
+    description: "Detailed motion and scene dynamics description"
+    required: true
+  - name: motion_bucket_id
+    type: integer
+    description: "Motion intensity bucket identifier"
+    required: false
+    default: 127
+    constraints:
+      min_value: 1
+      max_value: 255
+  - name: num_frames
+    type: integer
+    description: "Number of video frames to generate"
+    required: false
+    default: 49
+    constraints:
+      min_value: 17
+      max_value: 121
+      step: 4
+  - name: fps
+    type: integer
+    description: "Frames per second playback rate"
+    required: false
+    default: 24
+    constraints:
+      min_value: 8
+      max_value: 60
+  - name: seed
+    type: integer
+    description: "Deterministic random seed"
+    required: false
+
+outputs:
+  - name: video
+    type: video_url
+    format: "video/mp4"
+
+validation:
+  test_fixture: "fixtures/video_i2v.json"
+  verification_method: "schema_check"
+
+supported_model_families:
+  - wan-video
+  - minimax-video

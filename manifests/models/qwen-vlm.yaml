@@ -1,0 +1,33 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-vlm
+  family: qwen-vlm
+  display_name: "Qwen2-VL Multimodal Model"
+  service_id: vision-service
+  version: "2.0.0"
+
+weights:
+  primary_checkpoint: "Qwen/Qwen2-VL-7B-Instruct-AWQ"
+  format: safetensors
+  quantization: awq
+  default_precision: fp16
+
+hardware:
+  min_vram_gb: 14.0
+  context_window: 16384
+  preferred_gpu: t4
+  allocation_policy: single_gpu
+
+capabilities:
+  image_chat: true
+  video_chat: true
+  visual_grounding: true
+  document_qa: true
+
+status: full
+coverage_percent: 100.0
+missing_capabilities: []
+
+limits:
+  max_context_tokens: 16384

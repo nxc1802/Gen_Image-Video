@@ -1,0 +1,32 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-embedding
+  family: qwen-embedding
+  display_name: "Qwen Embedding & Reranker"
+  service_id: embed-service
+  version: "1.0.0"
+
+weights:
+  primary_checkpoint: "Qwen/Qwen-Embedding-0.6B"
+  format: safetensors
+  quantization: none
+  default_precision: fp16
+
+hardware:
+  min_vram_gb: 4.0
+  context_window: 8192
+  preferred_gpu: t4
+  allocation_policy: single_gpu
+
+capabilities:
+  text_embedding: true
+  multimodal_embedding: true
+  reranking: true
+
+status: full
+coverage_percent: 100.0
+missing_capabilities: []
+
+limits:
+  max_context_tokens: 8192

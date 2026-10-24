@@ -1,0 +1,44 @@
+apiVersion: factory.ai/v1
+kind: ServiceManifest
+metadata:
+  id: vision-service
+  name: "vLLM Vision Language Model Daemon"
+  subsystem: vlm
+  version: 1.0.0
+
+network:
+  static_domain: vision.ai.example.com
+  internal_port: 8081
+  protocol: http
+  auth_required: true
+  cors_origins:
+    - https://studio.ai.example.com
+    - http://localhost:3000
+
+health_check:
+  endpoint: /health
+  interval_seconds: 15
+  timeout_seconds: 5
+  unhealthy_threshold: 3
+
+framework:
+  type: vllm
+  version: "0.4.2"
+  entrypoint: "python -m vllm.entrypoints.openai.api_server --port 8081"
+
+hardware:
+  gpu_required: true
+  gpu_device_index: 0
+  min_vram_gb: 14.0
+  min_ram_gb: 16.0
+  cuda_version_min: "12.1"
+
+supported_modalities:
+  - multimodal
+  - text
+
+auth_policy:
+  scheme: bearer
+  jwt_audience: factory-vlm-api
+  rate_limit_rpm: 30
+  allow_unauthenticated: false

@@ -1,0 +1,42 @@
+apiVersion: factory.ai/v1
+kind: CapabilityManifest
+id: image.t2i
+subsystem: image
+display_name: "Text to Image Generation"
+description: "Generates high-fidelity image from textual prompt description"
+
+inputs:
+  - name: prompt
+    type: string
+    description: "Detailed description of desired visual content"
+    required: true
+  - name: width
+    type: integer
+    description: "Width of output image in pixels"
+    required: false
+    default: 1024
+    constraints:
+      min_value: 512
+      max_value: 2048
+      step: 64
+  - name: height
+    type: integer
+    description: "Height of output image in pixels"
+    required: false
+    default: 1024
+    constraints:
+      min_value: 512
+      max_value: 2048
+      step: 64
+
+outputs:
+  - name: image
+    type: image_url
+    format: "image/png"
+
+validation:
+  test_fixture: "fixtures/image_t2i.json"
+  verification_method: "schema_check"
+
+supported_model_families:
+  - qwen-image

@@ -1,0 +1,32 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: ace-step-1.5
+  family: acestep-music
+  display_name: "ACE-Step 1.5 Music Generation"
+  service_id: music-service
+  version: "1.5.0"
+
+weights:
+  primary_checkpoint: "ACE-Studio/ACE-Step-1.5"
+  format: safetensors
+  quantization: none
+  default_precision: bf16
+
+hardware:
+  min_vram_gb: 6.0
+  preferred_gpu: t4
+  allocation_policy: single_gpu
+
+capabilities:
+  text_to_music: true
+  lyrics_to_music: true
+  audio_to_audio: true
+  audio_to_music: true
+
+status: full
+coverage_percent: 100.0
+missing_capabilities: []
+
+limits:
+  max_duration_seconds: 180.0

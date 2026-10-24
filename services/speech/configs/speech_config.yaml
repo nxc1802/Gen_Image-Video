@@ -1,0 +1,20 @@
+subsystem: speech
+service_id: speech-service
+host: "0.0.0.0"
+port: 8288
+models:
+  asr: "Qwen/Qwen3-ASR-1.7B"
+  tts: "Qwen/Qwen3-TTS-12Hz-1.7B-Base"
+  alignment: "Qwen/Qwen3-ForcedAligner"
+device: "cuda:0"
+vram_limit_gb: 8.0
+auth_required: true
+sample_rate: 24000
+supported_voices:
+  - alloy
+  - echo
+  - fable
+  - onyx
+  - nova
+  - shimmer
+  - default

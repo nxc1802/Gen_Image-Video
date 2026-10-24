@@ -1,0 +1,34 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-speech
+  family: qwen-speech
+  display_name: "Qwen3 Audio Speech & TTS Suite"
+  service_id: speech-service
+  version: "3.0.0"
+
+weights:
+  primary_checkpoint: "Qwen/Qwen3-ASR-1.7B"
+  components:
+    tts: "Qwen/Qwen3-TTS-12Hz-1.7B-Base"
+  format: safetensors
+  quantization: none
+  default_precision: bf16
+
+hardware:
+  min_vram_gb: 8.0
+  preferred_gpu: t4
+  allocation_policy: single_gpu
+
+capabilities:
+  speech_to_text: true
+  text_to_speech: true
+  voice_cloning: true
+  word_timestamps: true
+
+status: full
+coverage_percent: 100.0
+missing_capabilities: []
+
+limits:
+  max_duration_seconds: 300.0

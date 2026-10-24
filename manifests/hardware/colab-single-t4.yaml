@@ -1,0 +1,19 @@
+apiVersion: factory.ai/v1
+kind: HardwareTopologyManifest
+id: colab-single-t4
+name: "Google Colab Single Tesla T4 Environment"
+environment: colab
+
+host:
+  cpu_cores: 2
+  system_ram_gb: 12.0
+  storage_temp_gb: 40.0
+
+gpus:
+  - index: 0
+    name: "NVIDIA Tesla T4"
+    total_vram_gb: 15.0
+    max_allocatable_vram_gb: 14.2
+    assigned_services:
+      - text-service
+      - image-service

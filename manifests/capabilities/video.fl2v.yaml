@@ -1,0 +1,54 @@
+apiVersion: factory.ai/v1
+kind: CapabilityManifest
+id: video.fl2v
+subsystem: video
+display_name: "First and Last Frame to Video Generation"
+description: "Generates video sequence interpolating between first and last keyframes"
+
+inputs:
+  - name: first_frame_url
+    type: image_url
+    description: "Starting keyframe URL"
+    required: true
+  - name: last_frame_url
+    type: image_url
+    description: "Ending keyframe URL"
+    required: true
+  - name: prompt
+    type: string
+    description: "Description of the transition and actions between keyframes"
+    required: true
+  - name: num_frames
+    type: integer
+    description: "Number of video frames to generate"
+    required: false
+    default: 49
+    constraints:
+      min_value: 17
+      max_value: 121
+      step: 4
+  - name: fps
+    type: integer
+    description: "Frames per second playback rate"
+    required: false
+    default: 24
+    constraints:
+      min_value: 8
+      max_value: 60
+  - name: seed
+    type: integer
+    description: "Deterministic random seed"
+    required: false
+
+outputs:
+  - name: video
+    type: video_url
+    format: "video/mp4"
+
+validation:
+  test_fixture: "fixtures/video_fl2v.json"
+  verification_method: "schema_check"
+
+supported_model_families:
+  - wan-video
+  - minimax-video

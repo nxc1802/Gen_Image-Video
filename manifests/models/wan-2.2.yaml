@@ -1,0 +1,37 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: wan-2.2
+  family: wan-video
+  display_name: "Wan 2.2 Video Family"
+  service_id: video-service
+  version: "2.2.0"
+
+weights:
+  primary_checkpoint: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+  format: diffusers
+  quantization: "4bit"
+  default_precision: fp16
+
+hardware:
+  min_vram_gb: 14.0
+  preferred_gpu: t4
+  allocation_policy: single_gpu
+
+capabilities:
+  text_to_video: true
+  image_to_video: true
+  first_last_frame_to_video: true
+  video_extension: true
+  video_with_audio: false
+
+status: partial
+coverage_percent: 80.0
+missing_capabilities:
+  - video_with_audio
+
+limits:
+  max_width: 1280
+  max_height: 720
+  max_frames: 81
+  max_duration_seconds: 5.0

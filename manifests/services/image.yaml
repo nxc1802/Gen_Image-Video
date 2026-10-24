@@ -1,0 +1,43 @@
+apiVersion: factory.ai/v1
+kind: ServiceManifest
+metadata:
+  id: image-service
+  name: "ComfyUI Image Generation Daemon (GPU 0)"
+  subsystem: image
+  version: 1.0.0
+
+network:
+  static_domain: image.ai.example.com
+  internal_port: 8188
+  protocol: http
+  auth_required: true
+  cors_origins:
+    - https://studio.ai.example.com
+    - http://localhost:3000
+
+health_check:
+  endpoint: /system_stats
+  interval_seconds: 15
+  timeout_seconds: 5
+  unhealthy_threshold: 3
+
+framework:
+  type: comfyui
+  version: "0.3.0"
+  entrypoint: "python ComfyUI/main.py --port 8188 --cuda-device 0 --dont-print-server"
+
+hardware:
+  gpu_required: true
+  gpu_device_index: 0
+  min_vram_gb: 14.0
+  min_ram_gb: 16.0
+  cuda_version_min: "12.1"
+
+supported_modalities:
+  - image
+
+auth_policy:
+  scheme: bearer
+  jwt_audience: factory-image-api
+  rate_limit_rpm: 30
+  allow_unauthenticated: false

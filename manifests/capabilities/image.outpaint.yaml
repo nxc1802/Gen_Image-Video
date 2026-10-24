@@ -1,0 +1,44 @@
+apiVersion: factory.ai/v1
+kind: CapabilityManifest
+id: image.outpaint
+subsystem: image
+display_name: "Image Outpainting"
+description: "Expands canvas borders of an existing image seamlessly"
+
+inputs:
+  - name: image_url
+    type: image_url
+    description: "Source image URL to be expanded"
+    required: true
+  - name: prompt
+    type: string
+    description: "Description of the expanded environment and scene"
+    required: true
+  - name: expand
+    type: json
+    description: "Expansion padding object containing top, bottom, left, right pixel counts"
+    required: false
+  - name: denoise_strength
+    type: float
+    description: "Denoising strength for expanded canvas areas"
+    required: false
+    default: 0.85
+    constraints:
+      min_value: 0.05
+      max_value: 1.0
+  - name: seed
+    type: integer
+    description: "Deterministic random seed"
+    required: false
+
+outputs:
+  - name: image
+    type: image_url
+    format: "image/png"
+
+validation:
+  test_fixture: "fixtures/image_outpaint.json"
+  verification_method: "schema_check"
+
+supported_model_families:
+  - qwen-image

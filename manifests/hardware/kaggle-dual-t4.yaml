@@ -1,0 +1,32 @@
+apiVersion: factory.ai/v1
+kind: HardwareTopologyManifest
+id: kaggle-dual-t4
+name: "Kaggle Dual Tesla T4 Environment"
+environment: kaggle
+
+host:
+  cpu_cores: 4
+  system_ram_gb: 32.0
+  storage_temp_gb: 70.0
+
+gpus:
+  - index: 0
+    name: "NVIDIA Tesla T4"
+    total_vram_gb: 15.0
+    max_allocatable_vram_gb: 14.2
+    assigned_services:
+      - text-service
+      - vision-service
+      - decision-service
+      - embed-service
+      - speech-service
+      - image-service
+
+  - index: 1
+    name: "NVIDIA Tesla T4"
+    total_vram_gb: 15.0
+    max_allocatable_vram_gb: 14.2
+    assigned_services:
+      - video-service
+      - music-service
+      - enhancement-service

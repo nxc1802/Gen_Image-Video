@@ -1,0 +1,67 @@
+[project]
+name = "factory-v4-workspace"
+version = "4.0.0"
+description = "Factory v4 Decoupled AI Generative Factory Monorepo"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Factory Architecture Team" }
+]
+dependencies = []
+
+[tool.uv.workspace]
+members = [
+    "factory/apps/control-api",
+    "packages/contracts",
+    "packages/auth",
+    "packages/model-registry",
+    "packages/client-sdk/python",
+]
+
+[tool.uv.sources]
+factory-contracts = { workspace = true }
+factory-auth = { workspace = true }
+factory-model-registry = { workspace = true }
+factory-client = { workspace = true }
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+exclude = [
+    "legacy",
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    "node_modules",
+    ".next",
+    ".agents",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "B", "C4", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests", "factory/apps/control-api/tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+pythonpath = [
+    ".",
+    "packages/contracts/src",
+    "packages/auth/src",
+    "packages/model-registry/src",
+]
+norecursedirs = [
+    "legacy",
+    "node_modules",
+    ".git",
+    "__pycache__",
+    ".next",
+    ".agents",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]

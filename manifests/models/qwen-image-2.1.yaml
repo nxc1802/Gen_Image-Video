@@ -1,0 +1,44 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-image-2.1
+  family: qwen-image
+  display_name: "Qwen-Image 2.1 Family"
+  service_id: image-service
+  version: "2.1.0"
+
+weights:
+  primary_checkpoint: "abenzerps/Qwen-Image-2.1-GGUF/qwen-image-2.1-Q4_K_M.gguf"
+  components:
+    clip: "qwen3vl_8b_fp8_scaled.safetensors"
+    vae: "qwen_image_2.1_vae_bf16.safetensors"
+    inpaint_adapter: "qwen_image_inpaint_adapter.safetensors"
+    controlnet_pose: "qwen_image_control_pose.safetensors"
+    controlnet_depth: "qwen_image_control_depth.safetensors"
+  format: gguf
+  quantization: q4_k_m
+  default_precision: bf16
+
+hardware:
+  min_vram_gb: 14.0
+  preferred_gpu: t4
+  allocation_policy: single_gpu
+
+capabilities:
+  text_to_image: true
+  image_to_image: true
+  inpaint: true
+  outpaint: true
+  instruction_edit: true
+  reference_image: true
+  multi_reference: true
+  control_pose: true
+  control_depth: true
+
+status: full
+coverage_percent: 100.0
+missing_capabilities: []
+
+limits:
+  max_width: 2048
+  max_height: 2048

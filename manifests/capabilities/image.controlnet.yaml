@@ -1,0 +1,44 @@
+apiVersion: factory.ai/v1
+kind: CapabilityManifest
+id: image.controlnet
+subsystem: image
+display_name: "ControlNet Guided Image Generation"
+description: "Applies structural spatial conditioning (pose, depth, canny) to image generation"
+
+inputs:
+  - name: prompt
+    type: string
+    description: "Detailed description of desired visual content"
+    required: true
+  - name: control_type
+    type: string
+    description: "ControlNet type: openpose, depth, or canny"
+    required: true
+  - name: control_image_url
+    type: image_url
+    description: "Control image providing structural guidance"
+    required: true
+  - name: strength
+    type: float
+    description: "Conditioning application strength"
+    required: false
+    default: 0.85
+    constraints:
+      min_value: 0.0
+      max_value: 2.0
+  - name: seed
+    type: integer
+    description: "Deterministic random seed"
+    required: false
+
+outputs:
+  - name: image
+    type: image_url
+    format: "image/png"
+
+validation:
+  test_fixture: "fixtures/image_controlnet.json"
+  verification_method: "schema_check"
+
+supported_model_families:
+  - qwen-image

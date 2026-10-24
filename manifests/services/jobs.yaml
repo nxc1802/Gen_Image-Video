@@ -1,0 +1,44 @@
+apiVersion: factory.ai/v1
+kind: ServiceManifest
+metadata:
+  id: jobs-service
+  name: "Factory v4 Control Plane & Jobs Gateway"
+  subsystem: jobs
+  version: 1.0.0
+
+network:
+  static_domain: jobs.ai.example.com
+  internal_port: 8000
+  protocol: http
+  auth_required: true
+  cors_origins:
+    - https://studio.ai.example.com
+    - http://localhost:3000
+
+health_check:
+  endpoint: /health
+  interval_seconds: 15
+  timeout_seconds: 5
+  unhealthy_threshold: 3
+
+framework:
+  type: fastapi
+  version: "0.111.0"
+  entrypoint: "uvicorn factory.apps.control_api.src.main:app --host 0.0.0.0 --port 8000"
+
+hardware:
+  gpu_required: false
+  gpu_device_index: null
+  min_vram_gb: 0.0
+  min_ram_gb: 4.0
+  cuda_version_min: null
+
+supported_modalities:
+  - text
+  - multimodal
+
+auth_policy:
+  scheme: bearer
+  jwt_audience: factory-control-api
+  rate_limit_rpm: 120
+  allow_unauthenticated: false

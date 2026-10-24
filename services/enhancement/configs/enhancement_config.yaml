@@ -1,0 +1,22 @@
+subsystem: enhancement
+service_id: enhancement-service
+host: "0.0.0.0"
+port: 8002
+device_index: 1
+min_vram_gb: 6.0
+lease_duration_seconds: 300
+supported_tasks:
+  - image_super_resolution
+  - video_super_resolution
+  - frame_interpolation
+  - audio_enhancement
+supported_models:
+  - enhancement-suite-v1
+checkpoints:
+  real_esrgan_2x: "xinntao/Real-ESRGAN/RealESRGAN_x2plus.pth"
+  real_esrgan_4x: "xinntao/Real-ESRGAN/RealESRGAN_x4plus.pth"
+  rife: "hzwer/RIFE4.6"
+  bsrgan: "cszn/BSRGAN"
+  audio_denoise: "Rikorose/DeepFilterNet"
+s3_endpoint_url: "https://s3.ai.example.com"
+artifacts_prefix: "artifacts/enhancement"

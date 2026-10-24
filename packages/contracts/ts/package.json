@@ -1,0 +1,8 @@
+{
+  "name": "@factory/contracts",
+  "version": "4.0.0",
+  "description": "TypeScript type definitions for Factory v4 manifests, errors, and jobs",
+  "main": "index.ts",
+  "types": "index.ts",
+  "license": "MIT"
+}

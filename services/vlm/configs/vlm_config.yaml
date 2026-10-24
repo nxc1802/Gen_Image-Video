@@ -1,0 +1,25 @@
+service_id: vision-service
+name: "vLLM Vision Language Model Daemon"
+host: "0.0.0.0"
+port: 8081
+static_domain: "vision.ai.example.com"
+protocol: "http"
+
+model:
+  name: "Qwen/Qwen2-VL-7B-Instruct-AWQ"
+  alias: "qwen-vl-max"
+  quantization: "awq"
+  precision: "fp16"
+  max_context_tokens: 16384
+  max_output_tokens: 4096
+
+hardware:
+  gpu_required: true
+  gpu_device_index: 1
+  min_vram_gb: 14.0
+  allocation_policy: "single_gpu"
+
+cors_origins:
+  - "https://studio.ai.example.com"
+  - "http://localhost:3000"
+  - "*"

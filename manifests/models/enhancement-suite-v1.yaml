@@ -1,0 +1,36 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: enhancement-suite-v1
+  family: media-enhancement
+  display_name: "Media Post-Processing & Enhancement Suite"
+  service_id: enhancement-service
+  version: "1.0.0"
+
+weights:
+  primary_checkpoint: "xinntao/Real-ESRGAN"
+  components:
+    rife: "hzwer/RIFE4.6"
+    bsrgan: "cszn/BSRGAN"
+    audio_denoise: "Rikorose/DeepFilterNet"
+  format: safetensors
+  quantization: none
+  default_precision: fp16
+
+hardware:
+  min_vram_gb: 6.0
+  preferred_gpu: t4
+  allocation_policy: single_gpu
+
+capabilities:
+  image_super_resolution: true
+  video_super_resolution: true
+  frame_interpolation: true
+  audio_enhancement: true
+
+status: full
+coverage_percent: 100.0
+missing_capabilities: []
+
+limits:
+  max_duration_seconds: 300.0

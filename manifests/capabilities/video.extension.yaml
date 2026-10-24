@@ -1,0 +1,57 @@
+apiVersion: factory.ai/v1
+kind: CapabilityManifest
+id: video.extension
+subsystem: video
+display_name: "Video Extension and Chaining"
+description: "Extends an existing video clip seamlessly"
+
+inputs:
+  - name: video_url
+    type: video_url
+    description: "Previous video clip URL to be extended"
+    required: true
+  - name: prompt
+    type: string
+    description: "Continuation prompt describing ensuing actions"
+    required: true
+  - name: source_frames
+    type: integer
+    description: "Total frame count in source video clip"
+    required: false
+    default: 49
+    constraints:
+      min_value: 1
+      max_value: 240
+  - name: overlap_frames
+    type: integer
+    description: "Number of overlapping frames used for temporal conditioning"
+    required: false
+    default: 16
+    constraints:
+      min_value: 1
+      max_value: 60
+  - name: num_frames
+    type: integer
+    description: "Number of continuation frames to generate"
+    required: false
+    default: 49
+    constraints:
+      min_value: 17
+      max_value: 121
+      step: 4
+  - name: seed
+    type: integer
+    description: "Deterministic random seed"
+    required: false
+
+outputs:
+  - name: video
+    type: video_url
+    format: "video/mp4"
+
+validation:
+  test_fixture: "fixtures/video_extension.json"
+  verification_method: "schema_check"
+
+supported_model_families:
+  - wan-video

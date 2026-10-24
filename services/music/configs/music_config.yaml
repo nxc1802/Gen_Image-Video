@@ -1,0 +1,17 @@
+subsystem: music
+service_id: music-service
+host: "0.0.0.0"
+port: 8001
+acestep_api_url: "http://127.0.0.1:8008"
+model_id: "ACE-Studio/ACE-Step-1.5"
+device_index: 1
+min_vram_gb: 6.0
+lease_duration_seconds: 300
+supported_tasks:
+  - text_to_music
+  - lyrics_to_music
+  - audio_to_audio
+supported_models:
+  - ace-step-1.5
+s3_endpoint_url: "https://s3.ai.example.com"
+artifacts_prefix: "artifacts/music"

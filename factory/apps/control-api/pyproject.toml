@@ -1,0 +1,27 @@
+[project]
+name = "factory-control-api"
+version = "0.1.0"
+description = "Factory v4 Control Plane API (Authentication, Queue, Registry, Telemetry)"
+requires-python = ">=3.11"
+dependencies = [
+    "factory-contracts",
+    "factory-auth",
+    "factory-model-registry",
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.7.0",
+    "httpx>=0.27.0",
+    "asyncpg>=0.29.0",
+    "redis>=5.0.4",
+    "boto3>=1.34.0",
+    "opentelemetry-api>=1.25.0",
+    "opentelemetry-sdk>=1.25.0",
+    "opentelemetry-instrumentation-fastapi>=0.46b0",
+    "python-multipart>=0.0.9",
+    "pyjwt>=2.8.0",
+    "pillow>=10.3.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

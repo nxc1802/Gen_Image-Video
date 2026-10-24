@@ -1,0 +1,33 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-text
+  family: qwen-text
+  display_name: "Qwen 2.5 Text LLM"
+  service_id: text-service
+  version: "2.5.0"
+
+weights:
+  primary_checkpoint: "Qwen/Qwen2.5-7B-Instruct-AWQ"
+  format: safetensors
+  quantization: awq
+  default_precision: fp16
+
+hardware:
+  min_vram_gb: 12.0
+  context_window: 32768
+  preferred_gpu: t4
+  allocation_policy: single_gpu
+
+capabilities:
+  chat_completion: true
+  structured_output: true
+  tool_calling: true
+  streaming: true
+
+status: full
+coverage_percent: 100.0
+missing_capabilities: []
+
+limits:
+  max_context_tokens: 32768

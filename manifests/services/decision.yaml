@@ -1,0 +1,43 @@
+apiVersion: factory.ai/v1
+kind: ServiceManifest
+metadata:
+  id: decision-service
+  name: "vLLM Decision Routing Engine"
+  subsystem: decision
+  version: 1.0.0
+
+network:
+  static_domain: decision.ai.example.com
+  internal_port: 8082
+  protocol: http
+  auth_required: true
+  cors_origins:
+    - https://studio.ai.example.com
+    - http://localhost:3000
+
+health_check:
+  endpoint: /health
+  interval_seconds: 15
+  timeout_seconds: 5
+  unhealthy_threshold: 3
+
+framework:
+  type: vllm
+  version: "0.4.2"
+  entrypoint: "python -m services.decision.decision_service --port 8082"
+
+hardware:
+  gpu_required: true
+  gpu_device_index: 0
+  min_vram_gb: 6.0
+  min_ram_gb: 8.0
+  cuda_version_min: "12.1"
+
+supported_modalities:
+  - decision
+
+auth_policy:
+  scheme: bearer
+  jwt_audience: factory-decision-api
+  rate_limit_rpm: 60
+  allow_unauthenticated: false

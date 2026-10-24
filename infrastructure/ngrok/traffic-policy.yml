@@ -1,0 +1,30 @@
+# Ngrok Edge Traffic Policy Configuration for Factory v4
+inbound:
+  - name: "Enforce HTTPS redirect"
+    actions:
+      - type: "redirect"
+        config:
+          to: "https://${req.host}${req.url.path}"
+          status_code: 301
+        when: "req.headers['x-forwarded-proto'] == 'http'"
+
+  - name: "Edge Rate Limiting"
+    actions:
+      - type: "rate-limit"
+        config:
+          name: "global-edge-limit"
+          algorithm: "sliding_window"
+          capacity: 120
+          rate: "60s"
+          bucket_key:
+            - "conn.client_ip"
+
+  - name: "Restrict Admin Endpoints to Internal Subnets"
+    actions:
+      - type: "custom-response"
+        config:
+          status_code: 403
+          content: '{"error":{"code":"FORBIDDEN","message":"Access to admin endpoints is restricted."}}'
+          headers:
+            Content-Type: "application/json"
+        when: "req.url.path.startsWith('/v1/admin/') && !conn.client_ip.inRanges(['127.0.0.1/32', '10.0.0.0/8', '192.168.0.0/16'])"

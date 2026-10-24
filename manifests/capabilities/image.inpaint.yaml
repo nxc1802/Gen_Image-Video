@@ -1,0 +1,32 @@
+apiVersion: factory.ai/v1
+kind: CapabilityManifest
+id: image.inpaint
+subsystem: image
+display_name: "Image Inpainting with Mask"
+description: "Fills or edits masked regions of an input image according to text prompt"
+
+inputs:
+  - name: image_url
+    type: image_url
+    description: "Source image URL to be edited"
+    required: true
+  - name: mask_url
+    type: mask_url
+    description: "Binary mask URL where white pixels indicate region to replace"
+    required: true
+  - name: prompt
+    type: string
+    description: "Description of replacement visual content"
+    required: true
+
+outputs:
+  - name: image
+    type: image_url
+    format: "image/png"
+
+validation:
+  test_fixture: "fixtures/image_inpaint.json"
+  verification_method: "schema_check"
+
+supported_model_families:
+  - qwen-image

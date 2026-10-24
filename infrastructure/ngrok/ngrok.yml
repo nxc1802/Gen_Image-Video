@@ -1,0 +1,57 @@
+version: "3"
+agent:
+  authtoken: "${NGROK_AUTHTOKEN}"
+  metadata: "factory-v4-edge"
+  web_addr: "127.0.0.1:4040"
+
+tunnels:
+  control_plane:
+    proto: http
+    addr: 8000
+    domain: "${NGROK_DOMAIN_CONTROL}"
+    traffic_policy_file: "./traffic-policy.yml"
+
+  studio_web:
+    proto: http
+    addr: 3000
+    domain: "${NGROK_DOMAIN_STUDIO}"
+
+  text_vlm:
+    proto: http
+    addr: 8080
+    domain: "${NGROK_DOMAIN_TEXT}"
+
+  decision:
+    proto: http
+    addr: 8082
+    domain: "decision.ai.example.com"
+
+  embedding:
+    proto: http
+    addr: 8083
+    domain: "embed.ai.example.com"
+
+  image_comfyui:
+    proto: http
+    addr: 8188
+    domain: "${NGROK_DOMAIN_IMAGE}"
+
+  video_comfyui:
+    proto: http
+    addr: 8189
+    domain: "${NGROK_DOMAIN_VIDEO}"
+
+  speech:
+    proto: http
+    addr: 8288
+    domain: "${NGROK_DOMAIN_SPEECH}"
+
+  music:
+    proto: http
+    addr: 8001
+    domain: "${NGROK_DOMAIN_MUSIC}"
+
+  enhancement:
+    proto: http
+    addr: 8002
+    domain: "enhance.ai.example.com"

@@ -9,7 +9,7 @@ venv/
 .venv/
 ENV/
 
-# Jupyter
+# Jupyter Notebooks
 .ipynb_checkpoints/
 
 # System & OS
@@ -19,9 +19,14 @@ Thumbs.db
 # Secrets & Environment
 .env
 *.env
+*.env.local
+*.env.archived
 !.env.example
 
 # Runtime & Generated Outputs
+.agents/
+.factory_storage/
+legacy/v3/artifacts/
 test_outputs/
 benchmark_outputs/
 public_url.txt
@@ -29,12 +34,12 @@ current_url.txt
 *.active_colab_account*.txt
 *.mp4
 *.wav
-!kaggle/all-in-one/audio/default_speaker.wav
-*.log
+!legacy/v3/all-in-one/audio/default_speaker.wav
 *.png
 *.jpg
 *.jpeg
 *.webp
+*.log
 /tmp/
 
 # Node / Next.js
