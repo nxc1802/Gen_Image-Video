@@ -2,6 +2,7 @@
 services/text/src/app.py
 FastAPI application for the Factory v4 Text & VLM Subsystem (Port 8080).
 """
+import os
 import logging
 import uuid
 from contextlib import asynccontextmanager
@@ -143,7 +144,11 @@ app = FastAPI(
 app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        origin.strip()
+        for origin in os.environ.get("FACTORY_CORS_ORIGINS", "http://localhost:3000").split(",")
+        if origin.strip()
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
