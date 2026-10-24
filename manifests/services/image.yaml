@@ -7,7 +7,7 @@ metadata:
   version: 1.0.0
 
 network:
-  static_domain: image.ai.example.com
+  static_domain: "${NGROK_DOMAIN_IMAGE}"
   internal_port: 8188
   protocol: http
   auth_required: true
@@ -24,7 +24,7 @@ health_check:
 framework:
   type: comfyui
   version: "0.3.0"
-  entrypoint: "python ComfyUI/main.py --port 8188 --cuda-device 0 --dont-print-server"
+  entrypoint: "python -m services.image.launcher.run_comfyui"
 
 hardware:
   gpu_required: true
@@ -37,7 +37,7 @@ supported_modalities:
   - image
 
 auth_policy:
-  scheme: bearer
+  scheme: edge-basic
   jwt_audience: factory-image-api
   rate_limit_rpm: 30
   allow_unauthenticated: false
