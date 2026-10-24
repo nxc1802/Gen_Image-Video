@@ -6,14 +6,18 @@ monitors heartbeats/cancellations, and uploads S3 artifacts.
 """
 import asyncio
 import logging
+import os
 import re
 import time
 import uuid
 from pathlib import Path
+from urllib.parse import urlparse
 from typing import Any, Dict, List, Optional
 import httpx
 
 from factory_contracts.errors.error_contract import ErrorDetail
+from factory.apps.control_api.src.assets.ssrf import validate_target_url
+from factory.apps.control_api.src.assets.transport import PinningAsyncHTTPTransport
 from factory_contracts.jobs.job_contract import FactoryJob
 from factory_contracts.jobs.worker_contract import (
     JobCompletionRequest,
@@ -30,26 +34,6 @@ from services.image.config import ImageServiceConfig, load_image_config
 from services.image.prompt_builder import ImagePromptBuilder
 
 logger = logging.getLogger("services.image.worker")
-
-BLOCKED_SSRF_PATTERNS = [
-    r"^https?://127\.",
-    r"^https?://localhost",
-    r"^https?://\[::1\]",
-    r"^https?://10\.",
-    r"^https?://172\.(1[6-9]|2[0-9]|3[0-1])\.",
-    r"^https?://192\.168\.",
-    r"^https?://169\.254\.",
-    r"^https?://0\.0\.0\.0",
-    r"^https?://metadata\.google\.internal",
-]
-
-
-def is_ssrf_safe(url: str) -> bool:
-    for pattern in BLOCKED_SSRF_PATTERNS:
-        if re.search(pattern, url, re.IGNORECASE):
-            return False
-    return True
-
 
 class ImageWorkerDaemon:
     """Worker daemon leasing and executing image generation jobs."""
@@ -80,23 +64,60 @@ class ImageWorkerDaemon:
         return httpx.AsyncClient(base_url=self.config.control_api_url, headers=headers, timeout=30.0)
 
     async def stage_asset(self, url: str, target_filename: str) -> str:
-        """Downloads an input asset safely to the ComfyUI input directory."""
-        if not is_ssrf_safe(url):
-            raise ValueError(f"SSRF violation: blocked URL {url}")
+        """Stage only trusted Factory-owned assets with DNS-rebinding protection."""
+        parsed = urlparse(url)
+        hostname = (parsed.hostname or "").lower()
+        allowed_hosts = {
+            host.strip().lower()
+            for host in os.environ.get("FACTORY_ASSET_ALLOWED_HOSTS", "").split(",")
+            if host.strip()
+        }
+        configured_s3_host = (urlparse(self.config.s3_public_url).hostname or "").lower()
+        if configured_s3_host:
+            allowed_hosts.add(configured_s3_host)
+        if not hostname or hostname not in allowed_hosts:
+            raise ValueError(
+                f"Asset host '{hostname or '<missing>'}' is not a trusted Factory asset host."
+            )
+
+        _, verified_ips = validate_target_url(url)
+        transport = PinningAsyncHTTPTransport([str(ip) for ip in verified_ips])
+        max_bytes = int(os.environ.get("ASSET_MAX_UPLOAD_MB", "50")) * 1024 * 1024
 
         self.config.input_dir.mkdir(parents=True, exist_ok=True)
-        target_path = self.config.input_dir / target_filename
+        safe_name = Path(target_filename).name
+        target_path = (self.config.input_dir / safe_name).resolve()
+        input_root = self.config.input_dir.resolve()
+        target_path.relative_to(input_root)
 
-        try:
-            async with httpx.AsyncClient(timeout=30.0) as cl:
-                resp = await cl.get(url)
-                if resp.status_code == 200:
-                    target_path.write_bytes(resp.content)
-                    return target_filename
-        except Exception as e:
-            logger.warning(f"Could not download remote asset {url}: {e}. Using filename directly.")
+        async with httpx.AsyncClient(
+            timeout=60.0,
+            transport=transport,
+            follow_redirects=False,
+        ) as cl:
+            async with cl.stream("GET", url) as resp:
+                resp.raise_for_status()
+                content_type = (resp.headers.get("content-type") or "").split(";", 1)[0].lower()
+                if content_type and not (
+                    content_type.startswith("image/")
+                    or content_type.startswith("video/")
+                    or content_type.startswith("audio/")
+                    or content_type == "application/octet-stream"
+                ):
+                    raise ValueError(f"Unsupported staged asset MIME type '{content_type}'.")
+                content_length = resp.headers.get("content-length")
+                if content_length and int(content_length) > max_bytes:
+                    raise ValueError("Asset exceeds configured maximum size.")
 
-        return target_filename
+                chunks = bytearray()
+                async for chunk in resp.aiter_bytes():
+                    chunks.extend(chunk)
+                    if len(chunks) > max_bytes:
+                        raise ValueError("Asset exceeds configured maximum size.")
+                if not chunks:
+                    raise ValueError("Asset download returned an empty body.")
+                target_path.write_bytes(bytes(chunks))
+        return safe_name
 
     async def lease_job(self, client: httpx.AsyncClient) -> WorkerLeaseResponse:
         """Calls POST /v1/jobs/lease on the Factory Control API."""
@@ -170,7 +191,6 @@ class ImageWorkerDaemon:
         comp = JobCompletionRequest(
             artifacts=artifacts,
             inference_duration_ms=duration_ms,
-            peak_vram_mb=1400.0,
         )
         resp = await client.post(f"/v1/jobs/{job_id}/complete", json=comp.model_dump(mode="json"))
         resp.raise_for_status()
@@ -261,27 +281,22 @@ class ImageWorkerDaemon:
                     message=msg,
                 )
 
-            # 5. Check if ComfyUI is live; if not, perform simulation/fallback
-            output_filenames = [f"{job_id}_output.png"]
-            if await self.comfy_client.is_ready():
-                prompt_id = await self.comfy_client.queue_prompt(prompt_dict, client_id=job_id)
-                await self.comfy_client.listen_execution(
-                    prompt_id=prompt_id,
-                    client_id=job_id,
-                    on_progress=on_progress,
-                    cancel_event=cancel_event,
-                )
-            else:
-                # Simulation mode for testing / environments without active ComfyUI daemon
-                for s in range(1, 5):
-                    if cancel_event.is_set():
-                        raise asyncio.CancelledError("Job cancelled during execution")
-                    pct = round((s / 4) * 100.0, 1)
-                    await self.report_progress(client, job_id, "sampling", s, 4, pct, f"Step {s}/4")
-                    await asyncio.sleep(0.01)
+            # 5. Execute only against a live ComfyUI backend.
+            if not await self.comfy_client.is_ready():
+                raise RuntimeError("ComfyUI image backend is unavailable; simulation fallback is disabled.")
 
-            # 6. Collect artifacts and upload to S3
-            artifacts = self.artifact_collector.collect_job_outputs(job_id, output_filenames)
+            prompt_id = await self.comfy_client.queue_prompt(prompt_dict, client_id=job_id)
+            outputs = await self.comfy_client.listen_execution(
+                prompt_id=prompt_id,
+                client_id=job_id,
+                on_progress=on_progress,
+                cancel_event=cancel_event,
+            )
+            if not outputs:
+                raise RuntimeError("ComfyUI image execution completed without output metadata.")
+
+            # 6. Resolve the exact files reported by ComfyUI and upload them to Factory Storage.
+            artifacts = await self.artifact_collector.collect_and_upload(client, job_id, outputs)
             duration_ms = (time.time() - start_time) * 1000.0
 
             # 7. Complete job
