@@ -7,7 +7,7 @@ metadata:
   version: 1.0.0
 
 network:
-  static_domain: text.ai.example.com
+  static_domain: "${NGROK_DOMAIN_TEXT}"
   internal_port: 8080
   protocol: http
   auth_required: true
@@ -23,8 +23,8 @@ health_check:
 
 framework:
   type: vllm
-  version: "0.4.2"
-  entrypoint: "python -m vllm.entrypoints.openai.api_server --port 8080"
+  version: ">=0.31.0"
+  entrypoint: "python -m services.text.launcher.run_text_service --port 8080"
 
 hardware:
   gpu_required: true
