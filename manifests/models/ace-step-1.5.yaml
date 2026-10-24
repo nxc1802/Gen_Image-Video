@@ -21,12 +21,16 @@ hardware:
 capabilities:
   text_to_music: true
   lyrics_to_music: true
-  audio_to_audio: true
-  audio_to_music: true
+  audio_to_audio: false
+  audio_to_music: false
 
-status: full
-coverage_percent: 100.0
-missing_capabilities: []
+status: partial
+coverage_percent: 50.0
+missing_capabilities:
+  - audio_to_audio
+  - audio_to_music
+validation_status: pending_live
+validation_notes: "Native text/lyrics generation is wired through release_task/query_result. Source-audio staging remains gated."
 
 limits:
   max_duration_seconds: 180.0
