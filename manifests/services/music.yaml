@@ -8,7 +8,7 @@ metadata:
 
 network:
   static_domain: "${NGROK_DOMAIN_MUSIC}"
-  internal_port: 8001
+  internal_port: 8008
   protocol: http
   auth_required: true
   cors_origins:
