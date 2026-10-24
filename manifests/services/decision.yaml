@@ -7,7 +7,7 @@ metadata:
   version: 1.0.0
 
 network:
-  static_domain: decision.ai.example.com
+  static_domain: "${NGROK_DOMAIN_DECISION}"
   internal_port: 8082
   protocol: http
   auth_required: true
@@ -23,8 +23,8 @@ health_check:
 
 framework:
   type: vllm
-  version: "0.4.2"
-  entrypoint: "python -m services.decision.decision_service --port 8082"
+  version: ">=0.31.0"
+  entrypoint: "python -m services.decision.launcher.run_decision_service --port 8082"
 
 hardware:
   gpu_required: true
