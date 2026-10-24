@@ -24,7 +24,7 @@ health_check:
 framework:
   type: comfyui
   version: "0.3.0"
-  entrypoint: "python -m services.video.launcher.run_comfyui"
+  entrypoint: "python -m services.video.launcher.run_stack"
 
 hardware:
   gpu_required: true
