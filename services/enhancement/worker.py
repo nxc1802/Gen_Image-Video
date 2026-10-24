@@ -62,10 +62,11 @@ class EnhancementWorker:
         self.worker_id = worker_id
         self.control_plane_url = (
             control_plane_url
+            or os.environ.get("CONTROL_PLANE_URL")
             or os.environ.get("FACTORY_BASE_URL")
-            or "https://jobs.ai.example.com"
+            or "http://127.0.0.1:8000"
         ).rstrip("/")
-        self.api_key = api_key or os.environ.get("FACTORY_API_KEY", "sk-factory-test-token-valid")
+        self.api_key = api_key or os.environ.get("FACTORY_API_KEY", "")
         self.gpu_device = gpu_device
         self.lease_duration = lease_duration
 
@@ -81,6 +82,8 @@ class EnhancementWorker:
 
     @property
     def auth_headers(self) -> dict:
+        if not self.api_key:
+            raise RuntimeError("FACTORY_API_KEY is required for Enhancement worker authentication.")
         return {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
@@ -121,8 +124,6 @@ class EnhancementWorker:
             worker_id=self.worker_id,
             active_job_id=self._active_job_id,
             lease_token=self._active_lease_token,
-            gpu_utilization_percent=55.0,
-            vram_used_mb=3500.0,
         )
         try:
             await http_client.post(
@@ -184,18 +185,14 @@ class EnhancementWorker:
 
             await self.report_progress(http_client, job.job_id, 8, 80.0, "encoding_output")
 
-            art_id = res["artifact_id"]
-            storage_path = f"artifacts/enhancement/{art_id}.{ext}"
-            s3_url = f"https://s3.ai.example.com/assets/{art_id}.{ext}"
-
             artifact = ArtifactReference(
-                artifact_id=art_id,
+                artifact_id=res["artifact_id"],
                 type=res["type"],
                 mime_type=res["mime_type"],
                 size_bytes=res["size_bytes"],
-                storage_path=storage_path,
-                url=s3_url,
-                download_url=s3_url,
+                storage_path=res["storage_path"],
+                url=res["download_url"],
+                download_url=res["download_url"],
                 sha256=res["sha256"],
             )
 
@@ -217,8 +214,8 @@ class EnhancementWorker:
             logger.error(f"Enhancement failed on job {job.job_id}: {e}")
             fail_req = JobFailureRequest(
                 error=ErrorDetail(
-                    code=ErrorCode.INTERNAL_ERROR,
-                    message=f"Enhancement processing failed: {str(e)}",
+                    code=ErrorCode.SERVICE_UNAVAILABLE,
+                    message="Enhancement backend failed. Inspect correlated worker logs.",
                     request_id=job.request_id,
                 ),
                 retryable=True,
