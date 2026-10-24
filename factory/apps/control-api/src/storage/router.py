@@ -27,6 +27,14 @@ class UploadURLRequest(BaseModel):
     expires_in_seconds: int = Field(default=3600, ge=60, le=86400)
 
 
+class DownloadURLRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    storage_path: str = Field(..., min_length=1)
+    filename: Optional[str] = None
+    expires_in_seconds: int = Field(default=86400, ge=60, le=604800)
+
+
 router = APIRouter(prefix="/v1/storage", tags=["Storage"])
 
 
@@ -35,11 +43,10 @@ def get_storage_provider(request: Request) -> StorageProvider:
     if provider is not None:
         return provider
     config = load_storage_config()
-    if config.storage_backend == "s3" and config.s3_endpoint_url:
-        try:
-            return S3StorageProvider(config)
-        except Exception:
-            return LocalStorageProvider(config)
+    if config.storage_backend == "s3":
+        if not config.s3_endpoint_url:
+            raise RuntimeError("S3_ENDPOINT_URL is required when STORAGE_BACKEND=s3.")
+        return S3StorageProvider(config)
     return LocalStorageProvider(config)
 
 
@@ -58,6 +65,27 @@ async def create_upload_url(
         expires_in_seconds=req.expires_in_seconds,
     )
     return presigned
+
+
+
+
+@router.post("/download-url", dependencies=[Depends(verify_bearer_token)])
+async def create_download_url(
+    req: DownloadURLRequest,
+    storage: StorageProvider = Depends(get_storage_provider),
+):
+    config = load_storage_config()
+    url = storage.generate_presigned_download_url(
+        bucket=config.s3_bucket_name,
+        key=req.storage_path,
+        expires_in_seconds=req.expires_in_seconds,
+        filename=req.filename,
+    )
+    return {
+        "storage_path": req.storage_path,
+        "download_url": url,
+        "expires_in_seconds": req.expires_in_seconds,
+    }
 
 
 @router.get("/download")
