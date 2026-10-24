@@ -41,7 +41,15 @@ def call_backend(env_var: str, path: str, payload: Dict[str, Any], timeout: floa
             details={"error_type": type(exc).__name__, "path": path},
         ) from exc
 
-    required = ("artifact_id", "size_bytes", "sha256")
+    required = (
+        "artifact_id",
+        "type",
+        "mime_type",
+        "size_bytes",
+        "sha256",
+        "storage_path",
+        "download_url",
+    )
     if any(key not in data for key in required):
         raise ModelUnavailableError(
             message="Enhancement backend returned incomplete artifact metadata.",
