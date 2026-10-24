@@ -1,48 +1,53 @@
 """
-services/speech/alignment/aligner.py
-Word-level forced alignment adapter producing monotonic word timestamps and scores.
+Strict forced-alignment adapter.
+
+Word timestamps must come from a real aligner backend. Character-duration
+estimation is intentionally forbidden.
 """
-from typing import Any, Dict, List
-from factory_contracts.errors import InvalidRequestError
+import os
+from typing import Any, Dict
+
+import httpx
+
+from factory_contracts.errors import InvalidRequestError, ModelUnavailableError
 
 
 class ForcedAligner:
-    """Computes word-level temporal alignments between audio waveforms and text transcripts."""
+    def __init__(self, upstream_url: str | None = None):
+        self.upstream_url = (upstream_url or os.environ.get("QWEN_ALIGNER_URL") or "").rstrip("/")
+        self.api_key = os.environ.get("QWEN_ALIGNER_API_KEY") or os.environ.get("FACTORY_API_KEY", "")
 
     def align(self, audio_url: str, transcript_text: str) -> Dict[str, Any]:
-        """
-        Calculates monotonic word-level time boundaries and acoustic alignment scores.
-        Validates input presence and enforces:
-        1. aligned_words[i+1]["start_ms"] >= aligned_words[i]["end_ms"]
-        2. 0.0 <= score <= 1.0
-        """
-        if not audio_url or not transcript_text:
-            raise InvalidRequestError("Forced alignment requires 'audio_url' and 'transcript_text'.")
-
-        words = transcript_text.strip().split()
-        if not words:
-            raise InvalidRequestError("Transcript text must contain at least one word.")
-
-        aligned_words: List[Dict[str, Any]] = []
-        cur_time_ms = 0
-
-        # Word duration modeling based on character count (approx 60ms per char + 50ms pause)
-        for i, word in enumerate(words):
-            char_duration = max(200, len(word) * 65)
-            start_ms = cur_time_ms
-            end_ms = start_ms + char_duration
-
-            # Confidence score calculation (normalized 0.95 - 0.99)
-            score = round(0.99 - (i * 0.01 % 0.04), 2)
-
-            aligned_words.append({
-                "word": word,
-                "start_ms": start_ms,
-                "end_ms": end_ms,
-                "score": score,
-            })
-
-            # Guarantee monotonic boundary with 10ms inter-word gap
-            cur_time_ms = end_ms + 10
-
-        return {"aligned_words": aligned_words}
+        if not audio_url or not transcript_text or not transcript_text.strip():
+            raise InvalidRequestError("Forced alignment requires 'audio_url' and non-empty 'transcript_text'.")
+        if not self.upstream_url:
+            raise ModelUnavailableError(
+                message="Real forced-alignment backend is not configured.",
+                details={"required_env": "QWEN_ALIGNER_URL"},
+            )
+        headers = {"Content-Type": "application/json"}
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
+        try:
+            with httpx.Client(timeout=300.0) as client:
+                response = client.post(
+                    f"{self.upstream_url}/v1/audio/alignments",
+                    headers=headers,
+                    json={"audio_url": audio_url, "transcript_text": transcript_text},
+                )
+                if response.status_code >= 400:
+                    raise ModelUnavailableError(
+                        message="Forced-alignment backend rejected the request.",
+                        details={"status_code": response.status_code},
+                    )
+                payload = response.json()
+        except ModelUnavailableError:
+            raise
+        except (httpx.HTTPError, ValueError) as exc:
+            raise ModelUnavailableError(
+                message="Forced-alignment backend is unavailable.",
+                details={"error_type": type(exc).__name__},
+            ) from exc
+        if not isinstance(payload, dict) or not isinstance(payload.get("aligned_words"), list):
+            raise ModelUnavailableError(message="Forced-alignment backend returned an invalid response.")
+        return payload
