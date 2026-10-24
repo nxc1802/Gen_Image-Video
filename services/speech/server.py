@@ -99,6 +99,7 @@ class SpeechRequest(BaseModel):
     input: str
     voice: Optional[str] = "alloy"
     reference_audio_url: Optional[str] = None
+    reference_text: Optional[str] = None
     speed: Optional[float] = 1.0
     response_format: Optional[str] = "wav"
 
@@ -256,6 +257,7 @@ async def synthesize_speech(req: SpeechRequest):
         speed=req.speed or 1.0,
         response_format=req.response_format or "wav",
         model=req.model,
+        reference_text=req.reference_text,
     )
     return Response(
         content=wav_bytes,
