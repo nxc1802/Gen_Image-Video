@@ -98,6 +98,7 @@ export interface ServiceManifest {
 }
 
 export type ModelStatus = 'full' | 'partial';
+export type ModelValidationStatus = 'pending_live' | 'contract_verified' | 'live_verified';
 
 export interface ModelManifest {
   apiVersion: string;
@@ -126,6 +127,8 @@ export interface ModelManifest {
   status: ModelStatus;
   coverage_percent: number;
   missing_capabilities: string[];
+  validation_status?: ModelValidationStatus;
+  validation_notes?: string | null;
   limits: {
     max_context_tokens?: number | null;
     max_width?: number | null;
