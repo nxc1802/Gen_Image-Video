@@ -10,7 +10,7 @@ metadata:
 weights:
   primary_checkpoint: "xinntao/Real-ESRGAN"
   components:
-    rife: "hzwer/RIFE4.6"
+    rife: "hzwer/RIFE"
     bsrgan: "cszn/BSRGAN"
     audio_denoise: "Rikorose/DeepFilterNet"
   format: safetensors
@@ -23,14 +23,18 @@ hardware:
   allocation_policy: single_gpu
 
 capabilities:
-  image_super_resolution: true
-  video_super_resolution: true
-  frame_interpolation: true
-  audio_enhancement: true
+  image_super_resolution: false
+  video_super_resolution: false
+  frame_interpolation: false
+  audio_enhancement: false
 
-status: full
-coverage_percent: 100.0
-missing_capabilities: []
+status: partial
+coverage_percent: 0.0
+missing_capabilities:
+  - image_super_resolution
+  - video_super_resolution
+  - frame_interpolation
+  - audio_enhancement
 
 limits:
   max_duration_seconds: 300.0
