@@ -59,7 +59,10 @@ async def lifespan(app: FastAPI):
     await broker.initialize()
     app.state.broker = broker
 
-    stream_manager = StreamManager()
+    stream_manager = StreamManager(
+        redis_client=getattr(broker, "client", None),
+        repository=repository,
+    )
     app.state.stream_manager = stream_manager
 
     job_manager = JobLifecycleManager(
