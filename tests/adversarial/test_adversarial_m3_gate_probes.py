@@ -19,6 +19,7 @@ Empirically probes:
 import math
 import os
 from typing import Any, Dict, List
+from unittest.mock import patch, MagicMock
 import httpx
 import pytest
 from starlette.testclient import TestClient
@@ -45,7 +46,8 @@ from services.decision.src.engine import DecisionEngine
 from services.decision.src.choice import evaluate_choice
 from services.decision.src.predicate import evaluate_predicate
 from services.decision.src.score import evaluate_score
-from services.decision.src.calibration import compute_calibration_metrics
+from services.decision.src.calibration import evaluate_score_calibration
+from factory_contracts.errors import ModelUnavailableError, InvalidRequestError
 
 from services.speech.server import app as speech_app
 from services.music.server import app as music_app
@@ -117,7 +119,7 @@ class TestEmbeddingRerankFailFastAdversarialProbes:
             assert "scores" not in data, "Defect! 'scores' must be ABSENT on 503 rerank failure"
 
     def test_text_embedder_unit_vector_l2_norm(self):
-        """Assert that all generated real embeddings strictly adhere to unit L2 norm ||v||_2 = 1.0 ± 1e-4."""
+        """Assert that all generated real embeddings strictly adhere to unit L2 norm ||v||_2 = 1.0 ± 1e-4 when configured, and fail closed when unconfigured."""
         embedder = TextEmbedder(default_dimensions=1024)
         test_inputs = [
             "Factory v4 decoupled AI studio architecture",
@@ -127,18 +129,32 @@ class TestEmbeddingRerankFailFastAdversarialProbes:
             "A " * 200,
         ]
 
-        for dim in [256, 512, 1024]:
-            resp = embedder.embed_texts(model="Qwen/Qwen-Embedding-0.6B", texts=test_inputs, dimensions=dim)
+        # 1. Unconfigured backend fails closed (no fake vector fallback)
+        with pytest.raises(ModelUnavailableError) as exc:
+            embedder.embed_texts(model="Qwen/Qwen-Embedding-0.6B", texts=test_inputs, dimensions=256)
+        assert "Fake vectors are disabled" in str(exc.value)
+
+        # 2. Configured upstream returns normalized vectors
+        mock_embedding = [1.0 / math.sqrt(256)] * 256
+        mock_resp = {
+            "object": "list",
+            "data": [{"object": "embedding", "embedding": mock_embedding, "index": i} for i in range(len(test_inputs))],
+            "model": "Qwen/Qwen-Embedding-0.6B",
+            "usage": {"prompt_tokens": 10, "total_tokens": 10},
+        }
+        with patch.object(httpx.Client, "post") as mock_post:
+            mock_post.return_value = MagicMock(status_code=200, json=lambda: mock_resp)
+            configured_embedder = TextEmbedder(default_dimensions=1024, upstream_url="http://mock-vllm-embed:8000")
+            resp = configured_embedder.embed_texts(model="Qwen/Qwen-Embedding-0.6B", texts=test_inputs, dimensions=256)
             assert len(resp.data) == len(test_inputs)
             for item in resp.data:
                 vec = item.embedding
-                assert len(vec) == dim
-                # Euclidean norm: sqrt(sum(v_i^2))
+                assert len(vec) == 256
                 l2_norm = math.sqrt(sum(x * x for x in vec))
-                assert abs(l2_norm - 1.0) < 1e-4, f"L2 norm violation: ||v|| = {l2_norm} for dim {dim}"
+                assert abs(l2_norm - 1.0) < 1e-4, f"L2 norm violation: ||v|| = {l2_norm} for dim 256"
 
     def test_reranker_strictly_descending_and_bounded(self):
-        """Assert that rerank relevance scores are strictly descending and bounded in [0.0, 1.0]."""
+        """Assert that rerank relevance scores are strictly descending and bounded in [0.0, 1.0], and unconfigured reranker fails closed."""
         reranker = DocumentReranker()
         req = RerankRequest(
             model="Qwen/Qwen-Rerank-0.6B",
@@ -151,23 +167,39 @@ class TestEmbeddingRerankFailFastAdversarialProbes:
             ],
             top_n=4,
         )
-        resp = reranker.rerank(req)
-        results = resp.results
-        assert len(results) == 4
+        # 1. Unconfigured backend fails closed (no BM25 / lexical fallback)
+        with pytest.raises(ModelUnavailableError) as exc:
+            reranker.rerank(req)
+        assert "Lexical fallback is disabled" in str(exc.value)
 
-        # Verify descending order & score range
-        for i in range(len(results) - 1):
-            assert 0.0 <= results[i].relevance_score <= 1.0
-            assert results[i].relevance_score >= results[i + 1].relevance_score, (
-                f"Rerank sort violation: item {i} ({results[i].relevance_score}) < item {i+1} ({results[i+1].relevance_score})"
-            )
+        # 2. Configured upstream returns descending scored results
+        mock_data = {
+            "model": "Qwen/Qwen-Rerank-0.6B",
+            "results": [
+                {"index": 1, "document": req.documents[1], "relevance_score": 0.95},
+                {"index": 3, "document": req.documents[3], "relevance_score": 0.82},
+                {"index": 0, "document": req.documents[0], "relevance_score": 0.15},
+                {"index": 2, "document": req.documents[2], "relevance_score": 0.05},
+            ],
+        }
+        with patch.object(httpx.Client, "post") as mock_post:
+            mock_post.return_value = MagicMock(status_code=200, json=lambda: mock_data)
+            configured_reranker = DocumentReranker(upstream_url="http://mock-reranker:8000")
+            resp = configured_reranker.rerank(req)
+            results = resp.results
+            assert len(results) == 4
+            for i in range(len(results) - 1):
+                assert 0.0 <= results[i].relevance_score <= 1.0
+                assert results[i].relevance_score >= results[i + 1].relevance_score, (
+                    f"Rerank sort violation: item {i} ({results[i].relevance_score}) < item {i+1} ({results[i+1].relevance_score})"
+                )
 
 
 # ==============================================================================
 # PROBE SUITE 2: DECISION ENGINE CALIBRATION & MATH PROBES
 # ==============================================================================
 class TestDecisionEngineCalibrationAdversarialProbes:
-    """Rigorous empirical verification of probability distributions, confidence bounds, and calibration."""
+    """Rigorous empirical verification of fail-closed semantics, rejection of synthetic heuristics, and proxying native vLLM decisions."""
 
     @pytest.fixture
     def decision_client(self):
@@ -176,80 +208,40 @@ class TestDecisionEngineCalibrationAdversarialProbes:
         return TestClient(decision_app)
 
     @pytest.mark.parametrize("num_choices", [2, 3, 5, 8, 12, 20])
-    def test_choice_probabilities_sum_to_one(self, num_choices):
-        """
-        Assert that choice probabilities sum to 1.0 ± 1e-6 across varying candidate set sizes
-        and extreme logit disparities.
-        """
+    def test_legacy_choice_shim_fails_closed_no_heuristics(self, num_choices):
+        """Assert that legacy evaluate_choice strictly raises ModelUnavailableError and refuses heuristic scoring."""
         choices = [f"candidate_route_{i}" for i in range(num_choices)]
         context = "High-priority video rendering job requiring dual GPU cluster allocation."
+        with pytest.raises(ModelUnavailableError) as exc_info:
+            evaluate_choice(context=context, choices=choices)
+        assert "heuristics are disabled" in str(exc_info.value).lower()
 
-        result = evaluate_choice(context=context, choices=choices)
+    def test_legacy_predicate_and_calibration_shims_fail_closed(self):
+        """Assert that evaluate_predicate, evaluate_score, and evaluate_score_calibration raise ModelUnavailableError."""
+        with pytest.raises(ModelUnavailableError) as exc_p:
+            evaluate_predicate(context="ctx", hypothesis="hyp")
+        assert "heuristics are disabled" in str(exc_p.value).lower()
 
-        prob_sum = sum(result.probabilities.values())
-        assert abs(prob_sum - 1.0) < 1e-6, f"Probabilities sum {prob_sum} deviates from 1.0 by {abs(prob_sum - 1.0)}"
+        with pytest.raises(ModelUnavailableError) as exc_s:
+            evaluate_score("ctx")
+        assert "heuristics are disabled" in str(exc_s.value).lower()
 
-        for ch, p in result.probabilities.items():
-            assert 0.0 < p <= 1.0, f"Probability for {ch} = {p} out of bounds (0, 1]"
+        with pytest.raises(ModelUnavailableError) as exc_c:
+            evaluate_score_calibration()
+        assert "calibration is disabled" in str(exc_c.value).lower()
 
-        assert result.selected_choice in choices
-        max_choice = max(result.probabilities.keys(), key=lambda k: result.probabilities[k])
-        assert result.selected_choice == max_choice
-
-    def test_predicate_confidence_bounds_and_logprob_math(self):
-        """
-        Assert that predicate confidence is in [0, 1] and logprobs satisfy
-        exp(logprob_true) + exp(logprob_false) = 1.0 ± 0.01.
-        """
-        probe_cases = [
-            ("Blue sports car racing on track", "The request involves vehicular motion"),
-            ("A peaceful mountain lake with pine trees", "The scene is set outdoors in nature"),
-            ("Deep learning model weights optimization", "The text relates to culinary arts"),
-            ("Detailed oil painting portrait of an elder", "Image generation task"),
-            ("Abstract theoretical mathematics discussion", "Vehicle motion"),
-            ("", "Some hypothesis with context empty"),
-            ("Short text", "Very detailed and elaborate hypothesis testing domain boundaries"),
-        ]
-
-        for ctx, hyp in probe_cases:
-            resp = evaluate_predicate(context=ctx, hypothesis=hyp)
-
-            # Confidence bounds
-            assert 0.0 <= resp.confidence <= 1.0, f"Confidence {resp.confidence} out of bounds [0, 1]"
-            assert resp.confidence >= 0.5, f"Confidence {resp.confidence} expected >= 0.5 for selected binary decision"
-            assert isinstance(resp.decision, bool)
-
-            # Logprob validity
-            logprobs = resp.logprobs
-            assert "true" in logprobs and "false" in logprobs
-            lp_true = logprobs["true"]
-            lp_false = logprobs["false"]
-
-            assert lp_true <= 0.0, f"logprob_true {lp_true} must be non-positive"
-            assert lp_false <= 0.0, f"logprob_false {lp_false} must be non-positive"
-
-            # Probability reconstruction
-            p_true_recon = math.exp(lp_true)
-            p_false_recon = math.exp(lp_false)
-            prob_sum = p_true_recon + p_false_recon
-            assert abs(prob_sum - 1.0) < 0.01, f"Reconstructed probability sum {prob_sum} deviates from 1.0"
-
-    def test_decision_scoring_and_calibration_metrics(self, decision_client):
-        """Assert score output respects scale and calibration metrics ECE/Brier are in [0, 1]."""
+    def test_decision_scoring_unconfigured_backend_returns_503(self, decision_client):
+        """Assert that unconfigured native decision backend fails fast with 503 MODEL_UNAVAILABLE."""
         payload = {
-            "model": "qwen-decision-8b",
+            "model": "qwen-decision",
             "task": "score",
             "context": "Ultra sharp contrast, correct anatomy, 60fps zero artifacts.",
             "scale": [10.0, 50.0],
         }
         res = decision_client.post("/v1/decisions", headers=AUTH_HEADERS, json=payload)
-        assert res.status_code == 200
+        assert res.status_code == 503
         data = res.json()
-
-        assert 10.0 <= data["score"] <= 50.0
-        calib = data["calibration_metrics"]
-        assert 0.0 <= calib["ece"] <= 1.0
-        assert 0.0 <= calib["brier_score"] <= 1.0
+        assert data["error"]["code"] == "MODEL_UNAVAILABLE"
 
     def test_decision_engine_error_rejection(self, decision_client):
         """Assert invalid decision requests return 400 clean errors without crashes."""
@@ -257,7 +249,7 @@ class TestDecisionEngineCalibrationAdversarialProbes:
         res = decision_client.post(
             "/v1/decisions",
             headers=AUTH_HEADERS,
-            json={"model": "qwen-decision-8b", "task": "choice", "context": "ctx", "choices": []},
+            json={"model": "qwen-decision", "task": "choice", "context": "ctx", "choices": []},
         )
         assert res.status_code == 400
         assert res.json()["error"]["code"] == "INVALID_REQUEST"
@@ -266,7 +258,7 @@ class TestDecisionEngineCalibrationAdversarialProbes:
         res = decision_client.post(
             "/v1/decisions",
             headers=AUTH_HEADERS,
-            json={"model": "qwen-decision-8b", "task": "predicate", "context": "ctx", "hypothesis": "   "},
+            json={"model": "qwen-decision", "task": "predicate", "context": "ctx", "hypothesis": "   "},
         )
         assert res.status_code == 400
         assert res.json()["error"]["code"] == "INVALID_REQUEST"
@@ -275,10 +267,47 @@ class TestDecisionEngineCalibrationAdversarialProbes:
         res = decision_client.post(
             "/v1/decisions",
             headers=AUTH_HEADERS,
-            json={"model": "qwen-decision-8b", "task": "score", "context": "ctx", "scale": [100.0, 10.0]},
+            json={"model": "qwen-decision", "task": "score", "context": "ctx", "scale": [100.0, 10.0]},
         )
         assert res.status_code == 400
         assert res.json()["error"]["code"] == "INVALID_REQUEST"
+
+    def test_decision_engine_proxies_configured_backend(self, decision_client):
+        """Assert that when native vLLM decision backend is configured, it accurately proxies the response."""
+        mock_upstream_response = {
+            "id": "dec-123",
+            "model": "qwen-decision",
+            "answers": [
+                {
+                    "name": "decision",
+                    "type": "choice",
+                    "choice": "video_upscale",
+                    "probabilities": {"audio_enhancement": 0.1, "video_upscale": 0.9},
+                }
+            ],
+            "usage": {"prompt_tokens": 15, "total_tokens": 16},
+        }
+        with patch("services.decision.src.vllm_adapter.httpx.Client") as mock_client_cls:
+            mock_instance = MagicMock()
+            mock_instance.__enter__.return_value = mock_instance
+            mock_instance.post.return_value = MagicMock(status_code=200, json=lambda: mock_upstream_response)
+            mock_client_cls.return_value = mock_instance
+
+            configured_engine = DecisionEngine(upstream_url="http://mock-vllm-decision:8000")
+            decision_app.state.engine = configured_engine
+
+            payload = {
+                "model": "qwen-decision",
+                "task": "choice",
+                "context": "Context requiring video upscale",
+                "choices": ["audio_enhancement", "video_upscale"],
+            }
+            res = decision_client.post("/v1/decisions", headers=AUTH_HEADERS, json=payload)
+            assert res.status_code == 200
+            data = res.json()
+            assert data["task"] == "choice"
+            assert data["answer"]["choice"] == "video_upscale"
+            assert data["usage"]["total_tokens"] == 16
 
 
 # ==============================================================================
@@ -326,10 +355,8 @@ class TestSpeechMusicEnhancementResilienceProbes:
                 headers={**headers, "Content-Type": "application/octet-stream"},
                 content=corrupted_bytes,
             )
-            # Must not crash with 500
-            assert res.status_code == 200, f"Expected 200 with fallback duration, got {res.status_code}: {res.text}"
-            assert "text" in res.json()
-            assert res.json()["duration"] > 0
+            # Must not crash with 500; fails fast when backend unconfigured or invalid request
+            assert res.status_code in (400, 503)
 
             # 5. Invalid input to forced alignment -> 422
             res = client.post(
@@ -355,9 +382,13 @@ class TestSpeechMusicEnhancementResilienceProbes:
         1. Session 1 connects, streams chunks, finalizes via 'action: end', terminates cleanly.
         2. Session 2 reconnects on same server, streams chunks, terminates cleanly.
         """
+        speech_app.state.auth_config = AuthConfig(api_key=AUTH_TOKEN, jwt_secret=None, environment="test")
         with TestClient(speech_app) as client:
             # Session 1: Connect and stream with graceful finalization
-            with client.websocket_connect(f"/v1/audio/transcriptions/ws?token={AUTH_TOKEN}") as ws1:
+            with client.websocket_connect(
+                "/v1/audio/transcriptions/ws",
+                headers={"Authorization": f"Bearer {AUTH_TOKEN}"},
+            ) as ws1:
                 ws1.send_json({"chunk_id": 1})
                 resp1_1 = ws1.receive_json()
                 assert resp1_1.get("event") == "interim"
@@ -374,7 +405,10 @@ class TestSpeechMusicEnhancementResilienceProbes:
                 assert "text" in final1
 
             # Session 2: Fresh reconnection
-            with client.websocket_connect(f"/v1/audio/transcriptions/ws?token={AUTH_TOKEN}") as ws2:
+            with client.websocket_connect(
+                "/v1/audio/transcriptions/ws",
+                headers={"Authorization": f"Bearer {AUTH_TOKEN}"},
+            ) as ws2:
                 ws2.send_json({"chunk_id": 1})
                 resp2_1 = ws2.receive_json()
                 assert resp2_1.get("event") == "interim"
@@ -390,8 +424,12 @@ class TestSpeechMusicEnhancementResilienceProbes:
         Verifies that with remediation in place, the server gracefully handles the disconnect
         and finalizes session cleanly without crashing.
         """
+        speech_app.state.auth_config = AuthConfig(api_key=AUTH_TOKEN, jwt_secret=None, environment="test")
         with TestClient(speech_app) as client:
-            with client.websocket_connect(f"/v1/audio/transcriptions/ws?token={AUTH_TOKEN}") as ws:
+            with client.websocket_connect(
+                "/v1/audio/transcriptions/ws",
+                headers={"Authorization": f"Bearer {AUTH_TOKEN}"},
+            ) as ws:
                 ws.send_json({"chunk_id": 1})
                 resp = ws.receive_json()
                 assert resp.get("event") == "interim"
@@ -441,37 +479,34 @@ class TestSpeechMusicEnhancementResilienceProbes:
             assert res.json()["error"]["code"] == "VALIDATION_ERROR"
 
     def test_music_validation_and_clean_rejection(self):
-        """Send out-of-range parameters to music service; verify clean 422 validation without 500s."""
+        """Send requests to deprecated music service endpoints; verify clean 410 rejection without 500s."""
         music_app.state.auth_config = AuthConfig(api_key=AUTH_TOKEN, jwt_secret=None, environment="test")
         with TestClient(music_app) as client:
             headers = {"Authorization": f"Bearer {AUTH_TOKEN}", "Content-Type": "application/json"}
 
-            # Out of bounds duration_seconds (ge=5, le=300)
+            # Deprecated text_to_music
             res = client.post(
                 "/v1/text_to_music",
                 headers=headers,
                 json={"prompt": "Symphony", "duration_seconds": 1},
             )
-            assert res.status_code == 422
-            assert res.json()["error"]["code"] == "VALIDATION_ERROR"
+            assert res.status_code == 410
 
-            # Missing required prompt
+            # Deprecated text_to_music missing prompt
             res = client.post(
                 "/v1/text_to_music",
                 headers=headers,
                 json={"duration_seconds": 60},
             )
-            assert res.status_code == 422
-            assert res.json()["error"]["code"] == "VALIDATION_ERROR"
+            assert res.status_code == 410
 
-            # Out of bounds audio_strength (ge=0.0, le=1.0)
+            # Deprecated audio_to_audio
             res = client.post(
                 "/v1/audio_to_audio",
                 headers=headers,
                 json={"audio_url": "https://s3.ai.example.com/audio.wav", "prompt": "Remix", "audio_strength": 3.5},
             )
-            assert res.status_code == 422
-            assert res.json()["error"]["code"] == "VALIDATION_ERROR"
+            assert res.status_code == 410
 
 
 # ==============================================================================

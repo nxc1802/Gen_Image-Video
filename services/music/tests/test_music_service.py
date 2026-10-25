@@ -37,10 +37,7 @@ async def test_music_text_to_music():
             headers=TEST_HEADERS,
             json={"prompt": "Catchy synthpop theme", "duration_seconds": 10, "genre": "synthpop"},
         )
-        assert res.status_code == 200
-        data = res.json()
-        assert data["status"] == "completed"
-        assert data["artifact"]["mime_type"] == "audio/wav"
+        assert res.status_code == 410
 
 
 @pytest.mark.asyncio
@@ -51,8 +48,7 @@ async def test_music_lyrics_to_music():
             headers=TEST_HEADERS,
             json={"prompt": "Pop song", "lyrics": "Hello world from Factory v4", "duration_seconds": 10},
         )
-        assert res.status_code == 200
-        assert res.json()["status"] == "completed"
+        assert res.status_code == 410
 
 
 @pytest.mark.asyncio
@@ -63,5 +59,4 @@ async def test_music_audio_to_audio():
             headers=TEST_HEADERS,
             json={"audio_url": "https://s3.ai.example.com/assets/sample.wav", "prompt": "EDM remix"},
         )
-        assert res.status_code == 200
-        assert res.json()["status"] == "completed"
+        assert res.status_code == 410

@@ -342,7 +342,7 @@ class PostgresJobRepository(BaseJobRepository):
         RETURNING event_id
         """
         async with self.pool.acquire() as conn:
-            val = await conn.fetchval(query, job_id, event_type, stage, percent, json.dumps(data))
+            val = await conn.fetchval(query, job_id, event_type, stage, percent, json.dumps(data, default=str))
             return int(val)
 
     async def get_events_since(self, job_id: str, since_event_id: int) -> List[Dict[str, Any]]:

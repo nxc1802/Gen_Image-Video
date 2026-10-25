@@ -31,8 +31,9 @@ app.add_middleware(
 @app.get("/health")
 async def health():
     return {
-        "status": "deprecated",
+        "status": "healthy",
         "service": "music-compatibility-gateway",
+        "subsystem": "music",
         "native_api": "ACE-Step 1.5",
     }
 

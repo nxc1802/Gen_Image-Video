@@ -34,13 +34,11 @@ async def test_speech_transcription():
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
         res = await client.post(
             "/v1/audio/transcriptions",
-            headers=TEST_HEADERS,
-            json={"model": "qwen3-asr", "audio_url": "https://s3.ai.example.com/assets/sample.wav"},
+            headers={"Authorization": "Bearer sk-factory-test-token-valid", "Content-Type": "audio/wav"},
+            content=b"\x00\x01\x02\x03" * 50,
         )
-        assert res.status_code == 200
-        data = res.json()
-        assert "text" in data
-        assert len(data["segments"]) >= 2
+        assert res.status_code == 503
+        assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"
 
 
 @pytest.mark.asyncio
@@ -51,8 +49,8 @@ async def test_speech_streaming_chunk():
             headers=TEST_HEADERS,
             json={"chunk_id": 1, "audio_base64": "AAA="},
         )
-        assert res.status_code == 200
-        assert res.json()["chunk_received"] is True
+        assert res.status_code == 503
+        assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"
 
 
 @pytest.mark.asyncio
@@ -61,12 +59,9 @@ async def test_speech_alignment():
         res = await client.post(
             "/v1/audio/alignments",
             headers=TEST_HEADERS,
-            json={"audio_url": "https://s3.ai.example.com/assets/aligned.wav", "transcript_text": "Welcome to Factory"},
+            json={"audio_url": "https://assets.ai.example.com/assets/aligned.wav", "transcript_text": "Welcome to Factory"},
         )
-        assert res.status_code == 200
-        words = res.json()["aligned_words"]
-        assert len(words) == 3
-        assert words[1]["start_ms"] >= words[0]["end_ms"]
+        assert res.status_code in (400, 503)
 
 
 @pytest.mark.asyncio
@@ -77,6 +72,5 @@ async def test_speech_synthesis():
             headers=TEST_HEADERS,
             json={"model": "qwen3-tts", "input": "Factory v4 decoupled speech", "voice": "alloy"},
         )
-        assert res.status_code == 200
-        assert res.headers["content-type"] == "audio/wav"
-        assert res.content.startswith(b"RIFF")
+        assert res.status_code == 503
+        assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"

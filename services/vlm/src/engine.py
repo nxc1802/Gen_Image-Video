@@ -8,6 +8,7 @@ import httpx
 
 from factory_contracts.errors import InvalidRequestError, ModelUnavailableError
 from services.text.src.models import ChatCompletionRequest
+from services.vlm.src.processor import MultimodalMediaProcessor
 
 OFFLINE_MODELS = {"offline-model", "qwen-offline", "failing-model", "failing-vlm-model"}
 
@@ -32,6 +33,9 @@ class VLMEngine:
             raise ModelUnavailableError(message=f"Model '{request.model}' is offline.")
         if not request.messages:
             raise InvalidRequestError("Field 'messages' must be a non-empty array.")
+        processor = MultimodalMediaProcessor()
+        for msg in request.messages:
+            processor.parse_multimodal_content(msg.content)
 
     def _headers(self) -> dict[str, str]:
         h = {"Content-Type": "application/json"}

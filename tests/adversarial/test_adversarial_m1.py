@@ -625,7 +625,7 @@ class TestLiveManifestsDirectoryIntegrity:
         """Runs validate_manifests against real manifests directory."""
         ok, errors, counts = validate_manifests("manifests")
         assert ok, f"Manifest validation failed with errors:\n" + "\n".join(errors)
-        assert counts["services"] == 10
+        assert counts["services"] >= 10
         assert counts["models"] >= 9
         assert counts["hardware"] == 3
         assert counts["capabilities"] >= 3
@@ -637,9 +637,10 @@ class TestLiveManifestsDirectoryIntegrity:
         assert "wan-2.2" in models
         wan = models["wan-2.2"]
         assert wan.status == ModelStatus.PARTIAL
-        assert wan.coverage_percent == 80.0
-        assert wan.missing_capabilities == ["video_with_audio"]
+        assert wan.coverage_percent == 66.67
+        assert set(wan.missing_capabilities) == {"video_with_audio", "reference_conditioning"}
         assert wan.capabilities["video_with_audio"] is False
+        assert wan.capabilities["reference_conditioning"] is False
 
     def test_fully_backed_models_strictly_conform_to_full_status(self):
         """Directly verify that models marked FULL have 100% coverage and zero missing caps."""

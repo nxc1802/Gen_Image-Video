@@ -35,12 +35,10 @@ async def test_image_super_resolution():
         res = await client.post(
             "/v1/image_super_resolution",
             headers=TEST_HEADERS,
-            json={"image_url": "https://s3.ai.example.com/assets/sample.png", "scale_factor": 2},
+            json={"image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "scale_factor": 2},
         )
-        assert res.status_code == 200
-        data = res.json()
-        assert data["status"] == "completed"
-        assert data["artifact"]["mime_type"] == "image/png"
+        assert res.status_code == 503
+        assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"
 
 
 @pytest.mark.asyncio
@@ -49,12 +47,10 @@ async def test_video_super_resolution():
         res = await client.post(
             "/v1/video_super_resolution",
             headers=TEST_HEADERS,
-            json={"video_url": "https://s3.ai.example.com/assets/sample.mp4", "scale_factor": 2},
+            json={"video_url": "data:video/mp4;base64,AAA=", "scale_factor": 2},
         )
-        assert res.status_code == 200
-        data = res.json()
-        assert data["status"] == "completed"
-        assert data["artifact"]["mime_type"] == "video/mp4"
+        assert res.status_code == 503
+        assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"
 
 
 @pytest.mark.asyncio
@@ -63,12 +59,10 @@ async def test_frame_interpolation():
         res = await client.post(
             "/v1/frame_interpolation",
             headers=TEST_HEADERS,
-            json={"video_url": "https://s3.ai.example.com/assets/sample.mp4", "multiplier": 2},
+            json={"video_url": "data:video/mp4;base64,AAA=", "multiplier": 2},
         )
-        assert res.status_code == 200
-        data = res.json()
-        assert data["status"] == "completed"
-        assert data["artifact"]["mime_type"] == "video/mp4"
+        assert res.status_code == 503
+        assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"
 
 
 @pytest.mark.asyncio
@@ -77,9 +71,7 @@ async def test_audio_enhancement():
         res = await client.post(
             "/v1/audio_enhancement",
             headers=TEST_HEADERS,
-            json={"audio_url": "https://s3.ai.example.com/assets/sample.wav", "mode": "denoise"},
+            json={"audio_url": "data:audio/wav;base64,AAA=", "mode": "denoise"},
         )
-        assert res.status_code == 200
-        data = res.json()
-        assert data["status"] == "completed"
-        assert data["artifact"]["mime_type"] == "audio/wav"
+        assert res.status_code == 503
+        assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"

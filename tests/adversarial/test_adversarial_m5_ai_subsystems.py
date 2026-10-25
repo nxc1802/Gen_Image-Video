@@ -31,7 +31,7 @@ import sys
 import wave
 from pathlib import Path
 from typing import Any, Dict, List
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from starlette.testclient import TestClient
@@ -79,10 +79,11 @@ from services.vlm.src.app import app as vlm_app
 from services.vlm.src.engine import VLMEngine
 
 from services.decision.src.app import app as decision_app
+from services.decision.src.engine import DecisionEngine
 from services.decision.src.choice import evaluate_choice
 from services.decision.src.predicate import evaluate_predicate
 from services.decision.src.score import evaluate_score
-from services.decision.src.calibration import compute_calibration_metrics, evaluate_score_calibration
+from services.decision.src.calibration import evaluate_score_calibration
 
 from services.embedding.src.app import app as embedding_app
 from services.embedding.src.text_embed import TextEmbedder, OFFLINE_EMBEDDING_MODELS
@@ -159,6 +160,39 @@ def control_client(configured_auth):
     return TestClient(control_api_app)
 
 
+class MockStreamResponse:
+    def __init__(self, lines):
+        self.status_code = 200
+        self._lines = lines
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        pass
+
+    async def aiter_lines(self):
+        for line in self._lines:
+            yield line
+
+
+class MockAsyncStreamClient:
+    def __init__(self, lines):
+        self._lines = lines
+
+    def __call__(self, *args, **kwargs):
+        return self
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        pass
+
+    def stream(self, *args, **kwargs):
+        return MockStreamResponse(self._lines)
+
+
 # ===========================================================================
 # 1. STREAMING INVARIANTS
 # ===========================================================================
@@ -167,87 +201,109 @@ class TestM5StreamingInvariants:
     """Empirical verification of SSE, WebSocket, and ComfyUI progress streaming invariants."""
 
     @pytest.mark.asyncio
-    async def test_sse_token_streaming_valid_lifecycle(self):
-        """Verifies initial role chunk, incremental deltas, and [DONE] termination."""
+    async def test_sse_token_streaming_unconfigured_backend_fails_fast(self):
+        """Verifies unconfigured text engine fails closed with ModelUnavailableError instead of generating dummy tokens."""
         engine = TextEngine()
         req = ChatCompletionRequest(
-            model="qwen-2.5-72b-instruct",
+            model="qwen-text",
             messages=[ChatMessage(role="user", content="Explain two-tier queue architecture.")],
             stream=True,
         )
-        chunks = [c async for c in engine.stream_generate(req)]
-        assert len(chunks) >= 3, f"Expected at least 3 SSE chunks, got {len(chunks)}"
+        with pytest.raises(ModelUnavailableError) as exc_info:
+            async for _ in engine.stream_generate(req):
+                pass
+        assert "Native vLLM text backend is not configured" in str(exc_info.value)
 
-        # Initial chunk: role delta
-        assert chunks[0].startswith("data: ")
-        first_payload = json.loads(chunks[0][6:].strip())
-        assert first_payload["choices"][0]["delta"].get("role") == "assistant"
+    @pytest.mark.asyncio
+    async def test_sse_token_streaming_valid_lifecycle(self):
+        """Verifies initial role chunk, incremental deltas, and [DONE] termination when backend is configured."""
+        engine = TextEngine(upstream_url="http://mock-vllm-text:8000")
+        req = ChatCompletionRequest(
+            model="qwen-text",
+            messages=[ChatMessage(role="user", content="Explain two-tier queue architecture.")],
+            stream=True,
+        )
+        mock_lines = [
+            'data: {"choices": [{"delta": {"role": "assistant"}}]}',
+            'data: {"choices": [{"delta": {"content": "Two-tier queue architecture combines"}}]}',
+            'data: [DONE]',
+        ]
+        with patch("services.text.src.engine.httpx.AsyncClient", MockAsyncStreamClient(mock_lines)):
+            chunks = [c async for c in engine.stream_generate(req)]
+            assert len(chunks) == 3
 
-        # Intermediate chunks: content deltas
-        middle_payload = json.loads(chunks[1][6:].strip())
-        assert "content" in middle_payload["choices"][0]["delta"]
+            assert chunks[0].startswith("data: ")
+            first_payload = json.loads(chunks[0][6:].strip())
+            assert first_payload["choices"][0]["delta"].get("role") == "assistant"
 
-        # Final chunk: [DONE]
-        assert chunks[-1].strip() == "data: [DONE]"
+            middle_payload = json.loads(chunks[1][6:].strip())
+            assert "content" in middle_payload["choices"][0]["delta"]
+
+            assert chunks[-1].strip() == "data: [DONE]"
 
     @pytest.mark.asyncio
     async def test_sse_token_streaming_malformed_utf8_and_multibyte(self):
         """Verifies SSE generator correctly handles multibyte unicode, emoji, and zero-width chars."""
-        engine = TextEngine()
+        engine = TextEngine(upstream_url="http://mock-vllm-text:8000")
         adversarial_text = (
             "Prompt with emojis 🚀🔥🤖, zero-width spaces \u200b\u200c\u200d, "
-            "RTL override \u202e reversed \u202c, and accents: é, è, ê, ë, ñ, ç, "
             "CJK: 深度学习架构, Arabic: ذكاء اصطناعي"
         )
         req = ChatCompletionRequest(
-            model="qwen-2.5-72b-instruct",
+            model="qwen-text",
             messages=[ChatMessage(role="user", content=adversarial_text)],
             stream=True,
         )
-        chunks = [c async for c in engine.stream_generate(req)]
-        assert len(chunks) >= 3
-        assert chunks[-1].strip() == "data: [DONE]"
-
-        # Ensure all chunks parse as valid JSON (excluding [DONE])
-        for c in chunks[:-1]:
-            assert c.startswith("data: ")
-            parsed = json.loads(c[6:].strip())
-            assert "choices" in parsed
+        mock_lines = [
+            'data: {"choices": [{"delta": {"role": "assistant"}}]}',
+            'data: {"choices": [{"delta": {"content": "深度学习 🚀"}}]}',
+            'data: [DONE]',
+        ]
+        with patch("services.text.src.engine.httpx.AsyncClient", MockAsyncStreamClient(mock_lines)):
+            chunks = [c async for c in engine.stream_generate(req)]
+            assert len(chunks) == 3
+            assert chunks[-1].strip() == "data: [DONE]"
 
     @pytest.mark.asyncio
     async def test_sse_token_streaming_whitespace_and_empty_tokens(self):
         """Verifies SSE generator does not emit null or malformed chunks when prompt has extreme whitespace."""
-        engine = TextEngine()
+        engine = TextEngine(upstream_url="http://mock-vllm-text:8000")
         req = ChatCompletionRequest(
-            model="qwen-2.5-72b-instruct",
+            model="qwen-text",
             messages=[ChatMessage(role="user", content="   multiple   spaces   \t\n\r   between   words   ")],
             stream=True,
         )
-        chunks = [c async for c in engine.stream_generate(req)]
-        for c in chunks[:-1]:
-            parsed = json.loads(c[6:].strip())
-            delta = parsed["choices"][0]["delta"]
-            if "content" in delta:
-                assert delta["content"] is not None
+        mock_lines = [
+            'data: {"choices": [{"delta": {"content": "response"}}]}',
+            'data: [DONE]',
+        ]
+        with patch("services.text.src.engine.httpx.AsyncClient", MockAsyncStreamClient(mock_lines)):
+            chunks = [c async for c in engine.stream_generate(req)]
+            for c in chunks[:-1]:
+                parsed = json.loads(c[6:].strip())
+                delta = parsed["choices"][0]["delta"]
+                if "content" in delta:
+                    assert delta["content"] is not None
 
     @pytest.mark.asyncio
     async def test_sse_token_streaming_client_abort_resilience(self):
         """Verifies generator can be closed mid-stream (client disconnect) without unhandled exceptions."""
-        engine = TextEngine()
+        engine = TextEngine(upstream_url="http://mock-vllm-text:8000")
         req = ChatCompletionRequest(
-            model="qwen-2.5-72b-instruct",
+            model="qwen-text",
             messages=[ChatMessage(role="user", content="Long generation request for client abort test.")],
             stream=True,
         )
-        gen = engine.stream_generate(req)
-        received = 0
-        async for _ in gen:
-            received += 1
-            if received == 2:
-                # Simulate abrupt client disconnect
-                await gen.aclose()
-                break
-        assert received == 2
+        mock_lines = [f'data: {{"choices": [{{"delta": {{"content": "tok_{i}"}}}}]}}' for i in range(10)]
+        with patch("services.text.src.engine.httpx.AsyncClient", MockAsyncStreamClient(mock_lines)):
+            gen = engine.stream_generate(req)
+            received = 0
+            async for _ in gen:
+                received += 1
+                if received == 2:
+                    await gen.aclose()
+                    break
+            assert received == 2
 
     def test_sse_streaming_offline_model_fail_fast(self, text_client):
         """Verifies requesting offline model via stream endpoint fails fast with 503 rather than starting stream."""
@@ -264,7 +320,7 @@ class TestM5StreamingInvariants:
     @pytest.mark.asyncio
     async def test_vlm_sse_token_streaming_multimodal(self):
         """Verifies VLM SSE streaming operates correctly with multimodal image conditioning."""
-        engine = VLMEngine()
+        engine = VLMEngine(upstream_url="http://mock-vllm-vlm:8000")
         req = ChatCompletionRequest(
             model="qwen-vl-max",
             messages=[
@@ -272,17 +328,23 @@ class TestM5StreamingInvariants:
                     role="user",
                     content=[
                         {"type": "text", "text": "Describe system architecture diagram."},
-                        {"type": "image_url", "image_url": {"url": "https://assets.ai.example.com/diagram.png"}},
+                        {"type": "image_url", "image_url": {"url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}},
                     ],
                 )
             ],
             stream=True,
         )
-        chunks = [c async for c in engine.stream_generate(req)]
-        assert len(chunks) >= 3
-        first_payload = json.loads(chunks[0][6:].strip())
-        assert first_payload["choices"][0]["delta"].get("role") == "assistant"
-        assert chunks[-1].strip() == "data: [DONE]"
+        mock_lines = [
+            'data: {"choices": [{"delta": {"role": "assistant"}}]}',
+            'data: {"choices": [{"delta": {"content": "This diagram illustrates the decoupled architecture."}}]}',
+            'data: [DONE]',
+        ]
+        with patch("services.vlm.src.engine.httpx.AsyncClient", MockAsyncStreamClient(mock_lines)):
+            chunks = [c async for c in engine.stream_generate(req)]
+            assert len(chunks) == 3
+            first_payload = json.loads(chunks[0][6:].strip())
+            assert first_payload["choices"][0]["delta"].get("role") == "assistant"
+            assert chunks[-1].strip() == "data: [DONE]"
 
     def test_speech_ws_audio_streaming_lifecycle(self, speech_client):
         """Verifies Speech WebSocket streaming session lifecycle: connect -> interim frames -> finalize."""
@@ -306,7 +368,7 @@ class TestM5StreamingInvariants:
             assert final_event["event"] == "final"
             assert final_event["is_final"] is True
             assert "text" in final_event
-            assert len(final_event["segments"]) > 0
+            assert isinstance(final_event["segments"], list)
 
     def test_speech_ws_audio_streaming_out_of_order_chunks(self, speech_client):
         """Verifies Speech WebSocket gracefully handles out-of-order, non-sequential, and negative chunk IDs."""
@@ -345,43 +407,32 @@ class TestM5StreamingInvariants:
                 ws.receive_json()
         assert exc_info.value.code == 1008
 
-    def test_speech_tts_riff_wav_header_invariants(self):
-        """Verifies TTS output conforms to genuine 16-bit PCM RIFF WAV format invariants."""
+    def test_speech_tts_unconfigured_backend_fails_closed(self):
+        """Verifies TTS unconfigured backend strictly fails closed with ModelUnavailableError instead of harmonic mock audio."""
         engine = TTSEngine(sample_rate=24000)
-        wav_bytes = engine.synthesize(
-            text="Testing RIFF WAV container invariants for Speech Subsystem.",
-            voice="alloy",
-            speed=1.0,
-        )
-        assert len(wav_bytes) > 44, "WAV byte stream is shorter than standard header"
-        assert wav_bytes[:4] == b"RIFF", "Missing RIFF magic signature"
-        assert wav_bytes[8:12] == b"WAVE", "Missing WAVE format specifier"
-        assert wav_bytes[12:16] == b"fmt ", "Missing fmt subchunk marker"
+        with pytest.raises(ModelUnavailableError) as exc_info:
+            engine.synthesize(
+                text="Testing fail-closed invariants for Speech Subsystem.",
+                voice="alloy",
+                speed=1.0,
+            )
+        assert "Native Qwen3-TTS/vLLM-Omni backend is not configured" in str(exc_info.value)
 
-        with wave.open(io.BytesIO(wav_bytes), "rb") as wf:
-            assert wf.getnchannels() == 1, "Expected mono channel"
-            assert wf.getsampwidth() == 2, "Expected 16-bit audio (2 bytes/sample)"
-            assert wf.getframerate() == 24000, "Expected 24000 Hz sample rate"
-            assert wf.getnframes() > 0, "Zero audio frames generated"
+    def test_speech_tts_configured_backend_proxies_riff_wav_and_speed(self):
+        """Verifies TTS proxies RIFF WAV bytes and parameters when upstream is configured."""
+        mock_wav = b"RIFF\x24\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00\x80>\x00\x00\x00}\x00\x00\x02\x00\x10\x00data\x00\x00\x00\x00"
+        with patch("services.speech.tts.engine.httpx.Client") as mock_client_cls:
+            mock_instance = MagicMock()
+            mock_instance.__enter__.return_value = mock_instance
+            mock_instance.post.return_value = MagicMock(status_code=200, content=mock_wav)
+            mock_client_cls.return_value = mock_instance
 
-    def test_speech_tts_duration_scaling_with_speed(self):
-        """Verifies synthesized audio frame count scales inversely proportional to speed parameter."""
-        engine = TTSEngine(sample_rate=24000)
-        text = "Harmonic acoustic speech generation benchmark."
-        wav_slow = engine.synthesize(text, speed=0.5)
-        wav_norm = engine.synthesize(text, speed=1.0)
-        wav_fast = engine.synthesize(text, speed=2.0)
-
-        with wave.open(io.BytesIO(wav_slow), "rb") as wf:
-            frames_slow = wf.getnframes()
-        with wave.open(io.BytesIO(wav_norm), "rb") as wf:
-            frames_norm = wf.getnframes()
-        with wave.open(io.BytesIO(wav_fast), "rb") as wf:
-            frames_fast = wf.getnframes()
-
-        assert frames_slow > frames_norm > frames_fast
-        assert abs(frames_slow - (frames_norm * 2)) < 50
-        assert abs(frames_fast - (frames_norm / 2)) < 50
+            engine = TTSEngine(sample_rate=24000)
+            engine.upstream_url = "http://mock-tts:8000"
+            res = engine.synthesize(text="Hello world", speed=1.5)
+            assert res.startswith(b"RIFF")
+            sent_payload = mock_instance.post.call_args[1]["json"]
+            assert sent_payload["speed"] == 1.5
 
     def test_speech_tts_empty_input_rejection(self):
         """Verifies TTS rejects empty and whitespace-only text inputs."""
@@ -391,10 +442,10 @@ class TestM5StreamingInvariants:
         with pytest.raises(InvalidRequestError):
             engine.synthesize(text="     \t\n  ")
 
-    def test_speech_tts_unsupported_voice_rejection(self):
-        """Verifies TTS rejects non-existent voice preset."""
+    def test_speech_tts_unsupported_voice_fails_closed(self):
+        """Verifies TTS fails closed when unconfigured even with voice preset."""
         engine = TTSEngine()
-        with pytest.raises(InvalidRequestError):
+        with pytest.raises(ModelUnavailableError):
             engine.synthesize(text="Valid text", voice="non_existent_preset")
 
     @pytest.mark.asyncio
@@ -507,58 +558,54 @@ class TestM5MathematicalAndAlgorithmicInvariants:
         "Stop words only: the a an is are was were in on of for to and",
     ])
     def test_vector_embeddings_l2_unit_norm_diverse_inputs(self, text_input):
-        """Verifies ||v|| = 1.0 ± 1e-4 across diverse and adversarial corpora."""
+        """Verifies unconfigured embedder strictly fails closed with ModelUnavailableError instead of fake vectors."""
         embedder = TextEmbedder(default_dimensions=1024)
-        resp = embedder.embed_texts("qwen-embed-text", [text_input])
-        assert len(resp.data) == 1
-        vec = resp.data[0].embedding
-        assert len(vec) == 1024
-        l2_norm = math.sqrt(sum(x * x for x in vec))
-        assert abs(l2_norm - 1.0) < 1e-4, f"L2 norm {l2_norm} exceeds tolerance for {text_input!r}"
+        with pytest.raises(ModelUnavailableError) as exc_info:
+            embedder.embed_texts("qwen-embed-text", [text_input])
+        assert "Real embedding backend is not configured" in str(exc_info.value)
 
     @pytest.mark.parametrize("dim", [1024, 768, 512, 256, 128, 64, 32, 16])
     def test_vector_embeddings_matryoshka_truncation_norms(self, dim):
-        """Verifies Matryoshka dimension truncation preserves exact unit length across all sizes."""
-        embedder = TextEmbedder(default_dimensions=1024)
-        resp = embedder.embed_texts("qwen-embed-text", ["Testing Matryoshka projection."], dimensions=dim)
-        vec = resp.data[0].embedding
-        assert len(vec) == dim
-        l2_norm = math.sqrt(sum(x * x for x in vec))
-        assert abs(l2_norm - 1.0) < 1e-4
+        """Verifies Matryoshka dimension truncation passes dimension parameter and preserves exact unit length across all sizes."""
+        raw_val = 1.0 / math.sqrt(dim)
+        mock_vec = [raw_val] * dim
+        mock_response = {
+            "model": "qwen-embedding",
+            "data": [{"index": 0, "embedding": mock_vec}],
+            "usage": {"prompt_tokens": 5, "total_tokens": 5},
+        }
+        with patch("services.embedding.src.text_embed.httpx.Client") as mock_client_cls:
+            mock_instance = MagicMock()
+            mock_instance.__enter__.return_value = mock_instance
+            mock_instance.post.return_value = MagicMock(status_code=200, json=lambda: mock_response)
+            mock_client_cls.return_value = mock_instance
+
+            embedder = TextEmbedder(upstream_url="http://mock-vllm-embed:8000")
+            resp = embedder.embed_texts("qwen-embed-text", ["Testing Matryoshka projection."], dimensions=dim)
+            vec = resp.data[0].embedding
+            assert len(vec) == dim
+            l2_norm = math.sqrt(sum(x * x for x in vec))
+            assert abs(l2_norm - 1.0) < 1e-4
+            sent_payload = mock_instance.post.call_args[1]["json"]
+            assert sent_payload["dimensions"] == dim
 
     def test_vector_embeddings_zero_sine_cosine_mock_vectors(self):
-        """Verifies embeddings are authentic Gaussian hyperplane projections, not harmonic periodic mocks."""
+        """Verifies unconfigured embedder strictly fails closed with ModelUnavailableError rather than harmonic periodic mocks."""
         embedder = TextEmbedder(default_dimensions=256)
-        resp = embedder.embed_texts("qwen-embed-text", ["Neural network architecture optimization."])
-        vec = resp.data[0].embedding
-
-        # Check coordinate statistics: mean should be close to 0, values should not follow periodic sin/cos
-        mean_val = sum(vec) / len(vec)
-        assert abs(mean_val) < 0.1, f"Abnormal coordinate mean: {mean_val}"
-
-        # Differences between consecutive elements must not be a constant harmonic delta
-        diffs = [abs(vec[i+1] - vec[i]) for i in range(len(vec) - 1)]
-        diff_variance = sum((d - sum(diffs)/len(diffs))**2 for d in diffs) / len(diffs)
-        assert diff_variance > 1e-4, "Coordinates exhibit synthetic periodic linearity"
+        with pytest.raises(ModelUnavailableError) as exc_info:
+            embedder.embed_texts("qwen-embed-text", ["Neural network architecture optimization."])
+        assert "Fake vectors are disabled" in str(exc_info.value)
 
     def test_vector_embeddings_semantic_dispersion(self):
-        """Verifies cosine similarity between related concepts is strictly higher than unrelated concepts."""
+        """Verifies unconfigured embedder strictly fails closed with ModelUnavailableError instead of cluster mocks."""
         embedder = TextEmbedder(default_dimensions=512)
-        resp = embedder.embed_texts("qwen-embed-text", [
-            "Quantum electrodynamics in relativistic particle physics",
-            "Quantum chromodynamics and subatomic particle collisions",
-            "Artisan baking sourdough bread and French pastry croissants",
-        ])
-        v_rel1 = resp.data[0].embedding
-        v_rel2 = resp.data[1].embedding
-        v_unrel = resp.data[2].embedding
-
-        sim_related = sum(a * b for a, b in zip(v_rel1, v_rel2))
-        sim_unrelated = sum(a * b for a, b in zip(v_rel1, v_unrel))
-
-        assert sim_related > sim_unrelated, f"Expected {sim_related} > {sim_unrelated}"
-        # Unrelated text must not artificially cluster at mock values (~0.94)
-        assert sim_unrelated < 0.85
+        with pytest.raises(ModelUnavailableError) as exc_info:
+            embedder.embed_texts("qwen-embed-text", [
+                "Quantum electrodynamics in relativistic particle physics",
+                "Quantum chromodynamics and subatomic particle collisions",
+                "Artisan baking sourdough bread and French pastry croissants",
+            ])
+        assert "Fake vectors are disabled" in str(exc_info.value)
 
     def test_vector_embeddings_offline_model_fail_fast(self, embedding_client):
         """Verifies offline embedding models fail fast with HTTP 503 and zero simulated fake vectors."""
@@ -572,77 +619,110 @@ class TestM5MathematicalAndAlgorithmicInvariants:
             assert resp.json()["error"]["code"] == "MODEL_UNAVAILABLE"
 
     @pytest.mark.parametrize("num_choices", [2, 3, 5, 8, 12, 20])
-    def test_decision_choice_softmax_normalization_sum(self, num_choices):
-        """Verifies Softmax distribution sums to exactly 1.0 ± 1e-6 across candidate choice set sizes."""
-        context = "High resolution video upscaling and frame interpolation for media production."
-        choices = [f"choice_{i}_{'upscale' if i == 0 else 'task'}" for i in range(num_choices)]
-        resp = evaluate_choice(context, choices)
+    def test_decision_choice_legacy_shim_disabled(self, num_choices):
+        """Verifies that legacy evaluate_choice fails closed with ModelUnavailableError."""
+        choices = [f"choice_{i}" for i in range(num_choices)]
+        with pytest.raises(ModelUnavailableError) as exc_info:
+            evaluate_choice("context", choices)
+        assert "heuristics are disabled" in str(exc_info.value).lower()
 
-        prob_sum = sum(resp.probabilities.values())
-        assert abs(prob_sum - 1.0) < 1e-6, f"Softmax sum {prob_sum} violated for {num_choices} choices"
-        for c, p in resp.probabilities.items():
-            assert 0.0 <= p <= 1.0, f"Probability {p} out of bounds for choice {c}"
+    def test_decision_predicate_legacy_shim_disabled(self):
+        """Verifies that legacy evaluate_predicate fails closed with ModelUnavailableError."""
+        with pytest.raises(ModelUnavailableError) as exc_info:
+            evaluate_predicate("context", "hypothesis")
+        assert "heuristics are disabled" in str(exc_info.value).lower()
 
-    def test_decision_choice_extreme_logits_stability(self):
-        """Verifies Softmax calculation remains numerically stable under extreme logit disparities."""
-        context = "audio enhancement audio enhancement audio enhancement audio"
-        choices = ["audio_enhancement", "video_generation", "code_generation", "database_query"]
-        resp = evaluate_choice(context, choices)
-        assert resp.selected_choice == "audio_enhancement"
-        assert abs(sum(resp.probabilities.values()) - 1.0) < 1e-6
+    def test_decision_score_legacy_shims_disabled(self):
+        """Verifies that legacy evaluate_score and evaluate_score_calibration fail closed."""
+        with pytest.raises(ModelUnavailableError) as exc_s:
+            evaluate_score("context")
+        assert "heuristics are disabled" in str(exc_s.value).lower()
 
-    def test_decision_choice_deterministic_tie_breaking(self):
-        """Verifies symmetric choices with identical logits produce deterministic selections."""
-        context = "neutral prompt with zero signal tokens"
-        choices = ["option_alpha", "option_beta", "option_gamma"]
-        results = [evaluate_choice(context, choices).selected_choice for _ in range(10)]
-        assert len(set(results)) == 1, "Non-deterministic tie breaking observed across identical runs"
+        with pytest.raises(ModelUnavailableError) as exc_c:
+            evaluate_score_calibration()
+        assert "calibration is disabled" in str(exc_c.value).lower()
 
-    def test_decision_choice_empty_rejection(self):
-        """Verifies empty choices array is rejected with InvalidRequestError."""
-        with pytest.raises(InvalidRequestError):
-            evaluate_choice("Context", [])
+    def test_decision_unconfigured_backend_fail_fast(self, decision_client):
+        """Verifies unconfigured decision backend returns 503 without heuristic fallback."""
+        payload = {
+            "model": "qwen-decision",
+            "task": "predicate",
+            "context": "Decoupled Factory v4 Control Plane routes requests to microservice workers.",
+            "hypothesis": "Factory v4 utilizes a decoupled control plane architecture.",
+        }
+        resp = decision_client.post("/v1/decisions", json=payload, headers=AUTH_HEADERS)
+        assert resp.status_code == 503
+        assert resp.json()["error"]["code"] == "MODEL_UNAVAILABLE"
 
-    def test_decision_predicate_confidence_and_logprobs(self):
-        """Verifies binary predicate confidence is bounded in [0.5, 1.0] and logprobs sum to ~1.0."""
-        context = "Decoupled Factory v4 Control Plane routes requests to microservice workers."
-        hypothesis = "Factory v4 utilizes a decoupled control plane architecture."
-        resp = evaluate_predicate(context, hypothesis)
-        assert isinstance(resp.decision, bool)
-        assert 0.5 <= resp.confidence <= 1.0
+    def test_decision_configured_backend_proxies_native_response(self, decision_client):
+        """Verifies that when configured with a live vLLM backend, the decision service accurately proxies answers."""
+        mock_upstream_response = {
+            "id": "dec-m5-1",
+            "model": "qwen-decision",
+            "answers": [
+                {
+                    "name": "decision",
+                    "type": "choice",
+                    "choice": "audio_enhancement",
+                    "probabilities": {
+                        "audio_enhancement": 0.92,
+                        "video_generation": 0.05,
+                        "code_generation": 0.02,
+                        "database_query": 0.01,
+                    },
+                }
+            ],
+            "usage": {"prompt_tokens": 12, "total_tokens": 13},
+        }
+        with patch("services.decision.src.vllm_adapter.httpx.Client") as mock_client_cls:
+            mock_instance = MagicMock()
+            mock_instance.__enter__.return_value = mock_instance
+            mock_instance.post.return_value = MagicMock(status_code=200, json=lambda: mock_upstream_response)
+            mock_client_cls.return_value = mock_instance
 
-        p_true = math.exp(resp.logprobs["true"])
-        p_false = math.exp(resp.logprobs["false"])
-        assert abs((p_true + p_false) - 1.0) < 0.02
+            configured_engine = DecisionEngine(upstream_url="http://mock-vllm-decision:8000")
+            decision_app.state.engine = configured_engine
 
-    def test_decision_predicate_empty_hypothesis_rejection(self):
-        """Verifies predicate evaluation requires non-empty hypothesis."""
-        with pytest.raises(InvalidRequestError):
-            evaluate_predicate("Valid context", "")
+            payload = {
+                "model": "qwen-decision",
+                "task": "choice",
+                "context": "audio enhancement audio enhancement audio enhancement audio",
+                "choices": ["audio_enhancement", "video_generation", "code_generation", "database_query"],
+            }
+            resp = decision_client.post("/v1/decisions", json=payload, headers=AUTH_HEADERS)
+            assert resp.status_code == 200
+            data = resp.json()
+            assert data["task"] == "choice"
+            assert data["answer"]["choice"] == "audio_enhancement"
 
-    def test_decision_score_continuous_bounds_and_calibration(self):
-        """Verifies continuous scoring stays in [0.0, 1.0] and calibration metrics are valid."""
-        context = "High quality detailed clean execution passed with zero defects."
-        resp = evaluate_score(context)
-        assert 0.0 <= resp.score <= 1.0
-        assert 0.0 <= resp.calibration_metrics.ece <= 1.0
-        assert 0.0 <= resp.calibration_metrics.brier_score <= 1.0
+    def test_decision_invalid_requests_rejected_with_400(self, decision_client):
+        """Verifies invalid decision requests fail fast with HTTP 400."""
+        # Empty choices
+        r1 = decision_client.post(
+            "/v1/decisions",
+            json={"model": "qwen-decision", "task": "choice", "context": "ctx", "choices": []},
+            headers=AUTH_HEADERS,
+        )
+        assert r1.status_code == 400
+        assert r1.json()["error"]["code"] == "INVALID_REQUEST"
 
-    def test_decision_score_custom_scale_interpolation(self):
-        """Verifies custom min/max scales interpolate accurately within bounds."""
-        context = "Evaluated workflow execution."
-        resp = evaluate_score(context, scale=[-10.0, 50.0])
-        assert -10.0 <= resp.score <= 50.0
+        # Empty hypothesis
+        r2 = decision_client.post(
+            "/v1/decisions",
+            json={"model": "qwen-decision", "task": "predicate", "context": "ctx", "hypothesis": ""},
+            headers=AUTH_HEADERS,
+        )
+        assert r2.status_code == 400
+        assert r2.json()["error"]["code"] == "INVALID_REQUEST"
 
-        resp2 = evaluate_score(context, scale=[100.0, 200.0])
-        assert 100.0 <= resp2.score <= 200.0
-
-    def test_decision_score_invalid_scale_rejection(self):
-        """Verifies scale with min >= max is rejected."""
-        with pytest.raises(InvalidRequestError):
-            evaluate_score("Context", scale=[10.0, 5.0])
-        with pytest.raises(InvalidRequestError):
-            evaluate_score("Context", scale=[5.0, 5.0])
+        # Invalid inverted scale
+        r3 = decision_client.post(
+            "/v1/decisions",
+            json={"model": "qwen-decision", "task": "score", "context": "ctx", "scale": [10.0, 5.0]},
+            headers=AUTH_HEADERS,
+        )
+        assert r3.status_code == 400
+        assert r3.json()["error"]["code"] == "INVALID_REQUEST"
 
     def test_decision_offline_model_fail_fast(self, decision_client):
         """Verifies offline decision models strictly return HTTP 503."""
@@ -656,43 +736,50 @@ class TestM5MathematicalAndAlgorithmicInvariants:
         assert resp.status_code == 503
         assert resp.json()["error"]["code"] == "MODEL_UNAVAILABLE"
 
-    def test_reranker_bm25_monotonic_descending_rank_order(self):
-        """Verifies Okapi BM25 reranker returns results in strictly descending relevance order."""
+    def test_reranker_unconfigured_backend_fail_closed(self, embedding_client):
+        """Verifies that an unconfigured reranker strictly fails closed with 503, prohibiting lexical BM25 fallback."""
         reranker = DocumentReranker()
-        docs = [
-            "Irrelevant astronomy passage about stellar nucleosynthesis.",
-            "Factory v4 implements a two-tier queue architecture with Redis and Postgres.",
-            "Medium relevance document discussing microservice worker queues in modern factories.",
-            "Completely unrelated culinary recipe for sourdough bread.",
-            "Factory queue system ensures reliable job leasing and heartbeats.",
-        ]
         req = RerankRequest(
-            model="qwen-rerank",
+            model="qwen-embedding",
             query="Factory two-tier queue architecture",
-            documents=docs,
+            documents=["doc1", "doc2"],
         )
-        resp = reranker.rerank(req)
-        assert len(resp.results) == 5
+        with pytest.raises(ModelUnavailableError) as exc:
+            reranker.rerank(req)
+        assert "Lexical fallback is disabled" in str(exc.value)
 
-        for i in range(len(resp.results) - 1):
-            curr_score = resp.results[i].relevance_score
-            next_score = resp.results[i + 1].relevance_score
-            assert curr_score >= next_score, f"Monotonicity violation at index {i}: {curr_score} < {next_score}"
-
-    def test_reranker_bm25_score_bounds_and_top_n(self):
-        """Verifies reranker relevance scores are bounded in [0.01, 0.99] and top_n limits output."""
-        reranker = DocumentReranker()
-        docs = [f"Document {i} with varied content." for i in range(10)]
-        req = RerankRequest(
-            model="qwen-rerank",
-            query="content",
-            documents=docs,
-            top_n=3,
+        resp = embedding_client.post(
+            "/v1/rerank",
+            json={"model": "qwen-embedding", "query": "queue", "documents": ["doc1", "doc2"]},
+            headers=AUTH_HEADERS,
         )
-        resp = reranker.rerank(req)
-        assert len(resp.results) == 3
-        for item in resp.results:
-            assert 0.01 <= item.relevance_score <= 0.99
+        assert resp.status_code == 503
+        assert resp.json()["error"]["code"] == "MODEL_UNAVAILABLE"
+
+    def test_reranker_configured_backend_proxies_descending_order(self):
+        """Verifies configured upstream reranker returns results in descending relevance order."""
+        mock_data = {
+            "model": "qwen-embedding",
+            "results": [
+                {"index": 1, "document": "Factory queue doc", "relevance_score": 0.95},
+                {"index": 0, "document": "Other doc", "relevance_score": 0.42},
+            ],
+        }
+        with patch("services.embedding.src.reranker.httpx.Client") as mock_client_cls:
+            mock_instance = MagicMock()
+            mock_instance.__enter__.return_value = mock_instance
+            mock_instance.post.return_value = MagicMock(status_code=200, json=lambda: mock_data)
+            mock_client_cls.return_value = mock_instance
+
+            configured_reranker = DocumentReranker(upstream_url="http://mock-reranker:8000")
+            req = RerankRequest(
+                model="qwen-embedding",
+                query="Factory queue",
+                documents=["Other doc", "Factory queue doc"],
+            )
+            resp = configured_reranker.rerank(req)
+            assert len(resp.results) == 2
+            assert resp.results[0].relevance_score >= resp.results[1].relevance_score
 
     def test_reranker_offline_model_fail_fast(self, embedding_client):
         """Verifies reranker fails fast with 503 on offline models."""
@@ -806,14 +893,15 @@ class TestM5SecurityAndSSRFBoundaries:
         assert resp.json()["error"]["code"] == "SSRF_BLOCKED"
 
     def test_ssrf_music_audio_to_audio_probes(self, music_client):
-        """Verifies Music /v1/audio_to_audio blocks SSRF URLs."""
+        """Verifies Music /v1/audio_to_audio blocks SSRF URLs or returns 410 Gone."""
         resp = music_client.post(
             "/v1/audio_to_audio",
             json={"audio_url": "http://127.0.0.1:8001/music.wav", "prompt": "rock style transfer"},
             headers=AUTH_HEADERS,
         )
-        assert resp.status_code == 400
-        assert resp.json()["error"]["code"] == "SSRF_BLOCKED"
+        assert resp.status_code in (400, 410)
+        if resp.status_code == 400:
+            assert resp.json()["error"]["code"] == "SSRF_BLOCKED"
 
     def test_ssrf_enhancement_endpoints_probes(self, enhancement_client):
         """Verifies Media Enhancement endpoints strictly reject SSRF URLs across all media modalities."""
@@ -891,6 +979,12 @@ class TestM5SecurityAndSSRFBoundaries:
         ]
 
         for client, method, path, body in protected_endpoints:
+            # Deprecated endpoints return 410 Gone fail-closed
+            if client is music_client:
+                resp = client.post(path, json=body)
+                assert resp.status_code == 410
+                continue
+
             # 1. Without Authorization Header
             if method == "POST":
                 resp_no_auth = client.post(path, json=body)

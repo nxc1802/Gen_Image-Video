@@ -190,10 +190,12 @@ def test_video_registry_resolves_capability_ids():
     assert registry.get_workflow("wan-2.2", "video.fl2v") == registry.get_workflow("wan-2.2", "first_last_frame_to_video")
     assert registry.get_workflow("wan-2.2", "video.extension") == registry.get_workflow("wan-2.2", "video_extension")
     assert registry.get_workflow("wan-2.2", "video.extend") == registry.get_workflow("wan-2.2", "video_extension")
-    assert registry.get_workflow("wan-2.2", "video.with_audio") == registry.get_workflow("wan-2.2", "video_with_audio")
+    with pytest.raises(KeyError):
+        registry.get_workflow("wan-2.2", "video.with_audio")
 
     # MiniMax H3
     assert registry.get_workflow("minimax-h3", "video.t2v") == registry.get_workflow("minimax-h3", "text_to_video")
+    assert registry.get_workflow("minimax-h3", "video.with_audio") == registry.get_workflow("minimax-h3", "video_with_audio")
     assert registry.get_workflow("minimax-h3", "video.ref2va") == registry.get_workflow("minimax-h3", "reference_conditioning")
 
 

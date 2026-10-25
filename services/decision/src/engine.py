@@ -24,6 +24,7 @@ class DecisionEngine:
             raise ModelUnavailableError(message=f"Decision model '{request.model}' is offline.")
         if not request.context or not request.context.strip():
             raise InvalidRequestError("Field 'context' is required for decisions.")
+        self.adapter._question(request)
         if not self.adapter.is_configured:
             raise ModelUnavailableError(
                 message="Native vLLM decision backend is not configured. Heuristic fallback is disabled.",

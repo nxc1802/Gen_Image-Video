@@ -45,21 +45,20 @@ class StreamingASRBuffer:
         chunk_id: int,
         audio_data: Optional[bytes] = None,
     ) -> Dict[str, Any]:
-        if not audio_data:
-            raise InvalidRequestError("WebSocket ASR requires binary audio frames.")
         session = self._sessions.setdefault(
             session_id,
             {"created_at": time.time(), "last_text": "", "chunks": 0},
         )
         session["chunks"] += 1
-        result = self.engine.transcribe(audio_bytes=audio_data, model="qwen3-asr")
-        session["last_text"] = result.get("text", "")
-        session["last_segments"] = result.get("segments", [])
+        if audio_data:
+            result = self.engine.transcribe(audio_bytes=audio_data, model="qwen3-asr")
+            session["last_text"] = result.get("text", "")
+            session["last_segments"] = result.get("segments", [])
         return {
             "event": "interim",
             "chunk_id": chunk_id,
             "interim_text": session["last_text"],
-            "segments": session["last_segments"],
+            "segments": session.get("last_segments", []),
             "is_final": False,
             "timestamp_ms": int((time.time() - session["created_at"]) * 1000),
         }

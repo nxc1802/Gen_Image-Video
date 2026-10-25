@@ -210,6 +210,8 @@ async def websocket_transcription_stream(
         )
         if bearer_protocol:
             token = bearer_protocol[len("factory-bearer."):]
+    if not token:
+        token = websocket.query_params.get("token")
 
     authenticated = False
     if expected_key and token and secrets.compare_digest(token, expected_key):

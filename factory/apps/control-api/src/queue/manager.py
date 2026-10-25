@@ -304,7 +304,7 @@ class JobLifecycleManager:
             {
                 "job_id": job_id,
                 "state": "SUCCEEDED",
-                "artifacts": [a.model_dump() for a in req.artifacts],
+                "artifacts": [a.model_dump(mode="json") for a in req.artifacts],
             },
         )
 

@@ -39,26 +39,26 @@ def test_text_chat_completions_standard(text_client):
         "messages": [{"role": "user", "content": "Explain the two-tier queue architecture in Factory v4."}],
     }
     res = text_client.post("/v1/chat/completions", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    data = res.json()
-    assert data["object"] == "chat.completion"
-    assert len(data["choices"]) >= 1
-    assert "Factory v4" in data["choices"][0]["message"]["content"]
-    assert data["usage"]["total_tokens"] > 0
+    assert res.status_code == 503
+    assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"
 
 
 def test_text_chat_completions_streaming(text_client):
-    payload = {
-        "model": "qwen-2.5-72b-instruct",
-        "messages": [{"role": "user", "content": "Stream this response"}],
-        "stream": True,
-    }
-    res = text_client.post("/v1/chat/completions", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    assert "text/event-stream" in res.headers["content-type"]
-    text = res.text
-    assert "data: " in text
-    assert "data: [DONE]" in text
+    from services.text.src.models import ChatCompletionRequest, ChatMessage
+    from services.text.src.engine import TextEngine
+    engine = TextEngine()
+    req = ChatCompletionRequest(
+        model="qwen-2.5-72b-instruct",
+        messages=[ChatMessage(role="user", content="Stream this response")],
+        stream=True,
+    )
+    with pytest.raises(Exception) as exc_info:
+        import asyncio
+        async def run():
+            async for _ in engine.stream_generate(req):
+                pass
+        asyncio.run(run())
+    assert "Native vLLM text backend is not configured" in str(exc_info.value)
 
 
 def test_text_responses_api(text_client):
@@ -67,12 +67,8 @@ def test_text_responses_api(text_client):
         "input": "Calculate optimal GPU memory partition",
     }
     res = text_client.post("/v1/responses", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    data = res.json()
-    assert data["object"] == "response"
-    assert data["id"].startswith("resp-")
-    assert data["reasoning_tokens"] > 0
-    assert data["status"] == "completed"
+    assert res.status_code == 503
+    assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"
 
 
 def test_text_offline_model_fail_fast(text_client):
@@ -95,54 +91,30 @@ def test_text_empty_messages_rejected(text_client):
 def test_text_context_overflow_rejected(text_client):
     payload = {
         "model": "qwen-2.5-72b-instruct",
-        "messages": [{"role": "user", "content": "A" * 150000}],
+        "messages": [{"role": "user", "content": "A" * 600000}],
     }
     res = text_client.post("/v1/chat/completions", headers=AUTH_HEADERS, json=payload)
     assert res.status_code == 400
     assert res.json()["error"]["code"] == "INVALID_REQUEST"
 
 
-def test_text_chat_completions_system_persona(text_client):
-    payload = {
-        "model": "qwen-2.5-72b-instruct",
-        "messages": [
-            {"role": "system", "content": "You are an autonomous distributed systems architect."},
-            {"role": "user", "content": "What are your primary capabilities?"},
-        ],
+def test_text_chat_completions_configured_proxy(text_client):
+    from unittest.mock import patch, MagicMock
+    from services.text.src.engine import TextEngine
+    mock_resp = {
+        "id": "cmpl-1",
+        "object": "chat.completion",
+        "choices": [{"index": 0, "message": {"role": "assistant", "content": "Factory v4 is fully decoupled."}, "finish_reason": "stop"}],
+        "usage": {"total_tokens": 15},
     }
-    res = text_client.post("/v1/chat/completions", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    content = res.json()["choices"][0]["message"]["content"]
-    assert "autonomous distributed systems architect" in content.lower()
+    with patch("services.text.src.engine.httpx.Client") as mock_client_cls:
+        mock_instance = MagicMock()
+        mock_instance.__enter__.return_value = mock_instance
+        mock_instance.post.return_value = MagicMock(status_code=200, json=lambda: mock_resp)
+        mock_client_cls.return_value = mock_instance
 
-
-def test_text_chat_completions_json_response_format(text_client):
-    payload = {
-        "model": "qwen-2.5-72b-instruct",
-        "messages": [{"role": "user", "content": "Analyze node latency metrics"}],
-        "response_format": {"type": "json_object"},
-    }
-    res = text_client.post("/v1/chat/completions", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    content = res.json()["choices"][0]["message"]["content"]
-    import json
-    data = json.loads(content)
-    assert data["status"] == "success"
-    assert data["model"] == "qwen-2.5-72b-instruct"
-    assert "response" in data
-
-
-def test_text_responses_dynamic_reasoning_decomposition(text_client):
-    payload = {
-        "model": "qwen-2.5-72b-instruct",
-        "input": "Calculate cluster memory headroom where Headroom = (Total_RAM - OS_Reserve) / Worker_Nodes",
-    }
-    res = text_client.post("/v1/responses", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    data = res.json()
-    assert data["object"] == "response"
-    assert "Reasoning Step 1" in data["output"]
-    assert "Reasoning Step 2" in data["output"]
-    assert "Reasoning Step 3" in data["output"]
-    assert data["reasoning_tokens"] > 10
-    assert data["status"] == "completed"
+        app.state.engine = TextEngine(upstream_url="http://mock-vllm-text:8000")
+        payload = {"model": "qwen-2.5-72b-instruct", "messages": [{"role": "user", "content": "Explain Factory v4"}]}
+        res = text_client.post("/v1/chat/completions", headers=AUTH_HEADERS, json=payload)
+        assert res.status_code == 200
+        assert res.json()["choices"][0]["message"]["content"] == "Factory v4 is fully decoupled."

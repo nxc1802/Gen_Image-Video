@@ -407,7 +407,7 @@ class SqliteJobRepository(BaseJobRepository):
                 INSERT INTO job_events (job_id, event_type, stage, percent, data, created_at)
                 VALUES (?, ?, ?, ?, ?, ?)
                 """,
-                (job_id, event_type, stage, percent, json.dumps(data), now),
+                (job_id, event_type, stage, percent, json.dumps(data, default=str), now),
             )
             await self._db.commit()
             return cursor.lastrowid

@@ -22,6 +22,7 @@ import httpx
 import pytest
 
 from factory_auth.config import AuthConfig
+from factory_contracts.errors import ModelUnavailableError
 from factory_contracts.jobs.job_contract import JobState
 from factory_contracts.jobs.worker_contract import (
     WorkerLeaseRequest,
@@ -87,7 +88,7 @@ async def test_concurrent_burst_job_submission_and_leasing():
                 jobs_to_create.append(("image", "qwen-image-2.1", "text_to_image", {"prompt": f"Image {i}"}, 10 + i))
                 jobs_to_create.append(("video", "wan-2.2", "text_to_video", {"prompt": f"Video {i}", "fps": 24}, 10 + i))
                 jobs_to_create.append(("music", "ace-step-1.5", "text_to_music", {"prompt": f"Music {i}", "duration_seconds": 10}, 10 + i))
-                jobs_to_create.append(("enhancement", "enhancement-suite-v1", "image_super_resolution", {"image_url": f"https://s3.example.com/{i}.png", "scale_factor": 2}, 10 + i))
+                jobs_to_create.append(("speech", "qwen-speech", "text_to_speech", {"text": f"Speech {i}"}, 10 + i))
 
             async def submit_job(sub, model, task, inputs, prio):
                 res = await client.post("/v1/jobs", json={
@@ -177,8 +178,8 @@ async def test_concurrent_burst_job_submission_and_leasing():
                 simulate_worker("vid-w1", "video", ["wan-2.2"], ["text_to_video"]),
                 simulate_worker("mus-w0", "music", ["ace-step-1.5"], ["text_to_music"]),
                 simulate_worker("mus-w1", "music", ["ace-step-1.5"], ["text_to_music"]),
-                simulate_worker("enh-w0", "enhancement", ["enhancement-suite-v1"], ["image_super_resolution"]),
-                simulate_worker("enh-w1", "enhancement", ["enhancement-suite-v1"], ["image_super_resolution"]),
+                simulate_worker("sp-w0", "speech", ["qwen-speech"], ["text_to_speech"]),
+                simulate_worker("sp-w1", "speech", ["qwen-speech"], ["text_to_speech"]),
             ]
 
             results = await asyncio.gather(*workers)
@@ -216,7 +217,20 @@ async def test_job_cancellation_mid_execution_image_worker():
                 lease_duration_seconds=30,
             )
             img_daemon = ImageWorkerDaemon(config=img_cfg, http_client=client)
+            img_daemon.comfy_client.is_ready = AsyncMock(return_value=True)
+            img_daemon.comfy_client.queue_prompt = AsyncMock(return_value="prompt-test-123")
             img_daemon.comfy_client.interrupt = AsyncMock(return_value=True)
+
+            async def mock_img_listen(*args, **kwargs):
+                cancel_event = kwargs.get("cancel_event")
+                on_prog = kwargs.get("on_progress")
+                if on_prog:
+                    await on_prog(1, 25, 4.0, "sampling")
+                if cancel_event:
+                    await cancel_event.wait()
+                    raise asyncio.CancelledError()
+                return []
+            img_daemon.comfy_client.listen_execution = mock_img_listen
 
             original_report_progress = img_daemon.report_progress
             progress_count = 0
@@ -271,7 +285,20 @@ async def test_job_cancellation_mid_execution_video_worker():
                 lease_duration_seconds=30,
             )
             vid_daemon = VideoWorkerDaemon(config=vid_cfg, http_client=client)
+            vid_daemon.comfy_client.is_ready = AsyncMock(return_value=True)
+            vid_daemon.comfy_client.queue_prompt = AsyncMock(return_value="prompt-vid-123")
             vid_daemon.comfy_client.interrupt = AsyncMock(return_value=True)
+
+            async def mock_vid_listen(*args, **kwargs):
+                cancel_event = kwargs.get("cancel_event")
+                on_prog = kwargs.get("on_progress")
+                if on_prog:
+                    await on_prog(1, 24, 4.0, "sampling")
+                if cancel_event:
+                    await cancel_event.wait()
+                    raise asyncio.CancelledError()
+                return []
+            vid_daemon.comfy_client.listen_execution = mock_vid_listen
 
             vid_progress_count = 0
             vid_cancelled_triggered = False
@@ -364,53 +391,42 @@ async def test_media_artifact_integrity_and_sha256():
     Verifies that all subsystem media artifacts (Speech, Music, Image, Video, Enhancement)
     produce genuine, valid byte formats and exact SHA-256 matches.
     """
-    # 1. Speech TTS
+    # 1. Speech TTS fails closed when unconfigured
     tts = TTSEngine()
-    tts_wav = tts.synthesize("Factory v4 Gate Check", voice="alloy")
-    assert tts_wav.startswith(b"RIFF")
-    assert b"WAVEfmt " in tts_wav[:30]
-    with wave.open(io.BytesIO(tts_wav), "rb") as wf:
-        assert wf.getframerate() == 24000
-        assert wf.getnchannels() == 1
-    speech_sha = hashlib.sha256(tts_wav).hexdigest()
-    assert len(speech_sha) == 64
+    with pytest.raises(ModelUnavailableError):
+        tts.synthesize("Factory v4 Gate Check", voice="alloy")
 
-    # 2. Music ACEStep
+    # 2. Music ACEStep fails closed when unconfigured
     music_client = ACEStepClient()
-    music_res = await music_client.generate_music("text_to_music", {"prompt": "Upbeat synth", "duration_seconds": 5, "genre": "synth"})
-    music_wav = music_res["wav_bytes"]
-    assert music_wav.startswith(b"RIFF")
-    assert hashlib.sha256(music_wav).hexdigest() == music_res["sha256"]
+    with pytest.raises(ModelUnavailableError):
+        await music_client.generate_music("text_to_music", {"prompt": "Upbeat synth", "duration_seconds": 5, "genre": "synth"})
 
-    # 3. Image Collector
+    # 3. Image Collector fail-closed on missing outputs
     img_collector = ImageArtifactCollector(ImageServiceConfig(output_dir="/tmp"))
-    img_arts = img_collector.collect_job_outputs("job-img-chk", ["out.png"])
-    assert img_arts[0].mime_type == "image/png"
-    assert len(img_arts[0].sha256) == 64
+    with pytest.raises(FileNotFoundError):
+        img_collector._resolve_output_files({"node_1": {"filename": "non_existent.png"}})
 
-    # 4. Video Collector
+    # 4. Video Collector fail-closed on missing outputs
     vid_collector = VideoArtifactCollector(VideoServiceConfig(output_dir="/tmp"))
-    vid_arts = vid_collector.collect_job_outputs("job-vid-chk", ["out.mp4"])
-    assert vid_arts[0].mime_type == "video/mp4"
-    assert len(vid_arts[0].sha256) == 64
+    with pytest.raises(FileNotFoundError):
+        vid_collector._resolve_output_files({"node_1": {"filename": "non_existent.mp4"}})
 
-    # 5. Enhancement Processors
+    # 5. Enhancement Processors fail closed when unconfigured
     isr = ImageSuperResolutionProcessor()
-    isr_res = isr.process({"image_url": "https://s3.ai.example.com/assets/sample.png", "scale_factor": 4})
-    assert isr_res["width"] == 2048 and isr_res["height"] == 2048
-    assert isr_res["mime_type"] == "image/png"
+    with pytest.raises(ModelUnavailableError):
+        isr.process({"image_url": "https://s3.ai.example.com/assets/sample.png", "scale_factor": 4})
 
     vsr = VideoSuperResolutionProcessor()
-    vsr_res = vsr.process({"video_url": "https://s3.ai.example.com/assets/sample.mp4", "scale_factor": 2})
-    assert vsr_res["mime_type"] == "video/mp4"
+    with pytest.raises(ModelUnavailableError):
+        vsr.process({"video_url": "https://s3.ai.example.com/assets/sample.mp4", "scale_factor": 2})
 
     fi = FrameInterpolationProcessor()
-    fi_res = fi.process({"video_url": "https://s3.ai.example.com/assets/sample.mp4", "multiplier": 2})
-    assert fi_res["mime_type"] == "video/mp4"
+    with pytest.raises(ModelUnavailableError):
+        fi.process({"video_url": "https://s3.ai.example.com/assets/sample.mp4", "multiplier": 2})
 
     ae = AudioEnhancementProcessor()
-    ae_res = ae.process({"audio_url": "https://s3.ai.example.com/assets/sample.wav", "mode": "voice_clarity"})
-    assert ae_res["mime_type"] == "audio/wav"
+    with pytest.raises(ModelUnavailableError):
+        ae.process({"audio_url": "https://s3.ai.example.com/assets/sample.wav", "mode": "voice_clarity"})
 
 
 @pytest.mark.asyncio

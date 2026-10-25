@@ -55,15 +55,35 @@ TASK_CAPABILITY_ALIASES = {
     "score": "score_ranking",
     "embeddings": "text_embedding",
     "embedding": "text_embedding",
+    "vector_embeddings": "text_embedding",
     "rerank": "reranking",
     "transcription": "speech_to_text",
     "speech_to_text": "speech_to_text",
+    "speech_transcription": "speech_to_text",
     "tts": "text_to_speech",
     "text_to_speech": "text_to_speech",
+    "speech_synthesis": "text_to_speech",
+    "visual_language": "image_chat",
+    "vlm": "image_chat",
     "reference_conditioning": "reference_image",
     "reference": "reference_image",
     "fl2v": "first_last_frame_to_video",
     "extension": "video_extension",
+    "chat": "chat_completion",
+}
+
+MODEL_ALIASES = {
+    "qwen3-tts": "qwen-speech",
+    "qwen3-asr": "qwen-speech",
+    "qwen-2.5-72b": "qwen-text",
+    "qwen-2.5-72b-instruct": "qwen-text",
+    "qwen-text-2.5": "qwen-text",
+    "qwen-vl-max": "qwen-vlm",
+    "qwen-2.5-vl": "qwen-vlm",
+    "qwen-embed": "qwen-embedding",
+    "qwen-embed-text": "qwen-embedding",
+    "qwen-rerank": "qwen-embedding",
+    "qwen-decision-8b": "qwen-decision",
 }
 
 
@@ -76,7 +96,10 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
             status_code=503,
         )
     models = loader.load_models()
-    model = models.get(req.model)
+    resolved_model = MODEL_ALIASES.get(req.model, req.model)
+    model = models.get(resolved_model)
+    if model is not None:
+        req.model = resolved_model
     if model is None:
         raise InvalidRequestError(
             message=f"Unknown model '{req.model}'.",
@@ -392,6 +415,9 @@ async def websocket_job_stream(
         )
         if bearer_protocol:
             raw_token = bearer_protocol[len("factory-bearer."):]
+
+    if not raw_token:
+        raw_token = websocket.query_params.get("token")
 
     if not raw_token:
         # Close with 1008 Policy Violation (Unauthorized)

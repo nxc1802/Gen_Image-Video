@@ -2,10 +2,13 @@
 services/embedding/tests/test_embedding_service.py
 Unit and contract tests for the Vector Embedding & Rerank Daemon.
 """
+from unittest.mock import MagicMock, patch
+
 import pytest
-from starlette.testclient import TestClient
 from factory_auth.config import AuthConfig
 from services.embedding.src.app import app
+from services.embedding.src.engine import EmbeddingEngine
+from starlette.testclient import TestClient
 
 AUTH_TOKEN = "sk-factory-test-token-valid"
 AUTH_HEADERS = {"Authorization": f"Bearer {AUTH_TOKEN}", "Content-Type": "application/json"}
@@ -14,6 +17,7 @@ AUTH_HEADERS = {"Authorization": f"Bearer {AUTH_TOKEN}", "Content-Type": "applic
 @pytest.fixture
 def embed_client():
     app.state.auth_config = AuthConfig(api_key=AUTH_TOKEN, jwt_secret=None, environment="test")
+    app.state.engine = EmbeddingEngine()
     return TestClient(app)
 
 
@@ -21,37 +25,6 @@ def test_embed_health(embed_client):
     res = embed_client.get("/health", headers=AUTH_HEADERS)
     assert res.status_code == 200
     assert res.json()["service"] == "embed-service"
-
-
-def test_embeddings_single_and_batch(embed_client):
-    payload = {
-        "model": "qwen-embedding-8b",
-        "input": ["First sentence", "Second sentence", "Third sentence"],
-    }
-    res = embed_client.post("/v1/embeddings", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    data = res.json()
-    assert data["object"] == "list"
-    assert len(data["data"]) == 3
-    for i, item in enumerate(data["data"]):
-        assert item["index"] == i
-        vec = item["embedding"]
-        assert len(vec) == 1024
-        # Verify L2 normalization
-        norm = sum(v * v for v in vec) ** 0.5
-        assert abs(norm - 1.0) < 0.05
-        for val in vec[:20]:
-            assert -1.0 <= val <= 1.0
-
-
-def test_embeddings_v2_compatibility(embed_client):
-    payload = {
-        "model": "qwen-embedding-8b",
-        "input": "Testing v2 embed route",
-    }
-    res = embed_client.post("/v2/embed", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    assert len(res.json()["data"]) == 1
 
 
 def test_embeddings_fail_fast_offline_model(embed_client):
@@ -73,38 +46,57 @@ def test_embeddings_empty_input_rejected(embed_client):
     assert res.json()["error"]["code"] == "INVALID_REQUEST"
 
 
-def test_rerank_standard_and_descending(embed_client):
+def test_embeddings_unconfigured_fail_closed(embed_client):
     payload = {
-        "model": "qwen-rerank-8b",
-        "query": "How is queueing handled in Factory v4?",
-        "documents": [
-            "Factory v4 uses a two-tier queue with Postgres state and Redis events.",
-            "Bananas are rich in potassium.",
-            "ngrok static domains provide fixed API addresses.",
+        "model": "qwen-embedding-8b",
+        "input": ["First sentence", "Second sentence", "Third sentence"],
+    }
+    res = embed_client.post("/v1/embeddings", headers=AUTH_HEADERS, json=payload)
+    assert res.status_code == 503
+    assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"
+
+
+def test_embeddings_v2_unconfigured_fail_closed(embed_client):
+    payload = {
+        "model": "qwen-embedding-8b",
+        "input": "Testing v2 embed route",
+    }
+    res = embed_client.post("/v2/embed", headers=AUTH_HEADERS, json=payload)
+    assert res.status_code == 503
+    assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"
+
+
+def test_embeddings_configured_proxy(embed_client):
+    app.state.engine.text_embedder.adapter.upstream_url = "http://mock-vllm-embed:8000"
+    payload = {
+        "model": "qwen-embedding-8b",
+        "input": ["First sentence", "Second sentence"],
+    }
+
+    mock_resp = MagicMock()
+    mock_resp.status_code = 200
+    mock_resp.json.return_value = {
+        "object": "list",
+        "model": "qwen-embedding-8b",
+        "data": [
+            {"object": "embedding", "index": 0, "embedding": [0.1] * 1024},
+            {"object": "embedding", "index": 1, "embedding": [0.2] * 1024},
         ],
+        "usage": {"prompt_tokens": 10, "total_tokens": 10},
     }
-    res = embed_client.post("/v1/rerank", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    data = res.json()
-    assert "results" in data
-    assert len(data["results"]) == 3
-    scores = [r["relevance_score"] for r in data["results"]]
-    assert scores == sorted(scores, reverse=True)
-    for score in scores:
-        assert 0.0 <= score <= 1.0
-    # Top result should be the queue document
-    assert "two-tier queue" in data["results"][0]["document"]
 
+    with patch("httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.__enter__.return_value = mock_client
+        mock_client.post.return_value = mock_resp
+        mock_client_cls.return_value = mock_client
 
-def test_rerank_legacy_alias(embed_client):
-    payload = {
-        "model": "qwen-rerank-8b",
-        "query": "GPU allocation policy",
-        "documents": ["Dual T4 GPU setup on Kaggle", "Coffee roasting guide"],
-    }
-    res = embed_client.post("/rerank", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    assert len(res.json()["results"]) == 2
+        res = embed_client.post("/v1/embeddings", headers=AUTH_HEADERS, json=payload)
+        assert res.status_code == 200
+        data = res.json()
+        assert data["object"] == "list"
+        assert len(data["data"]) == 2
+        assert len(data["data"][0]["embedding"]) == 1024
 
 
 def test_rerank_fail_fast_offline_model(embed_client):
@@ -127,52 +119,33 @@ def test_rerank_empty_query_rejected(embed_client):
     assert res.json()["error"]["code"] == "INVALID_REQUEST"
 
 
-def test_embeddings_matryoshka_dimensions_and_strict_l2(embed_client):
-    """Verifies Matryoshka dimension truncation and strict unit L2 norm."""
-    for dim in (256, 512, 1024):
-        payload = {
-            "model": "qwen-embedding-8b",
-            "input": ["Testing Matryoshka dimension projection"],
-            "dimensions": dim,
-        }
-        res = embed_client.post("/v1/embeddings", headers=AUTH_HEADERS, json=payload)
-        assert res.status_code == 200
-        vec = res.json()["data"][0]["embedding"]
-        assert len(vec) == dim
-        norm = sum(v * v for v in vec) ** 0.5
-        assert abs(norm - 1.0) < 1e-4
-
-
-def test_embeddings_semantic_dispersion_not_clustering(embed_client):
-    """Verifies that unrelated texts exhibit true semantic dispersion (do NOT cluster to ~0.94)."""
+def test_rerank_unconfigured_fail_closed(embed_client):
     payload = {
-        "model": "qwen-embedding-8b",
-        "input": [
-            "The quick brown fox jumps over the lazy dog.",
-            "Quantum electrodynamics is a relativistic quantum field theory of electrodynamics.",
-            "The fast brown fox leaps over a sleepy hound.",
+        "model": "qwen-rerank-8b",
+        "query": "How is queueing handled in Factory v4?",
+        "documents": [
+            "Factory v4 uses a two-tier queue with Postgres state and Redis events.",
+            "Bananas are rich in potassium.",
         ],
     }
-    res = embed_client.post("/v1/embeddings", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    v_fox1 = res.json()["data"][0]["embedding"]
-    v_quantum = res.json()["data"][1]["embedding"]
-    v_fox2 = res.json()["data"][2]["embedding"]
-
-    def cos_sim(a, b):
-        return sum(x * y for x, y in zip(a, b))
-
-    sim_unrelated = cos_sim(v_fox1, v_quantum)
-    sim_related = cos_sim(v_fox1, v_fox2)
-
-    # Invariant: Unrelated concepts must NOT cluster to 0.94, but have near-zero cosine similarity
-    assert sim_unrelated < 0.35, f"Unrelated similarity {sim_unrelated} too high (indicates false clustering)"
-    # Invariant: Semantically related texts must have significantly higher similarity than unrelated
-    assert sim_related > sim_unrelated + 0.15
+    res = embed_client.post("/v1/rerank", headers=AUTH_HEADERS, json=payload)
+    assert res.status_code == 503
+    assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"
 
 
-def test_rerank_top_n_truncation(embed_client):
-    """Verifies that top_n parameter truncates rerank results properly."""
+def test_rerank_legacy_unconfigured_fail_closed(embed_client):
+    payload = {
+        "model": "qwen-rerank-8b",
+        "query": "GPU allocation policy",
+        "documents": ["Dual T4 GPU setup on Kaggle", "Coffee roasting guide"],
+    }
+    res = embed_client.post("/rerank", headers=AUTH_HEADERS, json=payload)
+    assert res.status_code == 503
+    assert res.json()["error"]["code"] == "MODEL_UNAVAILABLE"
+
+
+def test_rerank_configured_proxy_and_truncation(embed_client):
+    app.state.engine.reranker.adapter.upstream_url = "http://mock-tei-rerank:8000"
     payload = {
         "model": "qwen-rerank-8b",
         "query": "How is queueing handled in Factory v4?",
@@ -183,8 +156,29 @@ def test_rerank_top_n_truncation(embed_client):
         ],
         "top_n": 1,
     }
-    res = embed_client.post("/v1/rerank", headers=AUTH_HEADERS, json=payload)
-    assert res.status_code == 200
-    results = res.json()["results"]
-    assert len(results) == 1
-    assert "two-tier queue" in results[0]["document"]
+
+    mock_resp = MagicMock()
+    mock_resp.status_code = 200
+    mock_resp.json.return_value = {
+        "model": "qwen-rerank-8b",
+        "results": [
+            {"index": 0, "score": 0.95},
+            {"index": 2, "score": 0.40},
+            {"index": 1, "score": 0.05},
+        ],
+    }
+
+    with patch("httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.__enter__.return_value = mock_client
+        mock_client.post.return_value = mock_resp
+        mock_client_cls.return_value = mock_client
+
+        res = embed_client.post("/v1/rerank", headers=AUTH_HEADERS, json=payload)
+        assert res.status_code == 200
+        data = res.json()
+        assert "results" in data
+        assert len(data["results"]) == 1
+        assert data["results"][0]["index"] == 0
+        assert data["results"][0]["relevance_score"] == 0.95
+        assert "two-tier queue" in data["results"][0]["document"]
