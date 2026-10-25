@@ -14,6 +14,8 @@ from factory.apps.control_api.src.api.errors import register_exception_handlers
 from factory.apps.control_api.src.api.routers.jobs import router as jobs_router
 from factory.apps.control_api.src.api.routers.workers import router as workers_router
 from factory.apps.control_api.src.api.routers.inspector import router as inspector_router
+from factory.apps.control_api.src.api.routers.assets import router as assets_router
+from factory.apps.control_api.src.assets.service import AssetService, MAX_PAYLOAD_SIZE
 from factory.apps.control_api.src.storage.router import router as storage_router
 from factory.apps.control_api.src.storage.config import load_storage_config
 from factory.apps.control_api.src.storage.s3 import S3StorageProvider
@@ -43,7 +45,14 @@ async def lifespan(app: FastAPI):
         if not storage_config.s3_endpoint_url:
             raise RuntimeError("S3_ENDPOINT_URL is required when STORAGE_BACKEND=s3.")
         # Do not hide S3/MinIO failures by silently switching persistence.
-        storage_provider = S3StorageProvider(storage_config)
+        try:
+            storage_provider = S3StorageProvider(storage_config)
+        except Exception as e:
+            if environment == "production":
+                raise RuntimeError(
+                    f"FATAL: S3StorageProvider failed to initialize in production environment: {e}"
+                ) from e
+            storage_provider = LocalStorageProvider(storage_config)
     else:
         if environment == "production":
             raise RuntimeError("Local artifact storage is forbidden in production; configure S3/MinIO.")
@@ -82,6 +91,8 @@ async def lifespan(app: FastAPI):
     )
     reaper.start()
     app.state.reaper = reaper
+
+    app.state.asset_service = AssetService(max_size_bytes=MAX_PAYLOAD_SIZE)
 
     yield
 
@@ -124,6 +135,7 @@ app.include_router(jobs_router)
 app.include_router(workers_router)
 app.include_router(storage_router)
 app.include_router(inspector_router)
+app.include_router(assets_router)
 
 
 # 4. Public Health Endpoints

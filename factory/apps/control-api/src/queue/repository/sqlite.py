@@ -254,6 +254,36 @@ class SqliteJobRepository(BaseJobRepository):
             await self._db.commit()
             return job
 
+    async def list_jobs(
+        self,
+        limit: int = 50,
+        offset: int = 0,
+        service: Optional[str] = None,
+        state: Optional[str] = None,
+    ) -> List[FactoryJob]:
+        async with self._lock:
+            conditions = []
+            params: List[Any] = []
+            if service:
+                conditions.append("service = ?")
+                params.append(service)
+            if state:
+                state_val = state.value if hasattr(state, "value") else str(state)
+                conditions.append("state = ?")
+                params.append(state_val)
+
+            where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+            query = f"""
+                SELECT * FROM jobs
+                {where_clause}
+                ORDER BY created_at DESC
+                LIMIT ? OFFSET ?
+            """
+            params.extend([limit, offset])
+            async with self._db.execute(query, tuple(params)) as cursor:
+                rows = await cursor.fetchall()
+                return [self._row_to_job(row) for row in rows]
+
     async def find_eligible_jobs_for_worker(
         self,
         subsystem: str,
@@ -424,14 +454,30 @@ class SqliteJobRepository(BaseJobRepository):
                 await self._db.execute(
                     """
                     UPDATE worker_registrations SET
-                        current_job_id = COALESCE(?, current_job_id),
+                        current_job_id = ?,
                         last_heartbeat = ?,
                         gpu_utilization = COALESCE(?, gpu_utilization),
                         vram_used_mb = COALESCE(?, vram_used_mb),
+                        subsystem = COALESCE(?, subsystem),
+                        framework = COALESCE(?, framework),
+                        supported_models = COALESCE(?, supported_models),
+                        supported_tasks = COALESCE(?, supported_tasks),
+                        gpu_device = COALESCE(?, gpu_device),
                         status = 'ONLINE'
                     WHERE worker_id = ?
                     """,
-                    (active_job_id, now, gpu_utilization, vram_used_mb, worker_id),
+                    (
+                        active_job_id,
+                        now,
+                        gpu_utilization,
+                        vram_used_mb,
+                        subsystem if subsystem and subsystem != "unknown" else None,
+                        framework if framework and framework != "unknown" else None,
+                        json.dumps(supported_models) if supported_models is not None else None,
+                        json.dumps(supported_tasks) if supported_tasks is not None else None,
+                        gpu_device,
+                        worker_id,
+                    ),
                 )
             else:
                 await self._db.execute(

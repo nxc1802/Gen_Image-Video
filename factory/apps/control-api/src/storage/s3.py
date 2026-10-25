@@ -56,13 +56,21 @@ class S3StorageProvider(StorageProvider):
         self._ensure_bucket_exists()
 
     def _ensure_bucket_exists(self) -> None:
+        import os
+        env = os.environ.get("ENVIRONMENT", os.environ.get("FACTORY_ENV", "development")).lower()
+        if hasattr(self.config, "environment") and self.config.environment:
+            env = self.config.environment.lower()
         try:
             self.client.head_bucket(Bucket=self.bucket)
-        except ClientError:
+        except Exception as head_err:
             try:
                 self.client.create_bucket(Bucket=self.bucket)
-            except Exception:
-                pass  # Ignore if permissions disallow creation or already created
+            except Exception as create_err:
+                if env == "production":
+                    raise RuntimeError(
+                        f"FATAL: S3 bucket '{self.bucket}' is inaccessible or could not be created in production mode: {head_err}. Creation error: {create_err}"
+                    ) from create_err
+                # In development, ignore if offline/mock or permissions disallow creation
 
     def _remap_public_url(self, raw_url: str) -> str:
         """Remaps internal S3/MinIO host (e.g. minio:9000) to public endpoint (e.g. s3.ai.example.com)."""

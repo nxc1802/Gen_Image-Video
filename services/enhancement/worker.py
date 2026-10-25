@@ -149,6 +149,8 @@ class EnhancementWorker:
             total=10,
             percent=percent,
             message=f"Enhancement {stage} at {percent:.0f}%",
+            worker_id=self.worker_id,
+            lease_token=self._active_lease_token,
         )
         try:
             await http_client.post(
@@ -200,6 +202,8 @@ class EnhancementWorker:
             comp_req = JobCompletionRequest(
                 artifacts=[artifact],
                 inference_duration_ms=inference_duration_ms,
+                worker_id=self.worker_id,
+                lease_token=self._active_lease_token,
             )
 
             res = await http_client.post(
@@ -219,6 +223,8 @@ class EnhancementWorker:
                     request_id=job.request_id,
                 ),
                 retryable=True,
+                worker_id=self.worker_id,
+                lease_token=self._active_lease_token,
             )
             try:
                 await http_client.post(

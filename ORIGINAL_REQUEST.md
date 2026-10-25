@@ -80,3 +80,73 @@ Reference specification: /Volumes/WorkSpace/Factory/Gen_Image:Video/Refactor.md
 ## Follow-up — 2026-10-24T04:28:22Z
 
 The quota window has fully reset and the user has requested to continue reconnecting the multi-agent system. Please resume Milestone 2 Iteration 2 remediation and verification.
+
+
+## Follow-up — 2026-10-25T08:32:22Z
+
+Harden and complete the Factory v4 AI inference platform codebase by fixing packaging and CI blockers, resolving runtime contract mismatches between Studio Web and Control Plane, establishing worker lease authorization, removing fabricated telemetry, and ensuring 100% test pass rate.
+
+Working directory: /Volumes/WorkSpace/Factory/Gen_Image:Video
+Integrity mode: development
+
+## Requirements
+
+### R1. Packaging & Workspace Build Alignment (P0)
+- Configure Hatchling build wheel targets in `packages/auth/pyproject.toml`, `packages/client-sdk/python/pyproject.toml` (with entrypoint in `src/factory_client/__init__.py`), and `factory/apps/control-api/pyproject.toml`.
+- Provide `factory_control_api` package entrypoint in `factory/apps/control-api/src/factory_control_api/__init__.py` exporting `app`.
+- Ensure `uv sync --all-packages` executes cleanly and builds wheels without error.
+
+### R2. Canonical Task ID Resolution & Contract Alignment (P0)
+- In `packages/contracts/src/factory_contracts/tasks.py`, implement `normalize_task(task: str) -> str` and `CANONICAL_TASK_MAP` mapping capability IDs (`image.t2i`, `video.t2v`, `image.i2i`, `image.inpaint`, etc.) and short aliases to canonical names (`text_to_image`, `text_to_video`, etc.).
+- Ensure `JobLifecycleManager.submit_job` normalizes `req.task` so queued jobs in the database use canonical task names.
+- Update `services/image/worker.py` and `services/video/worker.py` `supported_tasks` declarations and `workflows/image/registry.py` and `workflows/video/registry.py` `TASK_ALIASES` to support both canonical task names and capability IDs.
+
+### R3. Job Dashboard List Endpoint (P0)
+- Add `list_jobs(limit: int = 50, offset: int = 0, service: Optional[str] = None, state: Optional[str] = None) -> List[FactoryJob]` to `BaseJobRepository`.
+- Implement `list_jobs` in `SqliteJobRepository` and `PostgresJobRepository` (ordered by `created_at DESC`).
+- Expose `manager.list_jobs` in `JobLifecycleManager`.
+- Implement `GET /v1/jobs` in `factory/apps/control-api/src/api/routers/jobs.py` matching Studio Web client contract (`apiClient.listJobs`).
+
+### R4. Asset Upload API Router (P0)
+- Create `factory/apps/control-api/src/api/routers/assets.py` mounting `POST /v1/assets/upload` and `GET /v1/assets/{asset_id}/download`.
+- `POST /v1/assets/upload` accepts `multipart/form-data` file uploads, validates via `AssetService.ingest_bytes()`, stores content via active `StorageProvider`, and returns artifact metadata with `s3_url` and `download_url`.
+- Include `assets.router` in `factory/apps/control-api/src/main.py`.
+
+### R5. Worker Lease Token & Ownership Authorization (P0)
+- Extend `ProgressUpdateRequest`, `JobCompletionRequest`, and `JobFailureRequest` in `factory_contracts/jobs/worker_contract.py` to include `worker_id: Optional[str]` and `lease_token: Optional[str]`.
+- Enforce in `JobLifecycleManager.update_progress`, `complete_job`, and `fail_job` that the caller's `worker_id` and `lease_token` match the active job lease; return HTTP 403 `UnauthorizedError` if unauthorized.
+- Enforce in `LeaseCoordinator.process_heartbeat` that `req.lease_token` matches active lease before extending.
+- Update worker daemons (`services/image/worker.py`, `services/video/worker.py`, `services/music/worker.py`) to pass active `worker_id` and `lease_token`.
+
+### R6. Real Telemetry & Stale Registry Elimination (P1)
+- Remove hardcoded `11.2` and `13.8` VRAM numbers from `TelemetryMetrics` and `inspector.py`. Default initial VRAM values to `null`.
+- In `LeaseCoordinator.process_heartbeat`, update real VRAM in `metrics.set_gpu_vram` when worker heartbeat reports `vram_used_mb`.
+- In `SqliteJobRepository` and `PostgresJobRepository` `upsert_worker_heartbeat`, replace `COALESCE(?, current_job_id)` with explicit assignment `current_job_id = $7` so when worker finishes a job and sends `active_job_id=None`, stale job IDs are cleared. Also update worker capabilities on heartbeat.
+
+### R7. Auth Configuration Alignment & S3 Fail-Fast (P1)
+- In `packages/auth`, add `jwt_algorithm` (from `JWT_ALGORITHM`, default `HS256`) and `jwt_audience` to `AuthConfig`. Pass both to `decode_jwt_token`.
+- In `S3StorageProvider._ensure_bucket_exists`, fail fast with an exception if running in production and bucket is inaccessible.
+
+### R8. GitHub Actions CI Configuration (P1)
+- Create `.github/workflows/ci.yml` running two matrix jobs:
+  1. `studio-web`: checkout, setup-node, npm ci, typecheck, lint, next build.
+  2. `backend`: checkout, setup-python (3.11 & 3.12), install uv, `uv sync --all-packages`, `factory-manifest validate`, `pytest tests/unit tests/security tests/contract tests/adversarial tests/e2e workflows services -q`.
+
+## Acceptance Criteria
+
+### Automated Verification
+- [ ] `uv sync --all-packages` exits with code 0.
+- [ ] `.venv/bin/factory-manifest validate` exits with code 0 and reports 0 errors.
+- [ ] All 1,065+ existing tests pass without regressions:
+  - `tests/unit`: 83+ passed
+  - `tests/security`: 116+ passed
+  - `tests/contract`: 4+ passed
+  - `tests/adversarial`: 394+ passed
+  - `tests/e2e`: 468+ passed
+  - `workflows` & `services`: 61+ passed
+- [ ] New unit tests pass:
+  - `tests/unit/api/test_jobs_list.py`: verifies `GET /v1/jobs` pagination, limit, and status filters.
+  - `tests/unit/api/test_assets_upload.py`: verifies `POST /v1/assets/upload` multipart upload and error cases.
+  - `tests/unit/queue/test_worker_lease_auth.py`: verifies unauthorized worker cannot progress/complete/fail another worker's lease.
+  - `tests/unit/contracts/test_task_normalization.py`: verifies canonical task normalization.
+- [ ] Studio Web production build succeeds: `npm run build` in `factory/apps/studio-web`.

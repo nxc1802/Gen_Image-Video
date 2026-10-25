@@ -129,12 +129,24 @@ class ImageWorkerDaemon:
             supported_models=["qwen-image-2.1"],
             supported_tasks=[
                 "text_to_image",
+                "image.t2i",
+                "t2i",
                 "image_to_image",
+                "image.i2i",
+                "i2i",
                 "inpaint",
+                "image.inpaint",
                 "outpaint",
+                "image.outpaint",
                 "instruction_edit",
+                "image.instruction_edit",
+                "edit",
                 "reference_conditioning",
+                "image.reference_conditioning",
+                "image.reference",
+                "reference",
                 "controlnet",
+                "image.controlnet",
             ],
             gpu_device=self.config.gpu_device,
             lease_duration_seconds=self.config.lease_duration_seconds,
@@ -153,6 +165,8 @@ class ImageWorkerDaemon:
         total: int,
         percent: float,
         message: Optional[str] = None,
+        worker_id: Optional[str] = None,
+        lease_token: Optional[str] = None,
     ) -> None:
         req = ProgressUpdateRequest(
             stage=stage,
@@ -160,6 +174,8 @@ class ImageWorkerDaemon:
             total=total,
             percent=percent,
             message=message,
+            worker_id=worker_id or self.config.worker_id,
+            lease_token=lease_token,
         )
         try:
             await client.post(f"/v1/jobs/{job_id}/progress", json=req.model_dump(mode="json"))
@@ -187,10 +203,14 @@ class ImageWorkerDaemon:
         job_id: str,
         artifacts: list,
         duration_ms: float,
+        worker_id: Optional[str] = None,
+        lease_token: Optional[str] = None,
     ) -> None:
         comp = JobCompletionRequest(
             artifacts=artifacts,
             inference_duration_ms=duration_ms,
+            worker_id=worker_id or self.config.worker_id,
+            lease_token=lease_token,
         )
         resp = await client.post(f"/v1/jobs/{job_id}/complete", json=comp.model_dump(mode="json"))
         resp.raise_for_status()
@@ -203,6 +223,8 @@ class ImageWorkerDaemon:
         message: str,
         request_id: Optional[str] = None,
         retryable: bool = False,
+        worker_id: Optional[str] = None,
+        lease_token: Optional[str] = None,
     ) -> None:
         req_id = request_id or f"req-{uuid.uuid4()}"
         from factory_contracts.errors.error_contract import ErrorCode
@@ -210,6 +232,8 @@ class ImageWorkerDaemon:
         fail = JobFailureRequest(
             error=ErrorDetail(code=code_enum, message=message, request_id=req_id),
             retryable=retryable,
+            worker_id=worker_id or self.config.worker_id,
+            lease_token=lease_token,
         )
         try:
             await client.post(f"/v1/jobs/{job_id}/fail", json=fail.model_dump(mode="json"))
@@ -246,7 +270,7 @@ class ImageWorkerDaemon:
 
         try:
             # 1. Report loading stage
-            await self.report_progress(client, job_id, stage="loading", step=0, total=20, percent=0.0, message="Staging assets")
+            await self.report_progress(client, job_id, stage="loading", step=0, total=20, percent=0.0, message="Staging assets", worker_id=self.config.worker_id, lease_token=lease_token)
 
             # 2. Stage remote assets
             staged_files: Dict[str, str] = {}
@@ -279,6 +303,8 @@ class ImageWorkerDaemon:
                     total=total,
                     percent=pct,
                     message=msg,
+                    worker_id=self.config.worker_id,
+                    lease_token=lease_token,
                 )
 
             # 5. Execute only against a live ComfyUI backend.
@@ -300,12 +326,12 @@ class ImageWorkerDaemon:
             duration_ms = (time.time() - start_time) * 1000.0
 
             # 7. Complete job
-            await self.complete_job(client, job_id, artifacts, duration_ms)
+            await self.complete_job(client, job_id, artifacts, duration_ms, worker_id=self.config.worker_id, lease_token=lease_token)
             logger.info(f"Job {job_id} completed successfully in {duration_ms:.1f}ms")
 
         except asyncio.CancelledError:
             logger.info(f"Job {job_id} cancelled.")
-            await self.fail_job(client, job_id, "JOB_CANCELLED", "Job was cancelled by user.", request_id=job.request_id, retryable=False)
+            await self.fail_job(client, job_id, "JOB_CANCELLED", "Job was cancelled by user.", request_id=job.request_id, retryable=False, worker_id=self.config.worker_id, lease_token=lease_token)
         except Exception as e:
             logger.error(f"Error processing job {job_id}: {e}")
             # Sanitize error detail strictly: no leaked paths or traces
@@ -316,6 +342,8 @@ class ImageWorkerDaemon:
                 "Image generation backend failed. Inspect correlated worker logs.",
                 request_id=job.request_id,
                 retryable=True,
+                worker_id=self.config.worker_id,
+                lease_token=lease_token,
             )
 
         finally:

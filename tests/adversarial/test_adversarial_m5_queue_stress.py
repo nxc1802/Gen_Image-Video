@@ -403,6 +403,8 @@ class TestWorkerCrashAndRebootRecovery:
 
                 # Step 7: Worker 2 updates progress and completes the job
                 prog_res = await client.post(f"/v1/jobs/{job_id}/progress", json={
+                    "worker_id": "worker-gpu0-rebooted",
+                    "lease_token": w2_data["lease_token"],
                     "stage": "sampling",
                     "step": 20,
                     "total": 20,
@@ -421,6 +423,8 @@ class TestWorkerCrashAndRebootRecovery:
                     "sha256": "a" * 64,
                 }
                 comp_res = await client.post(f"/v1/jobs/{job_id}/complete", json={
+                    "worker_id": "worker-gpu0-rebooted",
+                    "lease_token": w2_data["lease_token"],
                     "artifacts": [artifact],
                     "inference_duration_ms": 1450.0,
                     "peak_vram_mb": 6800.0,
@@ -652,6 +656,8 @@ class TestWorkerCrashAndRebootRecovery:
                 assert w2_res.json()["job"]["job_id"] == job_id
 
                 comp_res = await client.post(f"/v1/jobs/{job_id}/complete", json={
+                    "worker_id": "worker-text-rebooted",
+                    "lease_token": w2_res.json()["lease_token"],
                     "artifacts": [],
                     "inference_duration_ms": 2100.0,
                     "tokens_per_sec": 85.0,
@@ -878,7 +884,11 @@ class TestJobCancellationUnderHighConcurrency:
                     "download_url": f"https://s3/{job_id}.png",
                     "sha256": "f" * 64,
                 }
-                comp_res = await client.post(f"/v1/jobs/{job_id}/complete", json={"artifacts": [art]})
+                comp_res = await client.post(f"/v1/jobs/{job_id}/complete", json={
+                    "worker_id": "worker-complete-protect",
+                    "lease_token": lease_res.json()["lease_token"],
+                    "artifacts": [art],
+                })
                 assert comp_res.status_code == 200
 
                 # Attempt cancel on SUCCEEDED job
@@ -912,7 +922,7 @@ class TestJobCancellationUnderHighConcurrency:
                 job_id = sub.json()["job_id"]
 
                 # Worker leases
-                await client.post("/v1/jobs/lease", json={
+                l_res = await client.post("/v1/jobs/lease", json={
                     "worker_id": "worker-late",
                     "subsystem": "image",
                     "supported_models": ["qwen-image-2.1"],
@@ -927,6 +937,8 @@ class TestJobCancellationUnderHighConcurrency:
 
                 # Worker tries to complete
                 comp_res = await client.post(f"/v1/jobs/{job_id}/complete", json={
+                    "worker_id": "worker-late",
+                    "lease_token": l_res.json()["lease_token"],
                     "artifacts": [{
                         "artifact_id": "late-art",
                         "type": "image",
@@ -1088,7 +1100,12 @@ class TestStorageArtifactUploadSignedURLIntegrity:
                 }
                 comp_res = await client.post(
                     f"/v1/jobs/{active_job_id}/complete",
-                    json={"artifacts": [artifact_meta], "inference_duration_ms": 3200.0},
+                    json={
+                        "worker_id": "worker-storage-tester",
+                        "lease_token": lease_res.json()["lease_token"],
+                        "artifacts": [artifact_meta],
+                        "inference_duration_ms": 3200.0,
+                    },
                 )
                 assert comp_res.status_code == 200
 
@@ -1289,6 +1306,8 @@ class TestStorageArtifactUploadSignedURLIntegrity:
                     },
                 ]
                 comp_res = await client.post(f"/v1/jobs/{job_id}/complete", json={
+                    "worker_id": "worker-video-dual",
+                    "lease_token": lease_res.json()["lease_token"],
                     "artifacts": artifacts,
                     "inference_duration_ms": 5400.0,
                     "fps": 24.0,

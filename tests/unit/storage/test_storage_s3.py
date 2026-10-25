@@ -293,3 +293,37 @@ class TestLocalStorageProvider:
         assert target.is_relative_to(provider.base_dir)
         assert target == provider.base_dir / "artifacts" / "image" / "job-123" / "output.png"
 
+
+class TestS3StorageProviderFailFast:
+    def test_s3_storage_provider_fails_fast_in_production(self, monkeypatch):
+        from factory.apps.control_api.src.storage.s3 import S3StorageProvider
+
+        monkeypatch.setenv("ENVIRONMENT", "production")
+        cfg = StorageConfig(
+            storage_backend="s3",
+            s3_endpoint_url="http://127.0.0.1:54321",  # Unreachable port
+            s3_bucket_name="nonexistent-prod-bucket",
+            s3_access_key="fake-key",
+            s3_secret_key="fake-secret",
+        )
+        with pytest.raises(RuntimeError) as exc_info:
+            S3StorageProvider(cfg)
+        assert "FATAL: S3 bucket" in str(exc_info.value)
+        assert "inaccessible" in str(exc_info.value)
+
+    def test_s3_storage_provider_tolerates_offline_in_development(self, monkeypatch):
+        from factory.apps.control_api.src.storage.s3 import S3StorageProvider
+
+        monkeypatch.setenv("ENVIRONMENT", "development")
+        cfg = StorageConfig(
+            storage_backend="s3",
+            s3_endpoint_url="http://127.0.0.1:54321",  # Unreachable port
+            s3_bucket_name="offline-dev-bucket",
+            s3_access_key="fake-key",
+            s3_secret_key="fake-secret",
+        )
+        # In development, S3StorageProvider does not crash on offline bucket creation
+        provider = S3StorageProvider(cfg)
+        assert provider.bucket == "offline-dev-bucket"
+
+

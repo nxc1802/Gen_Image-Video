@@ -51,7 +51,12 @@ async def verify_bearer_token(
     # 2. JWT verification if token is dot-separated
     if config and config.jwt_secret and token.count(".") == 2:
         try:
-            payload = decode_jwt_token(token, config.jwt_secret)
+            payload = decode_jwt_token(
+                token,
+                config.jwt_secret,
+                algorithm=config.jwt_algorithm,
+                audience=config.jwt_audience,
+            )
             request.state.user = payload
             return payload
         except Exception:

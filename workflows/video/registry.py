@@ -24,12 +24,23 @@ ALL_TEMPLATES = [
 
 
 TASK_ALIASES: Dict[str, str] = {
+    # Short aliases
     "t2v": "text_to_video",
     "i2v": "image_to_video",
     "fl2v": "first_last_frame_to_video",
     "extension": "video_extension",
     "with_audio": "video_with_audio",
     "ref2va": "reference_conditioning",
+    # Capability IDs
+    "video.t2v": "text_to_video",
+    "video.i2v": "image_to_video",
+    "video.fl2v": "first_last_frame_to_video",
+    "video.extend": "video_extension",
+    "video.extension": "video_extension",
+    "video.audio": "video_with_audio",
+    "video.with_audio": "video_with_audio",
+    "video.reference": "reference_conditioning",
+    "video.ref2va": "reference_conditioning",
 }
 
 

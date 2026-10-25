@@ -4,7 +4,7 @@ Central JobLifecycleManager coordinating job submission, states, retries, and ev
 """
 import uuid
 from datetime import datetime, timezone
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 from factory_contracts.errors import (
     ErrorCode,
@@ -12,6 +12,7 @@ from factory_contracts.errors import (
     FactoryError,
     InvalidRequestError,
     NotFoundError,
+    UnauthorizedError,
 )
 from factory_contracts.jobs.job_contract import (
     FactoryJob,
@@ -25,6 +26,7 @@ from factory_contracts.jobs.worker_contract import (
     JobFailureRequest,
     ProgressUpdateRequest,
 )
+from factory_contracts.tasks import normalize_task
 from factory.apps.control_api.src.queue.broker.base import BaseQueueBroker
 from factory.apps.control_api.src.queue.repository.base import BaseJobRepository
 from factory.apps.control_api.src.queue.state_machine import JobStateMachine
@@ -74,7 +76,7 @@ class JobLifecycleManager:
             idempotency_key=req.idempotency_key,
             service=req.service,
             model=req.model,
-            task=req.task,
+            task=normalize_task(req.task),
             inputs=req.inputs,
             priority=req.priority,
             state=JobState.QUEUED,
@@ -105,6 +107,21 @@ class JobLifecycleManager:
         if not job:
             raise NotFoundError(f"Job '{job_id}' not found.")
         return job
+
+    async def list_jobs(
+        self,
+        limit: int = 50,
+        offset: int = 0,
+        service: Optional[str] = None,
+        state: Optional[str] = None,
+    ) -> List[FactoryJob]:
+        """Lists jobs ordered by created_at DESC with optional pagination and filtering."""
+        return await self.repository.list_jobs(
+            limit=limit,
+            offset=offset,
+            service=service,
+            state=state,
+        )
 
     async def cancel_job(self, job_id: str) -> FactoryJob:
         job = await self.get_job(job_id)
@@ -180,11 +197,47 @@ class JobLifecycleManager:
 
         return job
 
+    def _verify_worker_lease(
+        self,
+        job: FactoryJob,
+        worker_id: Optional[str],
+        lease_token: Optional[str],
+    ) -> None:
+        """
+        Enforces worker lease authorization.
+        If the job has an active worker lease:
+        - Rejects requests from unauthorized workers (mismatched worker_id or lease_token) with HTTP 403 UnauthorizedError.
+        If the job is unleased (e.g. direct unit tests):
+        - Permits modification only when worker_id is None and lease_token is None.
+        """
+        if job.worker is not None:
+            if not worker_id or not lease_token or worker_id != job.worker.worker_id or lease_token != job.worker.lease_token:
+                raise UnauthorizedError(
+                    message=f"Worker '{worker_id}' is not authorized to update job '{job.job_id}' under active lease.",
+                    status_code=403,
+                    details={
+                        "job_id": job.job_id,
+                        "worker_id": worker_id,
+                    },
+                )
+        else:
+            if worker_id is not None or lease_token is not None:
+                raise UnauthorizedError(
+                    message=f"Job '{job.job_id}' is not leased to worker '{worker_id}'.",
+                    status_code=403,
+                    details={
+                        "job_id": job.job_id,
+                        "worker_id": worker_id,
+                    },
+                )
+
     async def update_progress(self, job_id: str, req: ProgressUpdateRequest) -> FactoryJob:
         job = await self.get_job(job_id)
 
         if job.state in (JobState.SUCCEEDED, JobState.FAILED, JobState.CANCELLED):
             return job
+
+        self._verify_worker_lease(job, req.worker_id, req.lease_token)
 
         job.progress = JobProgress(
             stage=req.stage,
@@ -227,6 +280,8 @@ class JobLifecycleManager:
 
         JobStateMachine.validate_transition(job.state, JobState.SUCCEEDED, job_id)
 
+        self._verify_worker_lease(job, req.worker_id, req.lease_token)
+
         now = datetime.now(timezone.utc)
         job.state = JobState.SUCCEEDED
         job.completed_at = now
@@ -262,6 +317,11 @@ class JobLifecycleManager:
 
     async def fail_job(self, job_id: str, req: JobFailureRequest) -> FactoryJob:
         job = await self.get_job(job_id)
+
+        if job.state in (JobState.SUCCEEDED, JobState.CANCELLED):
+            return job
+
+        self._verify_worker_lease(job, req.worker_id, req.lease_token)
 
         if req.retryable and job.retry_count < job.max_retries:
             return await self.retry_job(job_id)

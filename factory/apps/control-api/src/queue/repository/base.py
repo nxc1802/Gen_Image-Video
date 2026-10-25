@@ -43,6 +43,17 @@ class BaseJobRepository(ABC):
         ...
 
     @abstractmethod
+    async def list_jobs(
+        self,
+        limit: int = 50,
+        offset: int = 0,
+        service: Optional[str] = None,
+        state: Optional[str] = None,
+    ) -> List[FactoryJob]:
+        """Lists jobs ordered by created_at DESC with optional pagination and filtering."""
+        ...
+
+    @abstractmethod
     async def find_eligible_jobs_for_worker(
         self,
         subsystem: str,

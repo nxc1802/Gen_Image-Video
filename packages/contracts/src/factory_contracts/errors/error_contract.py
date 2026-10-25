@@ -90,8 +90,13 @@ class FactoryError(Exception):
 
 
 class UnauthorizedError(FactoryError):
-    def __init__(self, message: str = "Missing or invalid authorization credentials", details: Optional[Dict[str, Any]] = None):
-        super().__init__(message=message, code=ErrorCode.UNAUTHORIZED.value, status_code=401, details=details)
+    def __init__(
+        self,
+        message: str = "Missing or invalid authorization credentials",
+        details: Optional[Dict[str, Any]] = None,
+        status_code: int = 401,
+    ):
+        super().__init__(message=message, code=ErrorCode.UNAUTHORIZED.value, status_code=status_code, details=details)
 
 
 class ForbiddenError(FactoryError):

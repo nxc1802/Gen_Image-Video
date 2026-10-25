@@ -130,12 +130,26 @@ class VideoWorkerDaemon:
             supported_models=["wan-2.2", "minimax-h3"],
             supported_tasks=[
                 "text_to_video",
+                "video.t2v",
+                "t2v",
                 "image_to_video",
+                "video.i2v",
+                "i2v",
                 "fl2v",
+                "video.fl2v",
                 "first_last_frame_to_video",
                 "video_extension",
+                "video.extend",
+                "video.extension",
+                "extension",
                 "video_with_audio",
+                "video.audio",
+                "video.with_audio",
+                "with_audio",
                 "reference_conditioning",
+                "video.reference",
+                "video.ref2va",
+                "ref2va",
             ],
             gpu_device=self.config.gpu_device,
             lease_duration_seconds=self.config.lease_duration_seconds,
@@ -154,6 +168,8 @@ class VideoWorkerDaemon:
         total: int,
         percent: float,
         message: Optional[str] = None,
+        worker_id: Optional[str] = None,
+        lease_token: Optional[str] = None,
     ) -> None:
         req = ProgressUpdateRequest(
             stage=stage,
@@ -161,6 +177,8 @@ class VideoWorkerDaemon:
             total=total,
             percent=percent,
             message=message,
+            worker_id=worker_id or self.config.worker_id,
+            lease_token=lease_token,
         )
         try:
             await client.post(f"/v1/jobs/{job_id}/progress", json=req.model_dump(mode="json"))
@@ -189,11 +207,15 @@ class VideoWorkerDaemon:
         artifacts: list,
         duration_ms: float,
         fps: float = 24.0,
+        worker_id: Optional[str] = None,
+        lease_token: Optional[str] = None,
     ) -> None:
         comp = JobCompletionRequest(
             artifacts=artifacts,
             inference_duration_ms=duration_ms,
             fps=fps,
+            worker_id=worker_id or self.config.worker_id,
+            lease_token=lease_token,
         )
         resp = await client.post(f"/v1/jobs/{job_id}/complete", json=comp.model_dump(mode="json"))
         resp.raise_for_status()
@@ -206,6 +228,8 @@ class VideoWorkerDaemon:
         message: str,
         request_id: Optional[str] = None,
         retryable: bool = False,
+        worker_id: Optional[str] = None,
+        lease_token: Optional[str] = None,
     ) -> None:
         req_id = request_id or f"req-{uuid.uuid4()}"
         from factory_contracts.errors.error_contract import ErrorCode
@@ -213,6 +237,8 @@ class VideoWorkerDaemon:
         fail = JobFailureRequest(
             error=ErrorDetail(code=code_enum, message=message, request_id=req_id),
             retryable=retryable,
+            worker_id=worker_id or self.config.worker_id,
+            lease_token=lease_token,
         )
         try:
             await client.post(f"/v1/jobs/{job_id}/fail", json=fail.model_dump(mode="json"))
@@ -249,7 +275,7 @@ class VideoWorkerDaemon:
 
         try:
             # 1. Report loading stage
-            await self.report_progress(client, job_id, stage="loading", step=0, total=20, percent=0.0, message="Staging video assets")
+            await self.report_progress(client, job_id, stage="loading", step=0, total=20, percent=0.0, message="Staging video assets", worker_id=self.config.worker_id, lease_token=lease_token)
 
             # 2. Stage remote assets
             staged_files: Dict[str, str] = {}
@@ -286,6 +312,8 @@ class VideoWorkerDaemon:
                     total=total,
                     percent=pct,
                     message=msg,
+                    worker_id=self.config.worker_id,
+                    lease_token=lease_token,
                 )
 
             # 5. Execute only against a live ComfyUI backend.
@@ -312,12 +340,12 @@ class VideoWorkerDaemon:
 
             # 7. Complete job
             fps_val = float(job.inputs.get("fps", 24.0))
-            await self.complete_job(client, job_id, artifacts, duration_ms, fps=fps_val)
+            await self.complete_job(client, job_id, artifacts, duration_ms, fps=fps_val, worker_id=self.config.worker_id, lease_token=lease_token)
             logger.info(f"Video job {job_id} completed successfully in {duration_ms:.1f}ms")
 
         except asyncio.CancelledError:
             logger.info(f"Video job {job_id} cancelled.")
-            await self.fail_job(client, job_id, "JOB_CANCELLED", "Job was cancelled by user.", request_id=job.request_id, retryable=False)
+            await self.fail_job(client, job_id, "JOB_CANCELLED", "Job was cancelled by user.", request_id=job.request_id, retryable=False, worker_id=self.config.worker_id, lease_token=lease_token)
         except Exception as e:
             logger.error(f"Error processing video job {job_id}: {e}")
             await self.fail_job(
@@ -327,6 +355,8 @@ class VideoWorkerDaemon:
                 "Video generation backend failed. Inspect correlated worker logs.",
                 request_id=job.request_id,
                 retryable=True,
+                worker_id=self.config.worker_id,
+                lease_token=lease_token,
             )
 
         finally:

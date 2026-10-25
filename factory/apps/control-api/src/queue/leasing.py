@@ -15,6 +15,7 @@ from factory_contracts.jobs.worker_contract import (
 )
 from factory.apps.control_api.src.queue.broker.base import BaseQueueBroker
 from factory.apps.control_api.src.queue.repository.base import BaseJobRepository
+from factory.apps.control_api.src.telemetry.metrics import metrics
 
 
 class LeaseCoordinator:
@@ -94,13 +95,29 @@ class LeaseCoordinator:
                 if job.state == JobState.CANCELLED:
                     cancel_requested = True
                 elif job.state in (JobState.RUNNING, JobState.STREAMING):
-                    now = datetime.now(timezone.utc)
-                    extended_until = now + timedelta(seconds=300)
-                    await self.repository.extend_lease(
-                        worker_id=req.worker_id,
-                        job_id=req.active_job_id,
-                        new_expires_at=extended_until,
-                    )
+                    if (
+                        job.worker is not None
+                        and job.worker.worker_id == req.worker_id
+                        and req.lease_token
+                        and job.worker.lease_token == req.lease_token
+                    ):
+                        now = datetime.now(timezone.utc)
+                        extended_until = now + timedelta(seconds=300)
+                        await self.repository.extend_lease(
+                            worker_id=req.worker_id,
+                            job_id=req.active_job_id,
+                            new_expires_at=extended_until,
+                        )
+
+        # Update real telemetry VRAM metrics
+        if req.vram_used_mb is not None:
+            vram_gb = round(req.vram_used_mb / 1024.0, 1)
+            worker = await self.repository.get_worker(req.worker_id)
+            gpu_device = worker.get("gpu_device") if worker else None
+            if gpu_device == 1 or "gpu-1" in req.worker_id or "gpu_1" in req.worker_id or "gpu1" in req.worker_id:
+                metrics.set_gpu_vram(gpu_1_gb=vram_gb)
+            else:
+                metrics.set_gpu_vram(gpu_0_gb=vram_gb)
 
         await self.repository.upsert_worker_heartbeat(
             worker_id=req.worker_id,

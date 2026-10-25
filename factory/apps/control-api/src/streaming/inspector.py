@@ -27,8 +27,8 @@ async def stream_studio_inspector(
         # Telemetry event
         snapshot = metrics.get_snapshot()
         telemetry_payload = {
-            "gpu_0_vram_used_gb": snapshot.get("gpu_0_vram_used_gb", 11.2),
-            "gpu_1_vram_used_gb": snapshot.get("gpu_1_vram_used_gb", 13.8),
+            "gpu_0_vram_used_gb": snapshot.get("gpu_0_vram_used_gb"),
+            "gpu_1_vram_used_gb": snapshot.get("gpu_1_vram_used_gb"),
             "active_jobs": snapshot.get("active_jobs", 0),
             "queue_depth": snapshot.get("queue_depth", 0),
         }

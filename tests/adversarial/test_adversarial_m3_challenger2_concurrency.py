@@ -144,13 +144,17 @@ async def test_concurrent_burst_job_submission_and_leasing():
 
                     # Report progress
                     prog_res = await client.post(f"/v1/jobs/{jid}/progress", json={
-                        "stage": "sampling", "step": 10, "total": 20, "percent": 50.0, "message": "Halfway"
+                        "stage": "sampling", "step": 10, "total": 20, "percent": 50.0, "message": "Halfway",
+                        "worker_id": worker_id,
+                        "lease_token": lease_token,
                     })
                     assert prog_res.status_code == 200
 
                     # Complete job with valid artifact
                     mime = "image/png" if subsystem == "image" else ("video/mp4" if subsystem == "video" else "audio/wav")
                     comp_res = await client.post(f"/v1/jobs/{jid}/complete", json={
+                        "worker_id": worker_id,
+                        "lease_token": lease_token,
                         "artifacts": [{
                             "artifact_id": f"art-{jid}",
                             "type": "image" if subsystem == "image" else ("video" if subsystem == "video" else "audio"),
@@ -335,6 +339,8 @@ async def test_audio_and_enhancement_job_cancellation():
 
             # Worker attempts to complete
             comp_res = await client.post(f"/v1/jobs/{jid2}/complete", json={
+                "worker_id": "mus-w0",
+                "lease_token": l_res2.json()["lease_token"],
                 "artifacts": [{
                     "artifact_id": f"art-{jid2}",
                     "type": "audio",

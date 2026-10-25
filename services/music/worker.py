@@ -139,6 +139,8 @@ class MusicWorker:
             total=20,
             percent=percent,
             message=f"ACE-Step {stage} at {percent:.0f}%",
+            worker_id=self.worker_id,
+            lease_token=self._active_lease_token,
         )
         try:
             await http_client.post(
@@ -213,7 +215,11 @@ class MusicWorker:
                 download_url=download_url,
                 sha256=result["sha256"],
             )
-            comp_req = JobCompletionRequest(artifacts=[artifact])
+            comp_req = JobCompletionRequest(
+                artifacts=[artifact],
+                worker_id=self.worker_id,
+                lease_token=self._active_lease_token,
+            )
 
             res = await http_client.post(
                 f"{self.control_plane_url}/v1/jobs/{job.job_id}/complete",
@@ -236,6 +242,8 @@ class MusicWorker:
                     request_id=job.request_id,
                 ),
                 retryable=True,
+                worker_id=self.worker_id,
+                lease_token=self._active_lease_token,
             )
             try:
                 await http_client.post(

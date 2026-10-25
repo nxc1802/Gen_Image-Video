@@ -210,6 +210,38 @@ class PostgresJobRepository(BaseJobRepository):
             )
         return job
 
+    async def list_jobs(
+        self,
+        limit: int = 50,
+        offset: int = 0,
+        service: Optional[str] = None,
+        state: Optional[str] = None,
+    ) -> List[FactoryJob]:
+        conditions = []
+        params: List[Any] = []
+        idx = 1
+        if service:
+            conditions.append(f"service = ${idx}")
+            params.append(service)
+            idx += 1
+        if state:
+            state_val = state.value if hasattr(state, "value") else str(state)
+            conditions.append(f"state = ${idx}")
+            params.append(state_val)
+            idx += 1
+
+        where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+        query = f"""
+            SELECT * FROM jobs
+            {where_clause}
+            ORDER BY created_at DESC
+            LIMIT ${idx} OFFSET ${idx + 1}
+        """
+        params.extend([limit, offset])
+        async with self.pool.acquire() as conn:
+            records = await conn.fetch(query, *params)
+            return [self._record_to_job(rec) for rec in records]
+
     async def find_eligible_jobs_for_worker(
         self,
         subsystem: str,
@@ -356,10 +388,15 @@ class PostgresJobRepository(BaseJobRepository):
             $1, $2, $3, $4::jsonb, $5::jsonb, $6, 'ONLINE', $7, NOW(), $8, $9, NOW()
         )
         ON CONFLICT (worker_id) DO UPDATE SET
-            current_job_id = COALESCE($7, worker_registrations.current_job_id),
+            current_job_id = $7,
             last_heartbeat = NOW(),
             gpu_utilization = COALESCE($8, worker_registrations.gpu_utilization),
             vram_used_mb = COALESCE($9, worker_registrations.vram_used_mb),
+            subsystem = CASE WHEN $2 IS NOT NULL AND $2 <> 'unknown' THEN $2 ELSE worker_registrations.subsystem END,
+            framework = CASE WHEN $3 IS NOT NULL AND $3 <> 'unknown' THEN $3 ELSE worker_registrations.framework END,
+            supported_models = CASE WHEN $4 IS NOT NULL AND $4 <> '[]' THEN $4::jsonb ELSE worker_registrations.supported_models END,
+            supported_tasks = CASE WHEN $5 IS NOT NULL AND $5 <> '[]' THEN $5::jsonb ELSE worker_registrations.supported_tasks END,
+            gpu_device = COALESCE($6, worker_registrations.gpu_device),
             status = 'ONLINE'
         """
         async with self.pool.acquire() as conn:

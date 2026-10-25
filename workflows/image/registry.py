@@ -21,10 +21,20 @@ TASK_TEMPLATE_MAP = {
 }
 
 TASK_ALIASES: Dict[str, str] = {
+    # Short aliases
     "t2i": "text_to_image",
     "i2i": "image_to_image",
     "edit": "instruction_edit",
     "reference": "reference_conditioning",
+    # Capability IDs
+    "image.t2i": "text_to_image",
+    "image.i2i": "image_to_image",
+    "image.inpaint": "inpaint",
+    "image.outpaint": "outpaint",
+    "image.instruction_edit": "instruction_edit",
+    "image.reference": "reference_conditioning",
+    "image.reference_conditioning": "reference_conditioning",
+    "image.controlnet": "controlnet",
 }
 
 

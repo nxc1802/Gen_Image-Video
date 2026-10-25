@@ -176,6 +176,8 @@ class TestControlPlaneLiveAPI:
                 "total": 20,
                 "percent": 50.0,
                 "message": "Denoising step 10/20",
+                "worker_id": "worker-gpu-image-0",
+                "lease_token": lease_data["lease_token"],
             },
         )
         assert prog_res.status_code == 200
@@ -198,6 +200,8 @@ class TestControlPlaneLiveAPI:
                 ],
                 "inference_duration_ms": 3200.0,
                 "peak_vram_mb": 11500.0,
+                "worker_id": "worker-gpu-image-0",
+                "lease_token": lease_data["lease_token"],
             },
         )
         assert comp_res.status_code == 200

@@ -5,7 +5,7 @@ FastAPI router for Client Job Lifecycle API endpoints (/v1/jobs).
 import asyncio
 import secrets
 from typing import Any, Dict, Optional
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, WebSocket, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response, WebSocket, status
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from factory_auth import verify_bearer_token, load_auth_config, decode_jwt_token
@@ -158,6 +158,43 @@ async def submit_job(
 
     status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
     return JSONResponse(status_code=status_code, content=job.model_dump(mode="json"), headers=headers)
+
+
+@router.get("", dependencies=[Depends(verify_bearer_token)])
+async def list_jobs(
+    request: Request,
+    limit: int = Query(default=50, ge=1, le=1000),
+    offset: int = Query(default=0, ge=0),
+    service: Optional[str] = Query(default=None),
+    state: Optional[str] = Query(default=None),
+    status: Optional[str] = Query(default=None),
+    manager: JobLifecycleManager = Depends(get_lifecycle_manager),
+):
+    """Lists jobs with optional filtering by service/state and pagination."""
+    effective_state = state or status
+    jobs = await manager.list_jobs(
+        limit=limit,
+        offset=offset,
+        service=service,
+        state=effective_state,
+    )
+    storage = get_storage_provider(request)
+    for job in jobs:
+        if job.artifacts and storage:
+            for art in job.artifacts:
+                if art.storage_path:
+                    try:
+                        fresh_url = storage.generate_presigned_download_url(
+                            bucket="",
+                            key=art.storage_path,
+                            expires_in_seconds=86400,
+                        )
+                        art.download_url = fresh_url
+                        art.url = fresh_url
+                    except Exception:
+                        pass
+
+    return [job.model_dump(mode="json") for job in jobs]
 
 
 @router.get("/{job_id}", dependencies=[Depends(verify_bearer_token)])

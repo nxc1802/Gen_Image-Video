@@ -60,6 +60,8 @@ class ProgressUpdateRequest(BaseModel):
     percent: float = Field(default=0.0, ge=0.0, le=100.0)
     message: Optional[str] = None
     preview_url: Optional[str] = None
+    worker_id: Optional[str] = Field(default=None, description="Worker daemon identifier")
+    lease_token: Optional[str] = Field(default=None, description="Active lease token")
 
 
 class JobCompletionRequest(BaseModel):
@@ -71,6 +73,8 @@ class JobCompletionRequest(BaseModel):
     tokens_per_sec: Optional[float] = None
     fps: Optional[float] = None
     peak_vram_mb: Optional[float] = None
+    worker_id: Optional[str] = Field(default=None, description="Worker daemon identifier")
+    lease_token: Optional[str] = Field(default=None, description="Active lease token")
 
 
 class JobFailureRequest(BaseModel):
@@ -79,3 +83,5 @@ class JobFailureRequest(BaseModel):
 
     error: ErrorDetail = Field(..., description="Sanitized error description")
     retryable: bool = Field(default=True, description="Whether job may be retried")
+    worker_id: Optional[str] = Field(default=None, description="Worker daemon identifier")
+    lease_token: Optional[str] = Field(default=None, description="Active lease token")

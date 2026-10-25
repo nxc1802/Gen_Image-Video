@@ -62,6 +62,7 @@ from factory_contracts.jobs import (
     JobSubmissionRequest,
     FactoryJob,
 )
+from factory_contracts.tasks import CANONICAL_TASK_MAP, normalize_task
 
 __all__ = [
     # Errors
@@ -122,4 +123,7 @@ __all__ = [
     "JobTelemetry",
     "JobSubmissionRequest",
     "FactoryJob",
+    # Tasks
+    "CANONICAL_TASK_MAP",
+    "normalize_task",
 ]
