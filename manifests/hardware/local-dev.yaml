@@ -22,7 +22,8 @@ gpus:
       - decision-service
       - embed-service
       
-      - rerank-service- speech-service
+      - rerank-service
+      - speech-service
       - image-service
       - video-service
       - music-service

@@ -106,7 +106,7 @@ jobs:
               for path in root.rglob("*"):
                   if not path.is_file() or path.suffix not in {".py", ".ts", ".tsx", ".js", ".mjs"}:
                       continue
-                  if "tests" in path.parts:
+                  if any(p in {"tests", "node_modules", ".next", "dist", "build"} for p in path.parts):
                       continue
                   text = path.read_text(encoding="utf-8", errors="ignore")
                   for needle, reason in forbidden.items():

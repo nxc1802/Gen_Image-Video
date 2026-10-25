@@ -248,6 +248,7 @@ name = "factory-control-api"
 version = "0.1.0"
 source = { editable = "factory/apps/control-api" }
 dependencies = [
+    { name = "aiosqlite" },
     { name = "asyncpg" },
     { name = "boto3" },
     { name = "factory-auth" },
@@ -268,6 +269,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "aiosqlite", specifier = ">=0.20.0" },
     { name = "asyncpg", specifier = ">=0.29.0" },
     { name = "boto3", specifier = ">=1.34.0" },
     { name = "factory-auth", editable = "packages/auth" },

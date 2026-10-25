@@ -37,7 +37,7 @@ export function generateClientSnippets(
   const python = `import os
 import httpx
 
-API_KEY = os.getenv("FACTORY_API_KEY", "${apiKey.startsWith("$") ? "sk-factory-studio" : apiKey}")
+API_KEY = os.getenv("FACTORY_API_KEY", "${apiKey.startsWith("$") ? "your-api-key" : apiKey}")
 BASE_URL = os.getenv("FACTORY_BASE_URL", "${cleanBaseUrl}")
 
 with httpx.Client(base_url=BASE_URL, timeout=120.0) as client:
@@ -61,7 +61,7 @@ with httpx.Client(base_url=BASE_URL, timeout=120.0) as client:
 
   // 3. TypeScript fetch
   const tsInputs = JSON.stringify(inputs, null, 4).replace(/{\n    }/g, "{}");
-  const typescript = `const apiKey = process.env.FACTORY_API_KEY || "${apiKey.startsWith("$") ? "sk-factory-studio" : apiKey}";
+  const typescript = `const apiKey = process.env.FACTORY_API_KEY || "${apiKey.startsWith("$") ? "your-api-key" : apiKey}";
 const baseUrl = process.env.FACTORY_BASE_URL || "${cleanBaseUrl}";
 
 async function submitJob() {
@@ -103,7 +103,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url=os.getenv("FACTORY_CONTROL_URL", "${cleanBaseUrl}/v1"),
-    api_key=os.getenv("FACTORY_API_KEY", "${apiKey.startsWith("$") ? "sk-factory-studio" : apiKey}"),
+    api_key=os.getenv("FACTORY_API_KEY", "${apiKey.startsWith("$") ? "your-api-key" : apiKey}"),
 )
 
 response = client.chat.completions.create(

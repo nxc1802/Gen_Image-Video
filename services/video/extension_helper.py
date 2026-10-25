@@ -41,10 +41,9 @@ class VideoExtensionHelper:
             except Exception as e:
                 logger.warning(f"ffmpeg frame extraction failed: {e}")
 
-        # Fallback 1x1 png image
-        mock_png = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15c4\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82"
-        output_frame_path.write_bytes(mock_png)
-        return output_frame_path
+        raise RuntimeError(
+            f"Failed to extract video frame from {video_path}: ffmpeg extraction failed or video is corrupt."
+        )
 
     @staticmethod
     def concatenate_videos(source_video_path: Path, extension_video_path: Path, output_video_path: Path) -> Path:

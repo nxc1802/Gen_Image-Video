@@ -104,7 +104,7 @@ export function ConnectionModal() {
               type="password"
               value={keyInput}
               onChange={(e) => setKeyInput(e.target.value)}
-              placeholder="sk-factory-studio"
+              placeholder="sk-..."
               className="w-full px-3 py-2 rounded-[6px] border border-hairline bg-canvas text-xs font-mono text-ink focus:outline-none focus:ring-1 focus:ring-ink"
             />
             <span className="text-[10px] font-mono text-ink-muted mt-1 flex items-center gap-1">
