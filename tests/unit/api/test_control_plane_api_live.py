@@ -315,7 +315,7 @@ class TestControlPlaneLiveAPI:
                 pass
         assert exc_info.value.code == 1008
 
-    def test_websocket_stream_authenticated_via_query_param(self, api_client, auth_headers):
+    def test_websocket_stream_rejects_query_param_token(self, api_client, auth_headers):
         sub_res = api_client.post(
             "/v1/jobs",
             headers=auth_headers,
@@ -327,7 +327,28 @@ class TestControlPlaneLiveAPI:
             },
         )
         job_id = sub_res.json()["job_id"]
-        with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws?token={VALID_TOKEN}") as ws:
+        from starlette.websockets import WebSocketDisconnect
+        with pytest.raises(WebSocketDisconnect) as exc_info:
+            with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws?token={VALID_TOKEN}"):
+                pass
+        assert exc_info.value.code == 1008
+
+    def test_websocket_stream_authenticated_via_subprotocol(self, api_client, auth_headers):
+        sub_res = api_client.post(
+            "/v1/jobs",
+            headers=auth_headers,
+            json={
+                "service": "image",
+                "model": "qwen-image-2.1",
+                "task": "text_to_image",
+                "inputs": {"prompt": "A cat"},
+            },
+        )
+        job_id = sub_res.json()["job_id"]
+        with api_client.websocket_connect(
+            f"/v1/jobs/{job_id}/ws",
+            subprotocols=["factory-v4", f"factory-bearer.{VALID_TOKEN}"],
+        ) as ws:
             assert ws is not None
 
     def test_websocket_stream_authenticated_via_auth_header(self, api_client, auth_headers):

@@ -1,11 +1,14 @@
 """
-factory/apps/control-api/src/api/middleware.py
-Request ID and Tracing Middleware
+factory/apps/control-api/src/api/middleware/__init__.py
+Control API Middleware Suite: Request ID, Telemetry, Rate Limiting, and Timeouts.
 """
 import uuid
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
+
+from .rate_limit import RateLimitMiddleware
+from .timeout import RequestTimeoutMiddleware
 
 
 class RequestIDMiddleware(BaseHTTPMiddleware):
@@ -20,3 +23,10 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
         response: Response = await call_next(request)
         response.headers["X-Request-ID"] = req_id
         return response
+
+
+__all__ = [
+    "RequestIDMiddleware",
+    "RateLimitMiddleware",
+    "RequestTimeoutMiddleware",
+]

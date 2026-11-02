@@ -210,8 +210,15 @@ async def websocket_transcription_stream(
         )
         if bearer_protocol:
             token = bearer_protocol[len("factory-bearer."):]
+
+    if websocket.query_params.get("token") is not None:
+        # Query-param token authentication is strictly prohibited (RFC 6455 / OWASP policy violation)
+        await websocket.close(code=1008)
+        return
+
     if not token:
-        token = websocket.query_params.get("token")
+        await websocket.close(code=1008)
+        return
 
     authenticated = False
     if expected_key and token and secrets.compare_digest(token, expected_key):

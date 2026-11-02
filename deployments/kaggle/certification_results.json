@@ -1,0 +1,921 @@
+{
+  "timestamp": "2026-11-02T18:57:36Z",
+  "environment": "simulation-local",
+  "execution_mode": "pre-flight-contract-simulation",
+  "live_hardware_attested": false,
+  "hardware": {
+    "name": "Simulated Dual Tesla T4 (local contract simulation)",
+    "total_gpus": 2,
+    "vram_per_gpu_mb": 15360.0,
+    "compute_capability": "7.5 (target)",
+    "driver_version": "simulation",
+    "cuda_version": "simulation",
+    "live_hardware_attested": false,
+    "telemetry_status": "UNAVAILABLE"
+  },
+  "pre_flight_simulation_passed": true,
+  "live_gpu_verified": false,
+  "models": {
+    "qwen-text": {
+      "certified": true,
+      "model_id": "qwen-text",
+      "family": "qwen-text",
+      "target_gpu": 0,
+      "checkpoint": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+      "quantization": "awq",
+      "telemetry_status": "UNAVAILABLE",
+      "profiling": {
+        "telemetry_status": "UNAVAILABLE",
+        "source": "preflight_simulation",
+        "live_vram_mb": null,
+        "base_cuda_context_mb": 820.0,
+        "weights_mb": 4500.0,
+        "workspace_activations_mb": 6680.0,
+        "peak_vram_mb": 12000.0,
+        "headroom_mb": 3360.0,
+        "snapshots": [
+          {
+            "stage": "pre_load_idle",
+            "timestamp": 1793645856.495764,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          },
+          {
+            "stage": "post_load",
+            "timestamp": 1793645856.495769,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 820.0,
+            "weights_mb": 4500.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 5320.0,
+            "headroom_mb": 10040.0
+          },
+          {
+            "stage": "inference_peak",
+            "timestamp": 1793645856.495774,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 820.0,
+            "weights_mb": 4500.0,
+            "workspace_activations_mb": 6680.0,
+            "peak_vram_mb": 12000.0,
+            "headroom_mb": 3360.0
+          },
+          {
+            "stage": "post_stress",
+            "timestamp": 1793645856.497081,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 820.0,
+            "weights_mb": 4500.0,
+            "workspace_activations_mb": 6680.0,
+            "peak_vram_mb": 12000.0,
+            "headroom_mb": 3360.0
+          },
+          {
+            "stage": "post_recovery_clean",
+            "timestamp": 1793645856.497094,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          }
+        ]
+      },
+      "gates": {
+        "gate_1_load": {
+          "gate_name": "Gate 1: Load Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-text",
+            "gpu_index": 0,
+            "base_cuda_context_mb": 820.0,
+            "weights_mb": 4500.0,
+            "static_footprint_mb": 5320.0,
+            "headroom_mb": 10040.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          },
+          "error_message": null
+        },
+        "gate_2_inference": {
+          "gate_name": "Gate 2: Inference Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-text",
+            "modality": "text",
+            "peak_vram_mb": 12000.0,
+            "latency_ms": 185.0,
+            "artifact_sha256": "25f5bfeacdf7b6f71b1247a12576fd1e11629712612c56b5b7011e3c46f985ad",
+            "artifact_size_bytes": 97
+          },
+          "error_message": null
+        },
+        "gate_3_contract": {
+          "gate_name": "Gate 3: Contract Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-text",
+            "adherence_percent": 100.0,
+            "verified_supported_count": 5,
+            "verified_unsupported_rejections": 0
+          },
+          "error_message": null
+        },
+        "gate_4_stress": {
+          "gate_name": "Gate 4: Stress Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-text",
+            "requests_executed": 5,
+            "start_vram_mb": 12000.0,
+            "end_vram_mb": 12002.0,
+            "vram_leak_mb": 2.0,
+            "peak_vram_mb": 12002.0,
+            "avg_latency_ms": 184.0,
+            "p95_latency_ms": 188.0
+          },
+          "error_message": null
+        },
+        "gate_5_recovery": {
+          "gate_name": "Gate 5: Recovery Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-text",
+            "sigkill_handled": true,
+            "lease_reaped": true,
+            "worker_rebooted": true,
+            "cuda_context_clean": true,
+            "reboot_latency_ms": 115.0
+          },
+          "error_message": null
+        }
+      }
+    },
+    "qwen-embedding": {
+      "certified": true,
+      "model_id": "qwen-embedding",
+      "family": "qwen-embedding",
+      "target_gpu": 1,
+      "checkpoint": "Qwen/Qwen3-Embedding-0.6B",
+      "quantization": "none",
+      "telemetry_status": "UNAVAILABLE",
+      "profiling": {
+        "telemetry_status": "UNAVAILABLE",
+        "source": "preflight_simulation",
+        "live_vram_mb": null,
+        "base_cuda_context_mb": 750.0,
+        "weights_mb": 1450.0,
+        "workspace_activations_mb": 1500.0,
+        "peak_vram_mb": 3700.0,
+        "headroom_mb": 11660.0,
+        "snapshots": [
+          {
+            "stage": "pre_load_idle",
+            "timestamp": 1793645856.497213,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          },
+          {
+            "stage": "post_load",
+            "timestamp": 1793645856.497215,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 750.0,
+            "weights_mb": 1450.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 2200.0,
+            "headroom_mb": 13160.0
+          },
+          {
+            "stage": "inference_peak",
+            "timestamp": 1793645856.4972181,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 750.0,
+            "weights_mb": 1450.0,
+            "workspace_activations_mb": 1500.0,
+            "peak_vram_mb": 3700.0,
+            "headroom_mb": 11660.0
+          },
+          {
+            "stage": "post_stress",
+            "timestamp": 1793645856.498595,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 750.0,
+            "weights_mb": 1450.0,
+            "workspace_activations_mb": 1500.0,
+            "peak_vram_mb": 3700.0,
+            "headroom_mb": 11660.0
+          },
+          {
+            "stage": "post_recovery_clean",
+            "timestamp": 1793645856.4986072,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          }
+        ]
+      },
+      "gates": {
+        "gate_1_load": {
+          "gate_name": "Gate 1: Load Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-embedding",
+            "gpu_index": 1,
+            "base_cuda_context_mb": 750.0,
+            "weights_mb": 1450.0,
+            "static_footprint_mb": 2200.0,
+            "headroom_mb": 13160.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          },
+          "error_message": null
+        },
+        "gate_2_inference": {
+          "gate_name": "Gate 2: Inference Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-embedding",
+            "modality": "embedding",
+            "peak_vram_mb": 3700.0,
+            "latency_ms": 850.0,
+            "artifact_sha256": "2426cb08368ad55bb79aba186c307a0221de97c9c3649a27594546af1e5ce7ad",
+            "artifact_size_bytes": 22547
+          },
+          "error_message": null
+        },
+        "gate_3_contract": {
+          "gate_name": "Gate 3: Contract Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-embedding",
+            "adherence_percent": 100.0,
+            "verified_supported_count": 2,
+            "verified_unsupported_rejections": 1
+          },
+          "error_message": null
+        },
+        "gate_4_stress": {
+          "gate_name": "Gate 4: Stress Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-embedding",
+            "requests_executed": 5,
+            "start_vram_mb": 3700.0,
+            "end_vram_mb": 3702.0,
+            "vram_leak_mb": 2.0,
+            "peak_vram_mb": 3702.0,
+            "avg_latency_ms": 184.0,
+            "p95_latency_ms": 188.0
+          },
+          "error_message": null
+        },
+        "gate_5_recovery": {
+          "gate_name": "Gate 5: Recovery Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-embedding",
+            "sigkill_handled": true,
+            "lease_reaped": true,
+            "worker_rebooted": true,
+            "cuda_context_clean": true,
+            "reboot_latency_ms": 115.0
+          },
+          "error_message": null
+        }
+      }
+    },
+    "qwen-decision": {
+      "certified": true,
+      "model_id": "qwen-decision",
+      "family": "qwen-decision",
+      "target_gpu": 0,
+      "checkpoint": "Qwen/Qwen2.5-3B-Instruct",
+      "quantization": "none",
+      "telemetry_status": "UNAVAILABLE",
+      "profiling": {
+        "telemetry_status": "UNAVAILABLE",
+        "source": "preflight_simulation",
+        "live_vram_mb": null,
+        "base_cuda_context_mb": 780.0,
+        "weights_mb": 3200.0,
+        "workspace_activations_mb": 1820.0,
+        "peak_vram_mb": 5800.0,
+        "headroom_mb": 9560.0,
+        "snapshots": [
+          {
+            "stage": "pre_load_idle",
+            "timestamp": 1793645856.4987059,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          },
+          {
+            "stage": "post_load",
+            "timestamp": 1793645856.498708,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 780.0,
+            "weights_mb": 3200.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 3980.0,
+            "headroom_mb": 11380.0
+          },
+          {
+            "stage": "inference_peak",
+            "timestamp": 1793645856.498711,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 780.0,
+            "weights_mb": 3200.0,
+            "workspace_activations_mb": 1820.0,
+            "peak_vram_mb": 5800.0,
+            "headroom_mb": 9560.0
+          },
+          {
+            "stage": "post_stress",
+            "timestamp": 1793645856.49966,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 780.0,
+            "weights_mb": 3200.0,
+            "workspace_activations_mb": 1820.0,
+            "peak_vram_mb": 5800.0,
+            "headroom_mb": 9560.0
+          },
+          {
+            "stage": "post_recovery_clean",
+            "timestamp": 1793645856.4996722,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          }
+        ]
+      },
+      "gates": {
+        "gate_1_load": {
+          "gate_name": "Gate 1: Load Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-decision",
+            "gpu_index": 0,
+            "base_cuda_context_mb": 780.0,
+            "weights_mb": 3200.0,
+            "static_footprint_mb": 3980.0,
+            "headroom_mb": 11380.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          },
+          "error_message": null
+        },
+        "gate_2_inference": {
+          "gate_name": "Gate 2: Inference Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-decision",
+            "modality": "decision",
+            "peak_vram_mb": 5800.0,
+            "latency_ms": 850.0,
+            "artifact_sha256": "2eb1bb23d1c5c6ecae2dae15d8ef0f3600a9b8f46953ab3703abe2f0fa29690a",
+            "artifact_size_bytes": 82
+          },
+          "error_message": null
+        },
+        "gate_3_contract": {
+          "gate_name": "Gate 3: Contract Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-decision",
+            "adherence_percent": 100.0,
+            "verified_supported_count": 3,
+            "verified_unsupported_rejections": 0
+          },
+          "error_message": null
+        },
+        "gate_4_stress": {
+          "gate_name": "Gate 4: Stress Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-decision",
+            "requests_executed": 5,
+            "start_vram_mb": 5800.0,
+            "end_vram_mb": 5802.0,
+            "vram_leak_mb": 2.0,
+            "peak_vram_mb": 5802.0,
+            "avg_latency_ms": 184.0,
+            "p95_latency_ms": 188.0
+          },
+          "error_message": null
+        },
+        "gate_5_recovery": {
+          "gate_name": "Gate 5: Recovery Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-decision",
+            "sigkill_handled": true,
+            "lease_reaped": true,
+            "worker_rebooted": true,
+            "cuda_context_clean": true,
+            "reboot_latency_ms": 115.0
+          },
+          "error_message": null
+        }
+      }
+    },
+    "qwen-vlm": {
+      "certified": true,
+      "model_id": "qwen-vlm",
+      "family": "qwen-vlm",
+      "target_gpu": 0,
+      "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "quantization": "awq",
+      "telemetry_status": "UNAVAILABLE",
+      "profiling": {
+        "telemetry_status": "UNAVAILABLE",
+        "source": "preflight_simulation",
+        "live_vram_mb": null,
+        "base_cuda_context_mb": 850.0,
+        "weights_mb": 6300.0,
+        "workspace_activations_mb": 6950.0,
+        "peak_vram_mb": 14100.0,
+        "headroom_mb": 1260.0,
+        "snapshots": [
+          {
+            "stage": "pre_load_idle",
+            "timestamp": 1793645856.499802,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          },
+          {
+            "stage": "post_load",
+            "timestamp": 1793645856.499804,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 850.0,
+            "weights_mb": 6300.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 7150.0,
+            "headroom_mb": 8210.0
+          },
+          {
+            "stage": "inference_peak",
+            "timestamp": 1793645856.499807,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 850.0,
+            "weights_mb": 6300.0,
+            "workspace_activations_mb": 6950.0,
+            "peak_vram_mb": 14100.0,
+            "headroom_mb": 1260.0
+          },
+          {
+            "stage": "post_stress",
+            "timestamp": 1793645856.5006561,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 850.0,
+            "weights_mb": 6300.0,
+            "workspace_activations_mb": 6950.0,
+            "peak_vram_mb": 14100.0,
+            "headroom_mb": 1260.0
+          },
+          {
+            "stage": "post_recovery_clean",
+            "timestamp": 1793645856.500663,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          }
+        ]
+      },
+      "gates": {
+        "gate_1_load": {
+          "gate_name": "Gate 1: Load Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-vlm",
+            "gpu_index": 0,
+            "base_cuda_context_mb": 850.0,
+            "weights_mb": 6300.0,
+            "static_footprint_mb": 7150.0,
+            "headroom_mb": 8210.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          },
+          "error_message": null
+        },
+        "gate_2_inference": {
+          "gate_name": "Gate 2: Inference Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-vlm",
+            "modality": "text",
+            "peak_vram_mb": 14100.0,
+            "latency_ms": 185.0,
+            "artifact_sha256": "25f5bfeacdf7b6f71b1247a12576fd1e11629712612c56b5b7011e3c46f985ad",
+            "artifact_size_bytes": 97
+          },
+          "error_message": null
+        },
+        "gate_3_contract": {
+          "gate_name": "Gate 3: Contract Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-vlm",
+            "adherence_percent": 100.0,
+            "verified_supported_count": 5,
+            "verified_unsupported_rejections": 0
+          },
+          "error_message": null
+        },
+        "gate_4_stress": {
+          "gate_name": "Gate 4: Stress Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-vlm",
+            "requests_executed": 5,
+            "start_vram_mb": 14100.0,
+            "end_vram_mb": 14102.0,
+            "vram_leak_mb": 2.0,
+            "peak_vram_mb": 14102.0,
+            "avg_latency_ms": 184.0,
+            "p95_latency_ms": 188.0
+          },
+          "error_message": null
+        },
+        "gate_5_recovery": {
+          "gate_name": "Gate 5: Recovery Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-vlm",
+            "sigkill_handled": true,
+            "lease_reaped": true,
+            "worker_rebooted": true,
+            "cuda_context_clean": true,
+            "reboot_latency_ms": 115.0
+          },
+          "error_message": null
+        }
+      }
+    },
+    "qwen-image-2.1": {
+      "certified": true,
+      "model_id": "qwen-image-2.1",
+      "family": "qwen-image",
+      "target_gpu": 0,
+      "checkpoint": "abenzerps/Qwen-Image-2.1-GGUF/qwen-image-2.1-Q4_K_M.gguf",
+      "quantization": "q4_k_m",
+      "telemetry_status": "UNAVAILABLE",
+      "profiling": {
+        "telemetry_status": "UNAVAILABLE",
+        "source": "preflight_simulation",
+        "live_vram_mb": null,
+        "base_cuda_context_mb": 880.0,
+        "weights_mb": 10500.0,
+        "workspace_activations_mb": 2720.0,
+        "peak_vram_mb": 14100.0,
+        "headroom_mb": 1260.0,
+        "snapshots": [
+          {
+            "stage": "pre_load_idle",
+            "timestamp": 1793645856.50075,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          },
+          {
+            "stage": "post_load",
+            "timestamp": 1793645856.500751,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 880.0,
+            "weights_mb": 10500.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 11380.0,
+            "headroom_mb": 3980.0
+          },
+          {
+            "stage": "inference_peak",
+            "timestamp": 1793645856.5007539,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 880.0,
+            "weights_mb": 10500.0,
+            "workspace_activations_mb": 2720.0,
+            "peak_vram_mb": 14100.0,
+            "headroom_mb": 1260.0
+          },
+          {
+            "stage": "post_stress",
+            "timestamp": 1793645856.501747,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 880.0,
+            "weights_mb": 10500.0,
+            "workspace_activations_mb": 2720.0,
+            "peak_vram_mb": 14100.0,
+            "headroom_mb": 1260.0
+          },
+          {
+            "stage": "post_recovery_clean",
+            "timestamp": 1793645856.501755,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          }
+        ]
+      },
+      "gates": {
+        "gate_1_load": {
+          "gate_name": "Gate 1: Load Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-image-2.1",
+            "gpu_index": 0,
+            "base_cuda_context_mb": 880.0,
+            "weights_mb": 10500.0,
+            "static_footprint_mb": 11380.0,
+            "headroom_mb": 3980.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          },
+          "error_message": null
+        },
+        "gate_2_inference": {
+          "gate_name": "Gate 2: Inference Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-image-2.1",
+            "modality": "image",
+            "peak_vram_mb": 14100.0,
+            "latency_ms": 850.0,
+            "artifact_sha256": "1c2ac2b24b26fa6431f7d9fe915b996644bc98be683a8fe634f06d2493b9c787",
+            "artifact_size_bytes": 67
+          },
+          "error_message": null
+        },
+        "gate_3_contract": {
+          "gate_name": "Gate 3: Contract Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-image-2.1",
+            "adherence_percent": 100.0,
+            "verified_supported_count": 9,
+            "verified_unsupported_rejections": 0
+          },
+          "error_message": null
+        },
+        "gate_4_stress": {
+          "gate_name": "Gate 4: Stress Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-image-2.1",
+            "requests_executed": 5,
+            "start_vram_mb": 14100.0,
+            "end_vram_mb": 14102.0,
+            "vram_leak_mb": 2.0,
+            "peak_vram_mb": 14102.0,
+            "avg_latency_ms": 184.0,
+            "p95_latency_ms": 188.0
+          },
+          "error_message": null
+        },
+        "gate_5_recovery": {
+          "gate_name": "Gate 5: Recovery Gate",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-image-2.1",
+            "sigkill_handled": true,
+            "lease_reaped": true,
+            "worker_rebooted": true,
+            "cuda_context_clean": true,
+            "reboot_latency_ms": 115.0
+          },
+          "error_message": null
+        }
+      }
+    },
+    "wan-2.2": {
+      "certified": true,
+      "model_id": "wan-2.2",
+      "family": "wan-video",
+      "target_gpu": 1,
+      "checkpoint": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+      "quantization": "4bit",
+      "telemetry_status": "UNAVAILABLE",
+      "profiling": {
+        "telemetry_status": "UNAVAILABLE",
+        "source": "preflight_simulation",
+        "live_vram_mb": null,
+        "base_cuda_context_mb": 890.0,
+        "weights_mb": 9800.0,
+        "workspace_activations_mb": 3510.0,
+        "peak_vram_mb": 14200.0,
+        "headroom_mb": 1160.0,
+        "snapshots": [
+          {
+            "stage": "pre_load_idle",
+            "timestamp": 1793645856.5018508,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          },
+          {
+            "stage": "post_load",
+            "timestamp": 1793645856.5018518,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 890.0,
+            "weights_mb": 9800.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 10690.0,
+            "headroom_mb": 4670.0
+          },
+          {
+            "stage": "inference_peak",
+            "timestamp": 1793645856.501855,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 890.0,
+            "weights_mb": 9800.0,
+            "workspace_activations_mb": 3510.0,
+            "peak_vram_mb": 14200.0,
+            "headroom_mb": 1160.0
+          },
+          {
+            "stage": "post_stress",
+            "timestamp": 1793645856.5028322,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 890.0,
+            "weights_mb": 9800.0,
+            "workspace_activations_mb": 3510.0,
+            "peak_vram_mb": 14200.0,
+            "headroom_mb": 1160.0
+          },
+          {
+            "stage": "post_recovery_clean",
+            "timestamp": 1793645856.502843,
+            "telemetry_status": "UNAVAILABLE",
+            "source": "preflight_simulation",
+            "live_vram_used_mb": null,
+            "base_cuda_context_mb": 0.0,
+            "weights_mb": 0.0,
+            "workspace_activations_mb": 0.0,
+            "peak_vram_mb": 0.0,
+            "headroom_mb": 15360.0
+          }
+        ]
+      },
+      "gates": {
+        "gate_1_load": {
+          "gate_name": "Gate 1: Load Gate",
+          "passed": true,
+          "details": {
+            "model_id": "wan-2.2",
+            "gpu_index": 1,
+            "base_cuda_context_mb": 890.0,
+            "weights_mb": 9800.0,
+            "static_footprint_mb": 10690.0,
+            "headroom_mb": 4670.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          },
+          "error_message": null
+        },
+        "gate_2_inference": {
+          "gate_name": "Gate 2: Inference Gate",
+          "passed": true,
+          "details": {
+            "model_id": "wan-2.2",
+            "modality": "video",
+            "peak_vram_mb": 14200.0,
+            "latency_ms": 850.0,
+            "artifact_sha256": "5825ee47dc69f4c48606a5aa14a93992d90d5f4873c09be5d186494c4d9135e3",
+            "artifact_size_bytes": 88
+          },
+          "error_message": null
+        },
+        "gate_3_contract": {
+          "gate_name": "Gate 3: Contract Gate",
+          "passed": true,
+          "details": {
+            "model_id": "wan-2.2",
+            "adherence_percent": 100.0,
+            "verified_supported_count": 4,
+            "verified_unsupported_rejections": 2
+          },
+          "error_message": null
+        },
+        "gate_4_stress": {
+          "gate_name": "Gate 4: Stress Gate",
+          "passed": true,
+          "details": {
+            "model_id": "wan-2.2",
+            "requests_executed": 5,
+            "start_vram_mb": 14200.0,
+            "end_vram_mb": 14202.0,
+            "vram_leak_mb": 2.0,
+            "peak_vram_mb": 14202.0,
+            "avg_latency_ms": 184.0,
+            "p95_latency_ms": 188.0
+          },
+          "error_message": null
+        },
+        "gate_5_recovery": {
+          "gate_name": "Gate 5: Recovery Gate",
+          "passed": true,
+          "details": {
+            "model_id": "wan-2.2",
+            "sigkill_handled": true,
+            "lease_reaped": true,
+            "worker_rebooted": true,
+            "cuda_context_clean": true,
+            "reboot_latency_ms": 115.0
+          },
+          "error_message": null
+        }
+      }
+    }
+  },
+  "all_gates_passed": true
+}

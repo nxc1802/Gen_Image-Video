@@ -96,7 +96,7 @@ async def studio_codegen(payload: Optional[Dict[str, Any]] = Body(default_factor
     python_snippet = (
         f"import httpx\n"
         f"import os\n\n"
-        f'API_KEY = os.getenv("FACTORY_API_KEY", "sk-factory-...")\n\n'
+        f'API_KEY = os.environ["FACTORY_API_KEY"]\n\n'
         f'response = httpx.post(\n'
         f'    "https://jobs.ai.example.com/v1/jobs",\n'
         f'    headers={{"Authorization": f"Bearer {{API_KEY}}", "Content-Type": "application/json"}},\n'
@@ -107,7 +107,10 @@ async def studio_codegen(payload: Optional[Dict[str, Any]] = Body(default_factor
     )
 
     typescript_snippet = (
-        f'const apiKey = process.env.FACTORY_API_KEY || "sk-factory-...";\n\n'
+        f'const apiKey = process.env.FACTORY_API_KEY;\n'
+        f'if (!apiKey) {{\n'
+        f'  throw new Error("Environment variable FACTORY_API_KEY is required.");\n'
+        f'}}\n\n'
         f'const response = await fetch("https://jobs.ai.example.com/v1/jobs", {{\n'
         f'  method: "POST",\n'
         f'  headers: {{\n'

@@ -2,6 +2,8 @@
 factory/apps/control-api/src/queue/manager.py
 Central JobLifecycleManager coordinating job submission, states, retries, and events.
 """
+import asyncio
+import time
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional, Tuple
@@ -26,7 +28,7 @@ from factory_contracts.jobs.worker_contract import (
     JobFailureRequest,
     ProgressUpdateRequest,
 )
-from factory_contracts.tasks import normalize_task
+from factory_contracts.tasks import normalize_model, normalize_task
 from factory.apps.control_api.src.queue.broker.base import BaseQueueBroker
 from factory.apps.control_api.src.queue.repository.base import BaseJobRepository
 from factory.apps.control_api.src.queue.state_machine import JobStateMachine
@@ -46,11 +48,33 @@ class JobLifecycleManager:
         self.repository = repository
         self.broker = broker
         self.stream_manager = stream_manager
+        self._last_metrics_update: float = 0.0
+
+    def _schedule_telemetry_update(self) -> None:
+        """Throttles and schedules asynchronous background update of queue/active metrics."""
+        now = time.monotonic()
+        if now - self._last_metrics_update < 1.0:
+            return
+        self._last_metrics_update = now
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(self._update_telemetry_async())
+        except RuntimeError:
+            pass
+
+    async def _update_telemetry_async(self) -> None:
+        try:
+            active, queued = await self.repository.count_active_and_queued()
+            metrics.set_active_jobs(active)
+            metrics.set_queue_depth(queued)
+        except Exception:
+            pass
 
     async def submit_job(
         self,
         req: JobSubmissionRequest,
         request_id: str,
+        trace_id: Optional[str] = None,
     ) -> Tuple[FactoryJob, bool]:
         """
         Submits a new job.
@@ -73,9 +97,10 @@ class JobLifecycleManager:
         job = FactoryJob(
             job_id=job_id,
             request_id=valid_req_id,
+            trace_id=trace_id,
             idempotency_key=req.idempotency_key,
             service=req.service,
-            model=req.model,
+            model=normalize_model(req.model),
             task=normalize_task(req.task),
             inputs=req.inputs,
             priority=req.priority,
@@ -87,17 +112,22 @@ class JobLifecycleManager:
         await self.repository.create_job(job)
         await self.broker.enqueue(job.job_id, job.service, job.priority)
 
-        # Update telemetry metrics
-        active, queued = await self.repository.count_active_and_queued()
-        metrics.set_active_jobs(active)
-        metrics.set_queue_depth(queued)
+        # Update telemetry metrics asynchronously off the hot request path
         metrics.increment_requests()
+        self._schedule_telemetry_update()
 
         # Emit initial queued event
         await self.stream_manager.publish(
             f"factory:events:job:{job_id}",
             "progress",
-            {"job_id": job_id, "stage": "queued", "percent": 0.0, "step": 0, "total": 0},
+            {
+                "job_id": job_id,
+                "trace_id": trace_id,
+                "stage": "queued",
+                "percent": 0.0,
+                "step": 0,
+                "total": 0,
+            },
         )
 
         return job, True
@@ -151,9 +181,7 @@ class JobLifecycleManager:
         )
 
         # Update metrics
-        active, queued = await self.repository.count_active_and_queued()
-        metrics.set_active_jobs(active)
-        metrics.set_queue_depth(queued)
+        self._schedule_telemetry_update()
 
         return job
 
@@ -202,42 +230,93 @@ class JobLifecycleManager:
         job: FactoryJob,
         worker_id: Optional[str],
         lease_token: Optional[str],
+        caller_worker_id: Optional[str] = None,
+        caller_role: Optional[str] = None,
     ) -> None:
         """
-        Enforces worker lease authorization.
-        If the job has an active worker lease:
-        - Rejects requests from unauthorized workers (mismatched worker_id or lease_token) with HTTP 403 UnauthorizedError.
-        If the job is unleased (e.g. direct unit tests):
-        - Permits modification only when worker_id is None and lease_token is None.
+        Enforces strict worker lease authorization.
+        - Enforces that caller owns worker, worker owns lease, lease belongs to job,
+          and lease is unexpired (job.worker.lease_expires_at >= now).
+        - Strictly blocks cross-worker job mutation (HTTP 403 UnauthorizedError).
+        - Rejects mutations on unleased jobs if worker credentials are provided or missing when
+          called by an authenticated worker identity.
         """
-        if job.worker is not None:
-            if not worker_id or not lease_token or worker_id != job.worker.worker_id or lease_token != job.worker.lease_token:
+        if job.worker is None:
+            if caller_worker_id is not None or worker_id is not None or lease_token is not None:
                 raise UnauthorizedError(
-                    message=f"Worker '{worker_id}' is not authorized to update job '{job.job_id}' under active lease.",
+                    message=f"Job '{job.job_id}' has no active worker lease.",
                     status_code=403,
                     details={
                         "job_id": job.job_id,
-                        "worker_id": worker_id,
+                        "worker_id": worker_id or caller_worker_id,
                     },
                 )
-        else:
-            if worker_id is not None or lease_token is not None:
+            return
+
+        # 1. Caller identity verification (JWT subject / worker_id bound to request)
+        if caller_worker_id and caller_role != "admin":
+            if worker_id and worker_id != caller_worker_id:
                 raise UnauthorizedError(
-                    message=f"Job '{job.job_id}' is not leased to worker '{worker_id}'.",
+                    message=f"Caller '{caller_worker_id}' is not authorized to act as worker '{worker_id}'.",
                     status_code=403,
                     details={
                         "job_id": job.job_id,
+                        "caller_worker_id": caller_worker_id,
                         "worker_id": worker_id,
                     },
                 )
 
-    async def update_progress(self, job_id: str, req: ProgressUpdateRequest) -> FactoryJob:
+        # 2. Worker owns lease and token matches active lease
+        effective_worker_id = worker_id or caller_worker_id
+        if (
+            not effective_worker_id
+            or not lease_token
+            or effective_worker_id != job.worker.worker_id
+            or lease_token != job.worker.lease_token
+        ):
+            raise UnauthorizedError(
+                message=f"Worker '{effective_worker_id}' with token '{lease_token}' does not hold active lease for job '{job.job_id}'.",
+                status_code=403,
+                details={
+                    "job_id": job.job_id,
+                    "worker_id": effective_worker_id,
+                    "lease_worker_id": job.worker.worker_id,
+                },
+            )
+
+        # 3. Lease is unexpired
+        now = datetime.now(timezone.utc)
+        expires_at = getattr(job.worker, "expires_at", None) or getattr(job.worker, "lease_expires_at", None)
+        if expires_at and expires_at < now:
+            raise UnauthorizedError(
+                message=f"Lease for job '{job.job_id}' expired at {expires_at.isoformat()}.",
+                status_code=403,
+                details={
+                    "job_id": job.job_id,
+                    "worker_id": effective_worker_id,
+                    "expires_at": expires_at.isoformat(),
+                },
+            )
+
+    async def update_progress(
+        self,
+        job_id: str,
+        req: ProgressUpdateRequest,
+        caller_worker_id: Optional[str] = None,
+        caller_role: Optional[str] = None,
+    ) -> FactoryJob:
         job = await self.get_job(job_id)
 
         if job.state in (JobState.SUCCEEDED, JobState.FAILED, JobState.CANCELLED):
             return job
 
-        self._verify_worker_lease(job, req.worker_id, req.lease_token)
+        self._verify_worker_lease(
+            job,
+            req.worker_id,
+            req.lease_token,
+            caller_worker_id=caller_worker_id,
+            caller_role=caller_role,
+        )
 
         job.progress = JobProgress(
             stage=req.stage,
@@ -271,7 +350,13 @@ class JobLifecycleManager:
 
         return job
 
-    async def complete_job(self, job_id: str, req: JobCompletionRequest) -> FactoryJob:
+    async def complete_job(
+        self,
+        job_id: str,
+        req: JobCompletionRequest,
+        caller_worker_id: Optional[str] = None,
+        caller_role: Optional[str] = None,
+    ) -> FactoryJob:
         job = await self.get_job(job_id)
 
         # Idempotent no-op for already completed jobs (protects artifacts and telemetry from mutation)
@@ -280,7 +365,13 @@ class JobLifecycleManager:
 
         JobStateMachine.validate_transition(job.state, JobState.SUCCEEDED, job_id)
 
-        self._verify_worker_lease(job, req.worker_id, req.lease_token)
+        self._verify_worker_lease(
+            job,
+            req.worker_id,
+            req.lease_token,
+            caller_worker_id=caller_worker_id,
+            caller_role=caller_role,
+        )
 
         now = datetime.now(timezone.utc)
         job.state = JobState.SUCCEEDED
@@ -309,19 +400,29 @@ class JobLifecycleManager:
         )
 
         # Update metrics
-        active, queued = await self.repository.count_active_and_queued()
-        metrics.set_active_jobs(active)
-        metrics.set_queue_depth(queued)
+        self._schedule_telemetry_update()
 
         return job
 
-    async def fail_job(self, job_id: str, req: JobFailureRequest) -> FactoryJob:
+    async def fail_job(
+        self,
+        job_id: str,
+        req: JobFailureRequest,
+        caller_worker_id: Optional[str] = None,
+        caller_role: Optional[str] = None,
+    ) -> FactoryJob:
         job = await self.get_job(job_id)
 
         if job.state in (JobState.SUCCEEDED, JobState.CANCELLED):
             return job
 
-        self._verify_worker_lease(job, req.worker_id, req.lease_token)
+        self._verify_worker_lease(
+            job,
+            req.worker_id,
+            req.lease_token,
+            caller_worker_id=caller_worker_id,
+            caller_role=caller_role,
+        )
 
         if req.retryable and job.retry_count < job.max_retries:
             return await self.retry_job(job_id)
@@ -347,8 +448,6 @@ class JobLifecycleManager:
         )
 
         metrics.increment_failures()
-        active, queued = await self.repository.count_active_and_queued()
-        metrics.set_active_jobs(active)
-        metrics.set_queue_depth(queued)
+        self._schedule_telemetry_update()
 
         return job

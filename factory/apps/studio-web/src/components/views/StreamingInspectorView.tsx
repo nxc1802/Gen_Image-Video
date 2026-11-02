@@ -219,13 +219,17 @@ export function StreamingInspectorView() {
             <div className="p-4 rounded-[10px] bg-surface border border-hairline">
               <span className="text-xs font-mono text-ink-muted">GPU 0 VRAM</span>
               <div className="text-xl font-mono font-bold text-ink mt-1">
-                {(telemetry?.gpu_0_vram_used_gb ?? 0).toFixed(1)} / 15.0 GB
+                {telemetry?.gpu_0_vram_used_gb != null
+                  ? `${telemetry.gpu_0_vram_used_gb.toFixed(1)} / 15.0 GB`
+                  : "-- / Unavailable"}
               </div>
             </div>
             <div className="p-4 rounded-[10px] bg-surface border border-hairline">
               <span className="text-xs font-mono text-ink-muted">GPU 1 VRAM</span>
               <div className="text-xl font-mono font-bold text-ink mt-1">
-                {(telemetry?.gpu_1_vram_used_gb ?? 0).toFixed(1)} / 15.0 GB
+                {telemetry?.gpu_1_vram_used_gb != null
+                  ? `${telemetry.gpu_1_vram_used_gb.toFixed(1)} / 15.0 GB`
+                  : "-- / Unavailable"}
               </div>
             </div>
             <div className="p-4 rounded-[10px] bg-surface border border-hairline">

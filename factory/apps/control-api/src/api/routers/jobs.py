@@ -165,7 +165,16 @@ async def submit_job(
     manager: JobLifecycleManager = Depends(get_lifecycle_manager),
 ):
     request_id = getattr(request.state, "request_id", None) or request.headers.get("x-request-id") or "req-unknown"
-    
+    trace_id = getattr(request.state, "trace_id", None) or request.headers.get("x-trace-id")
+    if not trace_id:
+        tp = request.headers.get("traceparent")
+        if tp:
+            from factory.apps.control_api.src.telemetry.propagation import extract_traceparent
+            trace_id, _ = extract_traceparent({"traceparent": tp})
+    if not trace_id:
+        from factory.apps.control_api.src.telemetry.context import ctx_trace_id
+        trace_id = ctx_trace_id.get()
+
     # 1. Enforce model/service/task compatibility before consuming queue capacity.
     _validate_job_capability(req, request)
 
@@ -173,7 +182,7 @@ async def submit_job(
     enforce_payload_thresholds(req.inputs, request_id=request_id)
 
     # 3. Submit job through Lifecycle Manager
-    job, created = await manager.submit_job(req, request_id=request_id)
+    job, created = await manager.submit_job(req, request_id=request_id, trace_id=trace_id)
 
     headers = {}
     if should_attach_deprecation_header(req.inputs):
@@ -416,8 +425,10 @@ async def websocket_job_stream(
         if bearer_protocol:
             raw_token = bearer_protocol[len("factory-bearer."):]
 
-    if not raw_token:
-        raw_token = websocket.query_params.get("token")
+    if websocket.query_params.get("token") is not None:
+        # Query-param token authentication is strictly prohibited (RFC 6455 / OWASP policy violation)
+        await websocket.close(code=1008)
+        return
 
     if not raw_token:
         # Close with 1008 Policy Violation (Unauthorized)

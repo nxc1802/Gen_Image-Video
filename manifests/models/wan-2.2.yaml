@@ -32,7 +32,7 @@ missing_capabilities:
   - video_with_audio
   - reference_conditioning
 validation_status: pending_live
-validation_notes: "Wan workflows exist for T2V/I2V/FL2V/extension; audio/reference tasks must not cross-route to another model."
+validation_notes: "Pre-flight contract simulation passed for all 5 gates (MP4 container structure verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 1) per LIVE_VALIDATION.md Section 10."
 
 limits:
   max_width: 1280

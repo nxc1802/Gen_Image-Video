@@ -28,13 +28,15 @@ export function OperationsConsoleView() {
   } = useStudio();
 
   // Metrics
-  const gpu0Used = telemetry?.gpu_0_vram_used_gb ?? 0;
+  const gpu0Used = telemetry?.gpu_0_vram_used_gb;
   const gpu0Total = telemetry?.gpu_0_vram_total_gb ?? 15.0;
-  const gpu0Pct = Math.min(100, Math.round((gpu0Used / gpu0Total) * 100));
+  const gpu0Available = gpu0Used != null;
+  const gpu0Pct = gpu0Available ? Math.min(100, Math.round((gpu0Used / gpu0Total) * 100)) : null;
 
-  const gpu1Used = telemetry?.gpu_1_vram_used_gb ?? 0;
+  const gpu1Used = telemetry?.gpu_1_vram_used_gb;
   const gpu1Total = telemetry?.gpu_1_vram_total_gb ?? 15.0;
-  const gpu1Pct = Math.min(100, Math.round((gpu1Used / gpu1Total) * 100));
+  const gpu1Available = gpu1Used != null;
+  const gpu1Pct = gpu1Available ? Math.min(100, Math.round((gpu1Used / gpu1Total) * 100)) : null;
 
   const queueDepth = telemetry?.queue_depth ?? jobs.filter((j) => j.state === "QUEUED").length;
   const activeJobsCount =
@@ -115,23 +117,38 @@ export function OperationsConsoleView() {
               <Cpu weight="bold" className="w-4 h-4" />
               <span>GPU 0 (Tesla T4)</span>
             </span>
-            <span className={`px-2 py-0.5 rounded-[4px] border text-[10px] ${getVramColor(gpu0Pct)}`}>
-              {gpu0Pct}% Used
+            <span
+              className={`px-2 py-0.5 rounded-[4px] border text-[10px] ${
+                gpu0Pct != null ? getVramColor(gpu0Pct) : "text-ink-muted bg-subtle border-hairline"
+              }`}
+            >
+              {gpu0Pct != null ? `${gpu0Pct}% Used` : "Unavailable"}
             </span>
           </div>
           <div>
             <div className="text-2xl font-mono font-bold text-ink">
-              {gpu0Used.toFixed(1)} <span className="text-xs font-normal text-ink-muted">/ {gpu0Total.toFixed(1)} GB</span>
+              {gpu0Available ? (
+                <>
+                  {gpu0Used.toFixed(1)}{" "}
+                  <span className="text-xs font-normal text-ink-muted">
+                    / {gpu0Total.toFixed(1)} GB
+                  </span>
+                </>
+              ) : (
+                <span className="text-base font-normal text-ink-muted italic">Unavailable</span>
+              )}
             </div>
             <div className="w-full h-2 rounded-full bg-subtle overflow-hidden mt-2 border border-hairline">
               <div
-                className={`h-full transition-all duration-500 ${getVramBarColor(gpu0Pct)}`}
-                style={{ width: `${gpu0Pct}%` }}
+                className={`h-full transition-all duration-500 ${
+                  gpu0Pct != null ? getVramBarColor(gpu0Pct) : "bg-transparent"
+                }`}
+                style={{ width: `${gpu0Pct ?? 0}%` }}
               />
             </div>
           </div>
           <div className="text-[11px] font-mono text-ink-muted flex justify-between">
-            <span>Free: {(gpu0Total - gpu0Used).toFixed(1)} GB</span>
+            <span>Free: {gpu0Available ? `${(gpu0Total - gpu0Used).toFixed(1)} GB` : "--"}</span>
             <span>Target: Image &amp; Vision</span>
           </div>
         </div>
@@ -143,23 +160,38 @@ export function OperationsConsoleView() {
               <Cpu weight="bold" className="w-4 h-4" />
               <span>GPU 1 (Tesla T4)</span>
             </span>
-            <span className={`px-2 py-0.5 rounded-[4px] border text-[10px] ${getVramColor(gpu1Pct)}`}>
-              {gpu1Pct}% Used
+            <span
+              className={`px-2 py-0.5 rounded-[4px] border text-[10px] ${
+                gpu1Pct != null ? getVramColor(gpu1Pct) : "text-ink-muted bg-subtle border-hairline"
+              }`}
+            >
+              {gpu1Pct != null ? `${gpu1Pct}% Used` : "Unavailable"}
             </span>
           </div>
           <div>
             <div className="text-2xl font-mono font-bold text-ink">
-              {gpu1Used.toFixed(1)} <span className="text-xs font-normal text-ink-muted">/ {gpu1Total.toFixed(1)} GB</span>
+              {gpu1Available ? (
+                <>
+                  {gpu1Used.toFixed(1)}{" "}
+                  <span className="text-xs font-normal text-ink-muted">
+                    / {gpu1Total.toFixed(1)} GB
+                  </span>
+                </>
+              ) : (
+                <span className="text-base font-normal text-ink-muted italic">Unavailable</span>
+              )}
             </div>
             <div className="w-full h-2 rounded-full bg-subtle overflow-hidden mt-2 border border-hairline">
               <div
-                className={`h-full transition-all duration-500 ${getVramBarColor(gpu1Pct)}`}
-                style={{ width: `${gpu1Pct}%` }}
+                className={`h-full transition-all duration-500 ${
+                  gpu1Pct != null ? getVramBarColor(gpu1Pct) : "bg-transparent"
+                }`}
+                style={{ width: `${gpu1Pct ?? 0}%` }}
               />
             </div>
           </div>
           <div className="text-[11px] font-mono text-ink-muted flex justify-between">
-            <span>Free: {(gpu1Total - gpu1Used).toFixed(1)} GB</span>
+            <span>Free: {gpu1Available ? `${(gpu1Total - gpu1Used).toFixed(1)} GB` : "--"}</span>
             <span>Target: Video &amp; Text</span>
           </div>
         </div>

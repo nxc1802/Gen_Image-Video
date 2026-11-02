@@ -435,5 +435,188 @@ class TestWorkerLeaseAuth:
                     ),
                 )
             assert exc_info.value.status_code == 403
+
+            # And calling with caller_worker_id on unleased job is rejected even if worker_id is omitted
+            with pytest.raises(UnauthorizedError) as exc_caller:
+                await manager.update_progress(
+                    job.job_id,
+                    ProgressUpdateRequest(
+                        stage="sampling",
+                        step=3,
+                        total=10,
+                        percent=30.0,
+                    ),
+                    caller_worker_id="authenticated-worker-id",
+                )
+            assert exc_caller.value.status_code == 403
+        finally:
+            await repo.close()
+
+    async def test_caller_worker_id_mismatch_rejected(self):
+        """Caller worker identity from token claims must match worker_id in request."""
+        repo, broker, stream_mgr, manager, coordinator = await self._setup()
+        try:
+            job, _ = await manager.submit_job(
+                JobSubmissionRequest(
+                    service="image",
+                    model="qwen-image-2.1",
+                    task="text_to_image",
+                    inputs={"prompt": "Caller binding test"},
+                ),
+                request_id="req-caller-bind",
+            )
+            lease = await coordinator.lease_job(
+                WorkerLeaseRequest(
+                    worker_id="worker-real",
+                    subsystem="image",
+                    supported_models=["qwen-image-2.1"],
+                    supported_tasks=["text_to_image"],
+                )
+            )
+            token = lease.lease_token
+
+            # Caller token claim is 'worker-spoof', but request body claims 'worker-real'
+            with pytest.raises(UnauthorizedError) as exc_info:
+                await manager.update_progress(
+                    job.job_id,
+                    ProgressUpdateRequest(
+                        stage="sampling",
+                        step=1,
+                        total=10,
+                        percent=10.0,
+                        worker_id="worker-real",
+                        lease_token=token,
+                    ),
+                    caller_worker_id="worker-spoof",
+                    caller_role="worker",
+                )
+            assert exc_info.value.status_code == 403
+
+            # Admin caller can manage any worker
+            prog = await manager.update_progress(
+                job.job_id,
+                ProgressUpdateRequest(
+                    stage="sampling",
+                    step=1,
+                    total=10,
+                    percent=10.0,
+                    worker_id="worker-real",
+                    lease_token=token,
+                ),
+                caller_worker_id="admin-user",
+                caller_role="admin",
+            )
+            assert prog.progress.percent == 10.0
+        finally:
+            await repo.close()
+
+    async def test_expired_lease_blocks_progress_and_completion(self):
+        """Worker with an expired lease cannot mutate job state."""
+        repo, broker, stream_mgr, manager, coordinator = await self._setup()
+        try:
+            from datetime import timedelta
+            job, _ = await manager.submit_job(
+                JobSubmissionRequest(
+                    service="image",
+                    model="qwen-image-2.1",
+                    task="text_to_image",
+                    inputs={"prompt": "Expiry test"},
+                ),
+                request_id="req-expiry-test",
+            )
+            lease = await coordinator.lease_job(
+                WorkerLeaseRequest(
+                    worker_id="worker-expiry",
+                    subsystem="image",
+                    supported_models=["qwen-image-2.1"],
+                    supported_tasks=["text_to_image"],
+                    lease_duration_seconds=300,
+                )
+            )
+            token = lease.lease_token
+
+            # Manually expire the lease in the repository
+            past = datetime.now(timezone.utc) - timedelta(seconds=10)
+            await repo.extend_lease(worker_id="worker-expiry", job_id=job.job_id, new_expires_at=past)
+
+            # Progress must be rejected due to expiration
+            with pytest.raises(UnauthorizedError) as exc_p:
+                await manager.update_progress(
+                    job.job_id,
+                    ProgressUpdateRequest(
+                        stage="sampling",
+                        step=1,
+                        total=10,
+                        percent=10.0,
+                        worker_id="worker-expiry",
+                        lease_token=token,
+                    ),
+                )
+            assert exc_p.value.status_code == 403
+            assert "expired" in exc_p.value.message.lower()
+
+            # Completion must also be rejected due to expiration
+            artifact = ArtifactReference(
+                artifact_id="art-expired",
+                type="image",
+                mime_type="image/png",
+                size_bytes=100,
+                storage_path=f"image/{job.job_id}/out.png",
+                url="https://s3.ai.example.com/art.png",
+                download_url="https://s3.ai.example.com/art.png",
+                sha256="d" * 64,
+            )
+            with pytest.raises(UnauthorizedError) as exc_c:
+                await manager.complete_job(
+                    job.job_id,
+                    JobCompletionRequest(
+                        artifacts=[artifact],
+                        worker_id="worker-expiry",
+                        lease_token=token,
+                    ),
+                )
+            assert exc_c.value.status_code == 403
+            assert "expired" in exc_c.value.message.lower()
+        finally:
+            await repo.close()
+
+    async def test_worker_capability_matching_enforces_registered_manifests(self):
+        """Worker cannot lease jobs outside its verified registered manifest capabilities."""
+        repo, broker, stream_mgr, manager, coordinator = await self._setup()
+        try:
+            # 1. Submit a video job
+            job_video, _ = await manager.submit_job(
+                JobSubmissionRequest(
+                    service="video",
+                    model="wan-2.2",
+                    task="text_to_video",
+                    inputs={"prompt": "Video generation"},
+                ),
+                request_id="req-video-cap",
+            )
+
+            # 2. An image worker attempts to claim it supports wan-2.2
+            rogue_lease = await coordinator.lease_job(
+                WorkerLeaseRequest(
+                    worker_id="image-worker-rogue",
+                    subsystem="image",
+                    supported_models=["qwen-image-2.1", "wan-2.2"],  # wan-2.2 is not in image manifest!
+                    supported_tasks=["text_to_image", "text_to_video"],
+                )
+            )
+            # Must NOT lease the video job to the image worker
+            assert rogue_lease.job is None
+
+            # 3. Legitimate video worker can lease it
+            legit_video_lease = await coordinator.lease_job(
+                WorkerLeaseRequest(
+                    worker_id="video-worker-legit",
+                    subsystem="video",
+                    supported_models=["wan-2.2"],
+                    supported_tasks=["text_to_video"],
+                )
+            )
+            assert legit_video_lease.job is not None
+            assert legit_video_lease.job.job_id == job_video.job_id
         finally:
             await repo.close()

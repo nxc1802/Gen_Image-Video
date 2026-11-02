@@ -118,19 +118,13 @@ class TestSpeechWebSocketAdversarialSecurity:
                     pass
             assert exc_info.value.code == 1008
 
-    def test_valid_token_query_connects_and_streams(self):
-        """Valid token query param successfully authenticates and streams interim & final events."""
+    def test_valid_token_query_rejected_with_1008(self):
+        """Query param token authentication is strictly prohibited and must be rejected with 1008."""
         with TestClient(speech_app) as client:
-            with client.websocket_connect(f"/v1/audio/transcriptions/ws?token={VALID_API_KEY}") as ws:
-                ws.send_json({"chunk_id": 1})
-                resp = ws.receive_json()
-                assert resp.get("event") == "interim"
-                assert resp.get("chunk_id") == 1
-
-                ws.send_json({"action": "end"})
-                final_resp = ws.receive_json()
-                assert final_resp.get("event") == "final"
-                assert "text" in final_resp
+            with pytest.raises(WebSocketDisconnect) as exc_info:
+                with client.websocket_connect(f"/v1/audio/transcriptions/ws?token={VALID_API_KEY}"):
+                    pass
+            assert exc_info.value.code == 1008
 
     def test_valid_authorization_header_connects_and_streams(self):
         """Valid Authorization: Bearer header successfully authenticates."""
@@ -155,14 +149,20 @@ class TestSpeechWebSocketAdversarialSecurity:
         """
         with TestClient(speech_app) as client:
             # Session 1: abrupt disconnect mid-stream
-            with client.websocket_connect(f"/v1/audio/transcriptions/ws?token={VALID_API_KEY}") as ws1:
+            with client.websocket_connect(
+                "/v1/audio/transcriptions/ws",
+                headers={"Authorization": f"Bearer {VALID_API_KEY}"},
+            ) as ws1:
                 ws1.send_json({"chunk_id": 1})
                 resp = ws1.receive_json()
                 assert resp.get("event") == "interim"
                 # Exiting context without sending action: end triggers client disconnect
 
             # Session 2: Immediate follow-up connection must succeed normally (zero server corruption)
-            with client.websocket_connect(f"/v1/audio/transcriptions/ws?token={VALID_API_KEY}") as ws2:
+            with client.websocket_connect(
+                "/v1/audio/transcriptions/ws",
+                headers={"Authorization": f"Bearer {VALID_API_KEY}"},
+            ) as ws2:
                 ws2.send_json({"chunk_id": 100})
                 resp2 = ws2.receive_json()
                 assert resp2.get("event") == "interim"
@@ -176,7 +176,10 @@ class TestSpeechWebSocketAdversarialSecurity:
         from unittest.mock import patch
         with patch("services.speech.server.streaming_buffer.engine.transcribe", return_value={"text": "interim transcript", "segments": []}):
             with TestClient(speech_app) as client:
-                with client.websocket_connect(f"/v1/audio/transcriptions/ws?token={VALID_API_KEY}") as ws:
+                with client.websocket_connect(
+                    "/v1/audio/transcriptions/ws",
+                    headers={"Authorization": f"Bearer {VALID_API_KEY}"},
+                ) as ws:
                     ws.send_bytes(b"\x00\x01\x02\x03" * 256)
                     resp = ws.receive_json()
                     assert resp.get("event") == "interim"

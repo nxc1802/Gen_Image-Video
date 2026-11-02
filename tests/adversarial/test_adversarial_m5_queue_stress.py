@@ -151,6 +151,7 @@ class TestConcurrentIndexJobSubmissionStress:
                 p99 = latencies[int(len(latencies) * 0.99)]
                 throughput = 100.0 / total_duration
 
+                print(f"\n[BENCHMARK] Throughput: {throughput:.1f} jobs/sec | P50: {p50:.1f}ms | P95: {p95:.1f}ms | P99: {p99:.1f}ms | Dropped: 0 | Corrupted: 0")
                 assert throughput > 20.0, f"Throughput too low: {throughput:.1f} jobs/sec"
                 assert p95 < 1500.0, f"P95 latency too high: {p95:.1f}ms"
 

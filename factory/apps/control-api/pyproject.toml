@@ -21,6 +21,7 @@ dependencies = [
     "python-multipart>=0.0.9",
     "pyjwt>=2.8.0",
     "pillow>=10.3.0",
+    "alembic>=1.13.0",
 ]
 
 [build-system]

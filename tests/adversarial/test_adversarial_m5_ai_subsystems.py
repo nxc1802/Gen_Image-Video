@@ -26,6 +26,7 @@ import json
 import math
 import os
 import re
+import shutil
 import subprocess
 import sys
 import wave
@@ -348,7 +349,10 @@ class TestM5StreamingInvariants:
 
     def test_speech_ws_audio_streaming_lifecycle(self, speech_client):
         """Verifies Speech WebSocket streaming session lifecycle: connect -> interim frames -> finalize."""
-        with speech_client.websocket_connect(f"/v1/audio/transcriptions/ws?token={AUTH_TOKEN}") as ws:
+        with speech_client.websocket_connect(
+            "/v1/audio/transcriptions/ws",
+            headers={"Authorization": f"Bearer {AUTH_TOKEN}"},
+        ) as ws:
             # Send text frames with chunk IDs
             ws.send_text(json.dumps({"action": "stream", "chunk_id": 1}))
             event1 = ws.receive_json()
@@ -372,7 +376,10 @@ class TestM5StreamingInvariants:
 
     def test_speech_ws_audio_streaming_out_of_order_chunks(self, speech_client):
         """Verifies Speech WebSocket gracefully handles out-of-order, non-sequential, and negative chunk IDs."""
-        with speech_client.websocket_connect(f"/v1/audio/transcriptions/ws?token={AUTH_TOKEN}") as ws:
+        with speech_client.websocket_connect(
+            "/v1/audio/transcriptions/ws",
+            headers={"Authorization": f"Bearer {AUTH_TOKEN}"},
+        ) as ws:
             # Out of order chunks: 5, then 2, then 10, then -1, then 0
             for cid in [5, 2, 10, -1, 0]:
                 ws.send_text(json.dumps({"chunk_id": cid}))
@@ -387,7 +394,10 @@ class TestM5StreamingInvariants:
 
     def test_speech_ws_audio_streaming_abrupt_disconnect(self, speech_client):
         """Verifies Speech WebSocket handles client disconnecting abruptly without action='end'."""
-        with speech_client.websocket_connect(f"/v1/audio/transcriptions/ws?token={AUTH_TOKEN}") as ws:
+        with speech_client.websocket_connect(
+            "/v1/audio/transcriptions/ws",
+            headers={"Authorization": f"Bearer {AUTH_TOKEN}"},
+        ) as ws:
             ws.send_text(json.dumps({"chunk_id": 1}))
             event = ws.receive_json()
             assert event["event"] == "interim"
@@ -403,7 +413,17 @@ class TestM5StreamingInvariants:
     def test_speech_ws_auth_enforcement_invalid_token(self, speech_client):
         """Verifies invalid token WebSocket connection is rejected with close code 1008."""
         with pytest.raises(WebSocketDisconnect) as exc_info:
-            with speech_client.websocket_connect("/v1/audio/transcriptions/ws?token=invalid-key") as ws:
+            with speech_client.websocket_connect(
+                "/v1/audio/transcriptions/ws",
+                headers={"Authorization": "Bearer invalid-key"},
+            ) as ws:
+                ws.receive_json()
+        assert exc_info.value.code == 1008
+
+    def test_speech_ws_rejects_query_param_token(self, speech_client):
+        """Verifies WebSocket connection attempting query-param auth is rejected with close code 1008."""
+        with pytest.raises(WebSocketDisconnect) as exc_info:
+            with speech_client.websocket_connect(f"/v1/audio/transcriptions/ws?token={AUTH_TOKEN}") as ws:
                 ws.receive_json()
         assert exc_info.value.code == 1008
 
@@ -1085,8 +1105,11 @@ class TestM5StudioWebDynamicIntegrity:
 
         assert not violations, f"Legacy proxy header 'x-target-base-url' detected in:\n" + "\n".join(violations)
 
+    @pytest.mark.studio_web
     def test_studio_web_clean_typescript_compilation(self):
         """Verifies Studio Web TypeScript compiles cleanly with 0 type errors (tsc --noEmit)."""
+        if not (self.STUDIO_WEB_DIR / "node_modules").exists() or shutil.which("node") is None:
+            pytest.skip("studio-web/node_modules not installed; skipping cross-stack studio integration test")
         tsc_bin = self.STUDIO_WEB_DIR / "node_modules" / ".bin" / "tsc"
         cmd = [str(tsc_bin), "--noEmit"] if tsc_bin.exists() else ["npx", "tsc", "--noEmit"]
         result = subprocess.run(
@@ -1098,8 +1121,11 @@ class TestM5StudioWebDynamicIntegrity:
         )
         assert result.returncode == 0, f"TypeScript compilation failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
 
+    @pytest.mark.studio_web
     def test_studio_web_clean_nextjs_production_build(self):
         """Verifies Next.js 15 production build succeeds with all static routes generated."""
+        if not (self.STUDIO_WEB_DIR / "node_modules").exists() or shutil.which("node") is None:
+            pytest.skip("studio-web/node_modules not installed; skipping cross-stack studio integration test")
         result = subprocess.run(
             ["npm", "run", "build"],
             cwd=str(self.STUDIO_WEB_DIR),
@@ -1109,3 +1135,4 @@ class TestM5StudioWebDynamicIntegrity:
         )
         assert result.returncode == 0, f"Next.js build failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
         assert "Generating static pages" in result.stdout or "Compiled successfully" in result.stdout
+

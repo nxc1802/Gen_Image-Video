@@ -38,7 +38,7 @@ status: full
 coverage_percent: 100.0
 missing_capabilities: []
 validation_status: pending_live
-validation_notes: "All required Factory workflows are present; real GPU/workflow execution remains a release gate."
+validation_notes: "Pre-flight contract simulation passed for all 5 gates (PNG IHDR structure verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per LIVE_VALIDATION.md Section 10."
 
 limits:
   max_width: 2048

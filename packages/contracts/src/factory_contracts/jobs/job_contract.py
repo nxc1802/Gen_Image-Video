@@ -94,6 +94,7 @@ class FactoryJob(BaseModel):
 
     job_id: str = Field(..., pattern=r"^job-[0-9a-f-]+$", description="Job UUID v4")
     request_id: str = Field(..., pattern=r"^req-[0-9a-f-]+$", description="Originating request UUID v4")
+    trace_id: Optional[str] = Field(default=None, description="OpenTelemetry W3C trace ID correlating distributed span tree")
     idempotency_key: Optional[str] = None
     service: str
     model: str
@@ -111,3 +112,20 @@ class FactoryJob(BaseModel):
     error: Optional[ErrorDetail] = None
     artifacts: List[ArtifactReference] = Field(default_factory=list)
     telemetry: JobTelemetry = Field(default_factory=JobTelemetry)
+
+
+class AssetRecord(BaseModel):
+    """Persistent Asset record tracked in PostgreSQL/SQLite and Storage Providers."""
+    model_config = ConfigDict(extra="ignore")
+
+    asset_id: str = Field(..., description="Unique asset identifier, e.g. ast-...")
+    sha256: str = Field(..., min_length=64, max_length=64, description="Hex-encoded SHA256 checksum")
+    mime_type: str = Field(..., description="MIME content type")
+    size_bytes: int = Field(..., ge=0, description="Size of asset in bytes")
+    storage_path: str = Field(..., description="Internal S3/storage path key")
+    s3_url: str = Field(..., description="Full S3 or storage endpoint URL")
+    download_url: str = Field(..., description="Public/internal download URL endpoint")
+    filename: str = Field(..., description="Original uploaded filename")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    verified: bool = Field(default=True, description="Whether media validation succeeded")
+

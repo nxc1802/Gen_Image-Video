@@ -58,11 +58,30 @@ from factory_contracts.jobs import (
     JobProgress,
     WorkerLease,
     ArtifactReference,
+    AssetRecord,
     JobTelemetry,
     JobSubmissionRequest,
     FactoryJob,
 )
-from factory_contracts.tasks import CANONICAL_TASK_MAP, normalize_task
+from factory_contracts.tasks import (
+    CANONICAL_MODEL_MAP,
+    CANONICAL_TASK_MAP,
+    CANONICAL_TO_CAPABILITY_MAP,
+    MODEL_TO_FAMILY_MAP,
+    get_model_aliases,
+    get_task_aliases,
+    model_to_family,
+    normalize_model,
+    normalize_task,
+    task_to_capability_id,
+)
+from factory_contracts.telemetry import NVMLTelemetryCollector
+from factory_contracts.resilience import (
+    CircuitBreaker,
+    CircuitState,
+    CircuitBreakerError,
+    CircuitOpenError,
+)
 
 __all__ = [
     # Errors
@@ -120,10 +139,26 @@ __all__ = [
     "JobProgress",
     "WorkerLease",
     "ArtifactReference",
+    "AssetRecord",
     "JobTelemetry",
     "JobSubmissionRequest",
     "FactoryJob",
-    # Tasks
+    # Tasks & Models
     "CANONICAL_TASK_MAP",
+    "CANONICAL_TO_CAPABILITY_MAP",
+    "CANONICAL_MODEL_MAP",
+    "MODEL_TO_FAMILY_MAP",
     "normalize_task",
+    "normalize_model",
+    "task_to_capability_id",
+    "model_to_family",
+    "get_task_aliases",
+    "get_model_aliases",
+    # Telemetry
+    "NVMLTelemetryCollector",
+    # Resilience
+    "CircuitBreaker",
+    "CircuitState",
+    "CircuitBreakerError",
+    "CircuitOpenError",
 ]

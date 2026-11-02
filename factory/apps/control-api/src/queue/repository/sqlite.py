@@ -14,6 +14,7 @@ from pydantic import ValidationError
 from factory_contracts.errors.error_contract import ErrorDetail
 from factory_contracts.jobs.job_contract import (
     ArtifactReference,
+    AssetRecord,
     FactoryJob,
     JobProgress,
     JobState,
@@ -26,6 +27,7 @@ SQLITE_SCHEMA = """
 CREATE TABLE IF NOT EXISTS jobs (
     job_id TEXT PRIMARY KEY,
     request_id TEXT NOT NULL,
+    trace_id TEXT,
     idempotency_key TEXT UNIQUE,
     service TEXT NOT NULL,
     model TEXT NOT NULL,
@@ -76,8 +78,25 @@ CREATE TABLE IF NOT EXISTS worker_registrations (
     last_heartbeat TEXT NOT NULL,
     gpu_utilization REAL,
     vram_used_mb REAL,
+    temperature_c REAL,
+    telemetry_status TEXT NOT NULL DEFAULT 'UNAVAILABLE',
     registered_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS assets (
+    asset_id TEXT PRIMARY KEY,
+    sha256 TEXT NOT NULL,
+    mime_type TEXT NOT NULL,
+    size_bytes INTEGER NOT NULL,
+    storage_path TEXT NOT NULL,
+    s3_url TEXT NOT NULL,
+    download_url TEXT NOT NULL,
+    filename TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    verified INTEGER NOT NULL DEFAULT 1
+);
+CREATE INDEX IF NOT EXISTS idx_assets_sha256 ON assets (sha256);
+CREATE INDEX IF NOT EXISTS idx_assets_created_at ON assets (created_at DESC);
 """
 
 
@@ -107,7 +126,18 @@ class SqliteJobRepository(BaseJobRepository):
             Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         self._db = await aiosqlite.connect(self.db_path)
         self._db.row_factory = aiosqlite.Row
+        if self.db_path != ":memory:":
+            await self._db.execute("PRAGMA journal_mode = WAL;")
+            await self._db.execute("PRAGMA synchronous = NORMAL;")
+        else:
+            await self._db.execute("PRAGMA synchronous = OFF;")
+            await self._db.execute("PRAGMA temp_store = MEMORY;")
+        await self._db.execute("PRAGMA busy_timeout = 5000;")
         await self._db.executescript(SQLITE_SCHEMA)
+        try:
+            await self._db.execute("ALTER TABLE jobs ADD COLUMN trace_id TEXT;")
+        except Exception:
+            pass
         await self._db.commit()
 
     async def close(self) -> None:
@@ -128,6 +158,7 @@ class SqliteJobRepository(BaseJobRepository):
         return FactoryJob(
             job_id=d["job_id"],
             request_id=d["request_id"],
+            trace_id=d.get("trace_id"),
             idempotency_key=d["idempotency_key"],
             service=d["service"],
             model=d["model"],
@@ -147,6 +178,21 @@ class SqliteJobRepository(BaseJobRepository):
             completed_at=_parse_dt(d["completed_at"]),
         )
 
+    def _row_to_asset(self, row: aiosqlite.Row) -> AssetRecord:
+        d = dict(row)
+        return AssetRecord(
+            asset_id=d["asset_id"],
+            sha256=d["sha256"],
+            mime_type=d["mime_type"],
+            size_bytes=d["size_bytes"],
+            storage_path=d["storage_path"],
+            s3_url=d["s3_url"],
+            download_url=d["download_url"],
+            filename=d["filename"],
+            created_at=_parse_dt(d["created_at"]) or datetime.now(timezone.utc),
+            verified=bool(d["verified"]),
+        )
+
     async def create_job(self, job: FactoryJob) -> FactoryJob:
         async with self._lock:
             now = _iso_now()
@@ -160,15 +206,16 @@ class SqliteJobRepository(BaseJobRepository):
             await self._db.execute(
                 """
                 INSERT INTO jobs (
-                    job_id, request_id, idempotency_key, service, model, task,
+                    job_id, request_id, trace_id, idempotency_key, service, model, task,
                     inputs, priority, state, retry_count, max_retries,
                     worker_id, worker_lease, progress, error, artifacts,
                     telemetry, created_at, started_at, completed_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     job.job_id,
                     job.request_id,
+                    job.trace_id,
                     job.idempotency_key,
                     job.service,
                     job.model,
@@ -433,6 +480,48 @@ class SqliteJobRepository(BaseJobRepository):
                     })
                 return events
 
+    async def create_asset(self, asset: AssetRecord) -> AssetRecord:
+        async with self._lock:
+            created_at_str = asset.created_at.isoformat() if hasattr(asset.created_at, "isoformat") else str(asset.created_at)
+            await self._db.execute(
+                """
+                INSERT INTO assets (
+                    asset_id, sha256, mime_type, size_bytes, storage_path,
+                    s3_url, download_url, filename, created_at, verified
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    asset.asset_id,
+                    asset.sha256,
+                    asset.mime_type,
+                    asset.size_bytes,
+                    asset.storage_path,
+                    asset.s3_url,
+                    asset.download_url,
+                    asset.filename,
+                    created_at_str,
+                    1 if asset.verified else 0,
+                ),
+            )
+            await self._db.commit()
+            return asset
+
+    async def get_asset(self, asset_id: str) -> Optional[AssetRecord]:
+        async with self._lock:
+            async with self._db.execute("SELECT * FROM assets WHERE asset_id = ?", (asset_id,)) as cursor:
+                row = await cursor.fetchone()
+                if row:
+                    return self._row_to_asset(row)
+                return None
+
+    async def get_asset_by_sha256(self, sha256: str) -> Optional[AssetRecord]:
+        async with self._lock:
+            async with self._db.execute("SELECT * FROM assets WHERE sha256 = ?", (sha256,)) as cursor:
+                row = await cursor.fetchone()
+                if row:
+                    return self._row_to_asset(row)
+                return None
+
     async def upsert_worker_heartbeat(
         self,
         worker_id: str,
@@ -444,6 +533,8 @@ class SqliteJobRepository(BaseJobRepository):
         active_job_id: Optional[str] = None,
         gpu_utilization: Optional[float] = None,
         vram_used_mb: Optional[float] = None,
+        telemetry_status: Optional[str] = None,
+        temperature_c: Optional[float] = None,
     ) -> None:
         async with self._lock:
             now = _iso_now()
@@ -458,6 +549,8 @@ class SqliteJobRepository(BaseJobRepository):
                         last_heartbeat = ?,
                         gpu_utilization = COALESCE(?, gpu_utilization),
                         vram_used_mb = COALESCE(?, vram_used_mb),
+                        temperature_c = COALESCE(?, temperature_c),
+                        telemetry_status = COALESCE(?, telemetry_status),
                         subsystem = COALESCE(?, subsystem),
                         framework = COALESCE(?, framework),
                         supported_models = COALESCE(?, supported_models),
@@ -471,6 +564,8 @@ class SqliteJobRepository(BaseJobRepository):
                         now,
                         gpu_utilization,
                         vram_used_mb,
+                        temperature_c,
+                        telemetry_status,
                         subsystem if subsystem and subsystem != "unknown" else None,
                         framework if framework and framework != "unknown" else None,
                         json.dumps(supported_models) if supported_models is not None else None,
@@ -485,8 +580,9 @@ class SqliteJobRepository(BaseJobRepository):
                     INSERT INTO worker_registrations (
                         worker_id, subsystem, framework, supported_models,
                         supported_tasks, gpu_device, status, current_job_id,
-                        last_heartbeat, gpu_utilization, vram_used_mb, registered_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, 'ONLINE', ?, ?, ?, ?, ?)
+                        last_heartbeat, gpu_utilization, vram_used_mb,
+                        temperature_c, telemetry_status, registered_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, 'ONLINE', ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         worker_id,
@@ -499,6 +595,8 @@ class SqliteJobRepository(BaseJobRepository):
                         now,
                         gpu_utilization,
                         vram_used_mb,
+                        temperature_c,
+                        telemetry_status or "UNAVAILABLE",
                         now,
                     ),
                 )
@@ -518,13 +616,15 @@ class SqliteJobRepository(BaseJobRepository):
     async def count_active_and_queued(self) -> Tuple[int, int]:
         async with self._lock:
             async with self._db.execute(
-                "SELECT COUNT(*) FROM jobs WHERE state IN ('RUNNING', 'STREAMING', 'ADMITTED')"
-            ) as c1:
-                active = (await c1.fetchone())[0]
+                """
+                SELECT
+                    COALESCE(SUM(CASE WHEN state IN ('RUNNING', 'STREAMING', 'ADMITTED') THEN 1 ELSE 0 END), 0),
+                    COALESCE(SUM(CASE WHEN state = 'QUEUED' THEN 1 ELSE 0 END), 0)
+                FROM jobs
+                """
+            ) as cursor:
+                row = await cursor.fetchone()
+                active = int(row[0] or 0)
+                queued = int(row[1] or 0)
+                return active, queued
 
-            async with self._db.execute(
-                "SELECT COUNT(*) FROM jobs WHERE state = 'QUEUED'"
-            ) as c2:
-                queued = (await c2.fetchone())[0]
-
-            return active, queued

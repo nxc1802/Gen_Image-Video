@@ -37,8 +37,10 @@ class WorkerHeartbeatRequest(BaseModel):
     worker_id: str = Field(..., description="Unique worker daemon identifier")
     active_job_id: Optional[str] = Field(default=None, description="Active job ID currently being processed")
     lease_token: Optional[str] = Field(default=None, description="Active lease token")
+    telemetry_status: str = Field(default="UNAVAILABLE", description="'AVAILABLE' or 'UNAVAILABLE'")
     gpu_utilization_percent: Optional[float] = Field(default=None, ge=0.0, le=100.0)
     vram_used_mb: Optional[float] = Field(default=None, ge=0.0)
+    temperature_c: Optional[float] = Field(default=None, description="GPU temperature in Celsius")
 
 
 class WorkerHeartbeatResponse(BaseModel):

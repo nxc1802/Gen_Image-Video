@@ -56,9 +56,12 @@ async def verify_bearer_token(
                 config.jwt_secret,
                 algorithm=config.jwt_algorithm,
                 audience=config.jwt_audience,
+                issuer=getattr(config, "jwt_issuer", None),
             )
             request.state.user = payload
             return payload
+        except UnauthorizedError:
+            raise
         except Exception:
             raise UnauthorizedError(message="Invalid or expired JWT token.")
 

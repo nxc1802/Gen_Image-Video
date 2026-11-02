@@ -28,6 +28,7 @@ import ast
 import json
 import os
 import re
+import shutil
 import subprocess
 from pathlib import Path
 from typing import Any, Dict, List
@@ -50,6 +51,9 @@ from factory.apps.control_api.src.main import app
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CAPABILITIES_DIR = REPO_ROOT / "manifests" / "capabilities"
 STUDIO_WEB_DIR = REPO_ROOT / "factory" / "apps" / "studio-web"
+STUDIO_NODE_MODULES = STUDIO_WEB_DIR / "node_modules"
+HAS_NODE = shutil.which("node") is not None
+HAS_STUDIO_MODULES = (STUDIO_NODE_MODULES / "typescript").exists() and HAS_NODE
 
 
 def assert_sanitized_error_payload(data: Dict[str, Any], expected_code: str = "UNAUTHORIZED"):
@@ -64,6 +68,8 @@ def assert_sanitized_error_payload(data: Dict[str, Any], expected_code: str = "U
 
 def run_node_code(script: str) -> str:
     """Executes a JavaScript snippet inside studio-web directory using Node.js."""
+    if not HAS_STUDIO_MODULES:
+        pytest.skip("studio-web/node_modules not installed; skipping cross-stack studio integration test")
     result = subprocess.run(
         ["node", "-e", script],
         cwd=str(STUDIO_WEB_DIR),
@@ -247,6 +253,7 @@ class TestFormConstraintValidation:
         assert len(errs) == 1
         assert "Direct base64 is forbidden" in errs[0]
 
+    @pytest.mark.studio_web
     def test_node_dynamic_schema_form_validation_harness(self):
         """Executes DynamicSchemaForm validation rules inside Node.js across test capability payloads."""
         node_script = """
@@ -333,6 +340,7 @@ class TestCodegenVerification:
         output = run_node_code(node_script)
         return json.loads(output)
 
+    @pytest.mark.studio_web
     def test_frontend_codegen_all_four_targets_present(self):
         payload = {
             "service": "image",
@@ -346,6 +354,7 @@ class TestCodegenVerification:
         assert "typescript" in snippets
         assert "openai" in snippets
 
+    @pytest.mark.studio_web
     def test_frontend_codegen_target_url_invariants(self):
         payload = {"service": "video", "model": "wan-2.2", "task": "video.t2v", "inputs": {"prompt": "Drone shot"}}
         snippets = self._generate_frontend_snippets(payload)
@@ -357,6 +366,7 @@ class TestCodegenVerification:
         assert "https://jobs.ai.example.com" in snippets["typescript"]
         assert "/v1/jobs" in snippets["typescript"]
 
+    @pytest.mark.studio_web
     def test_frontend_codegen_python_httpx_ast_syntax(self):
         payloads = [
             {"service": "image", "model": "qwen-image-2.1", "task": "image.t2i", "inputs": {"prompt": "Sunset over river", "width": 1024}},
@@ -371,6 +381,7 @@ class TestCodegenVerification:
             assert "httpx" in snippets["python"]
             assert "Authorization" in snippets["python"]
 
+    @pytest.mark.studio_web
     def test_frontend_codegen_openai_sdk_ast_syntax(self):
         payload = {"service": "text", "model": "qwen-2.5-72b-instruct", "task": "text.chat", "inputs": {"prompt": "Explain quantum computing."}}
         snippets = self._generate_frontend_snippets(payload)
@@ -380,6 +391,7 @@ class TestCodegenVerification:
         assert "from openai import OpenAI" in snippets["openai"]
         assert "chat.completions.create" in snippets["openai"]
 
+    @pytest.mark.studio_web
     def test_frontend_codegen_typescript_syntax(self):
         payload = {"service": "video", "model": "wan-2.2", "task": "video.fl2v", "inputs": {"prompt": "Interpolation between frames", "num_frames": 49}}
         snippets = self._generate_frontend_snippets(payload)
@@ -396,6 +408,7 @@ class TestCodegenVerification:
         """
         assert run_node_code(node_script) == "TS_SYNTAX_VALID"
 
+    @pytest.mark.studio_web
     def test_frontend_codegen_curl_json_validity(self):
         payload = {
             "service": "enhancement",
@@ -416,6 +429,7 @@ class TestCodegenVerification:
         assert body_dict["model"] == "enhancement-suite-v1"
         assert body_dict["task"] == "image_super_resolution"
         assert body_dict["inputs"]["scale"] == 4
+
 
     def test_backend_control_plane_codegen_endpoint(self):
         """Tests live POST /api/studio/codegen on Control Plane."""

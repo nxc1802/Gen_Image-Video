@@ -238,8 +238,8 @@ export interface WorkerLeaseInfo {
 }
 
 export interface TelemetrySnapshot {
-  gpu_0_vram_used_gb: number;
-  gpu_1_vram_used_gb: number;
+  gpu_0_vram_used_gb: number | null;
+  gpu_1_vram_used_gb: number | null;
   gpu_0_vram_total_gb?: number;
   gpu_1_vram_total_gb?: number;
   active_jobs: number;

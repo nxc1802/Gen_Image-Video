@@ -19,18 +19,18 @@ from factory_contracts.errors import (
     NotFoundError,
     PayloadTooLargeError,
     SSRFBlockedError,
+    ServiceUnavailableError,
 )
+from factory_contracts.jobs.job_contract import AssetRecord
 from factory.apps.control_api.src.assets.service import AssetService, MAX_PAYLOAD_SIZE
 from factory.apps.control_api.src.assets.ssrf import validate_target_url
+from factory.apps.control_api.src.queue.repository.base import BaseJobRepository
 from factory.apps.control_api.src.storage.config import load_storage_config
 from factory.apps.control_api.src.storage.keys import format_asset_key
 from factory.apps.control_api.src.storage.provider import StorageProvider
 from factory.apps.control_api.src.storage.router import get_storage_provider
 
 router = APIRouter(prefix="/v1/assets", tags=["Assets"])
-
-# In-memory registry for uploaded asset metadata mapping asset_id -> storage metadata
-_ASSET_METADATA_CACHE: Dict[str, Dict[str, Any]] = {}
 
 
 def get_asset_service(request: Request) -> AssetService:
@@ -39,6 +39,14 @@ def get_asset_service(request: Request) -> AssetService:
         service = AssetService(max_size_bytes=MAX_PAYLOAD_SIZE)
         request.app.state.asset_service = service
     return service
+
+
+def get_repository(request: Request) -> BaseJobRepository:
+    repo = getattr(request.app.state, "repository", None)
+    if repo is None:
+        from factory.apps.control_api.src.queue.repository import get_job_repository
+        repo = get_job_repository()
+    return repo
 
 
 class AssetValidateRequest(BaseModel):
@@ -54,11 +62,13 @@ async def upload_asset(
     content_type: Optional[str] = Header(None, alias="content-type"),
     storage: StorageProvider = Depends(get_storage_provider),
     asset_service: AssetService = Depends(get_asset_service),
+    repository: BaseJobRepository = Depends(get_repository),
 ):
     """
     Accepts multipart/form-data media uploads, validates via AssetService,
-    persists bytes via active StorageProvider, and returns artifact metadata.
-    Also handles legacy/contract JSON simulation requests.
+    persists bytes via active StorageProvider with fail-fast error handling,
+    persists metadata to database assets table, and returns artifact metadata.
+    Does NOT retain raw_bytes in memory.
     """
     # 1. Enforce payload size limit from header
     if content_length:
@@ -71,72 +81,42 @@ async def upload_asset(
         except ValueError:
             pass
 
-    # 2. Check content-type: multipart vs JSON
-    is_multipart = content_type and "multipart/form-data" in content_type
+    # 2. Check content-type: reject JSON with 415
+    if content_type and "application/json" in content_type:
+        raise FactoryError(
+            message="Unsupported Media Type: upload endpoint requires multipart/form-data.",
+            code=ErrorCode.UNSUPPORTED_MEDIA_TYPE.value,
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        )
 
-    if is_multipart and file is not None:
+    if not content_type or ("multipart/form-data" not in content_type and "application/x-www-form-urlencoded" not in content_type):
+        raise FactoryError(
+            message="Unsupported Media Type: upload endpoint requires multipart/form-data.",
+            code=ErrorCode.UNSUPPORTED_MEDIA_TYPE.value,
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        )
+
+    if file is not None:
         raw_bytes = await file.read()
         filename = file.filename or "upload.bin"
         claimed_mime = file.content_type
-    elif is_multipart and file is None:
-        form = await request.form()
-        uploaded = form.get("file")
-        if uploaded is not None and hasattr(uploaded, "read"):
-            raw_bytes = await uploaded.read()
-            filename = getattr(uploaded, "filename", "upload.bin")
-            claimed_mime = getattr(uploaded, "content_type", None)
-        else:
-            raise InvalidRequestError("Multipart form must include 'file' upload field.")
     else:
-        # Fallback for JSON body testing / contract testing
         try:
-            body = await request.json()
-        except Exception:
-            raise InvalidRequestError("Request body must be multipart/form-data or valid JSON.")
+            form = await request.form()
+            uploaded = form.get("file")
+            if uploaded is not None and hasattr(uploaded, "read"):
+                raw_bytes = await uploaded.read()
+                filename = getattr(uploaded, "filename", "upload.bin")
+                claimed_mime = getattr(uploaded, "content_type", None)
+            else:
+                raise InvalidRequestError("Multipart form must include 'file' upload field.")
+        except Exception as e:
+            if isinstance(e, FactoryError):
+                raise e
+            raise InvalidRequestError("Multipart form must include 'file' upload field.")
 
-        mime = body.get("mime_type")
-        if not mime or not any(mime.startswith(prefix) for prefix in ("image/", "video/", "audio/")):
-            raise FactoryError(
-                message=f"MIME type '{mime}' is not permitted for model ingestion.",
-                code=ErrorCode.UNSUPPORTED_MEDIA_TYPE.value,
-                status_code=415,
-            )
-
-        asset_id = f"ast-{uuid.uuid4()}"
-        dummy_content = (
-            b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\n\x00\x00\x00\n\x08\x02\x00\x00\x00\x02PX\xea"
-            b"\x00\x00\x00\x13IDATx\x9cc\xfc\xcf\x80\x0f0\xe1\x95e\x18\xa9\xd2\x00A,\x01\x13y\xed\xba&\x00\x00\x00\x00IEND\xaeB`\x82"
-        )
-        sha256 = hashlib.sha256(dummy_content).hexdigest()
-        storage_path = f"assets/{asset_id}.bin"
-        config = load_storage_config()
-        bucket = config.s3_bucket_name
-        try:
-            await storage.upload_bytes(bucket=bucket, key=storage_path, data=dummy_content, mime_type=mime)
-            await storage.upload_bytes(bucket=bucket, key=format_asset_key(asset_id), data=dummy_content, mime_type=mime)
-        except Exception:
-            pass
-
-        created_at = datetime.now(timezone.utc).isoformat()
-        res = {
-            "asset_id": asset_id,
-            "artifact_id": asset_id,
-            "url": f"/v1/assets/{asset_id}/download",
-            "download_url": f"/v1/assets/{asset_id}/download",
-            "s3_path": storage_path,
-            "s3_url": f"https://s3.ai.example.com/assets/{asset_id}.bin",
-            "sha256": sha256,
-            "size_bytes": len(dummy_content),
-            "mime_type": mime,
-            "created_at": created_at,
-            "verified": True,
-        }
-        _ASSET_METADATA_CACHE[asset_id] = {
-            **res,
-            "raw_bytes": dummy_content,
-            "filename": f"{asset_id}.bin",
-        }
-        return JSONResponse(status_code=status.HTTP_201_CREATED, content=res)
+    if not raw_bytes:
+        raise InvalidMediaError("Uploaded media file cannot be empty.")
 
     # 3. Check byte limit
     if len(raw_bytes) > MAX_PAYLOAD_SIZE:
@@ -152,28 +132,47 @@ async def upload_asset(
     storage_path = record["storage_path"]
     size_bytes = record["size_bytes"]
 
-    # 5. Persist to active storage provider
+    # 5. Persist to active storage provider with fail-fast (HTTP 503)
     config = load_storage_config()
     bucket = config.s3_bucket_name
-    await storage.upload_bytes(
-        bucket=bucket,
-        key=storage_path,
-        data=raw_bytes,
-        mime_type=detected_mime,
-        metadata={"asset_id": asset_id, "sha256": sha256},
-    )
-    canonical_key = format_asset_key(asset_id)
-    await storage.upload_bytes(
-        bucket=bucket,
-        key=canonical_key,
-        data=raw_bytes,
-        mime_type=detected_mime,
-        metadata={"asset_id": asset_id, "sha256": sha256},
-    )
+    try:
+        await storage.upload_bytes(
+            bucket=bucket,
+            key=storage_path,
+            data=raw_bytes,
+            mime_type=detected_mime,
+            metadata={"asset_id": asset_id, "sha256": sha256},
+        )
+        canonical_key = format_asset_key(asset_id)
+        await storage.upload_bytes(
+            bucket=bucket,
+            key=canonical_key,
+            data=raw_bytes,
+            mime_type=detected_mime,
+            metadata={"asset_id": asset_id, "sha256": sha256},
+        )
+    except Exception as exc:
+        raise ServiceUnavailableError(f"Storage backend failed to store asset: {exc}")
 
     s3_url = f"https://s3.ai.example.com/{storage_path}"
     download_url = f"/v1/assets/{asset_id}/download"
-    created_at = datetime.now(timezone.utc).isoformat()
+    now_dt = datetime.now(timezone.utc)
+    created_at = now_dt.isoformat()
+
+    # 6. Persist asset metadata to database table
+    asset_record = AssetRecord(
+        asset_id=asset_id,
+        sha256=sha256,
+        mime_type=detected_mime,
+        size_bytes=size_bytes,
+        storage_path=storage_path,
+        s3_url=s3_url,
+        download_url=download_url,
+        filename=filename,
+        created_at=now_dt,
+        verified=True,
+    )
+    await repository.create_asset(asset_record)
 
     response_payload = {
         "asset_id": asset_id,
@@ -189,12 +188,6 @@ async def upload_asset(
         "verified": True,
     }
 
-    _ASSET_METADATA_CACHE[asset_id] = {
-        **response_payload,
-        "raw_bytes": raw_bytes,
-        "filename": filename,
-    }
-
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=response_payload)
 
 
@@ -202,29 +195,30 @@ async def upload_asset(
 async def download_asset(
     asset_id: str,
     storage: StorageProvider = Depends(get_storage_provider),
+    repository: BaseJobRepository = Depends(get_repository),
 ):
     """
     Downloads stored asset bytes by asset_id with proper Content-Type headers.
+    Queries database for asset metadata; streams strictly from storage provider.
+    Fails fast if storage fails; never falls back to in-memory bytes.
     """
+    asset = await repository.get_asset(asset_id)
+    if not asset:
+        raise NotFoundError(f"Asset '{asset_id}' not found.")
+
     config = load_storage_config()
     bucket = config.s3_bucket_name
+    storage_path = asset.storage_path or format_asset_key(asset_id)
+    mime_type = asset.mime_type or "application/octet-stream"
+    filename = asset.filename or f"{asset_id}.bin"
 
-    meta = _ASSET_METADATA_CACHE.get(asset_id)
-    storage_path = meta.get("storage_path") if meta else format_asset_key(asset_id)
-    mime_type = meta.get("mime_type", "application/octet-stream") if meta else "application/octet-stream"
-    filename = meta.get("filename", f"{asset_id}.bin") if meta else f"{asset_id}.bin"
-
-    data = None
     try:
         data = await storage.download_bytes(bucket, storage_path)
     except Exception:
         try:
             data = await storage.download_bytes(bucket, format_asset_key(asset_id))
-        except Exception:
-            if meta and "raw_bytes" in meta:
-                data = meta["raw_bytes"]
-            else:
-                raise NotFoundError(f"Asset '{asset_id}' not found.")
+        except Exception as exc:
+            raise ServiceUnavailableError(f"Storage provider failed to retrieve asset '{asset_id}': {exc}")
 
     if data is None:
         raise NotFoundError(f"Asset '{asset_id}' not found.")
@@ -251,13 +245,7 @@ async def validate_asset(
     if not req.url.startswith("http://") and not req.url.startswith("https://"):
         raise InvalidRequestError("URL must use http or https scheme.")
 
-    try:
-        validate_target_url(req.url)
-    except SSRFBlockedError as e:
-        if "example.com" in req.url:
-            pass
-        else:
-            raise e
+    validate_target_url(req.url)
 
     asset_id = f"ast-{uuid.uuid4()}"
     return {

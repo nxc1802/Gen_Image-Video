@@ -38,6 +38,12 @@ class MemoryQueueBroker(BaseQueueBroker):
             # Min-heap ordered by -priority (so higher priority comes first), then timestamp (FIFO)
             heapq.heappush(self._queues[service], (-priority, time.time(), job_id))
 
+        await self.publish_event(
+            f"factory:wakeup:{service}",
+            "wakeup",
+            {"job_id": job_id, "service": service, "priority": priority, "timestamp": time.time()},
+        )
+
     async def dequeue(self, service: str) -> Optional[str]:
         async with self._lock:
             q = self._queues.get(service)

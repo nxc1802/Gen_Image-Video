@@ -38,6 +38,14 @@ class RedisQueueBroker(BaseQueueBroker):
         key = f"factory:queue:{service}"
         score = self._calc_score(priority)
         await self.client.zadd(key, {job_id: score})
+        # Publish priority wakeup notification to workers on Redis wakeup bus
+        wakeup_payload = json.dumps({
+            "job_id": job_id,
+            "service": service,
+            "priority": priority,
+            "timestamp": time.time(),
+        })
+        await self.client.publish(f"factory:wakeup:{service}", wakeup_payload)
 
     async def dequeue(self, service: str) -> Optional[str]:
         key = f"factory:queue:{service}"

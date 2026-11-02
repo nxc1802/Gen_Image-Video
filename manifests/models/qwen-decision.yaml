@@ -28,7 +28,7 @@ status: full
 coverage_percent: 100.0
 missing_capabilities: []
 validation_status: pending_live
-validation_notes: "Native /v1/decisions is wired; calibration and throughput require live validation."
+validation_notes: "Pre-flight contract simulation passed for all 5 gates (predicate and choice routing verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per LIVE_VALIDATION.md Section 10."
 
 limits:
   max_context_tokens: 8192

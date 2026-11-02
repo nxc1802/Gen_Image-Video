@@ -9,7 +9,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from factory_auth import load_auth_config, verify_bearer_token
-from factory.apps.control_api.src.api.middleware import RequestIDMiddleware
+from factory.apps.control_api.src.api.middleware import (
+    RequestIDMiddleware,
+    RateLimitMiddleware,
+    RequestTimeoutMiddleware,
+)
 from factory.apps.control_api.src.api.errors import register_exception_handlers
 from factory.apps.control_api.src.api.routers.jobs import router as jobs_router
 from factory.apps.control_api.src.api.routers.workers import router as workers_router
@@ -33,6 +37,9 @@ from model_registry.loader import ManifestLoader
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Actively configure production structured JSON logging with 5-hop correlation
+    configure_telemetry_logging()
+
     # Enforces fail-fast startup guard if FACTORY_API_KEY is empty in production
     auth_config = load_auth_config()
     app.state.auth_config = auth_config
@@ -60,6 +67,15 @@ async def lifespan(app: FastAPI):
     app.state.storage_provider = storage_provider
 
     # 2. Initialize Two-Tier Queue & Lifecycle Engine
+    backend = os.environ.get("FACTORY_DB_BACKEND", "sqlite").lower()
+    if backend == "postgres" or os.environ.get("RUN_MIGRATIONS_ON_STARTUP", "").lower() in ("true", "1", "yes"):
+        try:
+            from factory.apps.control_api.src.queue.repository.migration_runner import run_migrations
+            run_migrations()
+        except Exception as e:
+            if environment == "production":
+                raise RuntimeError(f"FATAL: Database migration failed on startup: {e}") from e
+
     repository = get_job_repository()
     await repository.initialize()
     app.state.repository = repository
@@ -110,8 +126,10 @@ app = FastAPI(
 )
 
 # 1. Middlewares
-app.add_middleware(RequestIDMiddleware)
+app.add_middleware(RequestTimeoutMiddleware)
+app.add_middleware(RateLimitMiddleware)
 app.add_middleware(TelemetryTracingMiddleware)
+app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

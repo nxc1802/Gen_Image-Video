@@ -14,8 +14,8 @@ export function TopChromeBar() {
     setIsConnectionModalOpen,
   } = useStudio();
 
-  const gpu0Used = telemetry?.gpu_0_vram_used_gb ?? 0;
-  const gpu1Used = telemetry?.gpu_1_vram_used_gb ?? 0;
+  const gpu0Used = telemetry?.gpu_0_vram_used_gb;
+  const gpu1Used = telemetry?.gpu_1_vram_used_gb;
   const queueDepth = telemetry?.queue_depth ?? 0;
   const activeJobs = telemetry?.active_jobs ?? 0;
 
@@ -71,7 +71,11 @@ export function TopChromeBar() {
         <div className="px-2.5 py-1 rounded-[6px] bg-subtle border border-hairline text-ink-secondary flex items-center gap-2">
           <span className="text-ink-muted">VRAM:</span>
           <span>
-            G0: {gpu0Used.toFixed(1)}G · G1: {gpu1Used.toFixed(1)}G
+            {gpu0Used == null && gpu1Used == null ? (
+              <span className="text-ink-muted italic">Unavailable</span>
+            ) : (
+              `G0: ${gpu0Used != null ? `${gpu0Used.toFixed(1)}G` : "--"} · G1: ${gpu1Used != null ? `${gpu1Used.toFixed(1)}G` : "--"}`
+            )}
           </span>
         </div>
 

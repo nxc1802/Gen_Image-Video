@@ -3,6 +3,7 @@ factory/apps/control-api/src/queue/repository/postgres.py
 PostgreSQL implementation of BaseJobRepository using asyncpg.
 """
 import json
+import os
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -11,6 +12,7 @@ import asyncpg
 from factory_contracts.errors.error_contract import ErrorDetail
 from factory_contracts.jobs.job_contract import (
     ArtifactReference,
+    AssetRecord,
     FactoryJob,
     JobProgress,
     JobState,
@@ -23,6 +25,7 @@ POSTGRES_SCHEMA = """
 CREATE TABLE IF NOT EXISTS jobs (
     job_id VARCHAR(64) PRIMARY KEY,
     request_id VARCHAR(64) NOT NULL,
+    trace_id VARCHAR(64),
     idempotency_key VARCHAR(128) UNIQUE,
     service VARCHAR(32) NOT NULL,
     model VARCHAR(64) NOT NULL,
@@ -47,6 +50,7 @@ CREATE TABLE IF NOT EXISTS jobs (
 CREATE INDEX IF NOT EXISTS idx_jobs_state_priority ON jobs (state, priority DESC, created_at ASC);
 CREATE INDEX IF NOT EXISTS idx_jobs_service_model_task ON jobs (service, model, task);
 CREATE INDEX IF NOT EXISTS idx_jobs_idempotency_key ON jobs (idempotency_key) WHERE idempotency_key IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_jobs_running_leases ON jobs (state, updated_at) WHERE state IN ('RUNNING', 'STREAMING');
 
 CREATE TABLE IF NOT EXISTS job_events (
     event_id BIGSERIAL PRIMARY KEY,
@@ -72,8 +76,25 @@ CREATE TABLE IF NOT EXISTS worker_registrations (
     last_heartbeat TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     gpu_utilization FLOAT,
     vram_used_mb FLOAT,
+    temperature_c FLOAT,
+    telemetry_status VARCHAR(20) NOT NULL DEFAULT 'UNAVAILABLE',
     registered_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS assets (
+    asset_id VARCHAR(64) PRIMARY KEY,
+    sha256 VARCHAR(64) NOT NULL,
+    mime_type VARCHAR(128) NOT NULL,
+    size_bytes BIGINT NOT NULL,
+    storage_path VARCHAR(512) NOT NULL,
+    s3_url TEXT NOT NULL,
+    download_url TEXT NOT NULL,
+    filename VARCHAR(255) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    verified BOOLEAN NOT NULL DEFAULT TRUE
+);
+CREATE INDEX IF NOT EXISTS idx_assets_sha256 ON assets (sha256);
+CREATE INDEX IF NOT EXISTS idx_assets_created_at ON assets (created_at DESC);
 """
 
 
@@ -85,9 +106,15 @@ class PostgresJobRepository(BaseJobRepository):
         self.pool: Optional[asyncpg.Pool] = None
 
     async def initialize(self) -> None:
-        self.pool = await asyncpg.create_pool(self.dsn, min_size=2, max_size=20)
+        pool_min = int(os.environ.get("DB_POOL_MIN_SIZE", "5"))
+        pool_max = int(os.environ.get("DB_POOL_MAX_SIZE", "50"))
+        self.pool = await asyncpg.create_pool(self.dsn, min_size=pool_min, max_size=pool_max)
         async with self.pool.acquire() as conn:
             await conn.execute(POSTGRES_SCHEMA)
+            try:
+                await conn.execute("ALTER TABLE jobs ADD COLUMN IF NOT EXISTS trace_id VARCHAR(64);")
+            except Exception:
+                pass
 
     async def close(self) -> None:
         if self.pool:
@@ -107,6 +134,7 @@ class PostgresJobRepository(BaseJobRepository):
         return FactoryJob(
             job_id=d["job_id"],
             request_id=d["request_id"],
+            trace_id=d.get("trace_id"),
             idempotency_key=d["idempotency_key"],
             service=d["service"],
             model=d["model"],
@@ -126,20 +154,36 @@ class PostgresJobRepository(BaseJobRepository):
             completed_at=d["completed_at"],
         )
 
+    def _record_to_asset(self, record: asyncpg.Record) -> AssetRecord:
+        d = dict(record)
+        return AssetRecord(
+            asset_id=d["asset_id"],
+            sha256=d["sha256"],
+            mime_type=d["mime_type"],
+            size_bytes=int(d["size_bytes"]),
+            storage_path=d["storage_path"],
+            s3_url=d["s3_url"],
+            download_url=d["download_url"],
+            filename=d["filename"],
+            created_at=d["created_at"],
+            verified=bool(d["verified"]),
+        )
+
     async def create_job(self, job: FactoryJob) -> FactoryJob:
         query = """
         INSERT INTO jobs (
-            job_id, request_id, idempotency_key, service, model, task,
+            job_id, request_id, trace_id, idempotency_key, service, model, task,
             inputs, priority, state, retry_count, max_retries,
             worker_id, worker_lease, progress, error, artifacts,
             telemetry, created_at, started_at, completed_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9, $10, $11, $12, $13::jsonb, $14::jsonb, $15::jsonb, $16::jsonb, $17::jsonb, $18, $19, $20, NOW())
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, $11, $12, $13, $14::jsonb, $15::jsonb, $16::jsonb, $17::jsonb, $18::jsonb, $19, $20, $21, NOW())
         """
         async with self.pool.acquire() as conn:
             await conn.execute(
                 query,
                 job.job_id,
                 job.request_id,
+                job.trace_id,
                 job.idempotency_key,
                 job.service,
                 job.model,
@@ -367,6 +411,43 @@ class PostgresJobRepository(BaseJobRepository):
                 for r in records
             ]
 
+    async def create_asset(self, asset: AssetRecord) -> AssetRecord:
+        query = """
+        INSERT INTO assets (
+            asset_id, sha256, mime_type, size_bytes, storage_path,
+            s3_url, download_url, filename, created_at, verified
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        """
+        async with self.pool.acquire() as conn:
+            await conn.execute(
+                query,
+                asset.asset_id,
+                asset.sha256,
+                asset.mime_type,
+                asset.size_bytes,
+                asset.storage_path,
+                asset.s3_url,
+                asset.download_url,
+                asset.filename,
+                asset.created_at,
+                asset.verified,
+            )
+        return asset
+
+    async def get_asset(self, asset_id: str) -> Optional[AssetRecord]:
+        async with self.pool.acquire() as conn:
+            rec = await conn.fetchrow("SELECT * FROM assets WHERE asset_id = $1", asset_id)
+            if rec:
+                return self._record_to_asset(rec)
+            return None
+
+    async def get_asset_by_sha256(self, sha256: str) -> Optional[AssetRecord]:
+        async with self.pool.acquire() as conn:
+            rec = await conn.fetchrow("SELECT * FROM assets WHERE sha256 = $1", sha256)
+            if rec:
+                return self._record_to_asset(rec)
+            return None
+
     async def upsert_worker_heartbeat(
         self,
         worker_id: str,
@@ -378,20 +459,25 @@ class PostgresJobRepository(BaseJobRepository):
         active_job_id: Optional[str] = None,
         gpu_utilization: Optional[float] = None,
         vram_used_mb: Optional[float] = None,
+        telemetry_status: Optional[str] = None,
+        temperature_c: Optional[float] = None,
     ) -> None:
         query = """
         INSERT INTO worker_registrations (
             worker_id, subsystem, framework, supported_models,
             supported_tasks, gpu_device, status, current_job_id,
-            last_heartbeat, gpu_utilization, vram_used_mb, registered_at
+            last_heartbeat, gpu_utilization, vram_used_mb,
+            temperature_c, telemetry_status, registered_at
         ) VALUES (
-            $1, $2, $3, $4::jsonb, $5::jsonb, $6, 'ONLINE', $7, NOW(), $8, $9, NOW()
+            $1, $2, $3, $4::jsonb, $5::jsonb, $6, 'ONLINE', $7, NOW(), $8, $9, $10, COALESCE($11, 'UNAVAILABLE'), NOW()
         )
         ON CONFLICT (worker_id) DO UPDATE SET
             current_job_id = $7,
             last_heartbeat = NOW(),
             gpu_utilization = COALESCE($8, worker_registrations.gpu_utilization),
             vram_used_mb = COALESCE($9, worker_registrations.vram_used_mb),
+            temperature_c = COALESCE($10, worker_registrations.temperature_c),
+            telemetry_status = COALESCE($11, worker_registrations.telemetry_status),
             subsystem = CASE WHEN $2 IS NOT NULL AND $2 <> 'unknown' THEN $2 ELSE worker_registrations.subsystem END,
             framework = CASE WHEN $3 IS NOT NULL AND $3 <> 'unknown' THEN $3 ELSE worker_registrations.framework END,
             supported_models = CASE WHEN $4 IS NOT NULL AND $4 <> '[]' THEN $4::jsonb ELSE worker_registrations.supported_models END,
@@ -411,6 +497,8 @@ class PostgresJobRepository(BaseJobRepository):
                 active_job_id,
                 gpu_utilization,
                 vram_used_mb,
+                temperature_c,
+                telemetry_status,
             )
 
     async def get_worker(self, worker_id: str) -> Optional[Dict[str, Any]]:
@@ -424,11 +512,15 @@ class PostgresJobRepository(BaseJobRepository):
             return None
 
     async def count_active_and_queued(self) -> Tuple[int, int]:
+        if not self.pool:
+            raise RuntimeError("Repository not initialized.")
         async with self.pool.acquire() as conn:
-            active = await conn.fetchval(
-                "SELECT COUNT(*) FROM jobs WHERE state IN ('RUNNING', 'STREAMING', 'ADMITTED')"
+            row = await conn.fetchrow(
+                """
+                SELECT
+                    COALESCE(SUM(CASE WHEN state IN ('RUNNING', 'STREAMING', 'ADMITTED') THEN 1 ELSE 0 END), 0) as active,
+                    COALESCE(SUM(CASE WHEN state = 'QUEUED' THEN 1 ELSE 0 END), 0) as queued
+                FROM jobs
+                """
             )
-            queued = await conn.fetchval(
-                "SELECT COUNT(*) FROM jobs WHERE state = 'QUEUED'"
-            )
-            return int(active), int(queued)
+            return int(row["active"]), int(row["queued"])

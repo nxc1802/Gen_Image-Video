@@ -28,6 +28,7 @@ from factory_contracts.jobs.worker_contract import (
     WorkerLeaseRequest,
     WorkerLeaseResponse,
 )
+from factory_contracts.telemetry import NVMLTelemetryCollector
 from services.image.artifact_collector import ImageArtifactCollector
 from services.image.client import ComfyUIClient
 from services.image.config import ImageServiceConfig, load_image_config
@@ -50,9 +51,12 @@ class ImageWorkerDaemon:
         self.comfy_client = client or ComfyUIClient(host=self.config.comfy_host, port=self.config.port)
         self.prompt_builder = prompt_builder or ImagePromptBuilder()
         self.artifact_collector = artifact_collector or ImageArtifactCollector(self.config)
+        self.telemetry_collector = NVMLTelemetryCollector(device_index=self.config.gpu_device)
         self._http_client = http_client
         self._running = False
         self._stop_event = asyncio.Event()
+        self._wakeup_event = asyncio.Event()
+        self._wakeup_task: Optional[asyncio.Task] = None
 
     def _get_http_client(self) -> httpx.AsyncClient:
         if self._http_client is not None:
@@ -188,10 +192,15 @@ class ImageWorkerDaemon:
         job_id: str,
         lease_token: str,
     ) -> WorkerHeartbeatResponse:
+        metrics = self.telemetry_collector.sample()
         hb = WorkerHeartbeatRequest(
             worker_id=self.config.worker_id,
             active_job_id=job_id,
             lease_token=lease_token,
+            telemetry_status=metrics.get("telemetry_status", "UNAVAILABLE"),
+            gpu_utilization_percent=metrics.get("gpu_utilization_percent"),
+            vram_used_mb=metrics.get("vram_used_mb"),
+            temperature_c=metrics.get("temperature_c"),
         )
         resp = await client.post(f"/v1/workers/{self.config.worker_id}/heartbeat", json=hb.model_dump(mode="json"))
         resp.raise_for_status()
@@ -367,19 +376,74 @@ class ImageWorkerDaemon:
             if self._http_client is None:
                 await client.aclose()
 
+    async def _listen_wakeup_bus(self) -> None:
+        """Listens on Redis priority wakeup bus for image subsystem jobs."""
+        redis_url = getattr(self.config, "redis_url", None) or os.environ.get("REDIS_URL") or os.environ.get("FACTORY_REDIS_URL")
+        if not redis_url:
+            return
+        while self._running and not self._stop_event.is_set():
+            try:
+                import redis.asyncio as aioredis
+                r = aioredis.from_url(redis_url, decode_responses=True)
+                pubsub = r.pubsub()
+                await pubsub.subscribe("factory:wakeup:image")
+                try:
+                    async for msg in pubsub.listen():
+                        if not self._running or self._stop_event.is_set():
+                            break
+                        if msg and msg.get("type") == "message":
+                            self._wakeup_event.set()
+                finally:
+                    try:
+                        await pubsub.unsubscribe("factory:wakeup:image")
+                        await pubsub.close()
+                        await r.close()
+                    except Exception:
+                        pass
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.debug(f"Redis wakeup bus error: {e}")
+                await asyncio.sleep(2.0)
+
     async def run(self) -> None:
         """Runs the continuous worker lease loop until stopped."""
         self._running = True
+        self._stop_event.clear()
+        self._wakeup_event.clear()
+
+        redis_url = getattr(self.config, "redis_url", None) or os.environ.get("REDIS_URL") or os.environ.get("FACTORY_REDIS_URL")
+        if redis_url:
+            self._wakeup_task = asyncio.create_task(self._listen_wakeup_bus())
+
         logger.info(f"Starting Image Worker loop for {self.config.worker_id}...")
         while self._running and not self._stop_event.is_set():
             try:
                 processed = await self.lease_and_process_one()
                 if not processed:
-                    await asyncio.sleep(self.config.poll_interval_seconds)
+                    try:
+                        await asyncio.wait_for(
+                            self._wakeup_event.wait(),
+                            timeout=self.config.poll_interval_seconds,
+                        )
+                    except (asyncio.TimeoutError, TimeoutError):
+                        pass
+                    finally:
+                        self._wakeup_event.clear()
             except Exception as e:
                 logger.warning(f"Error in image worker lease loop: {e}")
                 await asyncio.sleep(self.config.poll_interval_seconds)
 
+        if self._wakeup_task:
+            self._wakeup_task.cancel()
+            try:
+                await self._wakeup_task
+            except asyncio.CancelledError:
+                pass
+
     def stop(self) -> None:
         self._running = False
         self._stop_event.set()
+        self._wakeup_event.set()
+        if self._wakeup_task:
+            self._wakeup_task.cancel()

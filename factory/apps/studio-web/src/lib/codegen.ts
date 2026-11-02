@@ -4,7 +4,7 @@ import type { CodegenResult, JobSubmissionPayload } from "@/types/studio";
 export function generateClientSnippets(
   payload: JobSubmissionPayload,
   baseUrl = "https://jobs.ai.example.com",
-  apiKey = "$FACTORY_API_KEY"
+  _apiKey = "$FACTORY_API_KEY"
 ): CodegenResult {
   const service = payload.service || "image";
   const model = payload.model || "qwen-image-2.1";
@@ -25,7 +25,7 @@ export function generateClientSnippets(
     2
   );
   const curl = `curl -X POST ${cleanBaseUrl}/v1/jobs \\
-  -H "Authorization: Bearer ${apiKey}" \\
+  -H "Authorization: Bearer $FACTORY_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '${curlJson}'`;
 
@@ -37,8 +37,8 @@ export function generateClientSnippets(
   const python = `import os
 import httpx
 
-API_KEY = os.getenv("FACTORY_API_KEY", "${apiKey.startsWith("$") ? "your-api-key" : apiKey}")
-BASE_URL = os.getenv("FACTORY_BASE_URL", "${cleanBaseUrl}")
+API_KEY = os.environ["FACTORY_API_KEY"]
+BASE_URL = os.environ.get("FACTORY_BASE_URL", "${cleanBaseUrl}")
 
 with httpx.Client(base_url=BASE_URL, timeout=120.0) as client:
     response = client.post(
@@ -61,7 +61,10 @@ with httpx.Client(base_url=BASE_URL, timeout=120.0) as client:
 
   // 3. TypeScript fetch
   const tsInputs = JSON.stringify(inputs, null, 4).replace(/{\n    }/g, "{}");
-  const typescript = `const apiKey = process.env.FACTORY_API_KEY || "${apiKey.startsWith("$") ? "your-api-key" : apiKey}";
+  const typescript = `const apiKey = process.env.FACTORY_API_KEY;
+if (!apiKey) {
+  throw new Error("Environment variable FACTORY_API_KEY is required.");
+}
 const baseUrl = process.env.FACTORY_BASE_URL || "${cleanBaseUrl}";
 
 async function submitJob() {
@@ -101,9 +104,12 @@ submitJob().catch(console.error);
   const openai = `import os
 from openai import OpenAI
 
+API_KEY = os.environ["FACTORY_API_KEY"]
+BASE_URL = os.environ.get("FACTORY_CONTROL_URL", "${cleanBaseUrl}/v1")
+
 client = OpenAI(
-    base_url=os.getenv("FACTORY_CONTROL_URL", "${cleanBaseUrl}/v1"),
-    api_key=os.getenv("FACTORY_API_KEY", "${apiKey.startsWith("$") ? "your-api-key" : apiKey}"),
+    base_url=BASE_URL,
+    api_key=API_KEY,
 )
 
 response = client.chat.completions.create(

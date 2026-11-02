@@ -607,9 +607,27 @@ class TestAdversarialWebSocketSecurity:
                 pass
         assert exc_info.value.code == 1008
 
-    def test_valid_api_key_accepted(self, api_client, target_job_id):
-        """Valid API key in query parameter must establish connection."""
-        with api_client.websocket_connect(f"/v1/jobs/{target_job_id}/ws?token={VALID_API_KEY}") as ws:
+    def test_valid_api_key_rejected_via_query_param(self, api_client, target_job_id):
+        """Valid API key in query parameter must be strictly rejected with 1008 (no query auth)."""
+        with pytest.raises(WebSocketDisconnect) as exc_info:
+            with api_client.websocket_connect(f"/v1/jobs/{target_job_id}/ws?token={VALID_API_KEY}"):
+                pass
+        assert exc_info.value.code == 1008
+
+    def test_valid_api_key_accepted_via_header(self, api_client, target_job_id):
+        """Valid API key in Authorization header must establish connection."""
+        with api_client.websocket_connect(
+            f"/v1/jobs/{target_job_id}/ws",
+            headers={"Authorization": f"Bearer {VALID_API_KEY}"},
+        ) as ws:
+            assert ws is not None
+
+    def test_valid_api_key_accepted_via_subprotocol(self, api_client, target_job_id):
+        """Valid API key in Sec-WebSocket-Protocol must establish connection."""
+        with api_client.websocket_connect(
+            f"/v1/jobs/{target_job_id}/ws",
+            subprotocols=["factory-v4", f"factory-bearer.{VALID_API_KEY}"],
+        ) as ws:
             assert ws is not None
 
     def test_valid_jwt_token_accepted(self, api_client, target_job_id):
@@ -649,7 +667,7 @@ class TestAdversarialWebSocketCancellation:
         assert res.json()["state"] == "QUEUED"
 
         # 2. Connect and send typed cancellation frame
-        with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws?token={VALID_API_KEY}") as ws:
+        with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws", headers={"Authorization": f"Bearer {VALID_API_KEY}"}) as ws:
             ws.send_text(json.dumps({"type": "cancel"}))
             # Small yield to let async cancellation complete
             time.sleep(0.05)
@@ -673,7 +691,7 @@ class TestAdversarialWebSocketCancellation:
         )
         job_id = res.json()["job_id"]
 
-        with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws?token={VALID_API_KEY}") as ws:
+        with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws", headers={"Authorization": f"Bearer {VALID_API_KEY}"}) as ws:
             ws.send_text(json.dumps({"action": "cancel"}))
             time.sleep(0.05)
 
@@ -694,7 +712,7 @@ class TestAdversarialWebSocketCancellation:
         )
         job_id = res.json()["job_id"]
 
-        with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws?token={VALID_API_KEY}") as ws:
+        with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws", headers={"Authorization": f"Bearer {VALID_API_KEY}"}) as ws:
             ws.send_text(json.dumps({"event": "cancel"}))
             time.sleep(0.05)
 
@@ -715,7 +733,7 @@ class TestAdversarialWebSocketCancellation:
         )
         job_id = res.json()["job_id"]
 
-        with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws?token={VALID_API_KEY}") as ws:
+        with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws", headers={"Authorization": f"Bearer {VALID_API_KEY}"}) as ws:
             ws.send_text(json.dumps({"type": "ping"}))
             ws.send_text(json.dumps({"action": "heartbeat"}))
             ws.send_text(json.dumps({"random_key": "random_value"}))
@@ -738,7 +756,7 @@ class TestAdversarialWebSocketCancellation:
         )
         job_id = res.json()["job_id"]
 
-        with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws?token={VALID_API_KEY}") as ws:
+        with api_client.websocket_connect(f"/v1/jobs/{job_id}/ws", headers={"Authorization": f"Bearer {VALID_API_KEY}"}) as ws:
             ws.send_text("THIS IS NOT JSON AT ALL {{{")
             ws.send_text("")
             ws.send_text("\x00\x01\x02")

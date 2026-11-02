@@ -100,16 +100,26 @@ class TestAssetsUploadRouter:
         err = res.json()["error"]
         assert err["code"] == "NOT_FOUND"
 
-    def test_legacy_json_upload(self, api_client, auth_headers):
+    def test_json_upload_rejected_415(self, api_client, auth_headers):
         headers = {**auth_headers, "Content-Type": "application/json"}
         res = api_client.post("/v1/assets/upload", headers=headers, json={"mime_type": "image/png"})
-        assert res.status_code == 201
-        data = res.json()
-        assert data["asset_id"].startswith("ast-")
-        assert data["mime_type"] == "image/png"
-        assert data["s3_url"].startswith("https://s3.ai.example.com/assets/")
-        assert data["verified"] is True
-        assert len(data["sha256"]) == 64
+        assert res.status_code == 415
+        err = res.json()["error"]
+        assert err["code"] == "UNSUPPORTED_MEDIA_TYPE"
+
+    def test_multipart_missing_file_rejected_400(self, api_client, auth_headers):
+        res = api_client.post("/v1/assets/upload", headers=auth_headers, files={"other_field": (None, "val")})
+        assert res.status_code == 400
+        err = res.json()["error"]
+        assert err["code"] == "INVALID_REQUEST"
+
+    def test_multipart_empty_file_rejected_400(self, api_client, auth_headers):
+        files = {"file": ("empty.png", b"", "image/png")}
+        res = api_client.post("/v1/assets/upload", headers=auth_headers, files=files)
+        assert res.status_code == 400
+        err = res.json()["error"]
+        assert err["code"] == "INVALID_MEDIA_TYPE"
+
 
     def test_unsupported_mime_rejected_415(self, api_client, auth_headers):
         headers = {**auth_headers, "Content-Type": "application/json"}
@@ -129,9 +139,9 @@ class TestAssetsUploadRouter:
         headers = {
             **auth_headers,
             "Content-Length": str(55 * 1024 * 1024),
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundary",
         }
-        res = api_client.post("/v1/assets/upload", headers=headers, json={"mime_type": "image/png"})
+        res = api_client.post("/v1/assets/upload", headers=headers, content=b"")
         assert res.status_code == 413
         err = res.json()["error"]
         assert err["code"] == "PAYLOAD_TOO_LARGE"
@@ -165,7 +175,29 @@ class TestAssetsUploadRouter:
         err = res.json()["error"]
         assert err["code"] == "SSRF_BLOCKED"
 
-    def test_asset_validate_public_url_200(self, api_client, auth_headers):
+    def test_asset_validate_ssrf_bypass_attempt_blocked_400(self, api_client, auth_headers):
+        headers = {**auth_headers, "Content-Type": "application/json"}
+        for target in [
+            "http://127.0.0.1/?domain=example.com",
+            "http://169.254.169.254/#example.com",
+            "http://10.0.0.1/admin?q=example.com",
+            "http://example.com:22/ssh",
+        ]:
+            res = api_client.post("/v1/assets/validate", headers=headers, json={"url": target})
+            assert res.status_code == 400
+            err = res.json()["error"]
+            assert err["code"] == "SSRF_BLOCKED"
+
+    def test_asset_validate_public_url_200(self, api_client, auth_headers, monkeypatch):
+        import socket
+        orig_getaddrinfo = socket.getaddrinfo
+
+        def mock_getaddrinfo(host, port, *args, **kwargs):
+            if host in ("cdn.example.com", "example.com") or host.endswith(".example.com"):
+                return [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", port))]
+            return orig_getaddrinfo(host, port, *args, **kwargs)
+
+        monkeypatch.setattr(socket, "getaddrinfo", mock_getaddrinfo)
         headers = {**auth_headers, "Content-Type": "application/json"}
         payload = {
             "url": "https://cdn.example.com/images/hero-character.png",
@@ -177,3 +209,59 @@ class TestAssetsUploadRouter:
         assert data["ssrf_safe"] is True
         assert data["source_url"] == payload["url"]
         assert data["s3_url"].startswith("https://s3.ai.example.com/assets/")
+
+    def test_asset_metadata_persisted_in_database(self, api_client, auth_headers):
+        import asyncio
+        expected_sha256 = hashlib.sha256(VALID_PNG_BYTES).hexdigest()
+        files = {"file": ("persisted_test.png", VALID_PNG_BYTES, "image/png")}
+        res = api_client.post("/v1/assets/upload", headers=auth_headers, files=files)
+        assert res.status_code == 201
+        asset_id = res.json()["asset_id"]
+
+        repo = app.state.repository
+        asset = asyncio.run(repo.get_asset(asset_id))
+        assert asset is not None
+        assert asset.asset_id == asset_id
+        assert asset.sha256 == expected_sha256
+        assert asset.mime_type == "image/png"
+        assert asset.size_bytes == len(VALID_PNG_BYTES)
+        assert asset.filename == "persisted_test.png"
+        assert asset.verified is True
+
+        # Test lookup by sha256
+        by_sha = asyncio.run(repo.get_asset_by_sha256(expected_sha256))
+        assert by_sha is not None
+        assert by_sha.sha256 == expected_sha256
+        assert by_sha.mime_type == "image/png"
+
+    def test_asset_upload_storage_failure_fails_fast_503(self, api_client, auth_headers, monkeypatch):
+        storage = app.state.storage_provider
+
+        async def broken_upload(*args, **kwargs):
+            raise IOError("S3 connection timed out")
+
+        monkeypatch.setattr(storage, "upload_bytes", broken_upload)
+        files = {"file": ("fail_upload.png", VALID_PNG_BYTES, "image/png")}
+        res = api_client.post("/v1/assets/upload", headers=auth_headers, files=files)
+        assert res.status_code == 503
+        err = res.json()["error"]
+        assert err["code"] == "SERVICE_UNAVAILABLE"
+
+    def test_asset_download_storage_failure_fails_fast_503(self, api_client, auth_headers, monkeypatch):
+        files = {"file": ("fail_dl.png", VALID_PNG_BYTES, "image/png")}
+        res = api_client.post("/v1/assets/upload", headers=auth_headers, files=files)
+        assert res.status_code == 201
+        asset_id = res.json()["asset_id"]
+
+        storage = app.state.storage_provider
+
+        async def broken_download(*args, **kwargs):
+            raise IOError("Storage read failed")
+
+        monkeypatch.setattr(storage, "download_bytes", broken_download)
+        dl_res = api_client.get(f"/v1/assets/{asset_id}/download", headers=auth_headers)
+        assert dl_res.status_code == 503
+        err = dl_res.json()["error"]
+        assert err["code"] == "SERVICE_UNAVAILABLE"
+
+

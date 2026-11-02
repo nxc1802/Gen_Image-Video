@@ -361,8 +361,8 @@ export class StudioApiClient {
               try {
                 const parsed = JSON.parse(rawData);
                 onMessage({
-                  gpu_0_vram_used_gb: Number(parsed.gpu_0_vram_used_gb ?? 0),
-                  gpu_1_vram_used_gb: Number(parsed.gpu_1_vram_used_gb ?? 0),
+                  gpu_0_vram_used_gb: parsed.gpu_0_vram_used_gb != null ? Number(parsed.gpu_0_vram_used_gb) : null,
+                  gpu_1_vram_used_gb: parsed.gpu_1_vram_used_gb != null ? Number(parsed.gpu_1_vram_used_gb) : null,
                   gpu_0_vram_total_gb: Number(parsed.gpu_0_vram_total_gb ?? 15.0),
                   gpu_1_vram_total_gb: Number(parsed.gpu_1_vram_total_gb ?? 15.0),
                   active_jobs: Number(parsed.active_jobs ?? 0),

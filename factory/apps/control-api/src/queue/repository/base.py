@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
-from factory_contracts.jobs.job_contract import FactoryJob, JobState
+from factory_contracts.jobs.job_contract import AssetRecord, FactoryJob, JobState
 
 
 class BaseJobRepository(ABC):
@@ -114,6 +114,21 @@ class BaseJobRepository(ABC):
         ...
 
     @abstractmethod
+    async def create_asset(self, asset: AssetRecord) -> AssetRecord:
+        """Persists a new asset record."""
+        ...
+
+    @abstractmethod
+    async def get_asset(self, asset_id: str) -> Optional[AssetRecord]:
+        """Retrieves an asset record by asset_id."""
+        ...
+
+    @abstractmethod
+    async def get_asset_by_sha256(self, sha256: str) -> Optional[AssetRecord]:
+        """Retrieves an asset record by its SHA256 checksum."""
+        ...
+
+    @abstractmethod
     async def upsert_worker_heartbeat(
         self,
         worker_id: str,
@@ -125,6 +140,8 @@ class BaseJobRepository(ABC):
         active_job_id: Optional[str] = None,
         gpu_utilization: Optional[float] = None,
         vram_used_mb: Optional[float] = None,
+        telemetry_status: Optional[str] = None,
+        temperature_c: Optional[float] = None,
     ) -> None:
         """Updates worker liveness and status."""
         ...
@@ -138,3 +155,4 @@ class BaseJobRepository(ABC):
     async def count_active_and_queued(self) -> Tuple[int, int]:
         """Returns (active_jobs_count, queued_jobs_count)."""
         ...
+

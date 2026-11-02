@@ -40,6 +40,9 @@ class TelemetryTracingMiddleware(BaseHTTPMiddleware):
             request_id = f"req-{uuid.uuid4()}"
             request.state.request_id = request_id
 
+        request.state.trace_id = trace_id
+        request.state.span_id = span_id
+
         set_correlation_context(
             request_id=request_id,
             trace_id=trace_id,

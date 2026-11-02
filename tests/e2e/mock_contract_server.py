@@ -333,9 +333,23 @@ class FactoryContractServer:
             return self._sanitize_error("PAYLOAD_TOO_LARGE", "Asset size exceeds 50MB limit.", 413)
 
         # Content type check
-        mime = data["mime_type"] if "mime_type" in data else request.headers.get("x-mime-type", "image/png")
-        if not mime or not any(mime.startswith(prefix) for prefix in ["image/", "video/", "audio/"]):
-            return self._sanitize_error("UNSUPPORTED_MEDIA_TYPE", f"MIME type '{mime}' is not permitted for model ingestion.", 415)
+        ct = request.headers.get("content-type", "")
+        if "multipart/form-data" in ct:
+            mime = "image/png"
+            if b"audio/" in request.content:
+                mime = "audio/wav"
+            elif b"video/" in request.content:
+                mime = "video/mp4"
+            elif b"image/jpeg" in request.content:
+                mime = "image/jpeg"
+            elif b"image/png" in request.content:
+                mime = "image/png"
+            elif "x-mime-type" in request.headers:
+                mime = request.headers["x-mime-type"]
+        else:
+            mime = data.get("mime_type") if data else request.headers.get("x-mime-type")
+            if not mime or not any(mime.startswith(prefix) for prefix in ["image/", "video/", "audio/"]):
+                return self._sanitize_error("UNSUPPORTED_MEDIA_TYPE", f"MIME type '{mime}' is not permitted for model ingestion.", 415)
 
         asset_id = f"ast-{uuid.uuid4()}"
         res = {

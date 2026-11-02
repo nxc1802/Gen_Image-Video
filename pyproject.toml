@@ -8,7 +8,9 @@ license = { text = "MIT" }
 authors = [
     { name = "Factory Architecture Team" }
 ]
-dependencies = []
+dependencies = [
+    "pynvml>=11.5.0",
+]
 
 [dependency-groups]
 dev = [
