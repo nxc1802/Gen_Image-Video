@@ -1,0 +1,52 @@
+{
+  "status": "success",
+  "timestamp": "2026-11-03T12:55:15Z",
+  "hardware": {
+    "platform": "Kaggle Dual Tesla T4",
+    "device_count": 2
+  },
+  "results": {
+    "text": {
+      "model": "Qwen/Qwen2.5-0.5B-Instruct",
+      "duration_ms": 43769.91,
+      "tokens": 204,
+      "generated_text": "Tại Factory v4, chúng tôi tự hào mang đến cho khách hàng nền tảng AI đa phương thức hiệu năng cao với sự hỗ trợ vượt trội từ Dual GPU Tesla T4. Đây là cơ sở dữ liệu mạnh mẽ được thiết kế để tối ưu hóa khả năng xử lý lớn nhất và tốc độ xử lý nhanh nhất. Với những tính năng tiên tiến như mô hình deep learning, phân tích ngôn ngữ natural language processing (NLP) và các công cụ viễn thông phức tạp, bạn sẽ không chỉ có thể làm việc với nhiều yêu cầu khác nhau mà còn tận dụng hiệu quả tối đa trong quá trình phát triển và quản lý dự án. Đồng thời, hệ thống này cũng đã được tích hợp với các dịch vụ AI tối ưu hóa hiệu suất và khả năng lưu trữ dữ liệu lớn. Sự kết hợp giữa GPU và CPU giúp Factory v4 Platform mang lại trải nghiệm tối ưu trong việc thực hiện các hoạt động phức tạp và đòi hỏi xử lý lớn.",
+      "output_file": "/kaggle/working/high_quality_outputs/generated_text_response.txt"
+    },
+    "image": {
+      "model": "stabilityai/sd-turbo",
+      "duration_ms": 29828.1,
+      "prompt": "A majestic Vietnamese dragon soaring gracefully through mystical misty limestone karst mountains in Ha Long Bay at golden sunset, cinematic volumetric lighting, highly detailed digital art, vibrant colors, photorealistic 8k masterpiece",
+      "resolution": "512x512",
+      "file_size_bytes": 404795,
+      "output_file": "/kaggle/working/high_quality_outputs/high_quality_dragon_halong_512x512.png"
+    },
+    "speech": {
+      "text": "Chào mừng bạn đến với Factory v4: Nền tảng AI đa phương thức cá nhân hoá. Toàn bộ hình ảnh, âm thanh và văn bản này đều được tính toán và sinh ra trực tiếp trên cụm phần cứng Dual Tesla T4.",
+      "duration_ms": 1394.67,
+      "file_size_bytes": 508494,
+      "output_file": "/kaggle/working/high_quality_outputs/factory_intro_speech.wav"
+    },
+    "video": {
+      "duration_ms": 867.39,
+      "fps": 24,
+      "frames": 24,
+      "file_size_bytes": 74142,
+      "output_file": "/kaggle/working/high_quality_outputs/cinematic_dragon_halong_motion.mp4"
+    },
+    "embedding": {
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "duration_ms": 5776.06,
+      "vector_dim": 384,
+      "similarity_matching_pair": 0.5968,
+      "similarity_differing_pair": 0.0084,
+      "sample_vector_5d": [
+        -0.0123,
+        0.08,
+        0.0368,
+        0.0651,
+        -0.0213
+      ]
+    }
+  }
+}
