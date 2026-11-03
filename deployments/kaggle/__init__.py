@@ -15,6 +15,11 @@ from deployments.kaggle.certify_kernel import (
     ModelCertificationProfile,
     Tier1ModelCertifier,
 )
+from deployments.kaggle.smoke_runner import (
+    ModelSmokeRunner,
+    SmokeReport,
+    StageResult,
+)
 
 __all__ = [
     "KaggleAPIClient",
@@ -27,4 +32,7 @@ __all__ = [
     "CertificationGateResult",
     "ModelCertificationProfile",
     "Tier1ModelCertifier",
+    "ModelSmokeRunner",
+    "SmokeReport",
+    "StageResult",
 ]
