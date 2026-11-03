@@ -20,6 +20,21 @@ SUBSYSTEM_GPU_MAP = {
     "video": 1, "music": 1, "enhancement": 1, "embedding": 1, "embed": 1, "rerank": 1,
 }
 
+SERVICE_EXECUTION_TIMEOUTS = {
+    "text": 300.0,
+    "vlm": 300.0,
+    "vision": 300.0,
+    "decision": 60.0,
+    "embedding": 60.0,
+    "embed": 60.0,
+    "rerank": 60.0,
+    "image": 300.0,
+    "speech": 300.0,
+    "music": 600.0,
+    "video": 900.0,
+    "enhancement": 600.0,
+}
+
 
 async def check_active_jobs_watchdog(
     repository,
@@ -27,6 +42,7 @@ async def check_active_jobs_watchdog(
     job_manager,
     heartbeat_timeout_seconds: float = 60.0,
     default_job_timeout_seconds: float = 300.0,
+    service_timeouts: Optional[dict] = None,
 ) -> int:
     """
     Scans active jobs (RUNNING or STREAMING).
@@ -95,13 +111,12 @@ async def check_active_jobs_watchdog(
             started_at = started_at.replace(tzinfo=timezone.utc)
         exec_elapsed = (now - started_at).total_seconds()
 
-        timeout_threshold = default_job_timeout_seconds
-        if job.worker and job.worker.lease_expires_at:
-            exp = job.worker.lease_expires_at
-            if exp.tzinfo is None:
-                exp = exp.replace(tzinfo=timezone.utc)
-            if now > exp:
-                timeout_threshold = 0.0  # Already expired
+        # Task/modality specific execution timeout budget
+        service_key = (job.service or "").lower()
+        if service_timeouts and service_key in service_timeouts:
+            timeout_threshold = service_timeouts[service_key]
+        else:
+            timeout_threshold = default_job_timeout_seconds
 
         fail_code = None
         fail_msg = None
@@ -146,8 +161,10 @@ async def watchdog_loop(
     app,
     interval_seconds: float = 10.0,
     heartbeat_timeout_seconds: float = 60.0,
+    service_timeouts: Optional[dict] = None,
 ) -> None:
     """Continuous background loop executing watchdog sweep every interval_seconds."""
+    timeouts = service_timeouts if service_timeouts is not None else SERVICE_EXECUTION_TIMEOUTS
     while True:
         try:
             await asyncio.sleep(interval_seconds)
@@ -160,6 +177,7 @@ async def watchdog_loop(
                     scheduler=scheduler,
                     job_manager=job_manager,
                     heartbeat_timeout_seconds=heartbeat_timeout_seconds,
+                    service_timeouts=timeouts,
                 )
         except asyncio.CancelledError:
             break

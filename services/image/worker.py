@@ -367,9 +367,9 @@ class ImageWorkerDaemon:
         client = self._get_http_client()
         try:
             lease_resp = await self.lease_job(client)
-            if lease_resp.job and lease_resp.lease_token:
+            if lease_resp.job:
                 logger.info(f"Claimed job {lease_resp.job.job_id} for task {lease_resp.job.task}")
-                await self.process_job(client, lease_resp.job, lease_resp.lease_token)
+                await self.process_job(client, lease_resp.job, lease_resp.lease_token or "")
                 return True
             return False
         finally:
