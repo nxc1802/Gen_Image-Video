@@ -184,6 +184,19 @@ class ScratchDiskManager:
             return None
 
         if not job_dir.exists() or not job_dir.is_dir():
+            clean_job = sanitize_id(job_id, default="unknown")
+            try:
+                candidates = list(self.root_dir.glob(f"*/{clean_job}")) + list(self.root_dir.glob(f"*/*/{clean_job}"))
+                for c in candidates:
+                    if c.is_dir():
+                        res_c = c.resolve()
+                        if res_c.is_relative_to(self.root_dir.resolve()):
+                            job_dir = c
+                            break
+            except Exception:
+                pass
+
+        if not job_dir.exists() or not job_dir.is_dir():
             return None
 
         try:

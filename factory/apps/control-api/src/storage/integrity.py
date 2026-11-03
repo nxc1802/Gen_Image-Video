@@ -3,7 +3,8 @@ factory/apps/control-api/src/storage/integrity.py
 Streaming SHA-256 calculation and verification utilities.
 """
 import hashlib
-from typing import AsyncIterable, BinaryIO
+from pathlib import Path
+from typing import AsyncIterable, BinaryIO, Union
 
 CHUNK_SIZE = 64 * 1024  # 64KB
 
@@ -19,6 +20,12 @@ def compute_stream_sha256(stream: BinaryIO) -> str:
     while chunk := stream.read(CHUNK_SIZE):
         hasher.update(chunk)
     return hasher.hexdigest()
+
+
+def compute_file_sha256(file_path: Union[str, Path]) -> str:
+    """Calculates hex-encoded SHA-256 for a file on disk using streaming."""
+    with open(file_path, "rb") as f:
+        return compute_stream_sha256(f)
 
 
 async def compute_async_stream_sha256(async_stream: AsyncIterable[bytes]) -> str:

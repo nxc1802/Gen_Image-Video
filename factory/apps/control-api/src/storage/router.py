@@ -2,6 +2,10 @@
 factory/apps/control-api/src/storage/router.py
 FastAPI router for storage presigned upload generation and local storage fallback endpoints.
 """
+import logging
+import os
+from pathlib import Path
+import shutil
 from typing import Optional
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response
 from fastapi.responses import FileResponse, Response
@@ -13,6 +17,9 @@ from factory.apps.control_api.src.storage.config import StorageConfig, load_stor
 from factory.apps.control_api.src.storage.keys import format_artifact_key
 from factory.apps.control_api.src.storage.local import LocalStorageProvider
 from factory.apps.control_api.src.storage.provider import PresignedUpload, StorageProvider
+from factory.apps.control_api.src.storage.scratch_disk import ScratchDiskManager, get_scratch_disk
+
+logger = logging.getLogger("factory.storage.router")
 
 
 class UploadURLRequest(BaseModel):
@@ -118,6 +125,7 @@ async def local_storage_upload(
     sig: str = Query(...),
     mime_type: str = Query(default="application/octet-stream"),
     storage: StorageProvider = Depends(get_storage_provider),
+    scratch_disk: ScratchDiskManager = Depends(get_scratch_disk),
 ):
     if not isinstance(storage, LocalStorageProvider):
         raise HTTPException(status_code=400, detail="Local upload endpoint only active for local storage backend.")
@@ -125,6 +133,33 @@ async def local_storage_upload(
     if not storage.verify_signature(bucket, key, expires, sig):
         raise HTTPException(status_code=403, detail="Invalid or expired upload signature.")
 
-    body = await request.body()
-    await storage.upload_bytes(bucket, key, body, mime_type)
-    return {"status": "uploaded", "storage_path": key, "size_bytes": len(body)}
+    path = storage._get_path(bucket, key)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Stream upload chunks directly to disk to prevent RAM bloat
+    total_size = 0
+    with open(path, "wb") as f:
+        async for chunk in request.stream():
+            if chunk:
+                f.write(chunk)
+                total_size += len(chunk)
+
+    # Sync artifact to scratch disk path: /tmp/factory_lite/artifacts/{job_id}/{filename}
+    parts = [p for p in key.strip("/").split("/") if p]
+    if len(parts) >= 2:
+        job_id = parts[-2]
+        filename = parts[-1]
+        try:
+            scratch_path = scratch_disk.get_artifact_path(job_id, filename)
+            scratch_path.parent.mkdir(parents=True, exist_ok=True)
+            if scratch_path.resolve() != path.resolve():
+                if scratch_path.exists():
+                    scratch_path.unlink()
+                try:
+                    os.link(str(path), str(scratch_path))
+                except OSError:
+                    shutil.copyfile(str(path), str(scratch_path))
+        except Exception as exc:
+            logger.warning(f"Failed to sync artifact to scratch disk for job {job_id}: {exc}")
+
+    return {"status": "uploaded", "storage_path": key, "size_bytes": total_size}

@@ -21,9 +21,23 @@ class StorageConfig(BaseModel):
     s3_region: str = "us-east-1"
     s3_download_url_expiration_seconds: int = Field(default=86400, ge=60, le=604800)
     s3_upload_url_expiration_seconds: int = Field(default=3600, ge=60, le=86400)
-    local_storage_dir: str = ".factory_storage/artifacts"
+    local_storage_dir: str = Field(
+        default_factory=lambda: (
+            os.environ.get("SCRATCH_ARTIFACTS_DIR")
+            or os.environ.get("FACTORY_ARTIFACT_DIR")
+            or os.environ.get("LOCAL_STORAGE_DIR")
+            or "/tmp/factory_lite/artifacts"
+        )
+    )
     local_storage_secret_key: str = ""
-    local_base_url: str = "http://localhost:8000"
+    local_base_url: str = Field(
+        default_factory=lambda: (
+            os.environ.get("CONTROL_PLANE_URL")
+            or os.environ.get("FACTORY_BASE_URL")
+            or os.environ.get("LOCAL_BASE_URL")
+            or "http://localhost:8000"
+        )
+    )
 
 
 def load_storage_config() -> StorageConfig:
@@ -44,7 +58,17 @@ def load_storage_config() -> StorageConfig:
         s3_region=os.environ.get("S3_REGION", "us-east-1"),
         s3_download_url_expiration_seconds=int(os.environ.get("S3_DOWNLOAD_URL_EXPIRATION_SECONDS", "86400")),
         s3_upload_url_expiration_seconds=int(os.environ.get("S3_UPLOAD_URL_EXPIRATION_SECONDS", "3600")),
-        local_storage_dir=os.environ.get("LOCAL_STORAGE_DIR", ".factory_storage/artifacts"),
+        local_storage_dir=(
+            os.environ.get("SCRATCH_ARTIFACTS_DIR", "").strip()
+            or os.environ.get("FACTORY_ARTIFACT_DIR", "").strip()
+            or os.environ.get("LOCAL_STORAGE_DIR", "").strip()
+            or "/tmp/factory_lite/artifacts"
+        ),
         local_storage_secret_key=local_secret,
-        local_base_url=os.environ.get("LOCAL_BASE_URL", "http://localhost:8000"),
+        local_base_url=(
+            os.environ.get("CONTROL_PLANE_URL", "").strip()
+            or os.environ.get("FACTORY_BASE_URL", "").strip()
+            or os.environ.get("LOCAL_BASE_URL", "").strip()
+            or "http://localhost:8000"
+        ),
     )

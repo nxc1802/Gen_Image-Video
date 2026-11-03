@@ -14,6 +14,7 @@ from factory_contracts.jobs.job_contract import FactoryJob, JobSubmissionRequest
 from factory_contracts.errors import FactoryError, InvalidRequestError, NotFoundError
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
 from factory.apps.control_api.src.storage.scratch_disk import ScratchDiskManager, get_scratch_disk
+from factory.apps.control_api.src.storage.keys import sanitize_id
 from factory.apps.control_api.src.storage.threshold import (
     DEPRECATION_HEADERS,
     enforce_payload_thresholds,
@@ -339,14 +340,36 @@ async def get_job_result(
         except Exception:
             pass
 
-    # Verify symlink containment before delivery
+    # Fallback to job.artifacts storage_path if not located by direct job_id directory
+    if not artifact_path and job.artifacts:
+        root_resolved = scratch_disk.root_dir.resolve()
+        for art in job.artifacts:
+            if art.storage_path:
+                try:
+                    clean_sp = art.storage_path.lstrip("/")
+                    candidates = [
+                        (scratch_disk.root_dir / clean_sp).resolve(),
+                        (scratch_disk.root_dir / "factory-artifacts" / clean_sp).resolve(),
+                    ]
+                    for cand in candidates:
+                        if cand.is_file() and not cand.is_symlink() and cand.is_relative_to(root_resolved):
+                            artifact_path = cand
+                            break
+                    if artifact_path:
+                        break
+                except Exception:
+                    pass
+
+    # Verify symlink and scratch disk root containment before delivery
     if artifact_path:
         if artifact_path.is_symlink():
             artifact_path = None
         else:
             try:
-                job_dir = scratch_disk.get_job_dir(job_id)
-                if not artifact_path.resolve().is_relative_to(job_dir.resolve()):
+                resolved_art = artifact_path.resolve()
+                root_resolved = scratch_disk.root_dir.resolve()
+                clean_job = sanitize_id(job_id, default="unknown")
+                if not resolved_art.is_relative_to(root_resolved) or clean_job not in str(resolved_art):
                     artifact_path = None
             except Exception:
                 artifact_path = None

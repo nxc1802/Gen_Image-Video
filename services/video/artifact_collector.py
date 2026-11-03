@@ -3,16 +3,30 @@ Collect real ComfyUI video outputs and upload them through Factory Storage.
 
 Missing files are fatal. No mock MP4 fallback is permitted.
 """
+import asyncio
 import mimetypes
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, AsyncGenerator, Dict, List
 import uuid
 
 import httpx
 
 from factory_contracts.jobs.job_contract import ArtifactReference
-from factory.apps.control_api.src.storage.integrity import compute_bytes_sha256
+from factory.apps.control_api.src.storage.integrity import compute_file_sha256
 from services.video.config import VideoServiceConfig
+
+
+async def _stream_file_chunks(file_path: Path, chunk_size: int = 1024 * 1024) -> AsyncGenerator[bytes, None]:
+    """Streams file chunks asynchronously without buffering entire file in RAM."""
+    def read_chunk(f):
+        return f.read(chunk_size)
+
+    with open(file_path, "rb") as f:
+        while True:
+            chunk = await asyncio.to_thread(read_chunk, f)
+            if not chunk:
+                break
+            yield chunk
 
 
 class VideoArtifactCollector:
@@ -62,11 +76,11 @@ class VideoArtifactCollector:
     ) -> List[ArtifactReference]:
         artifacts: List[ArtifactReference] = []
         for path in self._resolve_output_files(outputs):
-            data = path.read_bytes()
-            if not data:
+            file_size = path.stat().st_size
+            if file_size == 0:
                 raise ValueError(f"Generated video artifact is empty: {path.name}")
             mime = mimetypes.guess_type(path.name)[0] or "video/mp4"
-            sha256 = compute_bytes_sha256(data)
+            sha256 = compute_file_sha256(path)
 
             presign_resp = await client.post(
                 "/v1/storage/upload-url",
@@ -75,17 +89,24 @@ class VideoArtifactCollector:
                     "job_id": job_id,
                     "artifact_name": path.name,
                     "mime_type": mime,
-                    "max_size_bytes": len(data),
+                    "max_size_bytes": file_size,
                 },
             )
             presign_resp.raise_for_status()
             presign = presign_resp.json()
 
-            async with httpx.AsyncClient(timeout=600.0, follow_redirects=False) as upload_client:
+            upload_headers = dict(presign.get("headers") or {"Content-Type": mime})
+            upload_headers["Content-Length"] = str(file_size)
+
+            client_kwargs = {"timeout": 600.0, "follow_redirects": False}
+            if hasattr(client, "_transport") and client._transport is not None:
+                client_kwargs["transport"] = client._transport
+
+            async with httpx.AsyncClient(**client_kwargs) as upload_client:
                 put_resp = await upload_client.put(
                     presign["upload_url"],
-                    content=data,
-                    headers=presign.get("headers") or {"Content-Type": mime},
+                    content=_stream_file_chunks(path),
+                    headers=upload_headers,
                 )
                 put_resp.raise_for_status()
 
@@ -101,7 +122,7 @@ class VideoArtifactCollector:
                     artifact_id=f"art-{uuid.uuid4()}",
                     type="video",
                     mime_type=mime,
-                    size_bytes=len(data),
+                    size_bytes=file_size,
                     storage_path=presign["storage_path"],
                     url=download_url,
                     download_url=download_url,
