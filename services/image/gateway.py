@@ -21,7 +21,7 @@ try:
 except ImportError:
     websockets = None
 
-from factory_auth import decode_jwt_token, load_auth_config, verify_bearer_token
+from factory_auth import load_auth_config, verify_bearer_token
 from factory.apps.control_api.src.api.errors import register_exception_handlers
 from factory.apps.control_api.src.api.middleware import RequestIDMiddleware
 from services.image.config import ImageServiceConfig, load_image_config
@@ -116,12 +116,6 @@ async def websocket_proxy(websocket: WebSocket):
     auth_config = load_auth_config()
     token = _ws_token(websocket)
     authenticated = bool(token and secrets.compare_digest(token, auth_config.api_key))
-    if not authenticated and token and auth_config.jwt_secret and token.count(".") == 2:
-        try:
-            decode_jwt_token(token, auth_config.jwt_secret)
-            authenticated = True
-        except Exception:
-            authenticated = False
     if not authenticated:
         await websocket.close(code=1008)
         return

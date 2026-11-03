@@ -3,7 +3,6 @@ from factory_auth import (
     load_auth_config,
     verify_bearer_token,
     get_auth_config,
-    decode_jwt_token,
 )
 
 __all__ = [
@@ -11,5 +10,4 @@ __all__ = [
     "load_auth_config",
     "verify_bearer_token",
     "get_auth_config",
-    "decode_jwt_token",
 ]

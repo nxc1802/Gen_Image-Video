@@ -35,7 +35,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from starlette.websockets import WebSocketDisconnect, WebSocketDisconnected
 
-from factory_auth import verify_bearer_token, load_auth_config, decode_jwt_token
+from factory_auth import verify_bearer_token, load_auth_config
 from factory_contracts.errors import InvalidRequestError, UnauthorizedError
 from factory.apps.control_api.src.api.errors import register_exception_handlers
 from factory.apps.control_api.src.api.middleware import RequestIDMiddleware
@@ -192,7 +192,6 @@ async def websocket_transcription_stream(
 ):
     auth_config = getattr(websocket.app.state, "auth_config", None) or load_auth_config()
     expected_key = getattr(auth_config, "api_key", None)
-    jwt_secret = getattr(auth_config, "jwt_secret", None)
 
     token: Optional[str] = None
     auth_header = websocket.headers.get("authorization", "")
@@ -220,17 +219,7 @@ async def websocket_transcription_stream(
         await websocket.close(code=1008)
         return
 
-    authenticated = False
-    if expected_key and token and secrets.compare_digest(token, expected_key):
-        authenticated = True
-    elif jwt_secret and token and token.count(".") == 2:
-        try:
-            decode_jwt_token(token, jwt_secret)
-            authenticated = True
-        except Exception:
-            authenticated = False
-
-    if not authenticated:
+    if not (expected_key and token and secrets.compare_digest(token, expected_key)):
         await websocket.close(code=1008)  # Policy Violation / Unauthorized
         return
 

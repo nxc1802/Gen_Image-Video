@@ -9,7 +9,7 @@ from typing import Any, Dict, Optional
 from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Query, Request, Response, WebSocket, status
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 
-from factory_auth import verify_bearer_token, load_auth_config, decode_jwt_token
+from factory_auth import verify_bearer_token, load_auth_config
 from factory_contracts.jobs.job_contract import FactoryJob, JobSubmissionRequest, JobState
 from factory_contracts.errors import FactoryError, InvalidRequestError, NotFoundError
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
@@ -641,19 +641,8 @@ async def websocket_job_stream(
         await websocket.close(code=1008)
         return
 
-    is_authenticated = False
-    # 1. API Key constant-time comparison
-    if auth_config.api_key and secrets.compare_digest(token, auth_config.api_key):
-        is_authenticated = True
-    # 2. JWT verification
-    elif auth_config.jwt_secret and token.count(".") == 2:
-        try:
-            decode_jwt_token(token, auth_config.jwt_secret)
-            is_authenticated = True
-        except Exception:
-            is_authenticated = False
-
-    if not is_authenticated:
+    # Single API Key constant-time comparison
+    if not (auth_config.api_key and secrets.compare_digest(token, auth_config.api_key)):
         await websocket.close(code=1008)
         return
 

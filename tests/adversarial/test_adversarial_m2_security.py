@@ -22,8 +22,7 @@ import pytest
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
 
-import jwt
-from factory_auth import AuthConfig, decode_jwt_token
+from factory_auth import AuthConfig
 from factory_contracts.errors import (
     FactoryError,
     InvalidRequestError,
@@ -595,15 +594,11 @@ class TestAdversarialWebSocketSecurity:
                 pass
         assert exc_info.value.code == 1008
 
-    def test_forged_jwt_token_rejected_with_1008(self, api_client, target_job_id):
-        """Connecting with a JWT signed by an incorrect secret must close with 1008."""
-        forged_jwt = jwt.encode(
-            {"sub": "attacker", "roles": ["admin"], "exp": int(time.time()) + 3600},
-            "completely-wrong-secret-key-32-chars!!",
-            algorithm="HS256",
-        )
+    def test_forged_token_rejected_with_1008(self, api_client, target_job_id):
+        """Connecting with a forged token must close with 1008."""
+        forged_token = "forged-attacker-token-attempt"
         with pytest.raises(WebSocketDisconnect) as exc_info:
-            with api_client.websocket_connect(f"/v1/jobs/{target_job_id}/ws?token={forged_jwt}"):
+            with api_client.websocket_connect(f"/v1/jobs/{target_job_id}/ws?token={forged_token}"):
                 pass
         assert exc_info.value.code == 1008
 
@@ -630,18 +625,15 @@ class TestAdversarialWebSocketSecurity:
         ) as ws:
             assert ws is not None
 
-    def test_valid_jwt_token_accepted(self, api_client, target_job_id):
-        """Valid JWT signed with configured secret must establish connection."""
-        valid_jwt = jwt.encode(
-            {"sub": "service-worker-1", "roles": ["worker"], "exp": int(time.time()) + 3600},
-            VALID_JWT_SECRET,
-            algorithm="HS256",
-        )
-        with api_client.websocket_connect(
-            f"/v1/jobs/{target_job_id}/ws",
-            headers={"Authorization": f"Bearer {valid_jwt}"},
-        ) as ws:
-            assert ws is not None
+    def test_invalid_header_token_rejected_with_1008(self, api_client, target_job_id):
+        """Invalid token in Authorization header must be rejected with 1008."""
+        with pytest.raises(WebSocketDisconnect) as exc_info:
+            with api_client.websocket_connect(
+                f"/v1/jobs/{target_job_id}/ws",
+                headers={"Authorization": "Bearer wrong-token-1234"},
+            ):
+                pass
+        assert exc_info.value.code == 1008
 
 
 # ==============================================================================

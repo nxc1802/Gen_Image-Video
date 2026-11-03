@@ -9,11 +9,7 @@ import os
 import secrets
 from typing import Optional
 
-from factory_auth.jwt_auth import ALLOWED_ALGORITHMS
-
 logger = logging.getLogger(__name__)
-
-
 
 class AuthConfigError(ValueError, RuntimeError):
     """Raised when authentication configuration is invalid."""
@@ -28,10 +24,6 @@ class AuthConfig:
     jwt_algorithm: str = "HS256"
     jwt_audience: Optional[str] = None
     jwt_issuer: Optional[str] = None
-
-    def __post_init__(self):
-        if self.jwt_algorithm not in ALLOWED_ALGORITHMS:
-            raise ValueError(f"Disallowed or unsupported JWT algorithm: '{self.jwt_algorithm}'")
 
 
 def load_auth_config() -> AuthConfig:
@@ -57,23 +49,12 @@ def load_auth_config() -> AuthConfig:
             + "=" * 70
         )
 
-    jwt_alg = os.environ.get("JWT_ALGORITHM", "HS256").strip() or "HS256"
-    if jwt_alg not in ALLOWED_ALGORITHMS:
-        raise ValueError(f"FATAL: Unsupported or disallowed JWT_ALGORITHM: '{jwt_alg}'")
-
-    jwt_secret = os.environ.get("JWT_SECRET_KEY", os.environ.get("FACTORY_JWT_SECRET", "")).strip() or None
-    jwt_audience = os.environ.get("JWT_AUDIENCE", "").strip() or None
-    jwt_issuer = os.environ.get("JWT_ISSUER", "").strip() or None
-
-    if env == "production" and jwt_secret and not jwt_audience:
-        raise RuntimeError("FATAL: JWT_AUDIENCE must be explicitly configured in production mode when JWT is configured.")
-
     return AuthConfig(
         api_key=raw_key,
         environment=env,
-        jwt_secret=jwt_secret,
-        jwt_algorithm=jwt_alg,
-        jwt_audience=jwt_audience,
-        jwt_issuer=jwt_issuer,
+        jwt_secret=None,
+        jwt_algorithm="HS256",
+        jwt_audience=None,
+        jwt_issuer=None,
     )
 
