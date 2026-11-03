@@ -1,9 +1,9 @@
 """
-JWT verification with sanitized client-facing failures.
+packages/auth/src/factory_auth/jwt_auth.py
+Deprecated JWT verification module for Factory v4 Lite.
+JWT verification has been replaced by single FACTORY_API_KEY.
 """
 from typing import Any, Dict, Optional, Set
-
-import jwt
 
 from factory_contracts.errors import UnauthorizedError
 
@@ -17,21 +17,21 @@ def decode_jwt_token(
     audience: Optional[str] = None,
     issuer: Optional[str] = None,
 ) -> Dict[str, Any]:
+    """Decodes and validates a JWT token using strict security constraints."""
     if algorithm not in ALLOWED_ALGORITHMS:
-        raise UnauthorizedError(
-            message=f"Disallowed or unsupported JWT algorithm '{algorithm}'. "
-            f"Allowed algorithms: {sorted(ALLOWED_ALGORITHMS)}."
-        )
-
-    options: Dict[str, Any] = {
-        "verify_signature": True,
-        "require": ["exp"],
-        "verify_exp": True,
-        "verify_aud": audience is not None,
-        "verify_iss": issuer is not None,
-    }
+        raise UnauthorizedError(message=f"Disallowed or unsupported JWT algorithm: '{algorithm}'.")
 
     try:
+        import jwt
+    except ImportError:
+        raise UnauthorizedError(message="JWT library not available.")
+
+    try:
+        options = {
+            "verify_aud": audience is not None,
+            "verify_iss": issuer is not None,
+            "require": ["exp"],
+        }
         return jwt.decode(
             token,
             secret,
@@ -40,16 +40,14 @@ def decode_jwt_token(
             issuer=issuer,
             options=options,
         )
+    except jwt.MissingRequiredClaimError as exc:
+        raise UnauthorizedError(message=f"JWT token missing required claim: {exc}") from exc
     except jwt.ExpiredSignatureError as exc:
         raise UnauthorizedError(message="JWT token has expired.") from exc
-    except jwt.MissingRequiredClaimError as exc:
-        raise UnauthorizedError(message="JWT token is missing required claim 'exp'.") from exc
     except jwt.InvalidIssuerError as exc:
-        raise UnauthorizedError(message="Invalid JWT issuer.") from exc
+        raise UnauthorizedError(message=f"Invalid JWT issuer: {exc}") from exc
     except jwt.InvalidAudienceError as exc:
-        raise UnauthorizedError(message="Invalid JWT audience.") from exc
-    except jwt.InvalidAlgorithmError as exc:
-        raise UnauthorizedError(message="Invalid JWT algorithm.") from exc
+        raise UnauthorizedError(message=f"Invalid JWT audience: {exc}") from exc
     except jwt.InvalidTokenError as exc:
-        # Never reflect parser/signature internals back to untrusted callers.
         raise UnauthorizedError(message="Invalid JWT token.") from exc
+

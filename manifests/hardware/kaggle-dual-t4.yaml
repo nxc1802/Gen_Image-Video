@@ -20,9 +20,6 @@ gpus:
       - text-service
       - vision-service
       - decision-service
-      - embed-service
-      
-      - rerank-service
       - speech-service
       - image-service
 
@@ -33,6 +30,8 @@ gpus:
     admission_mode: exclusive
     max_concurrent_services: 1
     assigned_services:
+      - embed-service
+      - rerank-service
       - video-service
       - music-service
       - enhancement-service

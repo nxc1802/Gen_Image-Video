@@ -1,10 +1,9 @@
 """
 factory/apps/control-api/src/storage/__init__.py
-Public exports for Factory v4 storage subsystem.
+Public exports for Factory v4 Lite storage subsystem.
 """
 from .config import StorageConfig, load_storage_config
 from .provider import StorageProvider, PresignedUpload, StorageObjectMetadata
-from .s3 import S3StorageProvider
 from .local import LocalStorageProvider
 from .keys import format_artifact_key, format_asset_key, sanitize_id
 from .integrity import compute_bytes_sha256, compute_stream_sha256, verify_sha256
@@ -15,6 +14,10 @@ from .threshold import (
     should_attach_deprecation_header,
 )
 from .router import router as storage_router, get_storage_provider
+from .scratch_disk import ScratchDiskConfig, ScratchDiskManager, get_scratch_disk
+
+# S3 is deprecated in Factory v4 Lite; alias to LocalStorageProvider for compatibility
+S3StorageProvider = LocalStorageProvider
 
 __all__ = [
     "StorageConfig",
@@ -24,6 +27,9 @@ __all__ = [
     "StorageObjectMetadata",
     "S3StorageProvider",
     "LocalStorageProvider",
+    "ScratchDiskConfig",
+    "ScratchDiskManager",
+    "get_scratch_disk",
     "format_artifact_key",
     "format_asset_key",
     "sanitize_id",

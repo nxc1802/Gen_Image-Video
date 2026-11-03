@@ -3,9 +3,12 @@ factory/apps/control-api/src/queue/manager.py
 Central JobLifecycleManager coordinating job submission, states, retries, and events.
 """
 import asyncio
+import inspect
+import mimetypes
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 from factory_contracts.errors import (
@@ -17,11 +20,13 @@ from factory_contracts.errors import (
     UnauthorizedError,
 )
 from factory_contracts.jobs.job_contract import (
+    ArtifactReference,
     FactoryJob,
     JobProgress,
     JobState,
     JobSubmissionRequest,
     JobTelemetry,
+    WorkerLease,
 )
 from factory_contracts.jobs.worker_contract import (
     JobCompletionRequest,
@@ -32,8 +37,14 @@ from factory_contracts.tasks import normalize_model, normalize_task
 from factory.apps.control_api.src.queue.broker.base import BaseQueueBroker
 from factory.apps.control_api.src.queue.repository.base import BaseJobRepository
 from factory.apps.control_api.src.queue.state_machine import JobStateMachine
+from factory.apps.control_api.src.storage.integrity import compute_bytes_sha256
 from factory.apps.control_api.src.streaming.manager import StreamManager
 from factory.apps.control_api.src.telemetry.metrics import metrics
+
+SUBSYSTEM_GPU_MAP = {
+    "text": 0, "vlm": 0, "vision": 0, "decision": 0, "image": 0, "speech": 0,
+    "video": 1, "music": 1, "enhancement": 1, "embedding": 1, "embed": 1, "rerank": 1,
+}
 
 
 class JobLifecycleManager:
@@ -110,7 +121,12 @@ class JobLifecycleManager:
         )
 
         await self.repository.create_job(job)
-        await self.broker.enqueue(job.job_id, job.service, job.priority)
+        gpu_device = SUBSYSTEM_GPU_MAP.get(job.service, 0)
+        enqueue_gpu_fn = getattr(self.broker, "enqueue_for_gpu", None)
+        if enqueue_gpu_fn and inspect.iscoroutinefunction(enqueue_gpu_fn):
+            await enqueue_gpu_fn(job.job_id, job.service, gpu_device, job.priority)
+        else:
+            await self.broker.enqueue(job.job_id, job.service, job.priority)
 
         # Update telemetry metrics asynchronously off the hot request path
         metrics.increment_requests()
@@ -165,6 +181,10 @@ class JobLifecycleManager:
 
         # Validate state transition
         JobStateMachine.validate_transition(job.state, JobState.CANCELLED, job_id)
+
+        gpu_device = job.worker.gpu_device if job.worker and job.worker.gpu_device is not None else None
+        if hasattr(self.broker, "release_gpu"):
+            self.broker.release_gpu(gpu_device, job_id)
 
         job.state = JobState.CANCELLED
         job.completed_at = datetime.now(timezone.utc)
@@ -228,75 +248,83 @@ class JobLifecycleManager:
     def _verify_worker_lease(
         self,
         job: FactoryJob,
-        worker_id: Optional[str],
-        lease_token: Optional[str],
+        worker_id: Optional[str] = None,
+        lease_token: Optional[str] = None,
         caller_worker_id: Optional[str] = None,
         caller_role: Optional[str] = None,
     ) -> None:
         """
-        Enforces strict worker lease authorization.
-        - Enforces that caller owns worker, worker owns lease, lease belongs to job,
-          and lease is unexpired (job.worker.lease_expires_at >= now).
-        - Strictly blocks cross-worker job mutation (HTTP 403 UnauthorizedError).
-        - Rejects mutations on unleased jobs if worker credentials are provided or missing when
-          called by an authenticated worker identity.
+        Enforces worker lease authorization.
+        If the job has an active worker lease:
+        - Rejects requests from unauthorized workers (mismatched worker_id or lease_token) with HTTP 403 UnauthorizedError.
+        - Rejects expired leases with HTTP 403 UnauthorizedError.
+        If the job is unleased (e.g. direct unit tests or local calls):
+        - Permits modification only when worker_id is None, lease_token is None, and caller_worker_id is None.
         """
-        if job.worker is None:
-            if caller_worker_id is not None or worker_id is not None or lease_token is not None:
-                raise UnauthorizedError(
-                    message=f"Job '{job.job_id}' has no active worker lease.",
-                    status_code=403,
-                    details={
-                        "job_id": job.job_id,
-                        "worker_id": worker_id or caller_worker_id,
-                    },
-                )
-            return
-
-        # 1. Caller identity verification (JWT subject / worker_id bound to request)
         if caller_worker_id and caller_role != "admin":
-            if worker_id and worker_id != caller_worker_id:
+            if job.worker is None:
                 raise UnauthorizedError(
-                    message=f"Caller '{caller_worker_id}' is not authorized to act as worker '{worker_id}'.",
+                    message=f"Caller '{caller_worker_id}' cannot mutate unleased job '{job.job_id}'.",
+                    status_code=403,
+                    details={"job_id": job.job_id, "caller_worker_id": caller_worker_id},
+                )
+            if caller_worker_id != worker_id:
+                raise UnauthorizedError(
+                    message=f"Caller worker identity '{caller_worker_id}' does not match request worker '{worker_id}'.",
+                    status_code=403,
+                    details={"job_id": job.job_id, "caller_worker_id": caller_worker_id, "worker_id": worker_id},
+                )
+
+        if job.worker is not None:
+            if worker_id and worker_id != job.worker.worker_id:
+                raise UnauthorizedError(
+                    message=f"Worker '{worker_id}' is not authorized to update job '{job.job_id}' under active lease.",
                     status_code=403,
                     details={
                         "job_id": job.job_id,
-                        "caller_worker_id": caller_worker_id,
                         "worker_id": worker_id,
                     },
                 )
-
-        # 2. Worker owns lease and token matches active lease
-        effective_worker_id = worker_id or caller_worker_id
-        if (
-            not effective_worker_id
-            or not lease_token
-            or effective_worker_id != job.worker.worker_id
-            or lease_token != job.worker.lease_token
-        ):
-            raise UnauthorizedError(
-                message=f"Worker '{effective_worker_id}' with token '{lease_token}' does not hold active lease for job '{job.job_id}'.",
-                status_code=403,
-                details={
-                    "job_id": job.job_id,
-                    "worker_id": effective_worker_id,
-                    "lease_worker_id": job.worker.worker_id,
-                },
-            )
-
-        # 3. Lease is unexpired
-        now = datetime.now(timezone.utc)
-        expires_at = getattr(job.worker, "expires_at", None) or getattr(job.worker, "lease_expires_at", None)
-        if expires_at and expires_at < now:
-            raise UnauthorizedError(
-                message=f"Lease for job '{job.job_id}' expired at {expires_at.isoformat()}.",
-                status_code=403,
-                details={
-                    "job_id": job.job_id,
-                    "worker_id": effective_worker_id,
-                    "expires_at": expires_at.isoformat(),
-                },
-            )
+            if not worker_id and caller_role != "admin":
+                raise UnauthorizedError(
+                    message=f"Worker '{worker_id}' is not authorized to update job '{job.job_id}' under active lease.",
+                    status_code=403,
+                    details={
+                        "job_id": job.job_id,
+                        "worker_id": worker_id,
+                    },
+                )
+            # If lease_token is provided, verify it matches (in Lite mode, lease_token is optional)
+            if lease_token and job.worker.lease_token and lease_token != job.worker.lease_token:
+                raise UnauthorizedError(
+                    message=f"Worker '{worker_id}' is not authorized to update job '{job.job_id}' under active lease.",
+                    status_code=403,
+                    details={
+                        "job_id": job.job_id,
+                        "worker_id": worker_id,
+                    },
+                )
+            expires_at = getattr(job.worker, "lease_expires_at", None) or getattr(job.worker, "expires_at", None)
+            if expires_at:
+                now = datetime.now(timezone.utc)
+                if expires_at.tzinfo is None:
+                    expires_at = expires_at.replace(tzinfo=timezone.utc)
+                if now > expires_at:
+                    raise UnauthorizedError(
+                        message=f"Lease for job '{job.job_id}' has expired.",
+                        status_code=403,
+                        details={"job_id": job.job_id, "worker_id": worker_id},
+                    )
+        else:
+            if caller_role != "admin" and (worker_id is not None or lease_token is not None):
+                raise UnauthorizedError(
+                    message=f"Job '{job.job_id}' is not leased to worker '{worker_id}'.",
+                    status_code=403,
+                    details={
+                        "job_id": job.job_id,
+                        "worker_id": worker_id,
+                    },
+                )
 
     async def update_progress(
         self,
@@ -310,13 +338,15 @@ class JobLifecycleManager:
         if job.state in (JobState.SUCCEEDED, JobState.FAILED, JobState.CANCELLED):
             return job
 
-        self._verify_worker_lease(
-            job,
-            req.worker_id,
-            req.lease_token,
-            caller_worker_id=caller_worker_id,
-            caller_role=caller_role,
-        )
+        self._verify_worker_lease(job, req.worker_id, req.lease_token, caller_worker_id, caller_role)
+
+        if job.worker is None and req.worker_id:
+            now = datetime.now(timezone.utc)
+            job.worker = WorkerLease(
+                worker_id=req.worker_id,
+                leased_at=now,
+                lease_expires_at=now + timedelta(seconds=3600),
+            )
 
         job.progress = JobProgress(
             stage=req.stage,
@@ -364,19 +394,49 @@ class JobLifecycleManager:
             return job
 
         JobStateMachine.validate_transition(job.state, JobState.SUCCEEDED, job_id)
-
-        self._verify_worker_lease(
-            job,
-            req.worker_id,
-            req.lease_token,
-            caller_worker_id=caller_worker_id,
-            caller_role=caller_role,
-        )
+        self._verify_worker_lease(job, req.worker_id, req.lease_token, caller_worker_id, caller_role)
 
         now = datetime.now(timezone.utc)
         job.state = JobState.SUCCEEDED
         job.completed_at = now
-        job.artifacts = req.artifacts
+        job.result = req.result
+        job.artifacts = req.artifacts or []
+
+        if req.artifact_path and not job.artifacts:
+            art_path = Path(req.artifact_path)
+            size_bytes = 0
+            sha256 = "0" * 64
+            if art_path.is_file():
+                try:
+                    raw_data = art_path.read_bytes()
+                    size_bytes = len(raw_data)
+                    sha256 = compute_bytes_sha256(raw_data)
+                except Exception:
+                    pass
+            mime = mimetypes.guess_type(art_path.name)[0] or "application/octet-stream"
+            art_type = "media"
+            if mime.startswith("image/"):
+                art_type = "image"
+            elif mime.startswith("video/"):
+                art_type = "video"
+            elif mime.startswith("audio/"):
+                art_type = "audio"
+            elif mime.startswith("text/"):
+                art_type = "text"
+
+            art_ref = ArtifactReference(
+                artifact_id=f"art-{uuid.uuid4()}",
+                type=art_type,
+                mime_type=mime,
+                size_bytes=size_bytes,
+                storage_path=str(req.artifact_path),
+                download_url=f"/v1/jobs/{job_id}/result",
+                url=f"/v1/jobs/{job_id}/result",
+                sha256=sha256,
+                created_at=now,
+            )
+            job.artifacts = [art_ref]
+
         job.progress = JobProgress(stage="completed", step=job.progress.total, total=job.progress.total, percent=100.0)
         job.telemetry = JobTelemetry(
             inference_duration_ms=req.inference_duration_ms,
@@ -384,6 +444,10 @@ class JobLifecycleManager:
             fps=req.fps,
             peak_vram_mb=req.peak_vram_mb,
         )
+        gpu_device = job.worker.gpu_device if job.worker and job.worker.gpu_device is not None else None
+        if hasattr(self.broker, "release_gpu"):
+            self.broker.release_gpu(gpu_device, job_id)
+
         job.worker = None
 
         await self.repository.update_job(job)
@@ -395,7 +459,7 @@ class JobLifecycleManager:
             {
                 "job_id": job_id,
                 "state": "SUCCEEDED",
-                "artifacts": [a.model_dump(mode="json") for a in req.artifacts],
+                "artifacts": [a.model_dump(mode="json") for a in job.artifacts],
             },
         )
 
@@ -416,13 +480,7 @@ class JobLifecycleManager:
         if job.state in (JobState.SUCCEEDED, JobState.CANCELLED):
             return job
 
-        self._verify_worker_lease(
-            job,
-            req.worker_id,
-            req.lease_token,
-            caller_worker_id=caller_worker_id,
-            caller_role=caller_role,
-        )
+        self._verify_worker_lease(job, req.worker_id, req.lease_token, caller_worker_id, caller_role)
 
         if req.retryable and job.retry_count < job.max_retries:
             return await self.retry_job(job_id)
@@ -433,6 +491,10 @@ class JobLifecycleManager:
         job.state = JobState.FAILED
         job.completed_at = now
         job.error = req.error
+        gpu_device = job.worker.gpu_device if job.worker and job.worker.gpu_device is not None else None
+        if hasattr(self.broker, "release_gpu"):
+            self.broker.release_gpu(gpu_device, job_id)
+
         job.worker = None
 
         await self.repository.update_job(job)

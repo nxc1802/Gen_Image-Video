@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from factory_contracts.jobs.job_contract import FactoryJob, JobSubmissionRequest, JobProgress, JobState
-from factory.apps.control_api.src.queue.repository.sqlite import SqliteJobRepository
+from factory.apps.control_api.src.queue.repository.memory import InMemoryJobStore
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
 from factory.apps.control_api.src.queue.broker.memory_broker import MemoryQueueBroker
 from factory.apps.control_api.src.streaming.manager import StreamManager
@@ -22,7 +22,7 @@ from factory.apps.control_api.src.telemetry.middleware import TelemetryTracingMi
 
 @pytest.mark.asyncio
 async def test_job_lifecycle_manager_persists_trace_id():
-    repo = SqliteJobRepository(":memory:")
+    repo = InMemoryJobStore()
     await repo.initialize()
     broker = MemoryQueueBroker()
     await broker.initialize()

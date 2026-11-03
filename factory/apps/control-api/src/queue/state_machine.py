@@ -33,7 +33,7 @@ class JobStateMachine:
     # Allowed transitions map: Current State -> Set of allowed Target States
     ALLOWED_TRANSITIONS: Dict[JobState, Set[JobState]] = {
         JobState.CREATED: {JobState.QUEUED, JobState.CANCELLED, JobState.FAILED},
-        JobState.QUEUED: {JobState.ADMITTED, JobState.RUNNING, JobState.CANCELLED, JobState.RETRYING, JobState.FAILED},
+        JobState.QUEUED: {JobState.ADMITTED, JobState.RUNNING, JobState.CANCELLED, JobState.RETRYING, JobState.FAILED, JobState.SUCCEEDED},
         JobState.ADMITTED: {JobState.RUNNING, JobState.CANCELLED, JobState.FAILED, JobState.QUEUED},
         JobState.RUNNING: {JobState.STREAMING, JobState.SUCCEEDED, JobState.FAILED, JobState.CANCELLED, JobState.RETRYING},
         JobState.STREAMING: {JobState.RUNNING, JobState.SUCCEEDED, JobState.FAILED, JobState.CANCELLED, JobState.RETRYING},

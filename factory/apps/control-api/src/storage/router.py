@@ -13,7 +13,6 @@ from factory.apps.control_api.src.storage.config import StorageConfig, load_stor
 from factory.apps.control_api.src.storage.keys import format_artifact_key
 from factory.apps.control_api.src.storage.local import LocalStorageProvider
 from factory.apps.control_api.src.storage.provider import PresignedUpload, StorageProvider
-from factory.apps.control_api.src.storage.s3 import S3StorageProvider
 
 
 class UploadURLRequest(BaseModel):
@@ -43,10 +42,6 @@ def get_storage_provider(request: Request) -> StorageProvider:
     if provider is not None:
         return provider
     config = load_storage_config()
-    if config.storage_backend == "s3":
-        if not config.s3_endpoint_url:
-            raise RuntimeError("S3_ENDPOINT_URL is required when STORAGE_BACKEND=s3.")
-        return S3StorageProvider(config)
     return LocalStorageProvider(config)
 
 

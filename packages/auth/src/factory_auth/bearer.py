@@ -1,17 +1,16 @@
 """
-factory_auth/bearer.py
-FastAPI Dependency for Mandatory Bearer Authentication
+packages/auth/src/factory_auth/bearer.py
+FastAPI dependency enforcing single FACTORY_API_KEY with constant-time verification.
 """
 import secrets
-from typing import Annotated, Dict, Any, Optional
-from fastapi import Header, Request, Depends
+from typing import Annotated, Any, Dict, Optional
+from fastapi import Depends, Header, Request
+
 from factory_contracts.errors import UnauthorizedError
 from factory_auth.config import AuthConfig, load_auth_config
-from factory_auth.jwt_auth import decode_jwt_token
 
 
 def get_auth_config(request: Request) -> AuthConfig:
-    # Try request app state first, otherwise load
     if hasattr(request, "app") and hasattr(request.app.state, "auth_config"):
         return request.app.state.auth_config
     return load_auth_config()
@@ -23,7 +22,7 @@ async def verify_bearer_token(
     config: Annotated[AuthConfig, Depends(get_auth_config)] = None,
 ) -> Dict[str, Any]:
     """
-    Validates Bearer token in constant time.
+    Validates single FACTORY_API_KEY using constant-time string comparison (secrets.compare_digest).
     Rejects missing, empty, or invalid tokens with HTTP 401 UnauthorizedError.
     """
     if not authorization:
@@ -42,27 +41,12 @@ async def verify_bearer_token(
 
     token = parts[1].strip()
 
-    # 1. Constant-time API Key verification
-    if config and config.api_key and secrets.compare_digest(token, config.api_key):
-        user_context = {"sub": "system:api_key", "role": "admin"}
-        request.state.user = user_context
-        return user_context
+    active_config = config or load_auth_config()
+    expected_key = active_config.api_key if active_config else ""
 
-    # 2. JWT verification if token is dot-separated
-    if config and config.jwt_secret and token.count(".") == 2:
-        try:
-            payload = decode_jwt_token(
-                token,
-                config.jwt_secret,
-                algorithm=config.jwt_algorithm,
-                audience=config.jwt_audience,
-                issuer=getattr(config, "jwt_issuer", None),
-            )
-            request.state.user = payload
-            return payload
-        except UnauthorizedError:
-            raise
-        except Exception:
-            raise UnauthorizedError(message="Invalid or expired JWT token.")
+    if not expected_key or not secrets.compare_digest(token, expected_key):
+        raise UnauthorizedError(message="Invalid API key.")
 
-    raise UnauthorizedError(message="Invalid API token.")
+    user_context = {"sub": "system", "role": "admin"}
+    request.state.user = user_context
+    return user_context

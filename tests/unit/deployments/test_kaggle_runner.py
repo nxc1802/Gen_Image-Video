@@ -26,6 +26,7 @@ from deployments.kaggle.runner import (
 from deployments.kaggle.certify_kernel import (
     DualT4HardwareTopology,
     CertificationGates,
+    FourStageVerificationGate,
     HardwareMemoryProfiler,
     MemoryProfileSnapshot,
     PreflightContractSimulator,
@@ -212,12 +213,61 @@ class TestDualT4HardwareTopology:
 
     def test_assigned_gpu_routing(self):
         topology = DualT4HardwareTopology()
+        # GPU 0 Models
         assert topology.get_assigned_gpu("qwen-text") == 0
         assert topology.get_assigned_gpu("qwen-decision") == 0
         assert topology.get_assigned_gpu("qwen-vlm") == 0
         assert topology.get_assigned_gpu("qwen-image-2.1") == 0
+        assert topology.get_assigned_gpu("qwen-speech") == 0
+
+        # GPU 1 Models
         assert topology.get_assigned_gpu("qwen-embedding") == 1
         assert topology.get_assigned_gpu("wan-2.2") == 1
+        assert topology.get_assigned_gpu("minimax-h3") == 1
+        assert topology.get_assigned_gpu("ace-step-1.5") == 1
+        assert topology.get_assigned_gpu("enhancement-suite-v1") == 1
+
+        # Class-level model and service lists
+        assert "speech-service" in DualT4HardwareTopology.GPU_0_SERVICES
+        assert "enhancement-service" in DualT4HardwareTopology.GPU_1_SERVICES
+        assert "qwen-speech" in DualT4HardwareTopology.GPU_0_MODELS
+        assert "ace-step-1.5" in DualT4HardwareTopology.GPU_1_MODELS
+        assert "enhancement-suite-v1" in DualT4HardwareTopology.GPU_1_MODELS
+
+    def test_assigned_gpu_routing_all_ten_models_matching_hardware_manifest(self):
+        """Cross-checks all 10 model manifests against manifests/hardware/kaggle-dual-t4.yaml."""
+        import yaml
+
+        hw_file = Path("manifests/hardware/kaggle-dual-t4.yaml")
+        assert hw_file.exists(), f"Missing hardware manifest: {hw_file}"
+        with open(hw_file, "r", encoding="utf-8") as f:
+            hw_manifest = yaml.safe_load(f)
+
+        service_to_gpu = {}
+        for gpu in hw_manifest["gpus"]:
+            gpu_idx = gpu["index"]
+            for s in gpu["assigned_services"]:
+                service_to_gpu[s] = gpu_idx
+
+        models_dir = Path("manifests/models")
+        model_files = sorted(models_dir.glob("*.yaml"))
+        assert len(model_files) == 10, f"Expected 10 model manifests, found {len(model_files)}"
+
+        topology = DualT4HardwareTopology()
+        for mf in model_files:
+            with open(mf, "r", encoding="utf-8") as f:
+                m_data = yaml.safe_load(f)
+            meta = m_data.get("metadata", m_data)
+            model_id = meta.get("id") or m_data.get("id")
+            service = meta.get("service_id") or meta.get("service") or m_data.get("service")
+            assert service in service_to_gpu, f"Unknown service '{service}' in {mf}"
+            expected_gpu = service_to_gpu[service]
+            actual_gpu = topology.get_assigned_gpu(model_id)
+            assert actual_gpu == expected_gpu, (
+                f"Model {model_id} (service {service}) expected on GPU {expected_gpu}, "
+                f"but get_assigned_gpu returned {actual_gpu}"
+            )
+
 
     def test_exclusive_admission_conflict_on_same_gpu(self):
         topology = DualT4HardwareTopology()
@@ -791,3 +841,288 @@ class TestGate2AssertionHardening:
             latency_ms=2500.0,
         )
         assert res.passed is True
+
+
+# =====================================================================
+# 8. 4-Stage Verification Gate Pipeline Tests
+# =====================================================================
+
+class TestFourStageVerificationGate:
+    """Verifies the 4-Stage Verification Gate: Load -> Infer -> Validate -> Profile."""
+
+    def test_stage_1_load_gpu_placement_success(self):
+        topology = DualT4HardwareTopology()
+        # qwen-text correctly on GPU 0
+        res = FourStageVerificationGate.verify_stage_1_load(
+            model_id="qwen-text",
+            gpu_index=0,
+            base_cuda_context_mb=820.0,
+            weights_mb=4500.0,
+            load_time_sec=4.2,
+            topology=topology,
+        )
+        assert res.passed is True
+        assert res.gate_name == "Stage 1: Load"
+        assert res.details["static_footprint_mb"] == 5320.0
+        assert res.details["headroom_mb"] == 10040.0
+
+        # qwen-embedding correctly on GPU 1
+        res_emb = FourStageVerificationGate.verify_stage_1_load(
+            model_id="qwen-embedding",
+            gpu_index=1,
+            base_cuda_context_mb=750.0,
+            weights_mb=1450.0,
+            load_time_sec=2.1,
+            topology=topology,
+        )
+        assert res_emb.passed is True
+
+    def test_stage_1_load_gpu_placement_mismatch_fails(self):
+        topology = DualT4HardwareTopology()
+        # qwen-text wrongly placed on GPU 1
+        res = FourStageVerificationGate.verify_stage_1_load(
+            model_id="qwen-text",
+            gpu_index=1,
+            base_cuda_context_mb=820.0,
+            weights_mb=4500.0,
+            load_time_sec=4.2,
+            topology=topology,
+        )
+        assert res.passed is False
+        assert "hardware topology requires GPU 0" in res.error_message
+
+        # wan-2.2 wrongly placed on GPU 0
+        res_wan = FourStageVerificationGate.verify_stage_1_load(
+            model_id="wan-2.2",
+            gpu_index=0,
+            base_cuda_context_mb=890.0,
+            weights_mb=9800.0,
+            load_time_sec=8.5,
+            topology=topology,
+        )
+        assert res_wan.passed is False
+        assert "hardware topology requires GPU 1" in res_wan.error_message
+
+    def test_stage_1_load_music_and_enhancement_on_gpu_1_success(self):
+        """Verifies that ace-step-1.5 and enhancement-suite-v1 pass Stage 1 Load when placed on GPU 1."""
+        topology = DualT4HardwareTopology()
+        # ace-step-1.5 correctly on GPU 1
+        res_music = FourStageVerificationGate.verify_stage_1_load(
+            model_id="ace-step-1.5",
+            gpu_index=1,
+            base_cuda_context_mb=800.0,
+            weights_mb=4000.0,
+            load_time_sec=3.0,
+            topology=topology,
+        )
+        assert res_music.passed is True
+        assert res_music.gate_name == "Stage 1: Load"
+        assert res_music.details["gpu_index"] == 1
+        assert res_music.details["static_footprint_mb"] == 4800.0
+
+        # enhancement-suite-v1 correctly on GPU 1
+        res_enh = FourStageVerificationGate.verify_stage_1_load(
+            model_id="enhancement-suite-v1",
+            gpu_index=1,
+            base_cuda_context_mb=750.0,
+            weights_mb=2500.0,
+            load_time_sec=2.0,
+            topology=topology,
+        )
+        assert res_enh.passed is True
+        assert res_enh.gate_name == "Stage 1: Load"
+        assert res_enh.details["gpu_index"] == 1
+        assert res_enh.details["static_footprint_mb"] == 3250.0
+
+        # qwen-speech correctly on GPU 0
+        res_speech = FourStageVerificationGate.verify_stage_1_load(
+            model_id="qwen-speech",
+            gpu_index=0,
+            base_cuda_context_mb=700.0,
+            weights_mb=2200.0,
+            load_time_sec=2.2,
+            topology=topology,
+        )
+        assert res_speech.passed is True
+        assert res_speech.gate_name == "Stage 1: Load"
+        assert res_speech.details["gpu_index"] == 0
+        assert res_speech.details["static_footprint_mb"] == 2900.0
+
+    def test_stage_1_load_music_and_enhancement_on_wrong_gpu_fails(self):
+        """Verifies that ace-step-1.5 and enhancement-suite-v1 placed on GPU 0 fail Stage 1 Load."""
+        topology = DualT4HardwareTopology()
+        # ace-step-1.5 wrongly placed on GPU 0
+        res_music = FourStageVerificationGate.verify_stage_1_load(
+            model_id="ace-step-1.5",
+            gpu_index=0,
+            base_cuda_context_mb=800.0,
+            weights_mb=4000.0,
+            load_time_sec=3.0,
+            topology=topology,
+        )
+        assert res_music.passed is False
+        assert "hardware topology requires GPU 1" in res_music.error_message
+
+        # enhancement-suite-v1 wrongly placed on GPU 0
+        res_enh = FourStageVerificationGate.verify_stage_1_load(
+            model_id="enhancement-suite-v1",
+            gpu_index=0,
+            base_cuda_context_mb=750.0,
+            weights_mb=2500.0,
+            load_time_sec=2.0,
+            topology=topology,
+        )
+        assert res_enh.passed is False
+        assert "hardware topology requires GPU 1" in res_enh.error_message
+
+        # qwen-speech wrongly placed on GPU 1
+        res_speech = FourStageVerificationGate.verify_stage_1_load(
+            model_id="qwen-speech",
+            gpu_index=1,
+            base_cuda_context_mb=700.0,
+            weights_mb=2200.0,
+            load_time_sec=2.2,
+            topology=topology,
+        )
+        assert res_speech.passed is False
+        assert "hardware topology requires GPU 0" in res_speech.error_message
+
+
+    def test_stage_2_infer_forward_pass_and_latency(self):
+        res = FourStageVerificationGate.verify_stage_2_infer(
+            model_id="qwen-text",
+            modality="text",
+            peak_vram_mb=12000.0,
+            latency_ms=185.0,
+        )
+        assert res.passed is True
+        assert res.gate_name == "Stage 2: Infer"
+        assert res.details["latency_ms"] == 185.0
+        assert res.details["status"] == "PASS"
+
+    def test_stage_2_infer_peak_vram_limit_exceeded(self):
+        res = FourStageVerificationGate.verify_stage_2_infer(
+            model_id="qwen-text",
+            modality="text",
+            peak_vram_mb=15500.0,
+            latency_ms=185.0,
+        )
+        assert res.passed is False
+        assert "exceeded 15.0 GB ceiling" in res.error_message
+
+    def test_stage_3_validate_output_and_manifest_contract(self, tmp_path):
+        manifest_file = tmp_path / "qwen-embedding.yaml"
+        manifest_file.write_text(
+            """
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-embedding
+capabilities:
+  text_embedding: true
+  multimodal_embedding: false
+"""
+        )
+
+        def _executor(cap):
+            if cap == "text_embedding":
+                return True, 200, None
+            if cap == "multimodal_embedding":
+                return False, 400, None
+            return False, 404, None
+
+        # Unit L2 normalized vector
+        vec = [0.6, 0.8]  # 0.36 + 0.64 = 1.0
+        res = FourStageVerificationGate.verify_stage_3_validate(
+            model_id="qwen-embedding",
+            modality="embedding",
+            output_payload=vec,
+            manifest_path=manifest_file,
+            capability_executor=_executor,
+            peak_vram_mb=3700.0,
+            latency_ms=50.0,
+        )
+        assert res.passed is True
+        assert res.gate_name == "Stage 3: Validate"
+        assert res.details["contract_adherence_percent"] == 100.0
+        assert "artifact_sha256" in res.details
+
+    def test_stage_3_validate_unsupported_capability_leak_fails(self, tmp_path):
+        manifest_file = tmp_path / "model.yaml"
+        manifest_file.write_text(
+            """
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: test-model
+capabilities:
+  unsupported_task: false
+"""
+        )
+
+        def _bad_executor(cap):
+            # Leaks with 200 instead of 400
+            return True, 200, "fallback-model"
+
+        res = FourStageVerificationGate.verify_stage_3_validate(
+            model_id="test-model",
+            modality="text",
+            output_payload="valid output",
+            manifest_path=manifest_file,
+            capability_executor=_bad_executor,
+        )
+        assert res.passed is False
+        assert "Capability contract verification failed" in res.error_message
+
+    def test_stage_4_profile_telemetry_and_zero_leak(self):
+        profiler = HardwareMemoryProfiler(device_index=0)
+
+        # Zero leak runner
+        def _runner(idx):
+            return True, 12000.0 + (idx * 1.5), 180.0
+
+        res = FourStageVerificationGate.verify_stage_4_profile(
+            model_id="qwen-text",
+            profiler=profiler,
+            sustained_requests_count=5,
+            request_runner=_runner,
+        )
+        assert res.passed is True
+        assert res.gate_name == "Stage 4: Profile"
+        assert res.details["telemetry_status"] == "UNAVAILABLE"  # on local Mac
+        assert res.details["vram_leak_mb"] < 50.0
+
+    def test_stage_4_profile_excessive_leak_fails(self):
+        profiler = HardwareMemoryProfiler(device_index=0)
+
+        # Leaking runner (> 50 MB)
+        def _leaking_runner(idx):
+            return True, 12000.0 + (idx * 15.0), 180.0
+
+        res = FourStageVerificationGate.verify_stage_4_profile(
+            model_id="qwen-text",
+            profiler=profiler,
+            sustained_requests_count=5,
+            request_runner=_leaking_runner,
+        )
+        assert res.passed is False
+        assert "Memory leak detected" in res.error_message
+
+    def test_four_stage_pipeline_in_preflight_certification_results(self, tmp_path):
+        manifests_dir = Path(__file__).resolve().parent.parent.parent.parent / "manifests"
+        sim = PreflightContractSimulator(manifests_dir=manifests_dir)
+        results = sim.execute_all(output_path=tmp_path / "res.json")
+
+        assert "verification_pipeline" in results
+        assert results["verification_pipeline"] == [
+            "Stage 1: Load", "Stage 2: Infer", "Stage 3: Validate", "Stage 4: Profile"
+        ]
+
+        for m_id, m_data in results["models"].items():
+            assert "four_stage_pipeline" in m_data
+            pipe = m_data["four_stage_pipeline"]
+            assert pipe["stage_1_load"]["passed"] is True
+            assert pipe["stage_2_infer"]["passed"] is True
+            assert pipe["stage_3_validate"]["passed"] is True
+            assert pipe["stage_4_profile"]["passed"] is True
+

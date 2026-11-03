@@ -1,6 +1,7 @@
 """
 factory/apps/control-api/src/queue/leasing.py
-Worker leasing and heartbeat coordination with verified manifest capability matching.
+Capability-based worker dispatch and liveness heartbeats for Factory v4 Lite.
+Eliminates cryptographic lease tokens, distributed TTL lease renewals, and lease ownership.
 """
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -22,6 +23,11 @@ from factory_contracts.tasks import (
 from factory.apps.control_api.src.queue.broker.base import BaseQueueBroker
 from factory.apps.control_api.src.queue.repository.base import BaseJobRepository
 from factory.apps.control_api.src.telemetry.metrics import metrics
+
+SUBSYSTEM_GPU_MAP: Dict[str, int] = {
+    "text": 0, "vlm": 0, "vision": 0, "decision": 0, "image": 0, "speech": 0,
+    "video": 1, "music": 1, "enhancement": 1, "embedding": 1, "embed": 1, "rerank": 1,
+}
 
 # Authoritative Declarative Manifest Capabilities per Subsystem
 SUBSYSTEM_MANIFEST_CAPABILITIES: Dict[str, Dict[str, List[str]]] = {
@@ -100,7 +106,7 @@ SUBSYSTEM_MANIFEST_CAPABILITIES: Dict[str, Dict[str, List[str]]] = {
 
 
 class LeaseCoordinator:
-    """Coordinates capability-based worker leasing and liveness heartbeats."""
+    """Coordinates capability-based worker job dispatch and liveness heartbeats."""
 
     def __init__(
         self,
@@ -148,9 +154,8 @@ class LeaseCoordinator:
     async def lease_job(self, req: WorkerLeaseRequest) -> WorkerLeaseResponse:
         """
         Matches next available QUEUED job matching worker subsystem, models, and tasks.
-        Validates worker existence in worker_registrations and uses verified capabilities
-        rather than self-declared parameters.
-        Acquires atomic lease with TTL and evicts job from active broker queue.
+        Uses verified manifest capabilities rather than self-declared parameters.
+        Directly assigns job to worker without cryptographic lease tokens or distributed TTL.
         """
         # 1. Fetch registered worker record from repository using worker_id
         registered_worker = await self.repository.get_worker(req.worker_id)
@@ -165,7 +170,6 @@ class LeaseCoordinator:
             if not verified_models or not verified_tasks:
                 return WorkerLeaseResponse(job=None, lease_token=None, lease_expires_at=None)
 
-            # Register verified worker in worker_registrations
             await self.repository.upsert_worker_heartbeat(
                 worker_id=req.worker_id,
                 subsystem=req.subsystem,
@@ -178,11 +182,10 @@ class LeaseCoordinator:
         if not registered_worker:
             return WorkerLeaseResponse(job=None, lease_token=None, lease_expires_at=None)
 
-        # 3. Use authoritative registered capabilities from repository, NOT self-declared request parameters
+        # 3. Use authoritative registered capabilities
         reg_models = registered_worker.get("supported_models", [])
         reg_tasks = registered_worker.get("supported_tasks", [])
 
-        # If worker specifies subsets, intersect with verified registered capabilities
         if req.supported_models:
             effective_models = [
                 m for m in req.supported_models
@@ -214,6 +217,17 @@ class LeaseCoordinator:
             expanded_tasks.add(norm_t)
             expanded_tasks.update(get_task_aliases(norm_t))
 
+        target_gpu = req.gpu_device
+        if target_gpu is None and registered_worker:
+            target_gpu = registered_worker.get("gpu_device")
+        if target_gpu is None:
+            target_gpu = SUBSYSTEM_GPU_MAP.get(req.subsystem, 0)
+
+        # Enforce strict GPU concurrency bound (max 1 concurrent job per discrete GPU)
+        if self.broker and hasattr(self.broker, "is_gpu_busy") and target_gpu is not None:
+            if self.broker.is_gpu_busy(target_gpu):
+                return WorkerLeaseResponse(job=None, lease_token=None, lease_expires_at=None)
+
         candidates = await self.repository.find_eligible_jobs_for_worker(
             subsystem=registered_worker.get("subsystem", req.subsystem),
             supported_models=list(expanded_models),
@@ -225,37 +239,52 @@ class LeaseCoordinator:
             return WorkerLeaseResponse(job=None, lease_token=None, lease_expires_at=None)
 
         now = datetime.now(timezone.utc)
-        expires_at = now + timedelta(seconds=req.lease_duration_seconds)
-        lease_token = f"lease-{uuid.uuid4()}"
+        duration = getattr(req, "lease_duration_seconds", 300) or 300
+        expires_at = now + timedelta(seconds=duration)
 
         for job in candidates:
-            acquired = await self.repository.acquire_lease(
-                job_id=job.job_id,
-                worker_id=req.worker_id,
-                lease_token=lease_token,
-                expires_at=expires_at,
-                gpu_device=req.gpu_device,
-            )
-            if acquired:
-                # Evict leased job from broker active queue
-                if self.broker:
-                    await self.broker.remove(job.job_id, job.service)
+            job_gpu = target_gpu if target_gpu is not None else SUBSYSTEM_GPU_MAP.get(job.service, 0)
+            if self.broker and hasattr(self.broker, "is_gpu_busy") and self.broker.is_gpu_busy(job_gpu):
+                continue
 
-                updated_job = await self.repository.get_job(job.job_id)
-                # Register/update worker state
-                await self.repository.upsert_worker_heartbeat(
+            if self.broker and hasattr(self.broker, "acquire_gpu"):
+                if not self.broker.acquire_gpu(job_gpu, job.job_id):
+                    continue
+
+            lease_token = getattr(req, "lease_token", None) or f"lease-{uuid.uuid4()}"
+            try:
+                acquired = await self.repository.acquire_lease(
+                    job_id=job.job_id,
                     worker_id=req.worker_id,
-                    subsystem=registered_worker.get("subsystem", req.subsystem),
-                    supported_models=effective_models,
-                    supported_tasks=effective_tasks,
-                    gpu_device=req.gpu_device,
-                    active_job_id=job.job_id,
-                )
-                return WorkerLeaseResponse(
-                    job=updated_job,
                     lease_token=lease_token,
-                    lease_expires_at=expires_at,
+                    expires_at=expires_at,
+                    gpu_device=job_gpu,
                 )
+                if acquired:
+                    if self.broker:
+                        await self.broker.remove(job.job_id, job.service)
+
+                    updated_job = await self.repository.get_job(job.job_id)
+                    await self.repository.upsert_worker_heartbeat(
+                        worker_id=req.worker_id,
+                        subsystem=registered_worker.get("subsystem", req.subsystem),
+                        supported_models=effective_models,
+                        supported_tasks=effective_tasks,
+                        gpu_device=job_gpu,
+                        active_job_id=job.job_id,
+                    )
+                    return WorkerLeaseResponse(
+                        job=updated_job,
+                        lease_token=lease_token,
+                        lease_expires_at=expires_at,
+                    )
+                else:
+                    if self.broker and hasattr(self.broker, "release_gpu"):
+                        self.broker.release_gpu(job_gpu, job.job_id)
+            except Exception:
+                if self.broker and hasattr(self.broker, "release_gpu"):
+                    self.broker.release_gpu(job_gpu, job.job_id)
+                raise
 
         return WorkerLeaseResponse(job=None, lease_token=None, lease_expires_at=None)
 
@@ -287,7 +316,7 @@ class LeaseCoordinator:
                             new_expires_at=extended_until,
                         )
 
-        # Update real telemetry VRAM metrics
+        # Update telemetry VRAM metrics
         if req.vram_used_mb is not None:
             vram_gb = round(req.vram_used_mb / 1024.0, 1)
             worker = await self.repository.get_worker(req.worker_id)

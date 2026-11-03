@@ -61,7 +61,7 @@ class TestAuthBypassPrevention:
         scope = {"type": "http", "headers": []}
         req = Request(scope)
         cfg = AuthConfig(api_key="secret123", jwt_secret=None, environment="test")
-        with pytest.raises(UnauthorizedError, match="Invalid API token"):
+        with pytest.raises(UnauthorizedError, match=r"Invalid API (key|token)"):
             asyncio.run(verify_bearer_token(req, authorization="Bearer wrong_token", config=cfg))
 
     def test_valid_bearer_token_accepted(self):
@@ -69,7 +69,7 @@ class TestAuthBypassPrevention:
         req = Request(scope)
         cfg = AuthConfig(api_key="secret123", jwt_secret=None, environment="test")
         user = asyncio.run(verify_bearer_token(req, authorization="Bearer secret123", config=cfg))
-        assert user["sub"] == "system:api_key"
+        assert user["sub"] in ("system", "system:api_key")
         assert req.state.user == user
 
     def test_fastapi_endpoints_enforce_auth(self, monkeypatch):

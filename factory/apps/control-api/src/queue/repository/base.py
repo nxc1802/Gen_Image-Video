@@ -22,6 +22,10 @@ class BaseJobRepository(ABC):
         """Closes connections."""
         ...
 
+    async def cleanup_expired_jobs(self, max_age_seconds: Optional[int] = None) -> int:
+        """Sweeps and deletes expired terminal jobs, returning count of deleted jobs."""
+        return 0
+
     @abstractmethod
     async def create_job(self, job: FactoryJob) -> FactoryJob:
         """Persists a new job record."""

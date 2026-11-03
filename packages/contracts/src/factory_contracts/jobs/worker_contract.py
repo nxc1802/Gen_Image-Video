@@ -70,7 +70,9 @@ class JobCompletionRequest(BaseModel):
     """Payload sent by worker upon successful generation."""
     model_config = ConfigDict(extra="forbid")
 
-    artifacts: List[ArtifactReference] = Field(..., description="Generated artifacts")
+    artifacts: List[ArtifactReference] = Field(default_factory=list, description="Generated artifacts")
+    result: Optional[Any] = Field(default=None, description="In-memory inference result payload")
+    artifact_path: Optional[str] = Field(default=None, description="Scratch disk path to artifact")
     inference_duration_ms: Optional[float] = None
     tokens_per_sec: Optional[float] = None
     fps: Optional[float] = None

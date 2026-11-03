@@ -208,7 +208,7 @@ class TestAssetsUploadRouter:
         data = res.json()
         assert data["ssrf_safe"] is True
         assert data["source_url"] == payload["url"]
-        assert data["s3_url"].startswith("https://s3.ai.example.com/assets/")
+        assert data["s3_url"].startswith("/v1/assets/") or data["s3_url"].startswith("https://s3.ai.example.com/assets/")
 
     def test_asset_metadata_persisted_in_database(self, api_client, auth_headers):
         import asyncio

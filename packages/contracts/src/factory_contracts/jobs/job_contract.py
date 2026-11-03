@@ -39,7 +39,7 @@ class WorkerLease(BaseModel):
     gpu_device: Optional[int] = Field(default=None, description="Assigned GPU device index")
     lease_token: str = Field(default="", description="Cryptographic lease token held by worker")
     leased_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    lease_expires_at: datetime = Field(..., description="Lease expiration threshold (300s TTL)")
+    lease_expires_at: Optional[datetime] = Field(default=None, description="Lease expiration threshold (300s TTL)")
 
 
 class ArtifactReference(BaseModel):
@@ -111,6 +111,7 @@ class FactoryJob(BaseModel):
     max_retries: int = Field(default=3, ge=0)
     error: Optional[ErrorDetail] = None
     artifacts: List[ArtifactReference] = Field(default_factory=list)
+    result: Optional[Any] = Field(default=None, description="In-memory inference result payload")
     telemetry: JobTelemetry = Field(default_factory=JobTelemetry)
 
 

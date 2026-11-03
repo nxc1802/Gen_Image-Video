@@ -28,7 +28,7 @@ from factory.apps.control_api.src.telemetry.propagation import (
     extract_traceparent,
     inject_traceparent,
 )
-from factory.apps.control_api.src.telemetry.tracer import (
+from factory.apps.control_api.src.telemetry.middleware import (
     generate_span_id,
     generate_trace_id,
 )

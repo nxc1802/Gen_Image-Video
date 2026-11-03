@@ -23,7 +23,7 @@ from factory_contracts.jobs.worker_contract import (
 from factory.apps.control_api.src.queue.broker.memory_broker import MemoryQueueBroker
 from factory.apps.control_api.src.queue.leasing import LeaseCoordinator
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
-from factory.apps.control_api.src.queue.repository.sqlite import SqliteJobRepository
+from factory.apps.control_api.src.queue.repository import InMemoryJobStore as SqliteJobRepository
 from factory.apps.control_api.src.streaming.manager import StreamManager
 
 

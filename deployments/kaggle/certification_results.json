@@ -1,7 +1,13 @@
 {
-  "timestamp": "2026-11-02T18:57:36Z",
+  "timestamp": "2026-11-03T08:43:32Z",
   "environment": "simulation-local",
   "execution_mode": "pre-flight-contract-simulation",
+  "verification_pipeline": [
+    "Stage 1: Load",
+    "Stage 2: Infer",
+    "Stage 3: Validate",
+    "Stage 4: Profile"
+  ],
   "live_hardware_attested": false,
   "hardware": {
     "name": "Simulated Dual Tesla T4 (local contract simulation)",
@@ -24,6 +30,62 @@
       "checkpoint": "Qwen/Qwen2.5-7B-Instruct-AWQ",
       "quantization": "awq",
       "telemetry_status": "UNAVAILABLE",
+      "four_stage_pipeline": {
+        "stage_1_load": {
+          "stage_name": "Stage 1: Load",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-text",
+            "gpu_index": 0,
+            "base_cuda_context_mb": 820.0,
+            "weights_mb": 4500.0,
+            "static_footprint_mb": 5320.0,
+            "headroom_mb": 10040.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          }
+        },
+        "stage_2_infer": {
+          "stage_name": "Stage 2: Infer",
+          "passed": true,
+          "details": {
+            "peak_vram_mb": 12000.0,
+            "latency_ms": 185.0,
+            "status": "PASS"
+          }
+        },
+        "stage_3_validate": {
+          "stage_name": "Stage 3: Validate",
+          "passed": true,
+          "details": {
+            "output_validation": {
+              "model_id": "qwen-text",
+              "modality": "text",
+              "peak_vram_mb": 12000.0,
+              "latency_ms": 185.0,
+              "artifact_sha256": "25f5bfeacdf7b6f71b1247a12576fd1e11629712612c56b5b7011e3c46f985ad",
+              "artifact_size_bytes": 97
+            },
+            "contract_adherence": {
+              "model_id": "qwen-text",
+              "adherence_percent": 100.0,
+              "verified_supported_count": 5,
+              "verified_unsupported_rejections": 0
+            }
+          }
+        },
+        "stage_4_profile": {
+          "stage_name": "Stage 4: Profile",
+          "passed": true,
+          "details": {
+            "telemetry_status": "UNAVAILABLE",
+            "peak_vram_mb": 12002.0,
+            "vram_leak_mb": 2.0,
+            "requests_executed": 5,
+            "memory_leak_threshold_mb": 50.0
+          }
+        }
+      },
       "profiling": {
         "telemetry_status": "UNAVAILABLE",
         "source": "preflight_simulation",
@@ -36,7 +98,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793645856.495764,
+            "timestamp": 1793695412.423689,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -48,7 +110,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793645856.495769,
+            "timestamp": 1793695412.4236958,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -60,7 +122,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793645856.495774,
+            "timestamp": 1793695412.4237041,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -72,7 +134,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793645856.497081,
+            "timestamp": 1793695412.425165,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -84,7 +146,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793645856.497094,
+            "timestamp": 1793695412.425183,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -174,6 +236,62 @@
       "checkpoint": "Qwen/Qwen3-Embedding-0.6B",
       "quantization": "none",
       "telemetry_status": "UNAVAILABLE",
+      "four_stage_pipeline": {
+        "stage_1_load": {
+          "stage_name": "Stage 1: Load",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-embedding",
+            "gpu_index": 1,
+            "base_cuda_context_mb": 750.0,
+            "weights_mb": 1450.0,
+            "static_footprint_mb": 2200.0,
+            "headroom_mb": 13160.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          }
+        },
+        "stage_2_infer": {
+          "stage_name": "Stage 2: Infer",
+          "passed": true,
+          "details": {
+            "peak_vram_mb": 3700.0,
+            "latency_ms": 850.0,
+            "status": "PASS"
+          }
+        },
+        "stage_3_validate": {
+          "stage_name": "Stage 3: Validate",
+          "passed": true,
+          "details": {
+            "output_validation": {
+              "model_id": "qwen-embedding",
+              "modality": "embedding",
+              "peak_vram_mb": 3700.0,
+              "latency_ms": 850.0,
+              "artifact_sha256": "2426cb08368ad55bb79aba186c307a0221de97c9c3649a27594546af1e5ce7ad",
+              "artifact_size_bytes": 22547
+            },
+            "contract_adherence": {
+              "model_id": "qwen-embedding",
+              "adherence_percent": 100.0,
+              "verified_supported_count": 2,
+              "verified_unsupported_rejections": 1
+            }
+          }
+        },
+        "stage_4_profile": {
+          "stage_name": "Stage 4: Profile",
+          "passed": true,
+          "details": {
+            "telemetry_status": "UNAVAILABLE",
+            "peak_vram_mb": 3702.0,
+            "vram_leak_mb": 2.0,
+            "requests_executed": 5,
+            "memory_leak_threshold_mb": 50.0
+          }
+        }
+      },
       "profiling": {
         "telemetry_status": "UNAVAILABLE",
         "source": "preflight_simulation",
@@ -186,7 +304,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793645856.497213,
+            "timestamp": 1793695412.425302,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -198,7 +316,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793645856.497215,
+            "timestamp": 1793695412.4253042,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -210,7 +328,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793645856.4972181,
+            "timestamp": 1793695412.4253068,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -222,7 +340,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793645856.498595,
+            "timestamp": 1793695412.426398,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -234,7 +352,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793645856.4986072,
+            "timestamp": 1793695412.426408,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -324,6 +442,62 @@
       "checkpoint": "Qwen/Qwen2.5-3B-Instruct",
       "quantization": "none",
       "telemetry_status": "UNAVAILABLE",
+      "four_stage_pipeline": {
+        "stage_1_load": {
+          "stage_name": "Stage 1: Load",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-decision",
+            "gpu_index": 0,
+            "base_cuda_context_mb": 780.0,
+            "weights_mb": 3200.0,
+            "static_footprint_mb": 3980.0,
+            "headroom_mb": 11380.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          }
+        },
+        "stage_2_infer": {
+          "stage_name": "Stage 2: Infer",
+          "passed": true,
+          "details": {
+            "peak_vram_mb": 5800.0,
+            "latency_ms": 850.0,
+            "status": "PASS"
+          }
+        },
+        "stage_3_validate": {
+          "stage_name": "Stage 3: Validate",
+          "passed": true,
+          "details": {
+            "output_validation": {
+              "model_id": "qwen-decision",
+              "modality": "decision",
+              "peak_vram_mb": 5800.0,
+              "latency_ms": 850.0,
+              "artifact_sha256": "2eb1bb23d1c5c6ecae2dae15d8ef0f3600a9b8f46953ab3703abe2f0fa29690a",
+              "artifact_size_bytes": 82
+            },
+            "contract_adherence": {
+              "model_id": "qwen-decision",
+              "adherence_percent": 100.0,
+              "verified_supported_count": 3,
+              "verified_unsupported_rejections": 0
+            }
+          }
+        },
+        "stage_4_profile": {
+          "stage_name": "Stage 4: Profile",
+          "passed": true,
+          "details": {
+            "telemetry_status": "UNAVAILABLE",
+            "peak_vram_mb": 5802.0,
+            "vram_leak_mb": 2.0,
+            "requests_executed": 5,
+            "memory_leak_threshold_mb": 50.0
+          }
+        }
+      },
       "profiling": {
         "telemetry_status": "UNAVAILABLE",
         "source": "preflight_simulation",
@@ -336,7 +510,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793645856.4987059,
+            "timestamp": 1793695412.4265118,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -348,7 +522,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793645856.498708,
+            "timestamp": 1793695412.426514,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -360,7 +534,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793645856.498711,
+            "timestamp": 1793695412.426517,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -372,7 +546,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793645856.49966,
+            "timestamp": 1793695412.427239,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -384,7 +558,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793645856.4996722,
+            "timestamp": 1793695412.42725,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -474,6 +648,62 @@
       "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
       "quantization": "awq",
       "telemetry_status": "UNAVAILABLE",
+      "four_stage_pipeline": {
+        "stage_1_load": {
+          "stage_name": "Stage 1: Load",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-vlm",
+            "gpu_index": 0,
+            "base_cuda_context_mb": 850.0,
+            "weights_mb": 6300.0,
+            "static_footprint_mb": 7150.0,
+            "headroom_mb": 8210.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          }
+        },
+        "stage_2_infer": {
+          "stage_name": "Stage 2: Infer",
+          "passed": true,
+          "details": {
+            "peak_vram_mb": 14100.0,
+            "latency_ms": 185.0,
+            "status": "PASS"
+          }
+        },
+        "stage_3_validate": {
+          "stage_name": "Stage 3: Validate",
+          "passed": true,
+          "details": {
+            "output_validation": {
+              "model_id": "qwen-vlm",
+              "modality": "text",
+              "peak_vram_mb": 14100.0,
+              "latency_ms": 185.0,
+              "artifact_sha256": "25f5bfeacdf7b6f71b1247a12576fd1e11629712612c56b5b7011e3c46f985ad",
+              "artifact_size_bytes": 97
+            },
+            "contract_adherence": {
+              "model_id": "qwen-vlm",
+              "adherence_percent": 100.0,
+              "verified_supported_count": 5,
+              "verified_unsupported_rejections": 0
+            }
+          }
+        },
+        "stage_4_profile": {
+          "stage_name": "Stage 4: Profile",
+          "passed": true,
+          "details": {
+            "telemetry_status": "UNAVAILABLE",
+            "peak_vram_mb": 14102.0,
+            "vram_leak_mb": 2.0,
+            "requests_executed": 5,
+            "memory_leak_threshold_mb": 50.0
+          }
+        }
+      },
       "profiling": {
         "telemetry_status": "UNAVAILABLE",
         "source": "preflight_simulation",
@@ -486,7 +716,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793645856.499802,
+            "timestamp": 1793695412.427375,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -498,7 +728,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793645856.499804,
+            "timestamp": 1793695412.427377,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -510,7 +740,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793645856.499807,
+            "timestamp": 1793695412.42738,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -522,7 +752,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793645856.5006561,
+            "timestamp": 1793695412.4280488,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -534,7 +764,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793645856.500663,
+            "timestamp": 1793695412.428056,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -624,6 +854,62 @@
       "checkpoint": "abenzerps/Qwen-Image-2.1-GGUF/qwen-image-2.1-Q4_K_M.gguf",
       "quantization": "q4_k_m",
       "telemetry_status": "UNAVAILABLE",
+      "four_stage_pipeline": {
+        "stage_1_load": {
+          "stage_name": "Stage 1: Load",
+          "passed": true,
+          "details": {
+            "model_id": "qwen-image-2.1",
+            "gpu_index": 0,
+            "base_cuda_context_mb": 880.0,
+            "weights_mb": 10500.0,
+            "static_footprint_mb": 11380.0,
+            "headroom_mb": 3980.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          }
+        },
+        "stage_2_infer": {
+          "stage_name": "Stage 2: Infer",
+          "passed": true,
+          "details": {
+            "peak_vram_mb": 14100.0,
+            "latency_ms": 850.0,
+            "status": "PASS"
+          }
+        },
+        "stage_3_validate": {
+          "stage_name": "Stage 3: Validate",
+          "passed": true,
+          "details": {
+            "output_validation": {
+              "model_id": "qwen-image-2.1",
+              "modality": "image",
+              "peak_vram_mb": 14100.0,
+              "latency_ms": 850.0,
+              "artifact_sha256": "1c2ac2b24b26fa6431f7d9fe915b996644bc98be683a8fe634f06d2493b9c787",
+              "artifact_size_bytes": 67
+            },
+            "contract_adherence": {
+              "model_id": "qwen-image-2.1",
+              "adherence_percent": 100.0,
+              "verified_supported_count": 9,
+              "verified_unsupported_rejections": 0
+            }
+          }
+        },
+        "stage_4_profile": {
+          "stage_name": "Stage 4: Profile",
+          "passed": true,
+          "details": {
+            "telemetry_status": "UNAVAILABLE",
+            "peak_vram_mb": 14102.0,
+            "vram_leak_mb": 2.0,
+            "requests_executed": 5,
+            "memory_leak_threshold_mb": 50.0
+          }
+        }
+      },
       "profiling": {
         "telemetry_status": "UNAVAILABLE",
         "source": "preflight_simulation",
@@ -636,7 +922,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793645856.50075,
+            "timestamp": 1793695412.4281442,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -648,7 +934,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793645856.500751,
+            "timestamp": 1793695412.428146,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -660,7 +946,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793645856.5007539,
+            "timestamp": 1793695412.428148,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -672,7 +958,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793645856.501747,
+            "timestamp": 1793695412.4289842,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -684,7 +970,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793645856.501755,
+            "timestamp": 1793695412.428991,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -774,6 +1060,62 @@
       "checkpoint": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
       "quantization": "4bit",
       "telemetry_status": "UNAVAILABLE",
+      "four_stage_pipeline": {
+        "stage_1_load": {
+          "stage_name": "Stage 1: Load",
+          "passed": true,
+          "details": {
+            "model_id": "wan-2.2",
+            "gpu_index": 1,
+            "base_cuda_context_mb": 890.0,
+            "weights_mb": 9800.0,
+            "static_footprint_mb": 10690.0,
+            "headroom_mb": 4670.0,
+            "load_time_sec": 4.2,
+            "status": "HEALTHY"
+          }
+        },
+        "stage_2_infer": {
+          "stage_name": "Stage 2: Infer",
+          "passed": true,
+          "details": {
+            "peak_vram_mb": 14200.0,
+            "latency_ms": 850.0,
+            "status": "PASS"
+          }
+        },
+        "stage_3_validate": {
+          "stage_name": "Stage 3: Validate",
+          "passed": true,
+          "details": {
+            "output_validation": {
+              "model_id": "wan-2.2",
+              "modality": "video",
+              "peak_vram_mb": 14200.0,
+              "latency_ms": 850.0,
+              "artifact_sha256": "5825ee47dc69f4c48606a5aa14a93992d90d5f4873c09be5d186494c4d9135e3",
+              "artifact_size_bytes": 88
+            },
+            "contract_adherence": {
+              "model_id": "wan-2.2",
+              "adherence_percent": 100.0,
+              "verified_supported_count": 4,
+              "verified_unsupported_rejections": 2
+            }
+          }
+        },
+        "stage_4_profile": {
+          "stage_name": "Stage 4: Profile",
+          "passed": true,
+          "details": {
+            "telemetry_status": "UNAVAILABLE",
+            "peak_vram_mb": 14202.0,
+            "vram_leak_mb": 2.0,
+            "requests_executed": 5,
+            "memory_leak_threshold_mb": 50.0
+          }
+        }
+      },
       "profiling": {
         "telemetry_status": "UNAVAILABLE",
         "source": "preflight_simulation",
@@ -786,7 +1128,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793645856.5018508,
+            "timestamp": 1793695412.4290729,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -798,7 +1140,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793645856.5018518,
+            "timestamp": 1793695412.4290738,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -810,7 +1152,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793645856.501855,
+            "timestamp": 1793695412.429077,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -822,7 +1164,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793645856.5028322,
+            "timestamp": 1793695412.4298182,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -834,7 +1176,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793645856.502843,
+            "timestamp": 1793695412.429825,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,

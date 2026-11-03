@@ -15,6 +15,7 @@ VALID_API_KEYS = {
     "sk-factory-test-token-valid",
     "sk-factory-prod-secret-token",
     "test-token-12345",
+    "sk-factory-lite-e2e-valid-key-2026",
 }
 
 BLOCKED_SSRF_PATTERNS = [

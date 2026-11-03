@@ -1,6 +1,6 @@
 """
 factory/apps/control-api/src/telemetry/__init__.py
-Public exports for OpenTelemetry distributed tracing and observability.
+Public exports for structured logging and correlation in Factory v4 Lite.
 """
 from .context import (
     set_correlation_context,
@@ -14,11 +14,10 @@ from .context import (
     ctx_trace_id,
     ctx_span_id,
 )
-from .tracer import (
+from .middleware import (
     generate_trace_id,
     generate_span_id,
-    init_tracer,
-    get_tracer,
+    TelemetryTracingMiddleware,
 )
 from .propagation import (
     build_traceparent,
@@ -30,14 +29,26 @@ from .decorators import (
     traced_span,
 )
 from .logging import (
+    LiteJsonLogFormatter,
     TelemetryLogFormatter,
+    configure_lite_logging,
     configure_telemetry_logging,
 )
 from .metrics import (
     metrics,
     TelemetryMetrics,
 )
-from .middleware import TelemetryTracingMiddleware
+
+
+def init_tracer(service_name: str = "factory.control-api"):
+    """Deprecated: OpenTelemetry tracer replaced by LiteJsonLogFormatter."""
+    return None
+
+
+def get_tracer():
+    """Deprecated: OpenTelemetry tracer replaced by LiteJsonLogFormatter."""
+    return None
+
 
 __all__ = [
     "set_correlation_context",
@@ -59,7 +70,9 @@ __all__ = [
     "inject_traceparent",
     "trace_scope",
     "traced_span",
+    "LiteJsonLogFormatter",
     "TelemetryLogFormatter",
+    "configure_lite_logging",
     "configure_telemetry_logging",
     "metrics",
     "TelemetryMetrics",

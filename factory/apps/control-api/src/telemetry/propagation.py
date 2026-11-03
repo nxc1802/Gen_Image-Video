@@ -1,14 +1,23 @@
 """
 factory/apps/control-api/src/telemetry/propagation.py
-W3C TraceContext (traceparent & tracestate) injection and extraction.
+W3C TraceContext (traceparent & tracestate) injection and extraction for Factory v4 Lite.
 """
 import re
 from typing import Any, Dict, Optional, Tuple
-
-from factory.apps.control_api.src.telemetry.tracer import generate_span_id, generate_trace_id
+import uuid
 
 # W3C traceparent regex: 00-32hex-16hex-01
 TRACEPARENT_REGEX = re.compile(r"^00-([0-9a-fA-F]{32})-([0-9a-fA-F]{16})-([0-9a-fA-F]{2})$")
+
+
+def generate_trace_id() -> str:
+    """Generates a valid 128-bit trace ID (32 hex characters)."""
+    return uuid.uuid4().hex
+
+
+def generate_span_id() -> str:
+    """Generates a valid 64-bit span ID (16 hex characters)."""
+    return uuid.uuid4().hex[:16]
 
 
 def build_traceparent(trace_id: str, span_id: str, sampled: bool = True) -> str:

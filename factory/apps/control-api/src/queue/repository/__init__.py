@@ -1,50 +1,41 @@
 """
-Job repository factory.
-
-Production must use durable PostgreSQL. SQLite is intentionally limited to
-development/test so a missing DATABASE_URL can never silently downgrade job
-durability.
+factory/apps/control-api/src/queue/repository/__init__.py
+Repository factory for Factory v4 Lite.
+Default and only repository backend is InMemoryJobStore.
 """
-import os
 from typing import Optional
 
 from .base import BaseJobRepository
-from .postgres import PostgresJobRepository
-from .sqlite import SqliteJobRepository
+from .memory import CapacityExceededError, InMemoryJobStore
 
-__all__ = [
-    "BaseJobRepository",
-    "SqliteJobRepository",
-    "PostgresJobRepository",
-    "get_job_repository",
-]
+# Backward compatibility aliases
+SqliteJobRepository = InMemoryJobStore
+PostgresJobRepository = InMemoryJobStore
+
+_default_repository: Optional[InMemoryJobStore] = None
 
 
 def get_job_repository(
     backend: Optional[str] = None,
     db_url: Optional[str] = None,
-) -> BaseJobRepository:
-    env = os.environ.get("ENVIRONMENT", os.environ.get("FACTORY_ENV", "development")).lower()
-    be = (backend or os.environ.get("FACTORY_DB_BACKEND", "postgres" if env == "production" else "sqlite")).lower().strip()
-    url = db_url or os.environ.get("DATABASE_URL")
-    if not url and all(os.environ.get(k) for k in ("POSTGRES_HOST", "POSTGRES_DB", "POSTGRES_USER", "POSTGRES_PASSWORD")):
-        host = os.environ["POSTGRES_HOST"]
-        port = os.environ.get("POSTGRES_PORT", "5432")
-        user = os.environ["POSTGRES_USER"]
-        password = os.environ["POSTGRES_PASSWORD"]
-        database = os.environ["POSTGRES_DB"]
-        url = f"postgresql://{user}:{password}@{host}:{port}/{database}"
+    max_capacity: Optional[int] = None,
+    default_ttl_seconds: Optional[int] = None,
+) -> InMemoryJobStore:
+    """Returns the single-process InMemoryJobStore for Factory v4 Lite."""
+    global _default_repository
+    if _default_repository is None:
+        _default_repository = InMemoryJobStore(
+            max_capacity=max_capacity,
+            default_ttl_seconds=default_ttl_seconds,
+        )
+    return _default_repository
 
-    if be == "postgres":
-        if not url:
-            raise RuntimeError("DATABASE_URL is required when FACTORY_DB_BACKEND=postgres.")
-        return PostgresJobRepository(dsn=url)
 
-    if be != "sqlite":
-        raise RuntimeError(f"Unsupported FACTORY_DB_BACKEND '{be}'.")
-
-    if env == "production":
-        raise RuntimeError("SQLite job storage is forbidden in production.")
-
-    sqlite_path = os.environ.get("SQLITE_DB_PATH", ".factory_storage/factory.db")
-    return SqliteJobRepository(db_path=sqlite_path)
+__all__ = [
+    "BaseJobRepository",
+    "InMemoryJobStore",
+    "CapacityExceededError",
+    "SqliteJobRepository",
+    "PostgresJobRepository",
+    "get_job_repository",
+]

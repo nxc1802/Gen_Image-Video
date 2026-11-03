@@ -1,130 +1,100 @@
-# TEST_READY: Factory v4 E2E Test Suite Specification & Coverage Report
+# Factory v4 Lite: E2E Test Suite Specification & Coverage Matrix
 
-**Status:** CONTRACT SUITE VERIFIED — LIVE GPU CERTIFICATION PENDING  
-**Framework:** `pytest` (v9.1.1)  
-**Execution Environment:** macOS / Linux / Python 3.10+  
-**Total Automated Tests:** 468  
-**Contract Simulation Pass Rate:** 100% (468/468 in the recorded run; not a live inference result)  
-**Authoritative Specification:** `/Volumes/WorkSpace/Factory/Gen_Image:Video/Refactor.md`  
-**Master Plan & Feature Inventory:** `/Volumes/WorkSpace/Project/Gen_Image:Video/PROJECT.md`  
-**Test Infrastructure Guide:** `/Volumes/WorkSpace/Project/Gen_Image:Video/TEST_INFRA.md`  
+**Suite Location**: `tests/e2e/test_factory_lite_e2e.py`  
+**Target Architecture**: Factory v4 Lite In-Memory Personal AI API Provider  
+**Author**: `teamwork_test_writer_lite_1`  
+**Status**: Published & Ready for Milestone Verification  
 
 ---
 
-## 1. Executive Summary
+## 1. Overview & Architecture
 
-The Factory v4 contract test suite is published under `tests/e2e/`. In its default mode it validates API behavior against a deterministic `FactoryContractServer`; it does **not** prove that real GPU models, ngrok, PostgreSQL, Redis or S3 are operational. The suite covers the target contracts across all subsystems (Control Plane, Registry, Asset Service, Text, VLM, Decision, Speech, Embedding/Rerank, Image, Video, Music, Enhancement, Studio Web) over standardized external network contracts (HTTP REST, SSE, WebSocket, and S3 URLs).
+The Factory v4 Lite E2E test suite (`tests/e2e/test_factory_lite_e2e.py`) is an opaque-box, requirement-driven test suite designed according to the authoritative project requirements (`ORIGINAL_REQUEST.md` and `PROJECT.md`).
 
-The test suite operates in dual mode:
-1. **Contract Simulation Mode (Default):** Blazingly fast in-process contract verification running against `FactoryContractServer` via `httpx.MockTransport`, ensuring 100% deterministic CI execution without requiring live GPUs.
-2. **Live Cluster Mode (`FACTORY_E2E_LIVE=1`):** Seamless execution targeting live deployed Factory v4 services running locally or on Kaggle behind static ngrok domains.
-
----
-
-## 2. Test Tier Coverage Summary
-
-| Tier | Focus Area | Target Threshold | Actual Tests | Status |
-|---|---|---|---|---|
-| **Tier 1** | **Feature Coverage** | $\ge 5$ tests per feature (210 tests) | **210** | **100% PASS** |
-| **Tier 2** | **Boundary & Corner Cases** | $\ge 5$ tests per feature (210 tests) | **218** | **100% PASS** |
-| **Tier 3** | **Cross-Feature Interactions** | $\ge 20$ pairwise workflow tests | **25** | **100% PASS** |
-| **Tier 4** | **Real-World Scenarios** | $\ge 15$ end-to-end multi-modal journeys | **15** | **100% PASS** |
-| **Total** | **Contract Simulation Suite** | $\ge 450$ automated tests | **468** | **100% PASS** |
+### Zero External Service Dependencies
+- **No PostgreSQL or SQLite server**: Uses FastAPI `TestClient` targeting the in-memory Control Plane application (`app`).
+- **No Redis Broker or Pub/Sub**: Operates with in-process memory queue / scheduler and pub/sub streams.
+- **No S3 / MinIO**: Directly validates local scratch disk artifact delivery and automatic cleanup (`/tmp/factory_lite/artifacts/`).
+- **No Alembic**: Zero database migration dependencies.
 
 ---
 
-## 3. Feature-to-Test Mapping Matrix (All 42 Features)
+## 2. Test Runner Commands
 
-| # | Feature | Category | Milestone | Tier 1 Test File | Tier 2 Test File | Tier 1 Count | Tier 2 Count |
-|---|---------|----------|-----------|------------------|------------------|--------------|--------------|
-| 1 | Job Submission | Control Plane | M2 | `test_t1_control_plane.py` | `test_t2_security_auth.py`, `test_t2_payload_boundaries.py` | 5 | 5+ |
-| 2 | Job Status Query | Control Plane | M2 | `test_t1_control_plane.py` | `test_t2_security_auth.py`, `test_t2_error_sanitization.py` | 5 | 5+ |
-| 3 | Job Cancellation | Control Plane | M2 | `test_t1_control_plane.py` | `test_t2_feature_corners.py` | 5 | 5+ |
-| 4 | Job Retry | Control Plane | M2 | `test_t1_control_plane.py` | `test_t2_feature_corners.py` | 5 | 5+ |
-| 5 | Job SSE Events | Control Plane | M2 | `test_t1_control_plane.py` | `test_t2_feature_corners.py` | 5 | 5+ |
-| 6 | Job WebSocket | Control Plane | M2 | `test_t1_control_plane.py` | `test_t2_feature_corners.py` | 5 | 5+ |
-| 7 | Service Manifest Discovery | Registry | M1 | `test_t1_registry.py` | `test_t2_security_auth.py`, `test_t2_feature_corners.py` | 5 | 5+ |
-| 8 | Model Manifest Registry | Registry | M1 | `test_t1_registry.py` | `test_t2_security_auth.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 9 | Asset Service Upload / SSRF Validation | Asset Service | M1 | `test_t1_asset_service.py` | `test_t2_ssrf_and_assets.py` | 5 | 35 |
-| 10 | Text Chat Completions | Text / LLM | M3 | `test_t1_text_vlm.py` | `test_t2_payload_boundaries.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 11 | Text Responses API | Text / LLM | M3 | `test_t1_text_vlm.py` | `test_t2_payload_boundaries.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 12 | Decision Predicate | Decision Engine | M3 | `test_t1_decision.py` | `test_t2_feature_corners.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 13 | Decision Choice | Decision Engine | M3 | `test_t1_decision.py` | `test_t2_feature_corners.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 14 | Decision Score | Decision Engine | M3 | `test_t1_decision.py` | `test_t2_feature_corners.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 15 | Speech Audio Transcription | Speech Subsystem | M3 | `test_t1_speech.py` | `test_t2_feature_corners.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 16 | Speech Streaming ASR | Speech Subsystem | M3 | `test_t1_speech.py` | `test_t2_security_auth.py` | 5 | 5+ |
-| 17 | Speech Forced Alignment | Speech Subsystem | M3 | `test_t1_speech.py` | `test_t2_feature_corners.py` | 5 | 5+ |
-| 18 | Speech Synthesis (TTS) | Speech Subsystem | M3 | `test_t1_speech.py` | `test_t2_feature_corners.py`, `test_t2_payload_boundaries.py` | 5 | 5+ |
-| 19 | Vector Embeddings | Embedding & Rerank | M3 | `test_t1_embedding_rerank.py` | `test_t2_model_unavailability.py`, `test_t2_payload_boundaries.py` | 5 | 5+ |
-| 20 | Document Rerank | Embedding & Rerank | M3 | `test_t1_embedding_rerank.py` | `test_t2_model_unavailability.py`, `test_t2_payload_boundaries.py` | 5 | 5+ |
-| 21 | Image Text-to-Image | Image Subsystem | M3 | `test_t1_image.py` | `test_t2_payload_boundaries.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 22 | Image Image-to-Image | Image Subsystem | M3 | `test_t1_image.py` | `test_t2_payload_boundaries.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 23 | Image Inpainting | Image Subsystem | M3 | `test_t1_image.py` | `test_t2_feature_corners.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 24 | Image Outpainting | Image Subsystem | M3 | `test_t1_image.py` | `test_t2_feature_corners.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 25 | Image Instruction Edit | Image Subsystem | M3 | `test_t1_image.py` | `test_t2_feature_corners.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 26 | Image Reference Conditioning | Image Subsystem | M3 | `test_t1_image.py` | `test_t2_feature_corners.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 27 | Image ControlNet | Image Subsystem | M3 | `test_t1_image.py` | `test_t2_feature_corners.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 28 | Video Text-to-Video | Video Subsystem | M3 | `test_t1_video.py` | `test_t2_payload_boundaries.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 29 | Video Image-to-Video | Video Subsystem | M3 | `test_t1_video.py` | `test_t2_payload_boundaries.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 30 | Video First & Last Frame (FL2V) | Video Subsystem | M3 | `test_t1_video.py` | `test_t2_feature_corners.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 31 | Video Extension & Chaining | Video Subsystem | M3 | `test_t1_video.py` | `test_t2_feature_corners.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 32 | Video with Audio | Video Subsystem | M3 | `test_t1_video.py` | `test_t2_model_unavailability.py` | 5 | 5+ |
-| 33 | Music Text-to-Music | Music Subsystem | M3 | `test_t1_music.py` | `test_t2_payload_boundaries.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 34 | Music Lyrics-to-Music | Music Subsystem | M3 | `test_t1_music.py` | `test_t2_payload_boundaries.py`, `test_t2_model_unavailability.py` | 5 | 5+ |
-| 35 | Music Audio-to-Audio | Music Subsystem | M3 | `test_t1_music.py` | `test_t2_model_unavailability.py` | 5 | 5+ |
-| 36 | Enhancement Image Super-Resolution | Enhancement Subsystem | M3 | `test_t1_enhancement.py` | `test_t2_model_unavailability.py` | 5 | 5+ |
-| 37 | Enhancement Video Super-Resolution | Enhancement Subsystem | M3 | `test_t1_enhancement.py` | `test_t2_model_unavailability.py` | 5 | 5+ |
-| 38 | Enhancement Frame Interpolation | Enhancement Subsystem | M3 | `test_t1_enhancement.py` | `test_t2_model_unavailability.py` | 5 | 5+ |
-| 39 | Enhancement Audio Enhancement | Enhancement Subsystem | M3 | `test_t1_enhancement.py` | `test_t2_model_unavailability.py` | 5 | 5+ |
-| 40 | Studio Dynamic Schema Form | Studio Web | M4 | `test_t1_studio.py` | `test_t2_security_auth.py` | 5 | 5+ |
-| 41 | Studio Streaming Inspector | Studio Web | M4 | `test_t1_studio.py` | `test_t2_security_auth.py` | 5 | 5+ |
-| 42 | Studio Code Generator | Studio Web | M4 | `test_t1_studio.py` | `test_t2_security_auth.py` | 5 | 5+ |
+All tests execute via the workspace virtual environment (`.venv`):
 
----
-
-## 4. Test Execution Commands
-
-### Run Full Test Suite (468 tests)
+### Run Entire Factory Lite E2E Suite
 ```bash
-pytest tests/e2e -v
+.venv/bin/pytest tests/e2e/test_factory_lite_e2e.py -v
 ```
 
-### Run by Tier
+### Run Tier 1: Core Feature Coverage
 ```bash
-pytest tests/e2e/tier1_feature_coverage -v
-pytest tests/e2e/tier2_boundaries_corners -v
-pytest tests/e2e/tier3_cross_feature -v
-pytest tests/e2e/tier4_real_world_scenarios -v
+.venv/bin/pytest tests/e2e/test_factory_lite_e2e.py -k "TestTier1CoreFeatureCoverage" -v
 ```
 
-### Run by Security & Capability Markers
+### Run Tier 2: Boundary & Corner Cases
 ```bash
-pytest tests/e2e -m security -v
-pytest tests/e2e -m ssrf -v
-pytest tests/e2e -m streaming -v
+.venv/bin/pytest tests/e2e/test_factory_lite_e2e.py -k "TestTier2BoundaryCornerCases" -v
 ```
 
-### Run Against Live Cluster Deployment
+### Run Tier 3: Cross-Feature Combinations
 ```bash
-export FACTORY_E2E_LIVE=1
-export FACTORY_BASE_URL="https://jobs.ai.example.com"
-export FACTORY_API_KEY="sk-factory-prod-secret-token"
+.venv/bin/pytest tests/e2e/test_factory_lite_e2e.py -k "TestTier3CrossFeatureCombinations" -v
+```
 
-pytest tests/e2e -v
+### Run Tier 4: Real-world Provider Scenarios
+```bash
+.venv/bin/pytest tests/e2e/test_factory_lite_e2e.py -k "TestTier4RealWorldProviderScenarios" -v
 ```
 
 ---
 
-## 5. Verification Sign-Off
+## 3. 4-Tier Test Matrix & Requirement Mapping
 
-- **Contract Simulation:** recorded 468 passed. This is not production certification.
-- **Execution Speed:** 0.29s for 468 tests
-- **Sanitization Checks:** verified against the contract simulation; repeat against the live deployment before release.
-- **SSRF Defense:** contract vectors exist; live DNS-rebinding and redirect tests remain a release gate.
-- **Fail-Fast Compliance:** source and CI gates prohibit known fake-inference fallbacks; live unavailable-model behavior remains a release gate.
-- **Handoff Artifact:** Ready for orchestrator and Milestone validation gates.
+| Tier | Test Method | Covered Requirements | Expected Output Source | Current Baseline Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Tier 1** | `test_t1_health_check_public` | `GET /health` public endpoint (R2) | `PROJECT.md § Control Plane ↔ Client` | **PASS** |
+| **Tier 1** | `test_t1_model_discovery` | Dynamic model manifest discovery `GET /v1/models` (R2) | `manifests/models/*.yaml`, `PROJECT.md` | **PASS** |
+| **Tier 1** | `test_t1_single_api_key_auth_enforcement` | Single `FACTORY_API_KEY` Bearer auth (R1, R2) | `ORIGINAL_REQUEST.md R1`, `PROJECT.md` | **PASS** |
+| **Tier 1** | `test_t1_job_submission` | Inference job creation `POST /v1/jobs` (R2) | `PROJECT.md § Control Plane ↔ Client` | **PASS** |
+| **Tier 1** | `test_t1_job_status_lookup` | In-memory job state query `GET /v1/jobs/{id}` (R2) | `PROJECT.md § Control Plane ↔ Client` | **PASS** |
+| **Tier 1** | `test_t1_job_events_stream` | SSE progress event streaming `GET /v1/jobs/{id}/events` (R2) | `ORIGINAL_REQUEST.md R2`, `PROJECT.md` | **PASS** |
+| **Tier 1** | `test_t1_job_cancellation` | Clean in-memory cancellation `DELETE /v1/jobs/{id}` (R2) | `PROJECT.md § Control Plane ↔ Client` | **PASS** |
+| **Tier 1** | `test_t1_job_result_decision_json` | Direct JSON result delivery for Decision/Embedding (R2) | `ORIGINAL_REQUEST.md R2`, `PROJECT.md` | **PENDING (M2)** |
+| **Tier 1** | `test_t1_job_result_image_binary` | Direct PNG/JPEG binary result for Image generation (R2) | `ORIGINAL_REQUEST.md R2`, `PROJECT.md` | **PENDING (M2)** |
+| **Tier 1** | `test_t1_job_result_audio_binary` | Direct WAV binary result for Speech/Music generation (R2) | `ORIGINAL_REQUEST.md R2`, `PROJECT.md` | **PENDING (M2)** |
+| **Tier 1** | `test_t1_job_result_video_binary` | Direct MP4 binary result for Video generation (R2) | `ORIGINAL_REQUEST.md R2`, `PROJECT.md` | **PENDING (M2)** |
+| **Tier 1** | `test_t1_job_result_text_stream` | Direct text/SSE stream result for Text/VLM (R2) | `ORIGINAL_REQUEST.md R2`, `PROJECT.md` | **PENDING (M2)** |
+| **Tier 2** | `test_t2_invalid_payload_schema` | Rejection of malformed / incomplete job payloads (R2) | `JobSubmissionRequest` schema, HTTP 422/400 | **PASS** |
+| **Tier 2** | `test_t2_unknown_model_rejected` | Rejection of non-existent model families (R2) | `model_registry`, HTTP 400 | **PASS** |
+| **Tier 2** | `test_t2_unsupported_capability_rejected` | Rejection of tasks not supported by target model (R2) | `CapabilityManifest`, HTTP 400 | **PASS** |
+| **Tier 2** | `test_t2_payload_exceeding_1mb_rejected` | Rejection of inline payloads > 1MB (R2) | `threshold.py`, HTTP 413 | **PASS** |
+| **Tier 2** | `test_t2_invalid_api_key_variations` | Rejection of malformed/adversarial Bearer tokens (R1) | Constant-time digest comparison, HTTP 401 | **PASS** |
+| **Tier 2** | `test_t2_nonexistent_job_id_lookup_result_cancel` | Lookup, delete, and result on missing ID (R2) | In-memory store contract, HTTP 404 | **PASS** |
+| **Tier 2** | `test_t2_double_cancel_handling` | Clean idempotent cancellation handling (R2) | `JobStateMachine`, HTTP 200/400 | **PASS** |
+| **Tier 2** | `test_t2_cancel_succeeded_job_rejected` | Guard against cancelling terminal jobs (R2) | `JobStateMachine`, HTTP 400 | **PASS** |
+| **Tier 2** | `test_t2_error_sanitization_integrity` | Adversarial error sanitization (zero stack leaks) | Security contract, 0 internal path leaks | **PASS** |
+| **Tier 3** | `test_t3_submit_stream_download_disk_cleanup` | Submit -> Stream -> Scratch disk output -> Download -> Auto cleanup (R2) | Background task + scratch disk removal | **PENDING (M2)** |
+| **Tier 3** | `test_t3_idempotent_job_submission_consistency` | Duplicate submission idempotency (R2) | `InMemoryJobStore` idempotency map | **PASS** |
+| **Tier 4** | `test_t4_concurrent_job_submissions_dual_t4_gpus` | Concurrent burst across Dual T4 GPU partitions (R3) | GPU 0 (Image/Text/Decision) vs GPU 1 (Video/Music/Embed) | **PASS** |
+| **Tier 4** | `test_t4_worker_disconnect_and_timeout_deterministic_failure` | Deterministic worker disconnect/timeout (R3) | Deterministic failure without duplicate execution | **PASS** |
+| **Tier 4** | `test_t4_worker_http_status_reporting_without_lease_token` | Clean HTTP worker progress/complete reporting (R1, R3) | Zero cryptographic lease tokens | **PASS** |
 
+---
 
-## Live-certification warning
+## 4. Discovered Implementation Defects & Escalations
 
-Do not use the 468 contract tests or the historical 1,065-test commit message as evidence that Factory v4 is production-ready. Release certification requires the real-infrastructure gates in `LIVE_VALIDATION.md`, including native model inference, GPU OOM/admission tests, fixed-domain reconnect, durable queue failover, artifact integrity, and real streaming reconnect.
+During initial execution of the newly authored test suite against the live codebase, the following issues were discovered and escalated:
+
+### Defect 1: Unresolved Imports in `factory/apps/control-api/src/queue/__init__.py`
+- **Location**: `factory/apps/control-api/src/queue/__init__.py:9`
+- **Symptom**: `ModuleNotFoundError: No module named 'factory.apps.control_api.src.queue.reaper'`
+- **Root Cause**: Implementing agent `teamwork_worker_m1_1` deleted `reaper.py`, `postgres.py`, `sqlite.py`, and `redis_broker.py`, but `src/queue/__init__.py` still contains imports for `DeadJobReaper`, `SqliteJobRepository`, `PostgresJobRepository`, and `RedisQueueBroker`.
+- **Remediation Required**: Implementing agent must remove these deleted module references from `src/queue/__init__.py`.
+
+### Defect 2: Missing Route `GET /v1/jobs/{id}/result`
+- **Location**: `factory/apps/control-api/src/api/routers/jobs.py`
+- **Symptom**: `GET /v1/jobs/{id}/result` returns 404 Not Found.
+- **Root Cause**: Milestone 2 (Phase 2 API & Artifact Delivery) has not yet been implemented.
+- **Remediation Required**: Implementing agent for Milestone 2 must implement `GET /v1/jobs/{id}/result` supporting direct JSON, binary image/audio/video, and text streaming with automatic scratch disk cleanup.

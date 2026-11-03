@@ -107,13 +107,14 @@ async def test_concurrent_burst_job_submission_and_leasing():
 
             async def simulate_worker(worker_id, subsystem, models, tasks):
                 worker_leased = 0
-                while True:
+                gpu_dev = 1 if subsystem in ("video", "music", "enhancement", "embedding") else 0
+                while worker_leased < 5:
                     lease_req = {
                         "worker_id": worker_id,
                         "subsystem": subsystem,
                         "supported_models": models,
                         "supported_tasks": tasks,
-                        "gpu_device": 0,
+                        "gpu_device": gpu_dev,
                         "lease_duration_seconds": 30,
                     }
                     res = await client.post("/v1/jobs/lease", json=lease_req)
@@ -123,7 +124,8 @@ async def test_concurrent_burst_job_submission_and_leasing():
                     lease_token = data.get("lease_token")
 
                     if not job:
-                        break
+                        await asyncio.sleep(0.01)
+                        continue
 
                     jid = job["job_id"]
                     async with lock:

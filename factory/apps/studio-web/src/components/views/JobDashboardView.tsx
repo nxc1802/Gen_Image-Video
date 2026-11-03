@@ -77,6 +77,23 @@ export function JobDashboardView() {
     }
   };
 
+  // Download artifact
+  const handleDownloadArtifact = async (jobId: string) => {
+    try {
+      const { blob, filename } = await apiClient.downloadJobResult(jobId);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      setActionNotice(`Download failed: ${err.message}`);
+    }
+  };
+
   // State badge styling
   const renderStateBadge = (state: JobState) => {
     switch (state) {
@@ -349,10 +366,10 @@ export function JobDashboardView() {
             {/* State Machine Flow */}
             {renderLifecycleTimeline(selectedJob)}
 
-            {/* Worker Lease Details */}
+            {/* Execution Details */}
             <div className="p-3 rounded-[6px] bg-canvas border border-hairline text-xs font-mono space-y-1.5">
               <div className="text-[11px] font-semibold text-ink uppercase tracking-wider">
-                Worker Lease Information
+                Execution Details
               </div>
               <div className="flex justify-between text-ink-secondary">
                 <span>Worker ID:</span>
@@ -379,7 +396,7 @@ export function JobDashboardView() {
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline text-xs font-mono space-y-2">
                 <div className="text-[11px] font-semibold text-ink uppercase tracking-wider flex items-center gap-1.5">
                   <DownloadSimple weight="bold" className="w-4 h-4 text-emerald-600" />
-                  <span>Presigned S3 Artifacts ({selectedJob.artifacts.length})</span>
+                  <span>Inference Artifacts ({selectedJob.artifacts.length})</span>
                 </div>
                 <div className="space-y-2">
                   {selectedJob.artifacts.map((art, idx) => (
@@ -389,20 +406,17 @@ export function JobDashboardView() {
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-semibold text-ink">{art.name}</span>
-                        {art.download_url && (
-                          <a
-                            href={art.download_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-2 py-0.5 rounded bg-ink text-surface text-[10px] font-medium flex items-center gap-1"
-                          >
-                            <DownloadSimple weight="bold" className="w-3 h-3" />
-                            <span>Download</span>
-                          </a>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadArtifact(selectedJob.job_id)}
+                          className="px-2 py-0.5 rounded bg-ink text-surface text-[10px] font-medium flex items-center gap-1 hover:bg-ink-muted cursor-pointer"
+                        >
+                          <DownloadSimple weight="bold" className="w-3 h-3" />
+                          <span>Download</span>
+                        </button>
                       </div>
                       <div className="text-[10px] text-ink-muted truncate">
-                        S3: {art.storage_path}
+                        Artifact: {art.name}
                       </div>
                       {art.download_url && art.type.startsWith("image/") && (
                         <img
@@ -423,6 +437,27 @@ export function JobDashboardView() {
                       )}
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Direct Result Delivery for SUCCEEDED jobs without listed artifacts */}
+            {selectedJob.state === "SUCCEEDED" && (!selectedJob.artifacts || selectedJob.artifacts.length === 0) && (
+              <div className="p-3 rounded-[6px] bg-canvas border border-hairline text-xs font-mono space-y-2">
+                <div className="text-[11px] font-semibold text-ink uppercase tracking-wider flex items-center gap-1.5">
+                  <DownloadSimple weight="bold" className="w-4 h-4 text-emerald-600" />
+                  <span>Result Delivery</span>
+                </div>
+                <div className="p-2.5 rounded-[4px] bg-surface border border-hairline flex items-center justify-between">
+                  <span className="font-semibold text-ink">Inference Output</span>
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadArtifact(selectedJob.job_id)}
+                    className="px-2 py-0.5 rounded bg-ink text-surface text-[10px] font-medium flex items-center gap-1 hover:bg-ink-muted cursor-pointer"
+                  >
+                    <DownloadSimple weight="bold" className="w-3 h-3" />
+                    <span>Download Result</span>
+                  </button>
                 </div>
               </div>
             )}

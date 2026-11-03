@@ -4,14 +4,16 @@ FastAPI router for Client Job Lifecycle API endpoints (/v1/jobs).
 """
 import asyncio
 import secrets
+from pathlib import Path
 from typing import Any, Dict, Optional
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response, WebSocket, status
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Query, Request, Response, WebSocket, status
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 
 from factory_auth import verify_bearer_token, load_auth_config, decode_jwt_token
 from factory_contracts.jobs.job_contract import FactoryJob, JobSubmissionRequest, JobState
 from factory_contracts.errors import FactoryError, InvalidRequestError, NotFoundError
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
+from factory.apps.control_api.src.storage.scratch_disk import ScratchDiskManager, get_scratch_disk
 from factory.apps.control_api.src.storage.threshold import (
     DEPRECATION_HEADERS,
     enforce_payload_thresholds,
@@ -105,6 +107,10 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
             message=f"Unknown model '{req.model}'.",
             details={"model": req.model},
         )
+
+    min_vram = getattr(model.hardware, "min_vram_gb", 0.0) if hasattr(model, "hardware") else 0.0
+    if min_vram > 14.2:
+        raise InvalidRequestError("Requested model exceeds max allocatable VRAM of 14.2 GB")
 
     expected_service_id = SERVICE_IDS.get(req.service)
     if expected_service_id is None or model.metadata.service_id != expected_service_id:
@@ -210,21 +216,11 @@ async def list_jobs(
         service=service,
         state=effective_state,
     )
-    storage = get_storage_provider(request)
     for job in jobs:
-        if job.artifacts and storage:
+        if job.artifacts:
             for art in job.artifacts:
-                if art.storage_path:
-                    try:
-                        fresh_url = storage.generate_presigned_download_url(
-                            bucket="",
-                            key=art.storage_path,
-                            expires_in_seconds=86400,
-                        )
-                        art.download_url = fresh_url
-                        art.url = fresh_url
-                    except Exception:
-                        pass
+                art.download_url = f"/v1/jobs/{job.job_id}/result"
+                art.url = art.download_url
 
     return [job.model_dump(mode="json") for job in jobs]
 
@@ -236,24 +232,226 @@ async def get_job_status(
     manager: JobLifecycleManager = Depends(get_lifecycle_manager),
 ):
     job = await manager.get_job(job_id)
-    storage = get_storage_provider(request)
 
-    # Refresh presigned download URLs for artifacts on the fly
-    if job.artifacts and storage:
+    # Set direct download URLs for artifacts
+    if job.artifacts:
         for art in job.artifacts:
-            if art.storage_path:
-                try:
-                    fresh_url = storage.generate_presigned_download_url(
-                        bucket="",
-                        key=art.storage_path,
-                        expires_in_seconds=86400,
-                    )
-                    art.download_url = fresh_url
-                    art.url = fresh_url
-                except Exception:
-                    pass
+            art.download_url = f"/v1/jobs/{job.job_id}/result"
+            art.url = art.download_url
 
     return job.model_dump(mode="json")
+
+
+@router.get("/{job_id}/result", dependencies=[Depends(verify_bearer_token)])
+async def get_job_result(
+    job_id: str,
+    background_tasks: BackgroundTasks,
+    request: Request,
+    stream: bool = Query(default=False, description="Stream text tokens via SSE"),
+    manager: JobLifecycleManager = Depends(get_lifecycle_manager),
+    scratch_disk: ScratchDiskManager = Depends(get_scratch_disk),
+):
+    """
+    Returns the real inference result based on subsystem modality.
+    Attaches a synchronous cleanup hook via FastAPI BackgroundTasks
+    to delete the artifact file immediately after transmission completes.
+    """
+    job = await manager.get_job(job_id)
+    if not job:
+        raise NotFoundError(f"Job '{job_id}' not found.")
+
+    # 1. State Guard: In-progress states return 409 Conflict BEFORE attempting artifact delivery or background unlinking
+    if job.state in (JobState.CREATED, JobState.QUEUED, JobState.ADMITTED, JobState.RUNNING, JobState.STREAMING):
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={
+                "job_id": job.job_id,
+                "state": job.state.value,
+                "progress": job.progress.model_dump(mode="json"),
+            },
+        )
+
+    # 2. Cancelled state
+    if job.state == JobState.CANCELLED:
+        raise FactoryError(
+            message=f"Job '{job_id}' was cancelled.",
+            code="JOB_CANCELLED",
+            status_code=409,
+            details={"job_id": job.job_id, "state": "CANCELLED"},
+        )
+
+    # 3. Failed state
+    if job.state == JobState.FAILED:
+        err_code = "JOB_FAILED"
+        err_msg = "Job execution failed."
+        err_details = {"job_id": job.job_id}
+        if job.error:
+            err_code = job.error.code.value if hasattr(job.error.code, "value") else str(job.error.code)
+            err_msg = job.error.message or err_msg
+            err_details = job.error.details or err_details
+
+        if err_code == "WORKER_DISCONNECTED":
+            raise FactoryError(
+                message=err_msg,
+                code="WORKER_DISCONNECTED",
+                status_code=502,
+                details=err_details,
+            )
+        if err_code in ("GATEWAY_TIMEOUT", "TIMEOUT"):
+            raise FactoryError(
+                message=err_msg,
+                code="GATEWAY_TIMEOUT",
+                status_code=504,
+                details=err_details,
+            )
+        status_code = 400
+        if err_code in ("MODEL_UNAVAILABLE", "SERVICE_UNAVAILABLE"):
+            status_code = 503
+        raise FactoryError(
+            message=err_msg,
+            code=err_code,
+            status_code=status_code,
+            details=err_details,
+        )
+
+    # 4. SUCCEEDED State: Discover Artifact File on Scratch Disk with Symlink Containment
+    service = (job.service or "").lower()
+    artifact_path = scratch_disk.get_artifact(job_id)
+    if not artifact_path:
+        try:
+            job_dir = scratch_disk.get_job_dir(job_id)
+            if job_dir.is_dir():
+                resolved_job_dir = job_dir.resolve()
+                files = []
+                for f in sorted(job_dir.iterdir()):
+                    if f.is_symlink():
+                        continue
+                    try:
+                        resolved_f = f.resolve()
+                        if not resolved_f.is_relative_to(resolved_job_dir):
+                            continue
+                    except (ValueError, OSError):
+                        continue
+                    if f.is_file() and not f.name.startswith("."):
+                        files.append(f)
+                if files:
+                    artifact_path = files[0]
+        except Exception:
+            pass
+
+    # Verify symlink containment before delivery
+    if artifact_path:
+        if artifact_path.is_symlink():
+            artifact_path = None
+        else:
+            try:
+                job_dir = scratch_disk.get_job_dir(job_id)
+                if not artifact_path.resolve().is_relative_to(job_dir.resolve()):
+                    artifact_path = None
+            except Exception:
+                artifact_path = None
+
+    # If valid artifact file exists on scratch disk, deliver it
+    if artifact_path and artifact_path.exists() and artifact_path.is_file():
+        ext = artifact_path.suffix.lower()
+
+        # Image delivery
+        if ext in (".png", ".jpg", ".jpeg", ".webp") or service == "image":
+            mime_type = "image/jpeg" if ext in (".jpg", ".jpeg") else "image/png"
+            background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
+            return FileResponse(
+                path=str(artifact_path),
+                media_type=mime_type,
+                headers={"Content-Disposition": f'inline; filename="{job.job_id}{ext if ext else ".png"}"'},
+                background=background_tasks,
+            )
+
+        # Audio delivery
+        if ext in (".wav", ".mp3", ".ogg", ".flac") or service in ("speech", "music"):
+            mime_type = "audio/mpeg" if ext == ".mp3" else "audio/wav"
+            background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
+            return FileResponse(
+                path=str(artifact_path),
+                media_type=mime_type,
+                headers={"Content-Disposition": f'inline; filename="{job.job_id}{ext if ext else ".wav"}"'},
+                background=background_tasks,
+            )
+
+        # Video delivery
+        if ext in (".mp4", ".webm", ".mkv") or service in ("video", "enhancement"):
+            background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
+            return FileResponse(
+                path=str(artifact_path),
+                media_type="video/mp4",
+                headers={
+                    "Accept-Ranges": "bytes",
+                    "Content-Disposition": f'attachment; filename="{job.job_id}{ext if ext else ".mp4"}"',
+                },
+                background=background_tasks,
+            )
+
+        # Generic media delivery
+        background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
+        return FileResponse(
+            path=str(artifact_path),
+            media_type="application/octet-stream",
+            headers={"Content-Disposition": f'attachment; filename="{job.job_id}{ext}"'},
+            background=background_tasks,
+        )
+
+    # 5. SUCCEEDED State Modality Handlers (No Scratch Artifact)
+    # Case A: Decision / Embedding
+    if service in ("decision", "embedding", "embed"):
+        if hasattr(job, "result") and job.result is not None:
+            if isinstance(job.result, dict):
+                result_payload = {"job_id": job.job_id, **job.result}
+            elif isinstance(job.result, list):
+                if service in ("embedding", "embed"):
+                    result_payload = {"job_id": job.job_id, "embedding": job.result}
+                else:
+                    result_payload = {"job_id": job.job_id, "result": job.result}
+            else:
+                result_payload = {"job_id": job.job_id, "result": job.result}
+            return JSONResponse(content=result_payload)
+        else:
+            raise NotFoundError(f"Inference result payload not found for job '{job_id}'.")
+
+    # Case B: Text / VLM
+    if service in ("text", "vlm", "vision"):
+        accept_header = request.headers.get("accept", "").lower()
+        if stream or "text/event-stream" in accept_header:
+            return StreamingResponse(
+                stream_tokens_generator(job_id=job.job_id, stream_manager=manager.stream_manager),
+                media_type="text/event-stream",
+                headers={
+                    "Cache-Control": "no-cache",
+                    "Connection": "keep-alive",
+                    "X-Accel-Buffering": "no",
+                },
+            )
+
+        text_content = ""
+        usage_info = {}
+        if hasattr(job, "result") and job.result is not None:
+            if isinstance(job.result, dict):
+                text_content = job.result.get("text") or job.result.get("content") or ""
+                usage_info = job.result.get("usage", {})
+            elif isinstance(job.result, str):
+                text_content = job.result
+
+        if "text/plain" in accept_header and "application/json" not in accept_header:
+            return Response(content=text_content, media_type="text/plain")
+
+        return JSONResponse(
+            content={
+                "job_id": job.job_id,
+                "text": text_content,
+                "usage": usage_info,
+            }
+        )
+
+    # Case C: Media files missing on scratch disk for SUCCEEDED job
+    raise NotFoundError("Artifact file not found on scratch disk.")
 
 
 @router.delete("/{job_id}", dependencies=[Depends(verify_bearer_token)])

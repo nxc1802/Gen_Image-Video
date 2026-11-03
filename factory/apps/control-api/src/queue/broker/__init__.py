@@ -1,29 +1,32 @@
 """
-Queue broker factory.
-
-Redis is mandatory in production. The in-memory broker is only for local
-development/tests and can never be selected as an implicit production fallback.
+factory/apps/control-api/src/queue/broker/__init__.py
+Queue broker factory for Factory v4 Lite.
+Default and only broker backend is MemoryQueueBroker.
 """
-import os
 from typing import Optional
 
 from .base import BaseQueueBroker
 from .memory_broker import MemoryQueueBroker
-from .redis_broker import RedisQueueBroker
+from factory.apps.control_api.src.queue.scheduler import InMemoryScheduler
+
+# Backward compatibility alias
+RedisQueueBroker = InMemoryScheduler
+
+_default_broker: Optional[InMemoryScheduler] = None
+
+
+def get_queue_broker(redis_url: Optional[str] = None) -> InMemoryScheduler:
+    """Returns the in-memory queue broker for Factory v4 Lite."""
+    global _default_broker
+    if _default_broker is None:
+        _default_broker = InMemoryScheduler()
+    return _default_broker
+
 
 __all__ = [
     "BaseQueueBroker",
     "MemoryQueueBroker",
     "RedisQueueBroker",
+    "InMemoryScheduler",
     "get_queue_broker",
 ]
-
-
-def get_queue_broker(redis_url: Optional[str] = None) -> BaseQueueBroker:
-    env = os.environ.get("ENVIRONMENT", os.environ.get("FACTORY_ENV", "development")).lower()
-    url = redis_url or os.environ.get("FACTORY_REDIS_URL") or os.environ.get("REDIS_URL")
-    if url:
-        return RedisQueueBroker(redis_url=url)
-    if env == "production":
-        raise RuntimeError("REDIS_URL or FACTORY_REDIS_URL is required in production.")
-    return MemoryQueueBroker()

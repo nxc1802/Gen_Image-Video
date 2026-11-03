@@ -1,12 +1,8 @@
 """
-Durable job-event streaming for Factory v4.
-
-Job lifecycle events are persisted through BaseJobRepository and distributed
-through Redis when available. In-memory queues/history are development-only
-fallbacks for non-durable local execution and non-job token/audio streams.
+factory/apps/control-api/src/streaming/manager.py
+In-memory job-event streaming and replay for Factory v4 Lite.
 """
 import asyncio
-import json
 import time
 from collections import defaultdict
 from typing import Any, AsyncGenerator, Dict, Optional, Set
@@ -18,13 +14,19 @@ JOB_EVENT_PREFIX = "factory:events:job:"
 
 
 class StreamManager:
+    """
+    Manages in-memory pub/sub SSE and event distribution.
+    - Zero external Redis dependencies.
+    - Persists events through BaseJobRepository / InMemoryJobStore.
+    - In-memory async queues for real-time subscribers with replay on reconnect.
+    """
+
     def __init__(
         self,
-        redis_client=None,
         repository=None,
         history_size: int = 100,
+        redis_client=None,  # Deprecated parameter kept for compatibility
     ):
-        self._redis = redis_client
         self._repository = repository
         self._subscribers: Dict[str, Set[asyncio.Queue]] = defaultdict(set)
         self._history = EventHistoryBuffer(max_events_per_channel=history_size)
@@ -63,14 +65,12 @@ class StreamManager:
             "timestamp": now,
         }
 
-        if self._redis is not None:
-            await self._redis.publish(channel, json.dumps(payload))
-        else:
-            for q in list(self._subscribers.get(channel, ())):
-                try:
-                    q.put_nowait(payload)
-                except asyncio.QueueFull:
-                    pass
+        # Deliver to in-memory subscriber queues
+        for q in list(self._subscribers.get(channel, ())):
+            try:
+                q.put_nowait(payload)
+            except asyncio.QueueFull:
+                pass
 
         return event_id
 
@@ -109,18 +109,12 @@ class StreamManager:
         except (ValueError, TypeError):
             highest_event_id = 0
 
-        pubsub = None
-        if self._redis is not None:
-            pubsub = self._redis.pubsub()
-            await pubsub.subscribe(channel)
-
-        q: Optional[asyncio.Queue] = None
-        if self._redis is None:
-            q = asyncio.Queue(maxsize=512)
-            async with self._lock:
-                self._subscribers[channel].add(q)
+        q: asyncio.Queue = asyncio.Queue(maxsize=512)
+        async with self._lock:
+            self._subscribers[channel].add(q)
 
         try:
+            # 1. Replay persisted events from job store
             persisted = await self._replay_persisted_job_events(channel, last_event_id)
             if persisted:
                 for item in persisted:
@@ -149,58 +143,32 @@ class StreamManager:
                     if h.event_type in TERMINAL_STREAM_EVENTS:
                         return
 
-            if self._redis is not None and pubsub is not None:
-                async for msg in pubsub.listen():
-                    if msg.get("type") != "message":
-                        continue
+            # 2. If channel was already terminated and queue is empty, stop
+            if channel in self._terminated_channels and q.empty():
+                return
+
+            # 3. Stream real-time events from in-memory subscriber queue
+            while True:
+                item = await q.get()
+                raw_id = item.get("id")
+                if raw_id is not None:
                     try:
-                        item = json.loads(msg["data"])
-                    except (TypeError, ValueError, json.JSONDecodeError):
-                        continue
-
-                    raw_id = item.get("id")
-                    if raw_id is not None:
-                        try:
-                            eid = int(raw_id)
-                            if eid <= highest_event_id:
-                                continue
-                            highest_event_id = eid
-                        except (TypeError, ValueError):
-                            pass
-
-                    yield item
-                    if item.get("event") in TERMINAL_STREAM_EVENTS:
-                        return
-            else:
-                if channel in self._terminated_channels and q is not None and q.empty():
+                        eid = int(raw_id)
+                        if eid <= highest_event_id:
+                            if item.get("event") in TERMINAL_STREAM_EVENTS:
+                                return
+                            continue
+                        highest_event_id = eid
+                    except (TypeError, ValueError):
+                        pass
+                yield item
+                if item.get("event") in TERMINAL_STREAM_EVENTS:
                     return
-                while q is not None:
-                    item = await q.get()
-                    raw_id = item.get("id")
-                    if raw_id is not None:
-                        try:
-                            eid = int(raw_id)
-                            if eid <= highest_event_id:
-                                if item.get("event") in TERMINAL_STREAM_EVENTS:
-                                    return
-                                continue
-                            highest_event_id = eid
-                        except (TypeError, ValueError):
-                            pass
-                    yield item
-                    if item.get("event") in TERMINAL_STREAM_EVENTS:
-                        return
         finally:
-            if pubsub is not None:
-                try:
-                    await pubsub.unsubscribe(channel)
-                finally:
-                    await pubsub.close()
-            if q is not None:
-                async with self._lock:
-                    self._subscribers[channel].discard(q)
-                    if not self._subscribers[channel]:
-                        self._subscribers.pop(channel, None)
+            async with self._lock:
+                self._subscribers[channel].discard(q)
+                if not self._subscribers[channel]:
+                    self._subscribers.pop(channel, None)
 
     def get_history(self, channel: str, last_event_id: Optional[str] = None):
         if last_event_id:

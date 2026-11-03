@@ -203,7 +203,7 @@ export function OperationsConsoleView() {
               <Stack weight="bold" className="w-4 h-4" />
               <span>Queue Depth</span>
             </span>
-            <span className="text-[10px] text-ink-muted font-mono">Tier-2 Queue</span>
+            <span className="text-[10px] text-ink-muted font-mono">In-Memory Queue</span>
           </div>
           <div>
             <div className="text-2xl font-mono font-bold text-ink">
@@ -214,7 +214,7 @@ export function OperationsConsoleView() {
             </div>
           </div>
           <div className="text-[11px] font-mono text-ink-muted flex justify-between">
-            <span>Engine: Redis + Postgres</span>
+            <span>Engine: In-Memory Store</span>
             <button
               onClick={() => setActiveView("jobs")}
               className="text-ink hover:underline font-medium"
@@ -224,12 +224,12 @@ export function OperationsConsoleView() {
           </div>
         </div>
 
-        {/* Active Worker Leases */}
+        {/* Active GPU Executions */}
         <div className="p-4 rounded-[10px] bg-surface border border-hairline space-y-3">
           <div className="flex items-center justify-between text-xs font-mono text-ink-muted">
             <span className="flex items-center gap-1.5 text-ink font-semibold">
               <Lightning weight="bold" className="w-4 h-4 text-amber-500" />
-              <span>Active Leases</span>
+              <span>Active GPU Executions</span>
             </span>
             <span className="text-[10px] text-ink-muted font-mono">Workers</span>
           </div>
@@ -238,11 +238,11 @@ export function OperationsConsoleView() {
               {activeJobsCount} <span className="text-xs font-normal text-ink-muted">jobs running</span>
             </div>
             <div className="text-xs text-ink-secondary mt-1">
-              Leases assigned: <span className="font-semibold text-ink">{telemetry?.leases?.length ?? activeJobsCount}</span>
+              Active tasks: <span className="font-semibold text-ink">{telemetry?.leases?.length ?? activeJobsCount}</span>
             </div>
           </div>
           <div className="text-[11px] font-mono text-ink-muted flex justify-between">
-            <span>Lease TTL: 300s</span>
+            <span>Control Plane</span>
             <button
               onClick={() => setActiveView("inspector")}
               className="text-ink hover:underline font-medium"

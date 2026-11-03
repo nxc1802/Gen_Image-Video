@@ -154,8 +154,8 @@ async def upload_asset(
     except Exception as exc:
         raise ServiceUnavailableError(f"Storage backend failed to store asset: {exc}")
 
-    s3_url = f"https://s3.ai.example.com/{storage_path}"
     download_url = f"/v1/assets/{asset_id}/download"
+    s3_url = download_url
     now_dt = datetime.now(timezone.utc)
     created_at = now_dt.isoformat()
 
@@ -248,10 +248,12 @@ async def validate_asset(
     validate_target_url(req.url)
 
     asset_id = f"ast-{uuid.uuid4()}"
+    download_url = f"/v1/assets/{asset_id}/download"
     return {
         "asset_id": asset_id,
         "source_url": req.url,
-        "s3_url": f"https://s3.ai.example.com/assets/{asset_id}.bin",
+        "s3_url": download_url,
+        "download_url": download_url,
         "size_bytes": 1048576,
         "mime_type": req.mime_type or "image/png",
         "ssrf_safe": True,

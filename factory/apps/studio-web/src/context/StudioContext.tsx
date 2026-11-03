@@ -90,36 +90,15 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
       try {
         if (!silent) setConnectionStatus("connecting");
 
-        // Try /api/studio/schemas first (Feature 40), then fallback to individual endpoints
-        let loadedServices: ServiceManifest[] = [];
-        let loadedModels: ModelManifest[] = [];
-        let loadedCapabilities: CapabilityManifest[] = [];
+        const [mList, sList, cList] = await Promise.all([
+          apiClient.getModels().catch(() => []),
+          apiClient.getServices().catch(() => []),
+          apiClient.getCapabilities().catch(() => []),
+        ]);
 
-        try {
-          const schemasResp = await apiClient.getSchemas();
-          if (schemasResp?.schemas) {
-            loadedServices = schemasResp.schemas.services || [];
-            loadedModels = schemasResp.schemas.models || [];
-          }
-        } catch {
-          // Fallback to separate endpoints
-          const [sList, mList] = await Promise.all([
-            apiClient.getServices().catch(() => []),
-            apiClient.getModels().catch(() => []),
-          ]);
-          loadedServices = sList;
-          loadedModels = mList;
-        }
-
-        try {
-          loadedCapabilities = await apiClient.getCapabilities();
-        } catch {
-          loadedCapabilities = [];
-        }
-
-        setServices(loadedServices);
-        setModels(loadedModels);
-        setCapabilities(loadedCapabilities);
+        setModels(mList);
+        setServices(sList);
+        setCapabilities(cList);
         setConnectionStatus("online");
         setGlobalError(null);
       } catch (err: any) {

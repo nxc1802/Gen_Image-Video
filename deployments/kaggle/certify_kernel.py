@@ -33,8 +33,8 @@ import yaml
 class DualT4HardwareTopology:
     """
     Hardware topology and memory limits for Kaggle Dual-Tesla T4 environment:
-    - Card 0 (15,360 MiB / 15.0 GB): Text, Decision, VLM, Image
-    - Card 1 (15,360 MiB / 15.0 GB): Embedding, Video
+    - Card 0 (15,360 MiB / 15.0 GB): Text, Decision, VLM, Image, Speech
+    - Card 1 (15,360 MiB / 15.0 GB): Embedding, Video, Music, Enhancement
     Cards do NOT share unified address space.
     """
     TOTAL_VRAM_PER_GPU_MB: float = 15360.0  # 15.0 GB
@@ -43,11 +43,11 @@ class DualT4HardwareTopology:
     MAX_MEMORY_LEAK_MB: float = 50.0        # Gate 4 zero-leak threshold
 
     # Hardware Partitioning
-    GPU_0_SERVICES = ["text-service", "decision-service", "vision-service", "image-service"]
-    GPU_0_MODELS = ["qwen-text", "qwen-decision", "qwen-vlm", "qwen-image-2.1"]
+    GPU_0_SERVICES = ["text-service", "decision-service", "vision-service", "speech-service", "image-service"]
+    GPU_0_MODELS = ["qwen-text", "qwen-decision", "qwen-vlm", "qwen-image-2.1", "qwen-speech"]
 
-    GPU_1_SERVICES = ["embed-service", "rerank-service", "video-service", "music-service"]
-    GPU_1_MODELS = ["qwen-embedding", "wan-2.2", "minimax-h3"]
+    GPU_1_SERVICES = ["embed-service", "rerank-service", "video-service", "music-service", "enhancement-service"]
+    GPU_1_MODELS = ["qwen-embedding", "wan-2.2", "minimax-h3", "ace-step-1.5", "enhancement-suite-v1"]
 
     def __init__(self):
         self._active_models: Dict[int, Optional[str]] = {0: None, 1: None}
@@ -55,9 +55,9 @@ class DualT4HardwareTopology:
 
     def get_assigned_gpu(self, model_id: str) -> int:
         clean_id = model_id.lower().strip()
-        if any(k in clean_id for k in ["text", "decision", "vlm", "image"]):
+        if any(k in clean_id for k in ["text", "decision", "vlm", "speech", "image"]):
             return 0
-        if any(k in clean_id for k in ["embed", "rerank", "video", "wan", "minimax"]):
+        if any(k in clean_id for k in ["embed", "rerank", "video", "wan", "minimax", "ace", "music", "step", "enhancement"]):
             return 1
         return 0
 
@@ -689,6 +689,221 @@ class CertificationGates:
             },
         )
 
+    # =================================================================
+    # 4-Stage Verification Gate Pipeline (Load -> Infer -> Validate -> Profile)
+    # =================================================================
+
+    @classmethod
+    def verify_stage_1_load(
+        cls,
+        model_id: str,
+        gpu_index: int,
+        base_cuda_context_mb: float,
+        weights_mb: float,
+        load_time_sec: float,
+        topology: Optional[DualT4HardwareTopology] = None,
+    ) -> CertificationGateResult:
+        """
+        Stage 1: Load Gate
+        - Verifies weights placed on correct discrete GPU partition (GPU 0 vs GPU 1).
+        - Verifies CUDA driver context overhead (600-900 MB nominal range, 400-1200 MB bounds).
+        - Verifies static footprint <= 14.2 GB (14,540 MB), leaving >= 800 MB for activations.
+        """
+        topo = topology or DualT4HardwareTopology()
+        expected_gpu = topo.get_assigned_gpu(model_id)
+        if gpu_index != expected_gpu:
+            return CertificationGateResult(
+                gate_name="Stage 1: Load",
+                passed=False,
+                details={
+                    "model_id": model_id,
+                    "gpu_index": gpu_index,
+                    "expected_gpu": expected_gpu,
+                },
+                error_message=(
+                    f"Model '{model_id}' placed on GPU {gpu_index}, but hardware topology "
+                    f"requires GPU {expected_gpu} (GPU 0: Text, Decision, VLM, Image, Speech; "
+                    f"GPU 1: Embedding, Video, Music, Enhancement)."
+                ),
+            )
+
+        base_res = cls.verify_load_gate(
+            model_id=model_id,
+            gpu_index=gpu_index,
+            base_cuda_context_mb=base_cuda_context_mb,
+            weights_mb=weights_mb,
+            load_time_sec=load_time_sec,
+        )
+        return CertificationGateResult(
+            gate_name="Stage 1: Load",
+            passed=base_res.passed,
+            details=base_res.details,
+            error_message=base_res.error_message,
+        )
+
+    @classmethod
+    def verify_stage_2_infer(
+        cls,
+        model_id: str,
+        modality: str,
+        peak_vram_mb: float,
+        latency_ms: float,
+    ) -> CertificationGateResult:
+        """
+        Stage 2: Infer Gate
+        - Executes golden forward pass.
+        - Verifies peak VRAM < 15.0 GB (15,360 MB) hard limit.
+        - Profiles and records latency.
+        """
+        if peak_vram_mb >= DualT4HardwareTopology.ABSOLUTE_PEAK_LIMIT_MB:
+            return CertificationGateResult(
+                gate_name="Stage 2: Infer",
+                passed=False,
+                details={"model_id": model_id, "peak_vram_mb": peak_vram_mb},
+                error_message=f"Peak VRAM ({peak_vram_mb:.1f} MB) exceeded 15.0 GB ceiling on Tesla T4.",
+            )
+        if latency_ms <= 0:
+            return CertificationGateResult(
+                gate_name="Stage 2: Infer",
+                passed=False,
+                details={"model_id": model_id, "latency_ms": latency_ms},
+                error_message=f"Invalid latency measured during forward pass: {latency_ms} ms.",
+            )
+        return CertificationGateResult(
+            gate_name="Stage 2: Infer",
+            passed=True,
+            details={
+                "model_id": model_id,
+                "modality": modality,
+                "peak_vram_mb": peak_vram_mb,
+                "latency_ms": round(latency_ms, 2),
+                "status": "PASS",
+            },
+        )
+
+    @classmethod
+    def verify_stage_3_validate(
+        cls,
+        model_id: str,
+        modality: str,
+        output_payload: Any,
+        manifest_path: str | Path,
+        capability_executor: Callable[[str], Tuple[bool, int, Optional[str]]],
+        peak_vram_mb: float = 12000.0,
+        latency_ms: float = 200.0,
+    ) -> CertificationGateResult:
+        """
+        Stage 3: Validate Gate
+        - Strict output numerical & structural verification:
+            * Text / Decision: non-empty string or dict, zero NaNs / infinities.
+            * Embedding: unit L2 norm ||v||_2 = 1.0 +/- 1e-4, zero NaNs.
+            * Image: valid PNG header + 13-byte IHDR chunk, length >= 33 bytes.
+            * Video: valid MP4 container with ftyp box AND both moov and mdat boxes.
+        - 100% manifest capability contract adherence:
+            * Capabilities marked 'true' must succeed (HTTP 200).
+            * Capabilities marked 'false' must be rejected with HTTP 400 and zero cross-model fallback.
+        """
+        # 1. Output verification
+        output_res = cls.verify_inference_gate(
+            model_id=model_id,
+            modality=modality,
+            output_payload=output_payload,
+            peak_vram_mb=peak_vram_mb,
+            latency_ms=latency_ms,
+        )
+        if not output_res.passed:
+            return CertificationGateResult(
+                gate_name="Stage 3: Validate",
+                passed=False,
+                details={"output_validation": output_res.details},
+                error_message=f"Output verification failed: {output_res.error_message}",
+            )
+
+        # 2. Manifest capability contract verification
+        contract_res = cls.verify_contract_gate(
+            manifest_path=manifest_path,
+            capability_executor=capability_executor,
+        )
+        if not contract_res.passed:
+            return CertificationGateResult(
+                gate_name="Stage 3: Validate",
+                passed=False,
+                details={
+                    "output_validation": output_res.details,
+                    "contract_adherence": contract_res.details,
+                },
+                error_message=f"Capability contract verification failed: {contract_res.error_message}",
+            )
+
+        return CertificationGateResult(
+            gate_name="Stage 3: Validate",
+            passed=True,
+            details={
+                "model_id": model_id,
+                "modality": modality,
+                "artifact_sha256": output_res.details.get("artifact_sha256"),
+                "artifact_size_bytes": output_res.details.get("artifact_size_bytes"),
+                "contract_adherence_percent": contract_res.details.get("adherence_percent", 100.0),
+                "verified_supported_count": contract_res.details.get("verified_supported_count"),
+                "verified_unsupported_rejections": contract_res.details.get("verified_unsupported_rejections"),
+            },
+        )
+
+    @classmethod
+    def verify_stage_4_profile(
+        cls,
+        model_id: str,
+        profiler: HardwareMemoryProfiler,
+        sustained_requests_count: int,
+        request_runner: Callable[[int], Tuple[bool, float, float]],
+    ) -> CertificationGateResult:
+        """
+        Stage 4: Profile Gate
+        - Samples genuine NVML hardware telemetry (or explicit 'telemetry_status: UNAVAILABLE' when offline).
+        - Verifies zero memory leak (< 50 MB over 5+ sustained requests).
+        - Verifies peak VRAM remains within 15.0 GB.
+        """
+        stress_res = cls.verify_stress_gate(
+            model_id=model_id,
+            sustained_requests_count=sustained_requests_count,
+            request_runner=request_runner,
+        )
+        if not stress_res.passed:
+            return CertificationGateResult(
+                gate_name="Stage 4: Profile",
+                passed=False,
+                details=stress_res.details,
+                error_message=stress_res.error_message,
+            )
+
+        metrics = profiler.query_device_metrics()
+        return CertificationGateResult(
+            gate_name="Stage 4: Profile",
+            passed=True,
+            details={
+                "model_id": model_id,
+                "telemetry_status": profiler.telemetry_status,
+                "device_metrics": metrics,
+                "stress_profile": stress_res.details,
+                "vram_leak_mb": stress_res.details.get("vram_leak_mb"),
+                "leak_threshold_mb": DualT4HardwareTopology.MAX_MEMORY_LEAK_MB,
+            },
+        )
+
+
+class FourStageVerificationGate:
+    """
+    Kaggle Dual-T4 4-Stage Verification Gate Pipeline:
+      Stage 1: Load (weights on correct GPU 0 vs GPU 1, CUDA context overhead 600-900 MB, static footprint <= 14.2 GB)
+      Stage 2: Infer (forward pass, peak VRAM < 15.0 GB, latency profiling)
+      Stage 3: Validate (strict output verification: unit L2 norm 1.0 +/- 1e-4 for embeddings, PNG IHDR chunk >= 33B for images, MP4 ftyp+moov+mdat for videos, 100% manifest capability contract)
+      Stage 4: Profile (genuine NVML telemetry, or explicit 'telemetry_status: UNAVAILABLE' when offline, memory leak < 50 MB over 5 requests)
+    """
+    verify_stage_1_load = CertificationGates.verify_stage_1_load
+    verify_stage_2_infer = CertificationGates.verify_stage_2_infer
+    verify_stage_3_validate = CertificationGates.verify_stage_3_validate
+    verify_stage_4_profile = CertificationGates.verify_stage_4_profile
+
 
 # =====================================================================
 # 4. Tier 1 Model Certification Profiles & Execution Suite
@@ -821,6 +1036,7 @@ class PreflightContractSimulator:
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "environment": self.environment,
             "execution_mode": "pre-flight-contract-simulation",
+            "verification_pipeline": ["Stage 1: Load", "Stage 2: Infer", "Stage 3: Validate", "Stage 4: Profile"],
             "live_hardware_attested": False,
             "hardware": {
                 "name": "Simulated Dual Tesla T4 (local contract simulation)",
@@ -1015,6 +1231,42 @@ class PreflightContractSimulator:
         # Model passed all 5 gates! Evict from topology to release GPU
         self.topology.evict_model(target_gpu)
 
+        four_stage_pipeline = {
+            "stage_1_load": {
+                "stage_name": "Stage 1: Load",
+                "passed": g1.passed,
+                "details": g1.details,
+            },
+            "stage_2_infer": {
+                "stage_name": "Stage 2: Infer",
+                "passed": g2.passed,
+                "details": {
+                    "peak_vram_mb": peak_vram,
+                    "latency_ms": g2.details.get("latency_ms"),
+                    "status": "PASS",
+                },
+            },
+            "stage_3_validate": {
+                "stage_name": "Stage 3: Validate",
+                "passed": g2.passed and g3.passed,
+                "details": {
+                    "output_validation": g2.details,
+                    "contract_adherence": g3.details,
+                },
+            },
+            "stage_4_profile": {
+                "stage_name": "Stage 4: Profile",
+                "passed": g4.passed,
+                "details": {
+                    "telemetry_status": profiler.telemetry_status,
+                    "peak_vram_mb": g4.details.get("peak_vram_mb"),
+                    "vram_leak_mb": g4.details.get("vram_leak_mb"),
+                    "requests_executed": g4.details.get("requests_executed"),
+                    "memory_leak_threshold_mb": DualT4HardwareTopology.MAX_MEMORY_LEAK_MB,
+                },
+            },
+        }
+
         return {
             "certified": True,
             "model_id": model_id,
@@ -1023,6 +1275,7 @@ class PreflightContractSimulator:
             "checkpoint": profile.weights_checkpoint,
             "quantization": profile.quantization,
             "telemetry_status": profiler.telemetry_status,
+            "four_stage_pipeline": four_stage_pipeline,
             "profiling": {
                 "telemetry_status": profiler.telemetry_status,
                 "source": "preflight_simulation",
@@ -1082,6 +1335,7 @@ class KaggleLiveKernelExecutor:
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "environment": self.environment,
             "execution_mode": "live-gpu-execution",
+            "verification_pipeline": ["Stage 1: Load", "Stage 2: Infer", "Stage 3: Validate", "Stage 4: Profile"],
             "live_hardware_attested": True,
             "hardware": {
                 "name": hw_info.get("name", "NVIDIA Tesla T4 x2"),
@@ -1268,6 +1522,43 @@ class KaggleLiveKernelExecutor:
 
         self.topology.evict_model(target_gpu)
 
+        four_stage_pipeline = {
+            "stage_1_load": {
+                "stage_name": "Stage 1: Load",
+                "passed": g1.passed,
+                "details": g1.details,
+            },
+            "stage_2_infer": {
+                "stage_name": "Stage 2: Infer",
+                "passed": g2.passed,
+                "details": {
+                    "peak_vram_mb": peak_vram,
+                    "latency_ms": g2.details.get("latency_ms"),
+                    "status": "PASS",
+                },
+            },
+            "stage_3_validate": {
+                "stage_name": "Stage 3: Validate",
+                "passed": g2.passed and g3.passed,
+                "details": {
+                    "output_validation": g2.details,
+                    "contract_adherence": g3.details,
+                },
+            },
+            "stage_4_profile": {
+                "stage_name": "Stage 4: Profile",
+                "passed": g4.passed,
+                "details": {
+                    "telemetry_status": profiler.telemetry_status,
+                    "live_vram_mb": live_peak_vram,
+                    "peak_vram_mb": g4.details.get("peak_vram_mb"),
+                    "vram_leak_mb": g4.details.get("vram_leak_mb"),
+                    "requests_executed": g4.details.get("requests_executed"),
+                    "memory_leak_threshold_mb": DualT4HardwareTopology.MAX_MEMORY_LEAK_MB,
+                },
+            },
+        }
+
         return {
             "certified": True,
             "model_id": model_id,
@@ -1276,6 +1567,7 @@ class KaggleLiveKernelExecutor:
             "checkpoint": profile.weights_checkpoint,
             "quantization": profile.quantization,
             "telemetry_status": profiler.telemetry_status,
+            "four_stage_pipeline": four_stage_pipeline,
             "profiling": {
                 "telemetry_status": profiler.telemetry_status,
                 "source": "live_nvml",

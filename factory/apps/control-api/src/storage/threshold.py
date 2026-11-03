@@ -16,7 +16,7 @@ BASE64_ALPHABET_PATTERN = re.compile(r"^[A-Za-z0-9+/]+={0,2}$")
 DEPRECATION_HEADERS = {
     "Deprecation": "true",
     "Sunset": "Wed, 01 Jan 2027 00:00:00 GMT",
-    "Warning": '299 - "Inline base64 payloads are deprecated in Factory v4; use S3 signed URLs."',
+    "Warning": '299 - "Inline base64 payloads are deprecated in Factory v4; use direct multipart upload (POST /v1/assets/upload)."',
 }
 
 
@@ -107,7 +107,7 @@ def enforce_payload_thresholds(inputs: Dict[str, Any], request_id: Optional[str]
                 message=(
                     f"Inline base64 payload ({size_bytes:,} bytes) in field '{field_path}' exceeds the 1MB threshold. "
                     f"Inline base64 is deprecated for media. Please upload the asset to the "
-                    f"Asset Service (POST /v1/assets/upload) and provide the returned s3_url."
+                    f"Asset Service (POST /v1/assets/upload) and provide the returned download_url or asset_id."
                 ),
                 details={
                     "threshold_bytes": MAX_INLINE_BYTES,

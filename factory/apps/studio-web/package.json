@@ -6,6 +6,7 @@
     "dev": "node ./node_modules/next/dist/bin/next dev -p 3000",
     "build": "node ./node_modules/next/dist/bin/next build",
     "start": "node ./node_modules/next/dist/bin/next start -p 3000",
+    "typecheck": "tsc --noEmit",
     "lint": "node ./node_modules/next/dist/bin/next lint"
   },
   "dependencies": {

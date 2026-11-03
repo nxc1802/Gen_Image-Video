@@ -193,7 +193,7 @@ export function DynamicSchemaForm({
       ) {
         newErrors[
           spec.name
-        ] = "Direct base64 is forbidden; upload file or provide S3 storage URL.";
+        ] = "Direct base64 is forbidden; upload file or provide storage URL.";
       }
     }
 

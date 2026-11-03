@@ -1,11 +1,10 @@
 [project]
 name = "factory-auth"
 version = "0.1.0"
-description = "Authentication, JWT verification, and API key management for Factory v4"
+description = "Authentication and single API key management for Factory v4 Lite"
 requires-python = ">=3.11"
 dependencies = [
     "factory-contracts",
-    "pyjwt>=2.8.0",
     "fastapi>=0.111.0",
 ]
 

@@ -27,8 +27,7 @@ from factory_contracts.jobs.worker_contract import (
 from factory.apps.control_api.src.queue.broker.memory_broker import MemoryQueueBroker
 from factory.apps.control_api.src.queue.leasing import LeaseCoordinator
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
-from factory.apps.control_api.src.queue.reaper import DeadJobReaper
-from factory.apps.control_api.src.queue.repository.sqlite import SqliteJobRepository
+from factory.apps.control_api.src.queue.repository import InMemoryJobStore as SqliteJobRepository
 from factory.apps.control_api.src.queue.state_machine import (
     InvalidStateTransitionError,
     JobStateMachine,
@@ -276,62 +275,6 @@ class TestLeaseCoordinatorAndReaper:
             )
         )
         assert hb_cancel_resp.cancel_requested is True
-
-        await repo.close()
-
-    async def test_dead_job_reaper_auto_retry_and_exhaustion(self):
-        repo = SqliteJobRepository(db_path=":memory:")
-        await repo.initialize()
-        broker = MemoryQueueBroker()
-        stream_mgr = StreamManager()
-        reaper = DeadJobReaper(repository=repo, broker=broker, stream_manager=stream_mgr)
-
-        # Job with expired lease but retry_count < max_retries
-        expired_time = datetime.now(timezone.utc) - timedelta(seconds=60)
-        job = FactoryJob(
-            job_id="job-11111111-2222-3333-4444-555555555555",
-            request_id="req-99999999-8888-7777-6666-555555555555",
-            service="image",
-            model="qwen-image-2.1",
-            task="text_to_image",
-            inputs={"prompt": "stalled job"},
-            priority=10,
-            state=JobState.RUNNING,
-            retry_count=0,
-            max_retries=2,
-            worker=WorkerLease(
-                worker_id="crashed-worker",
-                lease_token="lease-expired",
-                lease_expires_at=expired_time,
-            ),
-        )
-        await repo.create_job(job)
-
-        recovered = await reaper.sweep_once()
-        assert recovered == 1
-
-        reloaded = await repo.get_job(job.job_id)
-        assert reloaded.state == JobState.QUEUED
-        assert reloaded.retry_count == 1
-        assert reloaded.worker is None
-
-        # Expire it again past max_retries
-        reloaded.state = JobState.RUNNING
-        reloaded.retry_count = 2
-        reloaded.worker = WorkerLease(
-            worker_id="crashed-worker",
-            lease_token="lease-expired-again",
-            lease_expires_at=expired_time,
-        )
-        await repo.update_job(reloaded)
-
-        recovered2 = await reaper.sweep_once()
-        assert recovered2 == 1
-
-        failed_job = await repo.get_job(job.job_id)
-        assert failed_job.state == JobState.FAILED
-        assert failed_job.error is not None
-        assert failed_job.error.code == "TIMEOUT"
 
         await repo.close()
 

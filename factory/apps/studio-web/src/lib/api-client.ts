@@ -98,7 +98,7 @@ export class StudioApiClient {
       throw new Error(`Failed to load Services (HTTP ${res.status})`);
     }
     const data = await res.json();
-    return Array.isArray(data) ? data : data.services || [];
+    return Array.isArray(data) ? data : data.services || data.data || [];
   }
 
   async getModels(): Promise<ModelManifest[]> {
@@ -159,6 +159,23 @@ export class StudioApiClient {
       throw new Error(`Failed to get job ${jobId} (HTTP ${res.status})`);
     }
     return res.json();
+  }
+
+  async downloadJobResult(jobId: string): Promise<{ blob: Blob; filename: string }> {
+    const res = await fetch(this.endpoint(`/v1/jobs/${encodeURIComponent(jobId)}/result`), {
+      headers: this.headers(false),
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to download result (HTTP ${res.status})`);
+    }
+    const disposition = res.headers.get("content-disposition");
+    let filename = `${jobId}.bin`;
+    if (disposition && disposition.includes("filename=")) {
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      if (match) filename = match[1];
+    }
+    const blob = await res.blob();
+    return { blob, filename };
   }
 
   async listJobs(limit = 50): Promise<FactoryJob[]> {
