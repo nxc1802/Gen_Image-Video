@@ -307,13 +307,18 @@ class KaggleDualT4Runner:
         )
 
         version_num = push_resp.get("versionNumber") or push_resp.get("versionNumberNullable")
-        logger.info(f"Pushed kernel {slug} version {version_num} to Kaggle.")
+        actual_slug = slug
+        if push_resp.get("ref"):
+            actual_slug = push_resp["ref"].strip("/").split("/")[-1]
+        elif push_resp.get("url"):
+            actual_slug = push_resp["url"].strip("/").split("/")[-1]
+        logger.info(f"Pushed kernel {actual_slug} version {version_num} to Kaggle.")
 
         def _log_streamer(line: str):
             logger.info(f"[Kaggle Remote] {line}")
 
         output_resp = self.client.poll_until_complete(
-            slug=slug,
+            slug=actual_slug,
             poll_interval_sec=poll_interval_sec,
             timeout_sec=timeout_sec,
             output_callback=_log_streamer,

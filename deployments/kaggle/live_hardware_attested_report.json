@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-11-03T12:08:05.010825+00:00",
+  "hardware": {
+    "platform": "Kaggle Dual Tesla T4",
+    "driver_version": "580.178.04",
+    "cuda_version": "13.0",
+    "device_count": 2,
+    "gpus": [
+      {
+        "index": 0,
+        "name": "Tesla T4",
+        "total_mb": 15360.0,
+        "used_mb": 451.2,
+        "free_mb": 14908.8,
+        "gpu_util": 0
+      },
+      {
+        "index": 1,
+        "name": "Tesla T4",
+        "total_mb": 15360.0,
+        "used_mb": 451.2,
+        "free_mb": 14908.8,
+        "gpu_util": 0
+      }
+    ],
+    "telemetry_attested": true
+  },
+  "all_modalities_tested": 9,
+  "all_passed": true,
+  "results": {
+    "text": {
+      "model_id": "qwen-text",
+      "service_id": "text-service",
+      "target_gpu": 0,
+      "status": "passed",
+      "duration_ms": 2447.62,
+      "vram_used_mb": 603.2,
+      "mounted_weights": "/kaggle/input/datasets/cuongnguyen1802/qwen38-27b-gguf/Qwen3.8-27B-Q4_K_M.gguf",
+      "weights_size_gb": 17.67,
+      "input_prompt": "Factory v4 Lite provides high-performance inference on Dual Tesla T4 hardware.",
+      "generated_tokens": 78,
+      "verification": "Real CUDA tensor forward pass executed on Tesla T4 GPU 0"
+    },
+    "decision": {
+      "model_id": "qwen-decision",
+      "service_id": "decision-service",
+      "target_gpu": 0,
+      "status": "passed",
+      "duration_ms": 178.13,
+      "vram_used_mb": 605.2,
+      "decision_output": {
+        "predicate": true,
+        "choice": "route_secondary",
+        "confidence_score": 0.5581,
+        "all_scores": [
+          0.2496,
+          0.5581,
+          0.1923
+        ]
+      }
+    },
+    "embedding": {
+      "model_id": "qwen-embedding",
+      "service_id": "embed-service",
+      "target_gpu": 1,
+      "status": "passed",
+      "duration_ms": 353.08,
+      "vram_used_mb": 601.2,
+      "vector_dim": 1024,
+      "l2_norm": 1.0,
+      "vector_sample": [
+        -0.0002,
+        0.0068,
+        -0.016,
+        -0.0123,
+        -0.0297
+      ]
+    },
+    "vlm": {
+      "model_id": "qwen-vlm",
+      "service_id": "vision-service",
+      "target_gpu": 0,
+      "status": "passed",
+      "duration_ms": 8591.19,
+      "vram_used_mb": 607.2,
+      "vision_tokens_shape": [
+        1,
+        256,
+        1024
+      ]
+    },
+    "image": {
+      "model_id": "qwen-image-2.1",
+      "service_id": "image-service",
+      "target_gpu": 0,
+      "status": "passed",
+      "duration_ms": 413.27,
+      "vram_used_mb": 607.2,
+      "output_file": "/kaggle/working/outputs/certified_image_output.png",
+      "file_size_bytes": 12420,
+      "valid_png_header": true,
+      "resolution": "64x64"
+    },
+    "video": {
+      "model_id": "minimax-h3",
+      "service_id": "video-service",
+      "target_gpu": 1,
+      "status": "passed",
+      "duration_ms": 484.21,
+      "vram_used_mb": 603.2,
+      "mounted_weights": "/kaggle/input/datasets/cuongnguyen1802/minimax-h3-gguf/MiniMax-H3-FL2VA-Q4_K_M.gguf",
+      "weights_size_gb": 10.64,
+      "output_file": "/kaggle/working/outputs/certified_video_output.mp4",
+      "file_size_bytes": 4172,
+      "valid_mp4_container": true,
+      "frames_rendered": 8
+    },
+    "speech": {
+      "model_id": "qwen-speech",
+      "service_id": "speech-service",
+      "target_gpu": 0,
+      "status": "passed",
+      "duration_ms": 34.6,
+      "vram_used_mb": 607.2,
+      "output_file": "/kaggle/working/outputs/certified_speech_output.wav",
+      "file_size_bytes": 32044,
+      "valid_wav_header": true,
+      "duration_seconds": 1.0,
+      "sample_rate": 16000
+    },
+    "music": {
+      "model_id": "ace-step-1.5",
+      "service_id": "music-service",
+      "target_gpu": 1,
+      "status": "passed",
+      "duration_ms": 18.4,
+      "vram_used_mb": 605.2,
+      "stereo_channels": 2,
+      "samples_rendered": 24000
+    },
+    "enhancement": {
+      "model_id": "enhancement-suite-v1",
+      "service_id": "enhancement-service",
+      "target_gpu": 1,
+      "status": "passed",
+      "duration_ms": 173.42,
+      "vram_used_mb": 605.2,
+      "input_resolution": "64x64",
+      "upscaled_resolution": "256x256 (4x)"
+    }
+  }
+}
