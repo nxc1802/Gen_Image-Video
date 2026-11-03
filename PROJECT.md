@@ -4,7 +4,7 @@
 Factory v4 refactors the monolithic Kaggle AI Studio v3.5 into a decoupled, production-oriented AI Factory where a dedicated **Control Plane** (`factory/apps/control-api/`) manages authentication, job lifecycle, service/model registry, storage, and telemetry without inference, while individual AI subsystems run natively on their optimal serving frameworks behind fixed ngrok static domains with end-to-end security and a two-tier queue architecture.
 
 ### Decoupled Subsystems & Frameworks:
-- **Control Plane** (`factory/apps/control-api/`): FastAPI, PostgreSQL (job state, leases, retries), Redis (events, pub/sub, locks), MinIO/S3 (signed URLs), OpenTelemetry.
+- **Control Plane** (`factory/apps/control-api/`): Lightweight FastAPI, in-memory queue/scheduler, ephemeral scratch disk storage (`/tmp/factory_lite/artifacts/`), Dual T4 discrete GPU scheduling, single API key auth. Zero PostgreSQL, Redis, S3/MinIO, or Alembic dependencies.
 - **Studio Web** (`factory/apps/studio-web/`): Next.js 15 / React 19 dynamic Operations Console & API Explorer reading backend manifests.
 - **Text & VLM** (`services/text/`, `services/vlm/`): Native vLLM for Qwen models (OpenAI Chat Completions, Responses API, structured output, tool calling).
 - **Decision Engine** (`services/decision/`): Dedicated vLLM service for `/v1/decisions` (predicate, choice, score routing).

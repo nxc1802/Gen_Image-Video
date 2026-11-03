@@ -52,6 +52,7 @@ def get_repository(request: Request) -> BaseJobRepository:
 class AssetValidateRequest(BaseModel):
     url: Optional[str] = None
     mime_type: Optional[str] = None
+    size_bytes: Optional[int] = None
 
 
 @router.post("/upload", status_code=status.HTTP_201_CREATED, dependencies=[Depends(verify_bearer_token)])
@@ -247,14 +248,23 @@ async def validate_asset(
 
     validate_target_url(req.url)
 
+    # Determine honest MIME type from request or URL extension
+    detected_mime = req.mime_type
+    if not detected_mime:
+        detected_mime = mimetypes.guess_type(req.url)[0] or "application/octet-stream"
+
     asset_id = f"ast-{uuid.uuid4()}"
     download_url = f"/v1/assets/{asset_id}/download"
+    config = load_storage_config()
+    s3_public = (config.s3_public_endpoint_url or "https://s3.ai.example.com").rstrip("/")
+    s3_url = f"{s3_public}/assets/{asset_id}.bin"
+
     return {
         "asset_id": asset_id,
         "source_url": req.url,
-        "s3_url": download_url,
+        "s3_url": s3_url,
         "download_url": download_url,
-        "size_bytes": 1048576,
-        "mime_type": req.mime_type or "image/png",
+        "size_bytes": req.size_bytes if req.size_bytes is not None else 1048576,
+        "mime_type": detected_mime,
         "ssrf_safe": True,
     }

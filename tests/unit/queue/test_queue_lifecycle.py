@@ -27,7 +27,7 @@ from factory_contracts.jobs.worker_contract import (
 from factory.apps.control_api.src.queue.broker.memory_broker import MemoryQueueBroker
 from factory.apps.control_api.src.queue.leasing import LeaseCoordinator
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
-from factory.apps.control_api.src.queue.repository import InMemoryJobStore as SqliteJobRepository
+from factory.apps.control_api.src.queue.repository import InMemoryJobStore
 from factory.apps.control_api.src.queue.state_machine import (
     InvalidStateTransitionError,
     JobStateMachine,
@@ -76,7 +76,7 @@ class TestJobStateMachine:
 @pytest.mark.asyncio
 class TestSqliteRepository:
     async def test_crud_and_idempotency(self):
-        repo = SqliteJobRepository(db_path=":memory:")
+        repo = InMemoryJobStore(db_path=":memory:")
         await repo.initialize()
 
         job = FactoryJob(
@@ -112,7 +112,7 @@ class TestSqliteRepository:
         await repo.close()
 
     async def test_worker_leasing_and_matching(self):
-        repo = SqliteJobRepository(db_path=":memory:")
+        repo = InMemoryJobStore(db_path=":memory:")
         await repo.initialize()
 
         job = FactoryJob(
@@ -218,7 +218,7 @@ class TestMemoryBroker:
 @pytest.mark.asyncio
 class TestLeaseCoordinatorAndReaper:
     async def test_leasing_flow(self):
-        repo = SqliteJobRepository(db_path=":memory:")
+        repo = InMemoryJobStore(db_path=":memory:")
         await repo.initialize()
         broker = MemoryQueueBroker()
         stream_mgr = StreamManager()
@@ -279,7 +279,7 @@ class TestLeaseCoordinatorAndReaper:
         await repo.close()
 
     async def test_lease_coordinator_evicts_job_from_broker(self):
-        repo = SqliteJobRepository(db_path=":memory:")
+        repo = InMemoryJobStore(db_path=":memory:")
         await repo.initialize()
         broker = MemoryQueueBroker()
         await broker.initialize()
@@ -327,7 +327,7 @@ class TestLeaseCoordinatorAndReaper:
 @pytest.mark.asyncio
 class TestJobLifecycleManager:
     async def test_full_job_lifecycle(self):
-        repo = SqliteJobRepository(db_path=":memory:")
+        repo = InMemoryJobStore(db_path=":memory:")
         await repo.initialize()
         broker = MemoryQueueBroker()
         stream_mgr = StreamManager()
@@ -384,7 +384,7 @@ class TestJobLifecycleManager:
         await repo.close()
 
     async def test_complete_job_idempotent_no_artifact_mutation(self):
-        repo = SqliteJobRepository(db_path=":memory:")
+        repo = InMemoryJobStore(db_path=":memory:")
         await repo.initialize()
         broker = MemoryQueueBroker()
         stream_mgr = StreamManager()

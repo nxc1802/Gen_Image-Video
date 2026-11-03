@@ -8,10 +8,6 @@ from typing import Optional
 from .base import BaseJobRepository
 from .memory import CapacityExceededError, InMemoryJobStore
 
-# Backward compatibility aliases
-SqliteJobRepository = InMemoryJobStore
-PostgresJobRepository = InMemoryJobStore
-
 _default_repository: Optional[InMemoryJobStore] = None
 
 
@@ -35,7 +31,5 @@ __all__ = [
     "BaseJobRepository",
     "InMemoryJobStore",
     "CapacityExceededError",
-    "SqliteJobRepository",
-    "PostgresJobRepository",
     "get_job_repository",
 ]

@@ -23,14 +23,14 @@ from factory_contracts.jobs.worker_contract import (
 from factory.apps.control_api.src.queue.broker.memory_broker import MemoryQueueBroker
 from factory.apps.control_api.src.queue.leasing import LeaseCoordinator
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
-from factory.apps.control_api.src.queue.repository import InMemoryJobStore as SqliteJobRepository
+from factory.apps.control_api.src.queue.repository import InMemoryJobStore
 from factory.apps.control_api.src.streaming.manager import StreamManager
 
 
 @pytest.mark.asyncio
 class TestWorkerLeaseAuth:
     async def _setup(self):
-        repo = SqliteJobRepository(db_path=":memory:")
+        repo = InMemoryJobStore(db_path=":memory:")
         await repo.initialize()
         broker = MemoryQueueBroker()
         await broker.initialize()
