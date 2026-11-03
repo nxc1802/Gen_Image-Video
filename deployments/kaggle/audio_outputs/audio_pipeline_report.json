@@ -1,0 +1,84 @@
+{
+  "session": "Session 2 - Multi-Engine Audio & Speech Studio",
+  "status": "success",
+  "timestamp": "2026-11-03T15:36:33Z",
+  "hardware": {
+    "platform": "Kaggle Dual Tesla T4",
+    "device_count": 2,
+    "driver_version": "580.178.04",
+    "initial_telemetry": {
+      "gpu_0": {
+        "name": "Tesla T4",
+        "used_mb": 451.2,
+        "free_mb": 14908.8,
+        "total_mb": 15360.0,
+        "gpu_util_pct": 0
+      },
+      "gpu_1": {
+        "name": "Tesla T4",
+        "used_mb": 451.2,
+        "free_mb": 14908.8,
+        "total_mb": 15360.0,
+        "gpu_util_pct": 0
+      }
+    },
+    "final_telemetry": {
+      "gpu_0": {
+        "name": "Tesla T4",
+        "used_mb": 451.2,
+        "free_mb": 14908.8,
+        "total_mb": 15360.0,
+        "gpu_util_pct": 0
+      },
+      "gpu_1": {
+        "name": "Tesla T4",
+        "used_mb": 451.2,
+        "free_mb": 14908.8,
+        "total_mb": 15360.0,
+        "gpu_util_pct": 0
+      }
+    }
+  },
+  "results": {
+    "qwen3_tts_1.7b": {
+      "model": "Qwen3-TTS-12Hz-1.7B-Base",
+      "mounted_path": "/kaggle/input/datasets/nguynxuncngde180528/qwen3-tts-1-7b",
+      "language": "en",
+      "audio_duration_sec": 15.19,
+      "sample_rate_hz": 24000,
+      "latency_ms": 2856.24,
+      "rtf": 0.188,
+      "peak_vram_mb": 451.2,
+      "file_size_bytes": 729294,
+      "wav_file": "/kaggle/working/audio_outputs/qwen3_tts_english.wav",
+      "mp3_file": "/kaggle/working/audio_outputs/qwen3_tts_english.mp3"
+    },
+    "xtts_v2_vietnamese": {
+      "model": "XTTS-v2-Vietnamese",
+      "mounted_checkpoint": "/kaggle/input/datasets/nguynxuncngde180528/xtts-v2-vietnamese/best_model.pth",
+      "language": "vi",
+      "audio_duration_sec": 13.25,
+      "sample_rate_hz": 24000,
+      "latency_ms": 765.75,
+      "rtf": 0.058,
+      "peak_vram_mb": 451.2,
+      "file_size_bytes": 635982,
+      "wav_file": "/kaggle/working/audio_outputs/xtts_v2_vietnamese.wav",
+      "mp3_file": "/kaggle/working/audio_outputs/xtts_v2_vietnamese.mp3"
+    },
+    "vieneu_tts_v3_turbo": {
+      "model": "VieNeu-TTS-v3-Turbo",
+      "dataset_url": "https://www.kaggle.com/datasets/cuongnguyen1802/vieneu-tts-v3-turbo",
+      "dataset_published": true,
+      "language": "vi",
+      "sample_rate_hz": 48000,
+      "audio_duration_sec": 13.1,
+      "latency_ms": 24940.83,
+      "rtf": 1.903,
+      "peak_vram_mb": 451.2,
+      "file_size_bytes": 1258062,
+      "wav_file": "/kaggle/working/audio_outputs/vieneu_v3_turbo_vietnamese.wav",
+      "mp3_file": "/kaggle/working/audio_outputs/vieneu_v3_turbo_vietnamese.mp3"
+    }
+  }
+}

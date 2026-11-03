@@ -51,3 +51,5 @@ node_modules/
 dist/
 build/
 *.egg-info/
+deployments/kaggle/audio_outputs/*.safetensors
+deployments/kaggle/audio_outputs/*.onnx

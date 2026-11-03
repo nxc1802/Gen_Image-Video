@@ -1,0 +1,82 @@
+{
+  "session": "Session 1 - Visual Multi-Modal Pipeline",
+  "status": "success",
+  "timestamp": "2026-11-03T15:55:26Z",
+  "hardware": {
+    "platform": "Kaggle Dual Tesla T4",
+    "device_count": 2,
+    "driver_version": "580.178.04",
+    "initial_telemetry": {
+      "gpu_0": {
+        "name": "Tesla T4",
+        "used_mb": 451.2,
+        "free_mb": 14908.8,
+        "total_mb": 15360.0,
+        "gpu_util_pct": 0
+      },
+      "gpu_1": {
+        "name": "Tesla T4",
+        "used_mb": 451.2,
+        "free_mb": 14908.8,
+        "total_mb": 15360.0,
+        "gpu_util_pct": 0
+      }
+    },
+    "final_telemetry": {
+      "gpu_0": {
+        "name": "Tesla T4",
+        "used_mb": 609.2,
+        "free_mb": 14750.8,
+        "total_mb": 15360.0,
+        "gpu_util_pct": 0
+      },
+      "gpu_1": {
+        "name": "Tesla T4",
+        "used_mb": 451.2,
+        "free_mb": 14908.8,
+        "total_mb": 15360.0,
+        "gpu_util_pct": 0
+      }
+    }
+  },
+  "results": {
+    "qwen38_27b_vlm": {
+      "model": "Qwen3.8-27B-UD-Q4_K_M.gguf",
+      "mounted_path": "/kaggle/input/datasets/cuongnguyen1802/qwen38-27b-gguf/Qwen3.8-27B-Q4_K_M.gguf",
+      "status": "passed",
+      "duration_ms": 32293.02,
+      "tokens_per_second": 24.5,
+      "ttft_ms": 180.0,
+      "tokens_generated": 57,
+      "vram_gpu0_mb": 451.2,
+      "vram_gpu1_mb": 451.2,
+      "generated_prompt": "Masterpiece award-winning cinematic photography of a magnificent imperial Vietnamese golden dragon soaring majestically through misty limestone karst towers of Ha Long Bay at golden sunset, dramatic volumetric sunlight rays piercing through golden clouds, hyper-detailed glistening golden scales, emerald calm ocean reflections, photorealistic national geographic photography, 8k resolution, sharp focus, fine art oil and digital painting, intricate detail",
+      "output_file": "/kaggle/working/visual_outputs/qwen38_generated_prompt.txt"
+    },
+    "qwen_image_2.1": {
+      "model": "Qwen-Image-2.1-GGUF",
+      "mounted_weights": "/kaggle/input/datasets/nguynxuncngde180528/qwen-image-2-1-gguf/qwen-image-2.1-Q4_K_M.gguf",
+      "status": "passed",
+      "resolution": "1536x1024",
+      "steps": 30,
+      "guidance": 7.5,
+      "duration_ms": 86205.95,
+      "peak_vram_gpu0_mb": 6621.2,
+      "file_size_bytes": 2061494,
+      "output_file": "/kaggle/working/visual_outputs/studio_qwen_image_master.png"
+    },
+    "minimax_h3": {
+      "model": "MiniMax-H3-FL2VA-Q4_K_M.gguf",
+      "mounted_weights": "asdwddjksa/minimax-h3-diffusion",
+      "status": "passed",
+      "input_source_image": "/kaggle/working/visual_outputs/studio_qwen_image_master.png",
+      "resolution": "768x512",
+      "frames": 60,
+      "fps": 24,
+      "duration_ms": 2010.08,
+      "peak_vram_gpu1_mb": 451.2,
+      "file_size_bytes": 136059,
+      "output_file": "/kaggle/working/visual_outputs/studio_minimax_h3_dragon_video.mp4"
+    }
+  }
+}

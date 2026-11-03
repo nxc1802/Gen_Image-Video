@@ -1,0 +1,42 @@
+{
+  "additional_special_tokens": [
+    "<|TEXT_PROMPT_START|>",
+    "<|TEXT_PROMPT_END|>",
+    "<|SPEECH_GENERATION_START|>",
+    "<|SPEECH_GENERATION_END|>",
+    "<|audio_ref_slot|>",
+    "<|emotion_0|>",
+    "<|emotion_1|>",
+    "<|emotion_2|>",
+    "<|emotion_3|>",
+    "<|emotion_4|>"
+  ],
+  "bos_token": {
+    "content": "<|bos|>",
+    "lstrip": false,
+    "normalized": false,
+    "rstrip": false,
+    "single_word": false
+  },
+  "eos_token": {
+    "content": "<|eos|>",
+    "lstrip": false,
+    "normalized": false,
+    "rstrip": false,
+    "single_word": false
+  },
+  "pad_token": {
+    "content": "<|pad|>",
+    "lstrip": false,
+    "normalized": false,
+    "rstrip": false,
+    "single_word": false
+  },
+  "unk_token": {
+    "content": "<|unk|>",
+    "lstrip": false,
+    "normalized": false,
+    "rstrip": false,
+    "single_word": false
+  }
+}
