@@ -66,10 +66,22 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "repo": "abenzerps/Qwen-Image-2.1-GGUF",
         "service_id": "image-service",
         "target_gpu": 0,
-        "estimated_gb": 8.9,
+        "estimated_gb": 4.2,
         "files": [
             {"src": "qwen-image-2.1-Q4_K_M.gguf", "dest": "qwen-image-2.1-Q4_K_M.gguf"},
             {"src": "vae/qwen_image_2.1_vae_bf16.safetensors", "dest": "qwen_image_2.1_vae_bf16.safetensors"},
+        ],
+    },
+    {
+        "id": "qwen-image-2.1-turbo",
+        "slug": "qwen-image-2-1-turbo-gguf",
+        "title": "Qwen Image 2.1 Turbo GGUF",
+        "repo": "unsloth/Qwen-Image-2.1-Turbo-GGUF",
+        "service_id": "image-service",
+        "target_gpu": 0,
+        "estimated_gb": 3.91,
+        "files": [
+            {"src": "qwen-image-2.1-turbo-Q4_K_M.gguf", "dest": "qwen-image-2.1-turbo-Q4_K_M.gguf"},
         ],
     },
     {
@@ -169,8 +181,8 @@ class DatasetPreparationManager:
 
     def __init__(self, username: Optional[str] = None, api_key: Optional[str] = None):
         self.username = resolve_kaggle_username(username)
-        self.api_key = api_key or os.environ.get("KAGGLE_KEY")
-        self.client = KaggleAPIClient(username=self.username, api_key=self.api_key)
+        self.client = KaggleAPIClient(username=self.username, api_key=api_key or os.environ.get("KAGGLE_KEY"))
+        self.api_key = self.client.api_key
 
     def check_dataset_status(self, slug: str) -> Dict[str, Any]:
         """Checks readiness of a specific Kaggle dataset."""
@@ -353,7 +365,7 @@ print("\\n🏁 All dataset download & publish jobs processed.")
     def deploy_downloader(
         self,
         target_slugs: Optional[List[str]] = None,
-        kernel_slug: str = "factory-model-downloader",
+        kernel_slug: str = "factory-v4-lite-model-downloader",
         poll_interval_sec: float = 10.0,
         timeout_sec: float = 7200.0,
     ) -> Dict[str, Any]:
@@ -373,11 +385,17 @@ print("\\n🏁 All dataset download & publish jobs processed.")
         )
         logger.info(f"Kernel pushed successfully: {push_resp.get('url')}")
 
+        actual_slug = kernel_slug
+        if push_resp.get("ref"):
+            actual_slug = push_resp["ref"].strip("/").split("/")[-1]
+        elif push_resp.get("url"):
+            actual_slug = push_resp["url"].strip("/").split("/")[-1]
+
         def _log_streamer(line: str):
             logger.info(f"[Kaggle Downloader] {line}")
 
         output = self.client.poll_until_complete(
-            slug=kernel_slug,
+            slug=actual_slug,
             poll_interval_sec=poll_interval_sec,
             timeout_sec=timeout_sec,
             output_callback=_log_streamer,
@@ -390,7 +408,7 @@ def main():
     parser.add_argument("--status", action="store_true", help="Inspect status of all 10 model datasets on Kaggle")
     parser.add_argument("--deploy", action="store_true", help="Deploy remote downloader kernel to Kaggle")
     parser.add_argument("--models", nargs="*", default=None, help="Specific model IDs or slugs to prepare")
-    parser.add_argument("--slug", default="factory-model-downloader", help="Kaggle kernel slug for downloader")
+    parser.add_argument("--slug", default="factory-v4-lite-model-downloader", help="Kaggle kernel slug for downloader")
     parser.add_argument("--user", default=None, help="Kaggle username")
     parser.add_argument("--token", default=None, help="Kaggle Bearer token")
     args = parser.parse_args()

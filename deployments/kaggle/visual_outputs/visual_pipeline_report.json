@@ -1,7 +1,13 @@
 {
-  "session": "Session 1 - Visual Multi-Modal Pipeline",
+  "session": "Session 1 - Visual Multi-Modal Pipeline (Fast Acceleration Suite)",
   "status": "success",
-  "timestamp": "2026-11-03T18:25:07Z",
+  "execution_mode": "fast_acceleration_suite",
+  "configuration": {
+    "vlm_acceleration": "MTP Speculative Decoding (draft-mtp, n_max=3, draft: mtp-Qwen3.8-27B-Q4_0.gguf)",
+    "image_acceleration": "Fast Euler 8 Steps (reduced from 20 steps)",
+    "video_acceleration": "MiniMax Turbo LoRA 8 Steps (reduced from 14-30 steps)"
+  },
+  "timestamp": "2026-11-04T15:24:15Z",
   "hardware": {
     "platform": "Kaggle Dual Tesla T4",
     "driver": "580.178.04",
@@ -23,54 +29,73 @@
       }
     },
     "peak_vram_telemetry": {
-      "qwen38_vlm_gpu0_mb": 10385.2,
-      "qwen38_vlm_gpu1_mb": 9981.2,
-      "qwen_image_gpu0_mb": 6621.2,
-      "minimax_h3_gpu1_mb": 12854.6
+      "qwen38_vlm": {
+        "gpu_0_mb": 11341.2,
+        "gpu_1_mb": 11993.2,
+        "total_mb": 23334.4
+      },
+      "qwen_image_2.1": {
+        "gpu_0_mb": 13053.2,
+        "gpu_1_mb": 451.2
+      },
+      "minimax_h3": {
+        "gpu_0_mb": 14319.2,
+        "gpu_1_mb": 451.2
+      }
     }
   },
   "results": {
     "qwen38_27b_vlm": {
       "model": "Qwen3.8-27B-UD-Q4_K_M.gguf",
       "mounted_path": "/kaggle/input/datasets/cuongnguyen1802/qwen38-27b-gguf/Qwen3.8-27B-Q4_K_M.gguf",
-      "split_mode": "layer (0.5, 0.5)",
+      "speculative_decoding": "MTP (Multi-Token Prediction, n=3)",
+      "draft_model": "/tmp/hf_cache/mtp-Qwen3.8-27B-Q4_0.gguf",
       "status": "passed",
-      "startup_seconds": 234.0,
-      "tokens_per_second": 2.21,
-      "ttft_ms": 452.4,
-      "tokens_generated": 128,
-      "peak_vram_gpu0_mb": 10385.2,
-      "peak_vram_gpu1_mb": 9981.2,
-      "generated_prompt": "Masterpiece award-winning cinematic photography of a magnificent imperial Vietnamese golden dragon soaring majestically through misty limestone karst towers of Ha Long Bay at golden sunset, dramatic volumetric sunlight rays piercing through golden clouds, hyper-detailed glistening golden scales, emerald calm ocean reflections, photorealistic national geographic photography, 8k resolution, sharp focus, fine art oil and digital painting, intricate detail",
+      "duration_ms": 334486.72,
+      "decode_tokens_per_second": 6.64,
+      "end_to_end_tokens_per_second": 2.8,
+      "prompt_tokens_per_second": 1.93,
+      "ttft_ms": 356.51,
+      "tokens_generated": 256,
+      "vram_gpu0_mb": 11341.2,
+      "vram_gpu1_mb": 11993.2,
+      "generated_prompt": "<think>\nThe user wants a breathtaking, award-winning cinematic prompt for AI image generation. The subject is an Imperial Vietnamese Golden Dragon soaring over limestone karst towers of Ha Long Bay at golden sunset. I need to craft a highly detailed, evocative, cinematic prompt that would produce a stunning image. Let me think about what makes a prompt truly exceptional for AI image generation:\n\n1. Subject details - the dragon should be specifically Vietnamese imperial style (long serpentine body, antlers, scales, whiskers, the specific golden coloration)\n2. Setting - Ha Long Bay's distinctive limestone karst formations, the water, the atmosphere\n3. Lighting - golden sunset, specific quality of light\n4. Composition - cinematic framing, scale, perspective\n5. Mood and atmosphere - majesty, power, serenity\n6. Technical/cinematic qualities - lens, depth of field, color grading\n7. Style references - cinematic, award-winning quality\n\nLet me craft this carefully to be vivid, specific, and layered:\n\n- The dragon: Imperial Vietnamese style - long serpentine body, golden scales with iridescent sheen, antlers (not horns - Vietnamese dragons have deer-like antlers), whiskers flowing, mane, claws, the specific",
       "output_file": "/kaggle/working/visual_outputs/qwen38_generated_prompt.txt"
     },
     "qwen_image_2.1": {
-      "model": "Qwen-Image-2.1-GGUF",
-      "mounted_weights": "/kaggle/input/datasets/nguynxuncngde180528/qwen-image-2-1-gguf/qwen-image-2.1-Q4_K_M.gguf",
+      "model": "Qwen-Image-2.1-Turbo-GGUF",
+      "mounted_weights": "/kaggle/input/qwen-image-2-1-turbo-gguf/qwen-image-2.1-turbo-Q4_K_M.gguf",
+      "mode": "turbo_standalone_model (8 Euler steps)",
       "status": "passed",
-      "resolution": "1536x1024",
-      "steps": 30,
-      "guidance": 7.5,
-      "duration_ms": 86205.95,
-      "peak_vram_gpu0_mb": 6621.2,
-      "file_size_bytes": 2061494,
-      "output_file": "/kaggle/working/visual_outputs/studio_qwen_image_master.png"
+      "resolution": "960x640",
+      "seed": 533776,
+      "steps": 8,
+      "duration_ms": 168365.14,
+      "seconds_per_step": 21.05,
+      "peak_vram_gpu0_mb": 13053.2,
+      "file_size_bytes": 1103746,
+      "output_file": "/kaggle/working/visual_outputs/studio_qwen_image_master.png",
+      "fast_output_file": "/kaggle/working/visual_outputs/studio_qwen_image_fast.png"
     },
     "minimax_h3": {
-      "model": "MiniMax-H3-FL2VA-Q4_K_M.gguf",
+      "model": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
       "mounted_weights": "/kaggle/input/datasets/asdwddjksa/minimax-h3-diffusion/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+      "mode": "turbo_lora_fast (8 steps)",
+      "turbo_lora": "minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors",
       "status": "passed",
       "input_source_image": "/kaggle/working/visual_outputs/studio_qwen_image_master.png",
-      "feature": "FL2VA (First & Last Frame to Video + Stereo Audio)",
       "resolution": "768x448",
-      "frames": 39,
+      "frames": 25,
       "fps": 24,
-      "audio_codec": "aac",
-      "duration_sec": 1.625,
-      "duration_ms": 14210.45,
-      "peak_vram_gpu1_mb": 12854.6,
-      "file_size_bytes": 703526,
-      "output_file": "/kaggle/working/visual_outputs/studio_minimax_h3_dragon_video.mp4"
+      "seed": 245870,
+      "steps": 8,
+      "duration_ms": 1153092.57,
+      "seconds_per_step": 144.14,
+      "peak_vram_gpu0_mb": 14319.2,
+      "peak_vram_gpu1_mb": 451.2,
+      "file_size_bytes": 762808,
+      "output_file": "/kaggle/working/visual_outputs/studio_minimax_h3_dragon_video.mp4",
+      "fast_output_file": "/kaggle/working/visual_outputs/studio_minimax_h3_dragon_video_fast.mp4"
     }
   }
 }

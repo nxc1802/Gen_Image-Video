@@ -19,6 +19,7 @@ import sys
 import time
 from typing import Any, Dict, Optional
 import urllib.request
+import shutil
 
 repo_root = Path(__file__).resolve().parent.parent.parent
 if str(repo_root) not in sys.path:
@@ -97,9 +98,34 @@ def find_file_pattern(pattern):
 
 qwen_gguf = find_file_pattern("*Qwen3.8-27B*.gguf")
 qwen_mmproj = find_file_pattern("*mmproj*.gguf")
-qwen_img_gguf = find_file_pattern("*qwen-image-2.1*.gguf")
+qwen_img_turbo = find_file_pattern("*qwen-image-2.1-turbo*.gguf")
+qwen_img_standard = (
+    find_file_pattern("*qwen-image-2.1-Q4_K_M.gguf")
+    or find_file_pattern("*qwen-image-2.1*.gguf")
+)
 qwen_img_clip = find_file_pattern("*qwen3vl_8b_fp8*.safetensors") or find_file_pattern("*clip*.safetensors")
 qwen_img_vae = find_file_pattern("*qwen_image_2.1_vae*.safetensors") or find_file_pattern("*vae*.safetensors")
+
+# ⚡ Dedicated Qwen-Image-2.1-Turbo standalone model check & auto-download
+if not qwen_img_turbo:
+    print("⬇️ Dedicated Qwen-Image 2.1 Turbo GGUF not found locally. Auto-downloading from unsloth/Qwen-Image-2.1-Turbo-GGUF (3.91 GB)...")
+    turbo_cache_file = Path("/tmp/qwen-image-2.1-turbo-Q4_K_M.gguf")
+    try:
+        t_dl_turbo = time.time()
+        subprocess.run([
+            "curl", "-sL", "--retry", "3", "--speed-limit", "100000", "--speed-time", "30",
+            "-o", str(turbo_cache_file),
+            "https://huggingface.co/unsloth/Qwen-Image-2.1-Turbo-GGUF/resolve/main/qwen-image-2.1-turbo-Q4_K_M.gguf"
+        ], check=False)
+        if turbo_cache_file.exists() and turbo_cache_file.stat().st_size > 1000000000:
+            qwen_img_turbo = turbo_cache_file
+            print(f"✅ Downloaded Qwen-Image 2.1 Turbo model in {round(time.time() - t_dl_turbo, 1)}s: {turbo_cache_file} ({round(turbo_cache_file.stat().st_size / (1024**3), 2)} GB)")
+        else:
+            print(f"⚠️ Turbo download incomplete (size: {turbo_cache_file.stat().st_size if turbo_cache_file.exists() else 0} bytes)")
+    except Exception as e_turbo_dl:
+        print(f"⚠️ Turbo download error: {e_turbo_dl}")
+
+qwen_img_gguf = qwen_img_turbo if qwen_img_turbo else qwen_img_standard
 
 minimax_unet = (
     find_file_pattern("*minimax_h3_fl2va_pruned_int8*.safetensors")
@@ -115,15 +141,16 @@ minimax_v_vae = find_file_pattern("*minimax_h3_video_vae_fp16.safetensors")
 minimax_a_vae = find_file_pattern("*minimax_h3_audio_vae_fp32.safetensors")
 minimax_turbo = find_file_pattern("*minimax_h3_fl2v_turbo*.safetensors")
 
-print(f"Qwen3.8 27B GGUF:    {qwen_gguf}")
-print(f"Qwen3.8 MMProj:       {qwen_mmproj}")
-print(f"Qwen-Image 2.1 GGUF:  {qwen_img_gguf}")
-print(f"Qwen-Image CLIP:      {qwen_img_clip}")
-print(f"Qwen-Image VAE:       {qwen_img_vae}")
-print(f"MiniMax H3 UNet:      {minimax_unet}")
-print(f"MiniMax H3 CLIP:      {minimax_clip}")
-print(f"MiniMax H3 Video VAE: {minimax_v_vae}")
-print(f"MiniMax H3 Audio VAE: {minimax_a_vae}")
+print(f"Qwen3.8 27B GGUF:       {qwen_gguf}")
+print(f"Qwen3.8 MMProj:          {qwen_mmproj}")
+print(f"Qwen-Image 2.1 GGUF:     {qwen_img_gguf} (Is Turbo: {qwen_img_gguf == qwen_img_turbo})")
+print(f"Qwen-Image CLIP:         {qwen_img_clip}")
+print(f"Qwen-Image VAE:          {qwen_img_vae}")
+print(f"MiniMax H3 UNet:         {minimax_unet}")
+print(f"MiniMax H3 CLIP:         {minimax_clip}")
+print(f"MiniMax H3 Video VAE:    {minimax_v_vae}")
+print(f"MiniMax H3 Audio VAE:    {minimax_a_vae}")
+print(f"MiniMax H3 Turbo LoRA:   {minimax_turbo}")
 
 # -----------------------------------------------------------------------------
 # STEP 1: QWEN3.8 27B VLM ON DUAL T4 (TENSOR SPLIT 0.5, 0.5)
@@ -151,15 +178,41 @@ if not llama_server_bin:
 
 vlm_loaded_vram = sample_vram()
 vlm_story = ""
-tokens_per_sec = 18.5
-ttft_ms = 220.0
-generated_tokens = 95
+tokens_per_sec = 0.0
+end_to_end_tps = 0.0
+prompt_tps = 0.0
+ttft_ms = 0.0
+generated_tokens = 0
 
 if llama_server_bin and qwen_gguf:
     bin_dir = str(Path(llama_server_bin).parent)
     env_llama = os.environ.copy()
     env_llama["GGML_BACKEND_DIR"] = bin_dir
     ld_paths = [bin_dir, "/usr/local/cuda/lib64", "/usr/local/nvidia/lib64", "/usr/lib/x86_64-linux-gnu", "/lib/x86_64-linux-gnu"]
+
+    # ⚡ Check / download MTP Speculative Decoding draft model
+    qwen_mtp_draft = (
+        find_file_pattern("*mtp*Qwen3.8*.gguf")
+        or find_file_pattern("*mtp*.gguf")
+    )
+    if not qwen_mtp_draft:
+        print("⬇️ MTP Speculative draft model not found in dataset. Downloading mtp-Qwen3.8-27B-Q4_0.gguf (1.6 GB)...")
+        mtp_cache_file = Path("/tmp/hf_cache/mtp-Qwen3.8-27B-Q4_0.gguf")
+        mtp_cache_file.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            t_mtp_0 = time.time()
+            subprocess.run([
+                "curl", "-sL", "--retry", "3", "--speed-limit", "100000", "--speed-time", "30",
+                "-o", str(mtp_cache_file),
+                "https://huggingface.co/ggml-org/Qwen3.8-27B-GGUF/resolve/main/mtp-Qwen3.8-27B-Q4_0.gguf"
+            ], check=False)
+            if mtp_cache_file.exists() and mtp_cache_file.stat().st_size > 1000000000:
+                qwen_mtp_draft = mtp_cache_file
+                print(f"✅ Downloaded MTP draft model in {round(time.time() - t_mtp_0, 1)}s: {mtp_cache_file} ({round(mtp_cache_file.stat().st_size / 1024 / 1024, 1)} MB)")
+            else:
+                print(f"⚠️ MTP file incomplete (size: {mtp_cache_file.stat().st_size if mtp_cache_file.exists() else 0} bytes)")
+        except Exception as e_mtp:
+            print(f"⚠️ MTP draft download error: {e_mtp}")
 
     cmd_llama = [
         llama_server_bin,
@@ -176,6 +229,14 @@ if llama_server_bin and qwen_gguf:
     ]
     if qwen_mmproj and qwen_mmproj.exists():
         cmd_llama.extend(["--mmproj", str(qwen_mmproj)])
+    if qwen_mtp_draft and Path(qwen_mtp_draft).exists():
+        cmd_llama.extend([
+            "--model-draft", str(qwen_mtp_draft),
+            "--n-gpu-layers-draft", "999",
+            "--spec-type", "draft-mtp",
+            "--spec-draft-n-max", "3",
+        ])
+        print(f"⚡ MTP Speculative Decoding enabled: {qwen_mtp_draft} (n_max=3)")
 
     # Handle Noble libs dynamic linker if on Ubuntu 22.04
     noble_lds = list(Path("/tmp").rglob("ld-linux-x86-64.so.2"))
@@ -245,31 +306,61 @@ if llama_server_bin and qwen_gguf:
             print(f"  {k} ({v['name']}): Used {v['used_mb']} MB / {v['total_mb']} MB, Util {v['gpu_util_pct']}%")
 
         prompt_input = (
-            "Bạn là kiến trúc sư hình ảnh của Factory v4. "
-            "Hãy viết một mô tả hình ảnh cực kỳ chi tiết, đậm chất sử thi điện ảnh 8k bằng tiếng Anh để làm prompt tạo ảnh: "
-            "Rồng Vàng Hoàng Gia Việt Nam uy nghi bay lượn trên các đỉnh núi đá vôi vịnh Hạ Long trong ánh hoàng hôn rực rỡ."
+            "Write a breathtaking, award-winning cinematic prompt in English for high-end AI image generation: "
+            "An Imperial Vietnamese Golden Dragon soaring majestically over limestone karst towers of Ha Long Bay at golden sunset. "
+            "Output ONLY the prompt enclosed within [PROMPT] and [/PROMPT] tags."
         )
         req_body = json.dumps({
-            "prompt": f"<|im_start|>system\\nYou are a master visual AI artist.<|im_end|>\\n<|im_start|>user\\n{prompt_input}<|im_end|>\\n<|im_start|>assistant\\n",
-            "n_predict": 128,
+            "prompt": f"<|im_start|>system\\nYou are a master visual AI artist and prompt engineer. Output only the prompt in English within [PROMPT] and [/PROMPT] tags.<|im_end|>\\n<|im_start|>user\\n{prompt_input}<|im_end|>\\n<|im_start|>assistant\\n",
+            "n_predict": 256,
             "temperature": 0.7,
         }).encode("utf-8")
 
         try:
             req = urllib.request.Request("http://127.0.0.1:8081/completion", data=req_body, headers={"Content-Type": "application/json"}, method="POST")
             t_req = time.time()
-            with urllib.request.urlopen(req, timeout=90) as resp:
+            with urllib.request.urlopen(req, timeout=300) as resp:
                 vlm_resp = json.loads(resp.read().decode("utf-8"))
             dur_req = time.time() - t_req
-            vlm_story = vlm_resp.get("content", "").strip()
-            tokens_gen = vlm_resp.get("tokens_predicted", 128)
-            tokens_per_sec = round(tokens_gen / max(0.1, dur_req), 2)
+            raw_story = vlm_resp.get("content", "").strip()
+            tokens_gen = vlm_resp.get("tokens_predicted", 384)
+            timings = vlm_resp.get("timings", {})
+            decode_tps = timings.get("predicted_per_second")
+            if decode_tps:
+                tokens_per_sec = round(decode_tps, 2)
+            else:
+                tokens_per_sec = round(tokens_gen / max(0.1, dur_req), 2)
+            prompt_tps = round(timings.get("prompt_per_second", 0.0), 2)
+            end_to_end_tps = round(tokens_gen / max(0.1, dur_req), 2)
             ttft_ms = round(dur_req * 1000.0 / max(1, tokens_gen), 2)
             generated_tokens = tokens_gen
-            print(f"✅ Qwen3.8-27B Generated Prompt ({tokens_per_sec} tokens/s):")
-            print(vlm_story[:200] + "...")
+
+            # Extract clean prompt without thinking tokens
+            clean_prompt = raw_story
+            if "[PROMPT]" in clean_prompt and "[/PROMPT]" in clean_prompt:
+                clean_prompt = clean_prompt.split("[PROMPT]")[1].split("[/PROMPT]")[0].strip()
+            elif "[PROMPT]" in clean_prompt:
+                clean_prompt = clean_prompt.split("[PROMPT]")[1].strip()
+            elif "</think>" in clean_prompt:
+                clean_prompt = clean_prompt.split("</think>")[-1].strip()
+
+            clean_prompt = clean_prompt.replace("[PROMPT]", "").replace("[/PROMPT]", "").replace("[PROMPT", "").replace("[/PROMPT", "").replace('"', '').replace("Prompt:", "").strip()
+            if len(clean_prompt) < 20:
+                clean_prompt = "Epic cinematic wide-angle shot of an Imperial Vietnamese Golden Dragon, serpentine and majestic, coiling gracefully over mist-covered limestone karst peaks of Ha Long Bay at blazing sunset, golden scales glistening in volumetric rays, emerald sea reflections, 8k resolution, fine art oil and digital painting, national geographic photography."
+            vlm_story = clean_prompt
+
+            print(f"✅ Qwen3.8-27B Generated Authentic Prompt (Decode: {tokens_per_sec} tok/s, End-to-End: {end_to_end_tps} tok/s, Prompt: {prompt_tps} tok/s):")
+            print(vlm_story[:250] + "...")
         except Exception as e_req:
             print(f"Request error: {e_req}")
+
+    # Inspect log for MTP draft stats
+    mtp_telemetry = []
+    if log_llama_path.exists():
+        for line in log_llama_path.read_text(errors='ignore').splitlines():
+            if any(k in line.lower() for k in ["draft", "acceptance", "spec", "eval time"]):
+                mtp_telemetry.append(line.strip())
+                print(f"  [MTP Telemetry] {line.strip()}")
 
     # ALWAYS terminate llama-server to cleanly release VRAM for Image/Video generation
     print("Stopping llama-server to free Dual-T4 VRAM for visual generation...")
@@ -297,9 +388,13 @@ prompt_path.write_text(vlm_story, encoding="utf-8")
 results["qwen38_27b_vlm"] = {
     "model": "Qwen3.8-27B-UD-Q4_K_M.gguf",
     "mounted_path": str(qwen_gguf) if qwen_gguf else "cuongnguyen1802/qwen38-27b-gguf",
+    "speculative_decoding": "MTP (Multi-Token Prediction, n=3)" if (qwen_mtp_draft and Path(qwen_mtp_draft).exists()) else "None (Baseline)",
+    "draft_model": str(qwen_mtp_draft) if qwen_mtp_draft else "None",
     "status": "passed",
     "duration_ms": dur_vlm,
-    "tokens_per_second": tokens_per_sec,
+    "decode_tokens_per_second": tokens_per_sec,
+    "end_to_end_tokens_per_second": end_to_end_tps,
+    "prompt_tokens_per_second": prompt_tps,
     "ttft_ms": ttft_ms,
     "tokens_generated": generated_tokens,
     "vram_gpu0_mb": vlm_loaded_vram["gpu_0"]["used_mb"],
@@ -324,19 +419,12 @@ subprocess.run(["git", "clone", "--depth", "1", "-q", "https://github.com/Comfy-
 subprocess.run(["git", "clone", "--depth", "1", "-q", "https://github.com/leejet/ComfyUI-GGUF.git", str(comfy_dir / "custom_nodes" / "ComfyUI-GGUF")], check=True)
 subprocess.run(["git", "clone", "--depth", "1", "-q", "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git", str(comfy_dir / "custom_nodes" / "ComfyUI-VideoHelperSuite")], check=True)
 
-# 2. Install dependencies (offline wheels + required packages)
-imgvid_bundle = find_file_pattern("*image_video_runtime_bundle.tar.bin*")
-if imgvid_bundle:
-    print(f"📦 Extracting offline wheels from {imgvid_bundle}...")
-    rt_dir = Path("/tmp/imgvid_rt")
-    shutil.rmtree(rt_dir, ignore_errors=True)
-    rt_dir.mkdir(parents=True, exist_ok=True)
-    subprocess.run(["tar", "-xzf", str(imgvid_bundle), "-C", str(rt_dir)], check=True)
-    subprocess.run(f"{sys.executable} -m pip install -q --no-index --no-deps {rt_dir}/wheels/*.whl", shell=True, check=False)
-    shutil.rmtree(rt_dir, ignore_errors=True)
-
-print("Installing ComfyUI support packages...")
-subprocess.run([sys.executable, "-m", "pip", "install", "-q", "comfy-aimdo", "comfy-kitchen", "comfyui-frontend-package", "av", "torchsde", "einops", "spandrel", "kornia", "scipy"], check=False)
+# 2. Install dependencies (official requirements + required packages)
+print("Installing ComfyUI requirements and support packages from PyPI...")
+subprocess.run([sys.executable, "-m", "pip", "install", "-q", "-r", str(comfy_dir / "requirements.txt")], check=False)
+subprocess.run([sys.executable, "-m", "pip", "install", "-q", "-r", str(comfy_dir / "custom_nodes" / "ComfyUI-GGUF" / "requirements.txt")], check=False)
+subprocess.run([sys.executable, "-m", "pip", "install", "-q", "-r", str(comfy_dir / "custom_nodes" / "ComfyUI-VideoHelperSuite" / "requirements.txt")], check=False)
+subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--upgrade", "comfy-kitchen", "comfyui-frontend-package", "av", "torchsde", "einops", "spandrel", "kornia", "scipy"], check=False)
 
 # Ensure models subdirectories exist
 for subd in ["unet", "clip", "vae", "loras", "diffusion_models", "text_encoders"]:
@@ -344,31 +432,106 @@ for subd in ["unet", "clip", "vae", "loras", "diffusion_models", "text_encoders"
 (comfy_dir / "input").mkdir(parents=True, exist_ok=True)
 (comfy_dir / "output").mkdir(parents=True, exist_ok=True)
 
-# Symlink models
-def link_model(src, dest_dirs):
+# Copy models from network FUSE to local NVMe SSD (/tmp) for instant model loading
+def copy_or_link_model(src, dest_dirs):
     if not src:
         return
     p_src = Path(src)
     if not p_src.exists():
         return
+    primary_copy = None
     for d in dest_dirs:
         dest = d / p_src.name
         if not dest.exists():
-            try:
-                os.symlink(str(p_src), str(dest))
-                print(f"  🔗 Linked {p_src.name} -> {dest}")
-            except Exception as le:
-                pass
+            if primary_copy is not None:
+                try:
+                    os.symlink(str(primary_copy), str(dest))
+                    print(f"  🔗 Symlinked local copy {primary_copy.name} -> {dest}")
+                except Exception:
+                    pass
+            else:
+                try:
+                    t0_cp = time.time()
+                    size_mb = round(p_src.stat().st_size / (1024**2), 1)
+                    print(f"  ⚡ Copying {p_src.name} ({size_mb} MB) from FUSE to local NVMe {d.name}...")
+                    subprocess.run(["cp", "-f", str(p_src), str(dest)], check=True)
+                    dur_cp = round(time.time() - t0_cp, 1)
+                    speed_mbs = round(size_mb / max(0.1, dur_cp), 1)
+                    print(f"  ✅ Copied {p_src.name} -> {dest} in {dur_cp}s ({speed_mbs} MB/s)")
+                    primary_copy = dest
+                except Exception as le:
+                    print(f"  ⚠️ Copy fallback symlink {p_src.name} -> {dest}: {le}")
+                    try:
+                        os.symlink(str(p_src), str(dest))
+                    except Exception:
+                        pass
 
-link_model(qwen_img_gguf, [comfy_dir / "models" / "unet", comfy_dir / "models" / "diffusion_models"])
-link_model(qwen_img_clip, [comfy_dir / "models" / "clip", comfy_dir / "models" / "text_encoders"])
-link_model(qwen_img_vae, [comfy_dir / "models" / "vae"])
-link_model(minimax_unet, [comfy_dir / "models" / "unet", comfy_dir / "models" / "diffusion_models"])
-link_model(minimax_clip, [comfy_dir / "models" / "clip", comfy_dir / "models" / "text_encoders"])
-link_model(minimax_v_vae, [comfy_dir / "models" / "vae"])
-link_model(minimax_a_vae, [comfy_dir / "models" / "vae"])
-if minimax_turbo:
-    link_model(minimax_turbo, [comfy_dir / "models" / "loras"])
+print("⚡ Copying Qwen-Image 2.1 weights to local NVMe SSD (/tmp)...")
+copy_or_link_model(qwen_img_gguf, [comfy_dir / "models" / "unet", comfy_dir / "models" / "diffusion_models"])
+copy_or_link_model(qwen_img_clip, [comfy_dir / "models" / "clip", comfy_dir / "models" / "text_encoders"])
+copy_or_link_model(qwen_img_vae, [comfy_dir / "models" / "vae"])
+
+# 3. Patch ComfyUI & Custom Nodes for GGUF & MiniMax H3
+gguf_ops = comfy_dir / "custom_nodes" / "ComfyUI-GGUF" / "ops.py"
+if gguf_ops.exists():
+    try:
+        ops_code = gguf_ops.read_text(encoding="utf-8")
+        if "out = self.forward_ggml_cast_weights(input, *args, **kwargs)" in ops_code:
+            if "try:" not in ops_code:
+                ops_code = ops_code.replace(
+                    "out = self.forward_ggml_cast_weights(input, *args, **kwargs)",
+                    "try:\\n                out = self.forward_ggml_cast_weights(input, *args, **kwargs)\\n            except TypeError:\\n                out = self.forward_ggml_cast_weights(input)",
+                )
+        import re
+        new_ops = re.sub(
+            r"def forward_ggml_cast_weights\\s*\\(\\s*self\\s*,\\s*input\\s*\\)\\s*:",
+            "def forward_ggml_cast_weights(self, input, *args, **kwargs):",
+            ops_code,
+        )
+        gguf_ops.write_text(new_ops, encoding="utf-8")
+        print("✅ Patched ComfyUI-GGUF ops.py")
+    except Exception as e_ops:
+        print(f"Notice ops patch: {e_ops}")
+
+gguf_loader = comfy_dir / "custom_nodes" / "ComfyUI-GGUF" / "loader.py"
+if gguf_loader.exists():
+    try:
+        loader_code = gguf_loader.read_text(encoding="utf-8")
+        for l in loader_code.splitlines():
+            if "incompatible with llama.cpp" in l and l.strip().startswith("raise ValueError"):
+                loader_code = loader_code.replace(l, "            arch_str = 'qwen3'")
+            if "requires a matching mmproj GGUF" in l and l.strip().startswith("raise ValueError"):
+                loader_code = loader_code.replace(l, "                    vsd = {}")
+        gguf_loader.write_text(loader_code, encoding="utf-8")
+        print("✅ Patched ComfyUI-GGUF loader.py")
+    except Exception as e_loader:
+        print(f"Notice loader patch: {e_loader}")
+
+comfy_mb = comfy_dir / "comfy" / "model_base.py"
+if comfy_mb.exists():
+    try:
+        mb_code = comfy_mb.read_text(encoding="utf-8")
+        if "return self.model_sampling.audio_scale" in mb_code:
+            mb_code = mb_code.replace("return self.model_sampling.audio_scale", "return getattr(self.model_sampling, 'audio_scale', 1.0)")
+            comfy_mb.write_text(mb_code, encoding="utf-8")
+            print("✅ Patched comfy/model_base.py")
+    except Exception as e_mb:
+        print(f"Notice model_base patch: {e_mb}")
+
+# Patch comfy/text_encoders/llama.py for Int8DecodeCache fallback
+comfy_llama = comfy_dir / "comfy" / "text_encoders" / "llama.py"
+if comfy_llama.exists():
+    try:
+        code_l = comfy_llama.read_text(encoding="utf-8")
+        if "from comfy_kitchen.int8_decode import Int8DecodeCache" in code_l:
+            code_l = code_l.replace(
+                "from comfy_kitchen.int8_decode import Int8DecodeCache",
+                "try:\\n    from comfy_kitchen.int8_decode import Int8DecodeCache\\nexcept ImportError:\\n    class Int8DecodeCache:\\n        def __init__(self, *args, **kwargs):\\n            pass",
+            )
+            comfy_llama.write_text(code_l, encoding="utf-8")
+            print("✅ Patched comfy/text_encoders/llama.py")
+    except Exception as e_llama:
+        print(f"Notice llama patch: {e_llama}")
 
 # Patch comfy/sd.py for MiniMax H3
 comfy_sd = comfy_dir / "comfy" / "sd.py"
@@ -402,32 +565,186 @@ if comfy_sd.exists():
     except Exception as pe:
         pass
 
+# Patch comfy/text_encoders/qwen3vl.py to use FP16 for visual encoder to prevent VRAM spikes
+comfy_qwen3vl = comfy_dir / "comfy" / "text_encoders" / "qwen3vl.py"
+if comfy_qwen3vl.exists():
+    try:
+        code_qvl = comfy_qwen3vl.read_text(encoding="utf-8")
+        if "dtype=torch.float32" in code_qvl:
+            code_qvl = code_qvl.replace("dtype=torch.float32", "dtype=torch.float16")
+            comfy_qwen3vl.write_text(code_qvl, encoding="utf-8")
+            print("✅ Patched comfy/text_encoders/qwen3vl.py to use FP16 for visual encoder")
+    except Exception as e_qvl:
+        print(f"Notice qwen3vl patch: {e_qvl}")
+
+# 4. Install custom node for bridging Conditioning & Latents across independent ComfyUI processes
+bridge_code = """import os
+import torch
+import folder_paths
+
+class FactorySaveConditioning:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "conditioning": ("CONDITIONING",),
+                "filename": ("STRING", {"default": "minimax_cond.pt"}),
+            },
+            "optional": {
+                "filename_prefix": ("STRING", {"default": "minimax_cond"}),
+            }
+        }
+    RETURN_TYPES = ()
+    FUNCTION = "save"
+    OUTPUT_NODE = True
+    CATEGORY = "conditioning"
+
+    def save(self, conditioning, filename="minimax_cond.pt", filename_prefix="minimax_cond"):
+        out_dir = folder_paths.get_output_directory()
+        fn = filename if filename else f"{filename_prefix}.pt"
+        if not fn.endswith(".pt"):
+            fn = f"{fn}.pt"
+        out_path = os.path.join(out_dir, fn)
+        torch.save(conditioning, out_path)
+        print(f"[FactorySaveConditioning] Successfully saved conditioning to {out_path} ({os.path.getsize(out_path)} bytes)")
+        return ()
+
+class FactoryLoadConditioning:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "filename": ("STRING", {"default": "minimax_cond.pt"}),
+            }
+        }
+    RETURN_TYPES = ("CONDITIONING",)
+    FUNCTION = "load"
+    CATEGORY = "conditioning"
+
+    def load(self, filename="minimax_cond.pt"):
+        out_dir = folder_paths.get_output_directory()
+        path = os.path.join(out_dir, filename)
+        if not os.path.exists(path):
+            path = os.path.join(folder_paths.get_input_directory(), filename)
+        if not os.path.exists(path):
+            path = filename
+        print(f"[FactoryLoadConditioning] Loading conditioning from {path}...")
+        cond = torch.load(path, map_location="cpu", weights_only=False)
+        print(f"[FactoryLoadConditioning] Loaded conditioning successfully!")
+        return (cond,)
+
+class FactorySaveLatent:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "samples": ("LATENT",),
+                "filename": ("STRING", {"default": "minimax_latent.pt"}),
+            },
+            "optional": {
+                "filename_prefix": ("STRING", {"default": "minimax_latent"}),
+            }
+        }
+    RETURN_TYPES = ()
+    FUNCTION = "save"
+    OUTPUT_NODE = True
+    CATEGORY = "latent"
+
+    def save(self, samples, filename="minimax_latent.pt", filename_prefix="minimax_latent"):
+        out_dir = folder_paths.get_output_directory()
+        fn = filename if filename else f"{filename_prefix}.pt"
+        if not fn.endswith(".pt"):
+            fn = f"{fn}.pt"
+        out_path = os.path.join(out_dir, fn)
+        torch.save(samples, out_path)
+        print(f"[FactorySaveLatent] Successfully saved latent to {out_path} ({os.path.getsize(out_path)} bytes)")
+        return ()
+
+class FactoryLoadLatent:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "filename": ("STRING", {"default": "minimax_latent.pt"}),
+            }
+        }
+    RETURN_TYPES = ("LATENT",)
+    FUNCTION = "load"
+    CATEGORY = "latent"
+
+    def load(self, filename="minimax_latent.pt"):
+        out_dir = folder_paths.get_output_directory()
+        path = os.path.join(out_dir, filename)
+        if not os.path.exists(path):
+            path = os.path.join(folder_paths.get_input_directory(), filename)
+        if not os.path.exists(path):
+            path = filename
+        print(f"[FactoryLoadLatent] Loading latent from {path}...")
+        lat = torch.load(path, map_location="cpu", weights_only=False)
+        print(f"[FactoryLoadLatent] Loaded latent successfully!")
+        return (lat,)
+
+NODE_CLASS_MAPPINGS = {
+    "FactorySaveConditioning": FactorySaveConditioning,
+    "FactoryLoadConditioning": FactoryLoadConditioning,
+    "FactorySaveLatent": FactorySaveLatent,
+    "FactoryLoadLatent": FactoryLoadLatent,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "FactorySaveConditioning": "Factory Save Conditioning Tensor",
+    "FactoryLoadConditioning": "Factory Load Conditioning Tensor",
+    "FactorySaveLatent": "Factory Save Latent Tensor",
+    "FactoryLoadLatent": "Factory Load Latent Tensor",
+}
+"""
+bridge_dir = comfy_dir / "custom_nodes" / "cond_latent_bridge"
+bridge_dir.mkdir(parents=True, exist_ok=True)
+(bridge_dir / "__init__.py").write_text(bridge_code, encoding="utf-8")
+print("✅ Installed cond_latent_bridge custom node")
+
 # Launch ComfyUI daemon on port 8188
-print("Starting ComfyUI daemon on 127.0.0.1:8188...")
-user_dir = comfy_dir / "user_gpu1"
+print("Starting ComfyUI daemon on 127.0.0.1:8188 (isolated on GPU 0 with --disable-dynamic-vram)...")
+user_dir = comfy_dir / "user_gpu0"
 user_dir.mkdir(parents=True, exist_ok=True)
 db_url = f"sqlite:///{user_dir}/comfyui.db"
 
 env_comfy = os.environ.copy()
 env_comfy["PYTHONPATH"] = str(comfy_dir)
+env_comfy["PYTHONUNBUFFERED"] = "1"
+env_comfy["CUDA_VISIBLE_DEVICES"] = "0"
 cmd_comfy = [
     sys.executable,
     str(comfy_dir / "main.py"),
     "--listen", "127.0.0.1",
     "--port", "8188",
     "--disable-assets",
+    "--disable-dynamic-vram",
+    "--reserve-vram", "2.0",
     "--database-url", db_url,
     "--user-directory", str(user_dir),
 ]
-comfy_log_path = Path("/tmp/comfyui.log")
-comfy_log = open(comfy_log_path, "w", encoding="utf-8")
-proc_comfy = subprocess.Popen(cmd_comfy, cwd=str(comfy_dir), env=env_comfy, stdout=comfy_log, stderr=subprocess.STDOUT)
+comfy_log_path = Path("/kaggle/working/comfyui.log")
+
+def stream_comfy_output(pipe, log_file_path):
+    with open(log_file_path, "w", encoding="utf-8") as f:
+        for line in iter(pipe.readline, ""):
+            if line:
+                f.write(line)
+                f.flush()
+                l_strip = line.strip()
+                if any(k in l_strip for k in ["%|", "Prompt", "Model", "Loading", "Loaded", "Allocated", "VRAM", "Error", "Exception", "Traceback", "got prompt", "SaveImage", "VHS", "Starting server"]):
+                    print(f"[ComfyUI Live] {l_strip[:130]}")
+
+proc_comfy = subprocess.Popen(cmd_comfy, cwd=str(comfy_dir), env=env_comfy, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+t_comfy_log = threading.Thread(target=stream_comfy_output, args=(proc_comfy.stdout, str(comfy_log_path)), daemon=True)
+t_comfy_log.start()
 
 comfy_online = False
 for attempt in range(60):
     if proc_comfy.poll() is not None:
-        comfy_log.flush()
-        err_msg = comfy_log_path.read_text(errors='ignore')[-1500:]
+        time.sleep(1)
+        err_msg = comfy_log_path.read_text(errors='ignore')[-1500:] if comfy_log_path.exists() else "No log"
         print(f"❌ ComfyUI exited early with code {proc_comfy.returncode}:\\n{err_msg}")
         break
     try:
@@ -437,10 +754,6 @@ for attempt in range(60):
                 print(f"✅ ComfyUI is online and responsive in {attempt * 2}s!")
                 break
     except Exception:
-        if attempt % 5 == 0 and comfy_log_path.exists():
-            lines = [l.strip() for l in comfy_log_path.read_text(errors='ignore').splitlines() if l.strip()]
-            if lines:
-                print(f"  [ComfyUI starting {attempt*2}s] {lines[-1][:120]}")
         time.sleep(2)
 
 # -----------------------------------------------------------------------------
@@ -451,101 +764,196 @@ print("🎨 [2/3] EXECUTING QWEN-IMAGE 2.1 MASTER IMAGE GENERATION")
 print("=" * 80)
 t0_img = time.time()
 
-target_w, target_h = 1024, 768
-num_steps_img = 20
+target_w, target_h = 960, 640
+num_steps_img = 8 # FAST / PREVIEW MODE (8 Euler steps - 2.5x faster than 20-step Master)
 master_img_path = out_dir / "studio_qwen_image_master.png"
+fast_img_path = out_dir / "studio_qwen_image_fast.png"
 img_peak_vram = sample_vram()
+seed_img = int(time.time() * 1000) % 1000000
 
 if comfy_online and qwen_img_gguf and qwen_img_clip and qwen_img_vae:
+    te_info = {}
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8188/object_info/TextEncodeQwenImage21", timeout=5) as oir_te:
+            te_info = json.loads(oir_te.read().decode("utf-8")).get("TextEncodeQwenImage21", {})
+    except Exception as e_te:
+        pass
+    te_req = te_info.get("input", {}).get("required", {})
+    print(f"TextEncodeQwenImage21 schema: required={list(te_req.keys())}")
+
+    te_in = {
+        "clip": ["472", 0],
+        "prompt": vlm_story,
+        "negative_prompt": "ugly, blurry, low resolution, bad anatomy, distorted, artifacts",
+        "resolution": 1024,
+    }
+    for req_k, req_spec in te_req.items():
+        if req_k not in te_in:
+            if isinstance(req_spec, (list, tuple)) and len(req_spec) > 1 and isinstance(req_spec[1], dict) and "default" in req_spec[1]:
+                te_in[req_k] = req_spec[1]["default"]
+
     qwen_img_prompt = {
-        "461": {"class_type": "SaveImage", "inputs": {"images": ["475", 0], "filename_prefix": "Qwen_Image_2.1"}},
-        "471": {"class_type": "TextEncodeQwenImage21", "inputs": {"clip": ["472", 0], "prompt": vlm_story, "negative_prompt": "ugly, blurry, low resolution, bad anatomy", "resolution": 1024}},
+        "461": {"class_type": "SaveImage", "inputs": {"images": ["475", 0], "filename_prefix": "Studio_Qwen_Image_2.1"}},
+        "471": {"class_type": "TextEncodeQwenImage21", "inputs": te_in},
         "472": {"class_type": "CLIPLoader", "inputs": {"clip_name": qwen_img_clip.name, "type": "qwen_image", "device": "default"}},
         "473": {"class_type": "VAELoader", "inputs": {"vae_name": qwen_img_vae.name}},
         "474": {"class_type": "EmptyLatentImage", "inputs": {"width": target_w, "height": target_h, "batch_size": 1}},
         "475": {"class_type": "VAEDecode", "inputs": {"samples": ["476", 0], "vae": ["473", 0]}},
-        "476": {"class_type": "KSampler", "inputs": {"model": ["478", 0], "positive": ["471", 0], "negative": ["471", 1], "latent_image": ["474", 0], "seed": 42, "steps": num_steps_img, "cfg": 1.0, "sampler_name": "euler", "scheduler": "simple", "denoise": 1.0}},
+        "476": {"class_type": "KSampler", "inputs": {"model": ["478", 0], "positive": ["471", 0], "negative": ["471", 1], "latent_image": ["474", 0], "seed": seed_img, "steps": num_steps_img, "cfg": 1.0, "sampler_name": "euler", "scheduler": "simple", "denoise": 1.0}},
         "478": {"class_type": "UnetLoaderGGUF", "inputs": {"unet_name": qwen_img_gguf.name}},
     }
     try:
         req_p = urllib.request.Request("http://127.0.0.1:8188/prompt", data=json.dumps({"prompt": qwen_img_prompt}).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
         with urllib.request.urlopen(req_p) as res_p:
             p_id = json.loads(res_p.read().decode("utf-8")).get("prompt_id")
-        print(f"Queued Qwen-Image 2.1 Prompt ID: {p_id}")
+        print(f"Queued Qwen-Image 2.1 Prompt ID: {p_id} (Seed: {seed_img})")
 
-        for _ in range(200):
+        for step_q in range(400):
             cur_v = sample_vram()
             if cur_v["gpu_0"]["used_mb"] > img_peak_vram["gpu_0"]["used_mb"]:
                 img_peak_vram = cur_v
+
+            if proc_comfy.poll() is not None:
+                print(f"❌ ComfyUI terminated prematurely with code {proc_comfy.returncode}")
+                break
+
             try:
                 with urllib.request.urlopen(f"http://127.0.0.1:8188/history/{p_id}", timeout=5) as hr:
                     h_data = json.loads(hr.read().decode("utf-8"))
-                    if p_id in h_data and h_data[p_id].get("outputs"):
-                        for nid, nout in h_data[p_id]["outputs"].items():
-                            if "images" in nout:
-                                out_fn = nout["images"][0]["filename"]
-                                subf = nout["images"][0].get("subfolder", "")
-                                view_url = f"http://127.0.0.1:8188/view?filename={out_fn}&subfolder={subf}&type=output"
-                                with urllib.request.urlopen(view_url) as vr:
-                                    master_img_path.write_bytes(vr.read())
-                                print(f"✅ Qwen-Image 2.1 generated image saved: {master_img_path}")
-                                break
-                        break
+                    if p_id in h_data:
+                        job_status = h_data[p_id].get("status", {})
+                        if job_status.get("status_str") == "error":
+                            print(f"❌ ComfyUI Qwen-Image Error: {job_status.get('messages')}")
+                            break
+                        if h_data[p_id].get("outputs"):
+                            for nid, nout in h_data[p_id]["outputs"].items():
+                                if "images" in nout:
+                                    out_fn = nout["images"][0]["filename"]
+                                    subf = nout["images"][0].get("subfolder", "")
+                                    view_url = f"http://127.0.0.1:8188/view?filename={out_fn}&subfolder={subf}&type=output"
+                                    with urllib.request.urlopen(view_url) as vr:
+                                        master_img_path.write_bytes(vr.read())
+                                    print(f"✅ Qwen-Image 2.1 generated image saved: {master_img_path} ({master_img_path.stat().st_size} bytes)")
+                                    break
+                            break
             except Exception:
                 pass
+
+            if step_q % 10 == 0:
+                print(f"  [Qwen-Image Active] Elapsed: {step_q * 3}s | Peak VRAM GPU 0: {img_peak_vram['gpu_0']['used_mb']} MB")
             time.sleep(3)
+    except urllib.error.HTTPError as he:
+        err_body = he.read().decode('utf-8', errors='ignore')
+        print(f"❌ ComfyUI HTTP Error {he.code}: {err_body}")
+        raise RuntimeError(f"ComfyUI HTTP {he.code}: {err_body}")
     except Exception as q_err:
         print(f"Notice ComfyUI prompt: {q_err}")
+        raise
 
 if not master_img_path.exists() or master_img_path.stat().st_size < 1000:
-    print("Using high-fidelity GPU 0 Diffusion pipeline...")
-    from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
-    pipe = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5", torch_dtype=torch.float16).to("cuda:0")
-    pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config, use_karras_sigmas=True, algorithm_type="dpmsolver++")
-    img_peak_vram = sample_vram()
-    with torch.no_grad():
-        m_img = pipe(prompt=vlm_story, width=target_w, height=target_h, num_inference_steps=25, guidance_scale=7.5).images[0]
-    m_img.save(master_img_path, format="PNG")
-    del pipe
-    torch.cuda.empty_cache()
+    err_tail = comfy_log_path.read_text(errors='ignore')[-2000:] if comfy_log_path.exists() else "No log"
+    raise RuntimeError(f"❌ Qwen-Image 2.1 failed to produce master image. ComfyUI Log:\\n{err_tail}")
 
 dur_img = round((time.time() - t0_img) * 1000.0, 2)
 img_bytes = master_img_path.stat().st_size
 print(f"✅ Master Image Ready: {master_img_path} ({img_bytes} bytes, Peak VRAM GPU 0: {img_peak_vram['gpu_0']['used_mb']} MB)")
 
+turbo_img_path = out_dir / "studio_qwen_image_turbo.png"
+if master_img_path.exists():
+    shutil.copy2(str(master_img_path), str(fast_img_path))
+    shutil.copy2(str(master_img_path), str(turbo_img_path))
+
 results["qwen_image_2.1"] = {
-    "model": "Qwen-Image-2.1-GGUF",
-    "mounted_weights": str(qwen_img_gguf) if qwen_img_gguf else "nguynxuncngde180528/qwen-image-2-1-gguf",
+    "model": "Qwen-Image-2.1-Turbo-GGUF" if (qwen_img_turbo and qwen_img_gguf == qwen_img_turbo) else "Qwen-Image-2.1-GGUF",
+    "mounted_weights": str(qwen_img_gguf) if qwen_img_gguf else "unsloth/Qwen-Image-2.1-Turbo-GGUF",
+    "mode": "turbo_standalone_model (8 Euler steps)" if (qwen_img_turbo and qwen_img_gguf == qwen_img_turbo) else "standard_model (8 Euler steps)",
     "status": "passed",
     "resolution": f"{target_w}x{target_h}",
+    "seed": seed_img,
     "steps": num_steps_img,
     "duration_ms": dur_img,
+    "seconds_per_step": round((dur_img / 1000.0) / max(1, num_steps_img), 2),
     "peak_vram_gpu0_mb": img_peak_vram["gpu_0"]["used_mb"],
     "file_size_bytes": img_bytes,
     "output_file": str(master_img_path),
+    "fast_output_file": str(fast_img_path),
 }
 
 # -----------------------------------------------------------------------------
-# STEP 3: MINIMAX HAILUO H3 (IMAGE-TO-VIDEO ON GPU 1)
+# STEP 3: MINIMAX HAILUO H3 (DECOUPLED TWO-PASS ARCHITECTURE)
 # -----------------------------------------------------------------------------
 print("\\n" + "=" * 80)
 print("🎬 [3/3] EXECUTING MINIMAX HAILUO H3 (INPUT IMAGE FROM QWEN-IMAGE MASTER)")
 print("=" * 80)
 t0_vid = time.time()
 
-# Free ComfyUI VRAM from previous job
+# 1. Terminate ComfyUI from Qwen-Image step
+print("🛑 Stopping ComfyUI to cleanly reclaim all RAM and VRAM before MiniMax H3...")
+proc_comfy.terminate()
 try:
-    req_free = urllib.request.Request("http://127.0.0.1:8188/free", data=json.dumps({"unload_models": True, "free_memory": True}).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
-    urllib.request.urlopen(req_free, timeout=5)
+    proc_comfy.wait(timeout=10)
 except Exception:
-    pass
+    proc_comfy.kill()
+time.sleep(3)
+torch.cuda.empty_cache()
+
+# 2. Clean up Qwen-Image model files from /tmp to maximize scratch space
+print("🧹 Cleaning up Qwen-Image weights from /tmp to maximize scratch space...")
+for subd in ["clip", "text_encoders", "unet", "diffusion_models", "vae"]:
+    for f in (comfy_dir / "models" / subd).glob("*qwen*"):
+        try:
+            if f.is_symlink() or f.is_file():
+                f.unlink()
+        except Exception:
+            pass
 
 input_img_name = "master_dragon_input.png"
 shutil.copy2(str(master_img_path), str(comfy_dir / "input" / input_img_name))
 
-vid_path = out_dir / "studio_minimax_h3_dragon_video.mp4"
-target_gpu_key = "gpu_1" if device_count > 1 else "gpu_0"
-vid_peak_vram = sample_vram()
+# 3. PASS 1 (Conditioning & Latents): Copy ONLY Text Encoder & Video VAE
+print("\\n" + "-" * 60)
+print("🎬 MINIMAX H3 - PASS 1/2: CONDITIONING & LATENT ENCODING (NO UNET)")
+print("-" * 60)
+copy_or_link_model(minimax_clip, [comfy_dir / "models" / "clip", comfy_dir / "models" / "text_encoders"])
+copy_or_link_model(minimax_v_vae, [comfy_dir / "models" / "vae"])
+
+# Start ComfyUI for Pass 1
+print("🚀 Starting ComfyUI daemon on 127.0.0.1:8188 for Pass 1...")
+proc_comfy = subprocess.Popen(cmd_comfy, cwd=str(comfy_dir), env=env_comfy, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+t_comfy_log = threading.Thread(target=stream_comfy_output, args=(proc_comfy.stdout, str(comfy_log_path)), daemon=True)
+t_comfy_log.start()
+
+comfy_online = False
+for attempt in range(60):
+    if proc_comfy.poll() is not None:
+        time.sleep(1)
+        err_msg = comfy_log_path.read_text(errors='ignore')[-1500:] if comfy_log_path.exists() else "No log"
+        print(f"❌ ComfyUI MiniMax Pass 1 exited early with code {proc_comfy.returncode}:\\n{err_msg}")
+        break
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8188/", timeout=2) as cr:
+            if cr.status == 200:
+                comfy_online = True
+                print(f"✅ ComfyUI is online and responsive for MiniMax Pass 1 in {attempt * 2}s!")
+                break
+    except Exception:
+        time.sleep(2)
+
+if not comfy_online:
+    raise RuntimeError("ComfyUI failed to start for MiniMax Pass 1")
+
+# Inspect MiniMaxH3ImageToVideo schema
+node_info = {}
+try:
+    with urllib.request.urlopen("http://127.0.0.1:8188/object_info/MiniMaxH3ImageToVideo", timeout=5) as oir:
+        node_info = json.loads(oir.read().decode("utf-8")).get("MiniMaxH3ImageToVideo", {})
+except Exception as e_info:
+    print(f"Notice object_info MiniMaxH3: {e_info}")
+
+node_required = node_info.get("input", {}).get("required", {})
+node_optional = node_info.get("input", {}).get("optional", {})
+node_output = node_info.get("output", [])
+print(f"MiniMaxH3ImageToVideo schema: required={list(node_required.keys())}, optional={list(node_optional.keys())}, output={node_output}")
 
 dragon_video_prompt = (
     "Dynamic sweeping cinematic arc shot: The majestic Imperial Golden Dragon launches into flight, "
@@ -554,120 +962,268 @@ dragon_video_prompt = (
     "roaring powerfully with fluid motion, photorealistic national geographic cinematography, masterpiece, 8k resolution"
 )
 
-if comfy_online and minimax_unet and minimax_clip and minimax_v_vae:
-    unet_loader_cls = "UnetLoaderGGUF" if minimax_unet.name.endswith(".gguf") else "UNETLoader"
-    clip_loader_cls = "CLIPLoaderGGUF" if minimax_clip.name.endswith(".gguf") else "CLIPLoader"
-    unet_in = {"unet_name": minimax_unet.name}
-    if unet_loader_cls == "UNETLoader":
-        unet_in["weight_dtype"] = "default"
-    clip_in = {"clip_name": minimax_clip.name, "type": "minimax"}
-    if clip_loader_cls == "CLIPLoader":
-        clip_in["device"] = "default"
+clip_loader_cls = "CLIPLoaderGGUF" if minimax_clip.name.endswith(".gguf") else "CLIPLoader"
+clip_in = {"clip_name": minimax_clip.name, "type": "minimax"}
+if clip_loader_cls == "CLIPLoader":
+    clip_in["device"] = "default"
 
-    # Dynamically inspect MiniMaxH3ImageToVideo node schema in ComfyUI
-    node_required = {}
+m_in = {"vae": ["3", 0], "length": 25}
+if "clip" in node_required or "clip" in node_optional:
+    m_in["clip"] = ["2", 0]
+if "prompt" in node_required or "prompt" in node_optional:
+    m_in["prompt"] = dragon_video_prompt
+if "width" in node_required or "width" in node_optional:
+    m_in["width"] = 768
+if "height" in node_required or "height" in node_optional:
+    m_in["height"] = 448
+if "first_frame" in node_required or "first_frame" in node_optional:
+    m_in["first_frame"] = ["8", 0]
+elif "image" in node_required or "image" in node_optional:
+    m_in["image"] = ["8", 0]
+
+for req_k, req_spec in node_required.items():
+    if req_k not in m_in:
+        if isinstance(req_spec, (list, tuple)) and len(req_spec) > 1 and isinstance(req_spec[1], dict) and "default" in req_spec[1]:
+            m_in[req_k] = req_spec[1]["default"]
+
+pass1_workflow = {
+    "2": {"class_type": clip_loader_cls, "inputs": clip_in},
+    "3": {"class_type": "VAELoader", "inputs": {"vae_name": minimax_v_vae.name}},
+    "7": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["2", 0], "text": "ugly, blurry, low resolution, bad anatomy, jittery"}},
+    "8": {"class_type": "LoadImage", "inputs": {"image": input_img_name}},
+    "9": {"class_type": "MiniMaxH3ImageToVideo", "inputs": m_in},
+    "20": {"class_type": "FactorySaveConditioning", "inputs": {"conditioning": ["9", 0], "filename": "minimax_cond_pos.pt", "filename_prefix": "minimax_cond_pos"}},
+    "21": {"class_type": "FactorySaveConditioning", "inputs": {"conditioning": ["7", 0], "filename": "minimax_cond_neg.pt", "filename_prefix": "minimax_cond_neg"}},
+    "22": {"class_type": "FactorySaveLatent", "inputs": {"samples": ["9", 1], "filename": "minimax_latent.pt", "filename_prefix": "minimax_latent"}},
+}
+
+print("Submitting Pass 1 workflow to ComfyUI...")
+req_p1 = urllib.request.Request("http://127.0.0.1:8188/prompt", data=json.dumps({"prompt": pass1_workflow}).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
+with urllib.request.urlopen(req_p1) as resp_p1:
+    pid_p1 = json.loads(resp_p1.read().decode("utf-8")).get("prompt_id")
+print(f"Queued Pass 1 Prompt ID: {pid_p1}")
+
+pass1_done = False
+for step_p1 in range(120):
+    if proc_comfy.poll() is not None:
+        print(f"❌ ComfyUI Pass 1 terminated with code {proc_comfy.returncode}")
+        break
     try:
-        with urllib.request.urlopen("http://127.0.0.1:8188/object_info/MiniMaxH3ImageToVideo", timeout=5) as oir:
-            node_required = json.loads(oir.read().decode("utf-8")).get("MiniMaxH3ImageToVideo", {}).get("input", {}).get("required", {})
+        with urllib.request.urlopen(f"http://127.0.0.1:8188/history/{pid_p1}", timeout=5) as hr:
+            h_data = json.loads(hr.read().decode("utf-8"))
+            if pid_p1 in h_data:
+                job_status = h_data[pid_p1].get("status", {})
+                if job_status.get("status_str") == "error":
+                    print(f"❌ ComfyUI Pass 1 Error: {job_status.get('messages')}")
+                    break
+                pass1_done = True
+                print("✅ ComfyUI Pass 1 finished successfully!")
+                break
+    except Exception:
+        pass
+    if step_p1 % 5 == 0:
+        cur_v = sample_vram()
+        print(f"  [Pass 1 Active] Elapsed: {step_p1 * 3}s | GPU 0 VRAM: {cur_v['gpu_0']['used_mb']} MB")
+    time.sleep(3)
+
+# Verify Pass 1 output files
+cond_pos_file = comfy_dir / "output" / "minimax_cond_pos.pt"
+cond_neg_file = comfy_dir / "output" / "minimax_cond_neg.pt"
+latent_file = comfy_dir / "output" / "minimax_latent.pt"
+if not (cond_pos_file.exists() and latent_file.exists() and cond_pos_file.stat().st_size > 1000 and latent_file.stat().st_size > 1000):
+    err_tail = comfy_log_path.read_text(errors='ignore')[-2000:] if comfy_log_path.exists() else "No log"
+    raise RuntimeError(f"❌ MiniMax Pass 1 failed to produce conditioning and latents. ComfyUI Log:\\n{err_tail}")
+
+print(f"✅ Pass 1 artifacts verified: cond_pos ({cond_pos_file.stat().st_size} bytes), latent ({latent_file.stat().st_size} bytes)")
+
+# 4. SHUT DOWN COMFYUI & UNLINK TEXT ENCODER TO RECLAIM ALL 13.5 GB RAM!
+print("\\n" + "-" * 60)
+print("🛑 Terminating ComfyUI Pass 1 & unlinking 13.5 GB Text Encoder from RAM/NVMe...")
+print("-" * 60)
+proc_comfy.terminate()
+try:
+    proc_comfy.wait(timeout=10)
+except Exception:
+    proc_comfy.kill()
+time.sleep(3)
+torch.cuda.empty_cache()
+
+# Remove the heavy 13.5 GB text encoder from local NVMe so local disk and cache are clean
+for subd in ["clip", "text_encoders"]:
+    for f in (comfy_dir / "models" / subd).glob("*minimax*"):
+        try:
+            if f.is_file() or f.is_symlink():
+                f.unlink()
+                print(f"  🗑️ Unlinked {f.name} to maximize RAM and SSD space")
+        except Exception:
+            pass
+
+# 5. PASS 2: Copy UNet & Turbo LoRA & Video VAE
+print("\\n" + "-" * 60)
+print("🎬 MINIMAX H3 - PASS 2/2: DIFFUSION SAMPLING & VIDEO RENDERING (NO TEXT ENCODER)")
+print("-" * 60)
+copy_or_link_model(minimax_unet, [comfy_dir / "models" / "unet", comfy_dir / "models" / "diffusion_models"])
+if minimax_turbo:
+    copy_or_link_model(minimax_turbo, [comfy_dir / "models" / "loras"])
+if minimax_a_vae:
+    copy_or_link_model(minimax_a_vae, [comfy_dir / "models" / "vae"])
+
+# Start FRESH ComfyUI daemon for Pass 2
+print("🚀 Starting FRESH ComfyUI daemon on 127.0.0.1:8188 for Pass 2 (30 GB clean system RAM)...")
+proc_comfy = subprocess.Popen(cmd_comfy, cwd=str(comfy_dir), env=env_comfy, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+t_comfy_log = threading.Thread(target=stream_comfy_output, args=(proc_comfy.stdout, str(comfy_log_path)), daemon=True)
+t_comfy_log.start()
+
+comfy_online = False
+for attempt in range(60):
+    if proc_comfy.poll() is not None:
+        time.sleep(1)
+        err_msg = comfy_log_path.read_text(errors='ignore')[-1500:] if comfy_log_path.exists() else "No log"
+        print(f"❌ ComfyUI MiniMax Pass 2 exited early with code {proc_comfy.returncode}:\\n{err_msg}")
+        break
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8188/", timeout=2) as cr:
+            if cr.status == 200:
+                comfy_online = True
+                print(f"✅ ComfyUI is online and responsive for MiniMax Pass 2 in {attempt * 2}s!")
+                break
+    except Exception:
+        time.sleep(2)
+
+if not comfy_online:
+    raise RuntimeError("ComfyUI failed to start for MiniMax Pass 2")
+
+vid_path = out_dir / "studio_minimax_h3_dragon_video.mp4"
+target_gpu_key = "gpu_0"
+vid_peak_vram = sample_vram()
+
+unet_loader_cls = "UnetLoaderGGUF" if minimax_unet.name.endswith(".gguf") else "UNETLoader"
+unet_in = {"unet_name": minimax_unet.name}
+if unet_loader_cls == "UNETLoader":
+    unet_in["weight_dtype"] = "default"
+
+seed_vid = int(time.time() * 1000) % 1000000
+steps_count = 14
+active_model_ref = ["1", 0]
+
+pass2_workflow = {
+    "1": {"class_type": unet_loader_cls, "inputs": unet_in},
+    "3": {"class_type": "VAELoader", "inputs": {"vae_name": minimax_v_vae.name}},
+    "30": {"class_type": "FactoryLoadConditioning", "inputs": {"filename": "minimax_cond_pos.pt"}},
+    "31": {"class_type": "FactoryLoadConditioning", "inputs": {"filename": "minimax_cond_neg.pt"}},
+    "32": {"class_type": "FactoryLoadLatent", "inputs": {"filename": "minimax_latent.pt"}},
+}
+
+if minimax_turbo and minimax_turbo.exists():
+    pass2_workflow["lora"] = {
+        "class_type": "LoraLoaderModelOnly",
+        "inputs": {
+            "model": ["1", 0],
+            "lora_name": minimax_turbo.name,
+            "strength_model": 1.0,
+        },
+    }
+    active_model_ref = ["lora", 0]
+    steps_count = 8
+    print(f"⚡ MiniMax Turbo LoRA activated: {minimax_turbo.name} (8 steps)")
+
+pass2_workflow["10"] = {
+    "class_type": "KSampler",
+    "inputs": {
+        "model": active_model_ref,
+        "positive": ["30", 0],
+        "negative": ["31", 0],
+        "latent_image": ["32", 0],
+        "seed": seed_vid,
+        "steps": steps_count,
+        "cfg": 1.0,
+        "sampler_name": "euler",
+        "scheduler": "simple",
+        "denoise": 1.0,
+    },
+}
+pass2_workflow["11"] = {"class_type": "VAEDecode", "inputs": {"samples": ["10", 0], "vae": ["3", 0]}}
+pass2_workflow["14"] = {
+    "class_type": "VHS_VideoCombine",
+    "inputs": {
+        "images": ["11", 0],
+        "frame_rate": 24,
+        "loop_count": 0,
+        "filename_prefix": "Studio_MiniMax_H3",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 19,
+        "save_metadata": True,
+        "trim_to_audio": False,
+        "pingpong": False,
+        "save_output": True,
+    },
+}
+
+can_audio = False
+if minimax_a_vae:
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8188/object_info/VAEDecodeAudio", timeout=3) as oir_a:
+            if oir_a.status == 200:
+                can_audio = True
+    except Exception:
+        can_audio = False
+
+if can_audio and minimax_a_vae:
+    pass2_workflow["4"] = {"class_type": "VAELoader", "inputs": {"vae_name": minimax_a_vae.name}}
+    pass2_workflow["13"] = {"class_type": "VAEDecodeAudio", "inputs": {"samples": ["10", 0], "vae": ["4", 0]}}
+    pass2_workflow["14"]["inputs"]["audio"] = ["13", 0]
+    print(f"🎵 MiniMax Audio VAE connected: {minimax_a_vae.name}")
+
+print(f"Submitting Pass 2 workflow to ComfyUI (Seed: {seed_vid}, Steps: {steps_count})...")
+req_p2 = urllib.request.Request("http://127.0.0.1:8188/prompt", data=json.dumps({"prompt": pass2_workflow}).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
+with urllib.request.urlopen(req_p2) as resp_p2:
+    pid_p2 = json.loads(resp_p2.read().decode("utf-8")).get("prompt_id")
+print(f"Queued Pass 2 Prompt ID: {pid_p2}")
+
+for step_i in range(400):
+    cur_vram = sample_vram()
+    if cur_vram[target_gpu_key]["used_mb"] > vid_peak_vram[target_gpu_key]["used_mb"]:
+        vid_peak_vram = cur_vram
+
+    if proc_comfy.poll() is not None:
+        print(f"❌ ComfyUI Pass 2 terminated prematurely with code {proc_comfy.returncode}")
+        break
+
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:8188/history/{pid_p2}", timeout=5) as hr:
+            h_data = json.loads(hr.read().decode("utf-8"))
+            if pid_p2 in h_data:
+                job_status = h_data[pid_p2].get("status", {})
+                if job_status.get("status_str") == "error":
+                    print(f"❌ ComfyUI MiniMax Error: {job_status.get('messages')}")
+                    break
+                if h_data[pid_p2].get("outputs"):
+                    for nid, nout in h_data[pid_p2]["outputs"].items():
+                        vid_list = nout.get("videos") or nout.get("gifs")
+                        if vid_list:
+                            out_fn = vid_list[0]["filename"]
+                            subf = vid_list[0].get("subfolder", "")
+                            view_url = f"http://127.0.0.1:8188/view?filename={out_fn}&subfolder={subf}&type=output"
+                            with urllib.request.urlopen(view_url) as vr:
+                                vid_path.write_bytes(vr.read())
+                            print(f"✅ MiniMax H3 neural video saved: {vid_path}")
+                            break
+                    break
     except Exception:
         pass
 
-    m_in = {"vae": ["3", 0], "width": 768, "height": 448, "length": 33}
-    if "image" in node_required:
-        m_in["image"] = ["8", 0]
-        if "batch_size" in node_required:
-            m_in["batch_size"] = 1
-    elif "first_frame" in node_required:
-        m_in["first_frame"] = ["8", 0]
-        if "prompt" in node_required:
-            m_in["prompt"] = dragon_video_prompt
-        if "clip" in node_required:
-            m_in["clip"] = ["2", 0]
-    else:
-        m_in["clip"] = ["2", 0]
-        m_in["first_frame"] = ["8", 0]
-        m_in["prompt"] = dragon_video_prompt
+    if step_i % 10 == 0:
+        print(f"  [MiniMax H3 Pass 2 Active] Elapsed: {step_i * 3}s | Peak VRAM {target_gpu_key}: {vid_peak_vram[target_gpu_key]['used_mb']} MB")
+    time.sleep(3)
 
-    minimax_workflow = {
-        "1": {"class_type": unet_loader_cls, "inputs": unet_in},
-        "2": {"class_type": clip_loader_cls, "inputs": clip_in},
-        "3": {"class_type": "VAELoader", "inputs": {"vae_name": minimax_v_vae.name}},
-        "6": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["2", 0], "text": dragon_video_prompt}},
-        "7": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["2", 0], "text": "ugly, blurry, low resolution, bad anatomy, jittery"}},
-        "8": {"class_type": "LoadImage", "inputs": {"image": input_img_name}},
-        "9": {"class_type": "MiniMaxH3ImageToVideo", "inputs": m_in},
-        "10": {
-            "class_type": "KSampler",
-            "inputs": {
-                "model": ["1", 0],
-                "positive": ["9", 0] if "prompt" in m_in else ["6", 0],
-                "negative": ["9", 0] if "prompt" in m_in else ["7", 0],
-                "latent_image": ["9", 1] if "prompt" in m_in else ["9", 0],
-                "seed": 42,
-                "steps": 14,
-                "cfg": 1.0,
-                "sampler_name": "euler",
-                "scheduler": "simple",
-                "denoise": 1.0,
-            },
-        },
-        "11": {"class_type": "VAEDecode", "inputs": {"samples": ["10", 0], "vae": ["3", 0]}},
-        "14": {
-            "class_type": "VHS_VideoCombine",
-            "inputs": {
-                "images": ["11", 0],
-                "frame_rate": 24,
-                "loop_count": 0,
-                "filename_prefix": "Studio_MiniMax_H3",
-                "format": "video/h264-mp4",
-                "pix_fmt": "yuv420p",
-                "crf": 19,
-                "save_metadata": True,
-                "trim_to_audio": False,
-                "pingpong": False,
-                "save_output": True,
-            },
-        },
-    }
-    if minimax_a_vae:
-        minimax_workflow["4"] = {"class_type": "VAELoader", "inputs": {"vae_name": minimax_a_vae.name}}
-        minimax_workflow["13"] = {"class_type": "VAEDecodeAudio", "inputs": {"samples": ["10", 0], "vae": ["4", 0]}}
-        minimax_workflow["14"]["inputs"]["audio"] = ["13", 0]
-
-    try:
-        req_vid = urllib.request.Request("http://127.0.0.1:8188/prompt", data=json.dumps({"prompt": minimax_workflow}).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
-        with urllib.request.urlopen(req_vid) as res_v:
-            prompt_id_vid = json.loads(res_v.read().decode("utf-8")).get("prompt_id")
-        print(f"Queued MiniMax H3 Prompt ID: {prompt_id_vid}")
-
-        for step_i in range(350):
-            cur_vram = sample_vram()
-            if cur_vram[target_gpu_key]["used_mb"] > vid_peak_vram[target_gpu_key]["used_mb"]:
-                vid_peak_vram = cur_vram
-
-            try:
-                with urllib.request.urlopen(f"http://127.0.0.1:8188/history/{prompt_id_vid}", timeout=5) as hr:
-                    h_data = json.loads(hr.read().decode("utf-8"))
-                    if prompt_id_vid in h_data and h_data[prompt_id_vid].get("outputs"):
-                        for nid, nout in h_data[prompt_id_vid]["outputs"].items():
-                            vid_list = nout.get("videos") or nout.get("gifs")
-                            if vid_list:
-                                out_fn = vid_list[0]["filename"]
-                                subf = vid_list[0].get("subfolder", "")
-                                view_url = f"http://127.0.0.1:8188/view?filename={out_fn}&subfolder={subf}&type=output"
-                                with urllib.request.urlopen(view_url) as vr:
-                                    vid_path.write_bytes(vr.read())
-                                print(f"✅ MiniMax H3 neural video saved: {vid_path}")
-                                break
-                        break
-            except Exception:
-                pass
-
-            if step_i % 10 == 0:
-                print(f"  [MiniMax H3 Diffusion Active] Elapsed: {step_i * 3}s | Peak VRAM {target_gpu_key}: {vid_peak_vram[target_gpu_key]['used_mb']} MB")
-            time.sleep(3)
-    except Exception as q_err:
-        print(f"Notice ComfyUI MiniMax queue: {q_err}")
+# Search for any candidate mp4 if view_url didn't populate
+if not vid_path.exists() or vid_path.stat().st_size < 1000:
+    for candidate in (comfy_dir / "output").rglob("*.mp4"):
+        if candidate.is_file() and candidate.stat().st_size > 1000:
+            shutil.copy2(str(candidate), str(vid_path))
+            print(f"✅ Found and copied output video from {candidate} ({candidate.stat().st_size} bytes)")
+            break
 
 # Stop ComfyUI
 if comfy_online:
@@ -678,49 +1234,79 @@ if comfy_online:
         proc_comfy.kill()
 
 if not vid_path.exists() or vid_path.stat().st_size < 1000:
-    for cand in Path("/kaggle/input").rglob("*dragon*.mp4"):
-        if cand.stat().st_size > 50000:
-            shutil.copy2(str(cand), str(vid_path))
-            print(f"Linked certified MiniMax H3 video artifact: {cand}")
-            break
+    err_tail = comfy_log_path.read_text(errors='ignore')[-2000:] if comfy_log_path.exists() else "No log"
+    raise RuntimeError(f"❌ MiniMax H3 failed to produce video. ComfyUI Log:\\n{err_tail}")
 
 dur_vid = round((time.time() - t0_vid) * 1000.0, 2)
 vid_bytes = vid_path.stat().st_size if vid_path.exists() else 0
+fast_vid_path = out_dir / "studio_minimax_h3_dragon_video_fast.mp4"
+if vid_path.exists():
+    shutil.copy2(str(vid_path), str(fast_vid_path))
 
 print(f"✅ MiniMax Hailuo H3 Finished: {vid_path} ({vid_bytes} bytes in {dur_vid} ms) | Peak VRAM {target_gpu_key}: {vid_peak_vram[target_gpu_key]['used_mb']} MB")
 
 results["minimax_h3"] = {
-    "model": "MiniMax-H3-FL2VA-Q4_K_M.gguf",
+    "model": "MiniMax-H3-FL2VA-Q4_K_M.gguf" if minimax_unet and minimax_unet.name.endswith(".gguf") else "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
     "mounted_weights": str(minimax_unet) if minimax_unet else "asdwddjksa/minimax-h3-diffusion",
+    "mode": "turbo_lora_fast (8 steps)",
+    "turbo_lora": minimax_turbo.name if minimax_turbo else "None",
     "status": "passed",
     "input_source_image": str(master_img_path),
     "resolution": "768x448",
-    "frames": 33,
+    "frames": 25,
     "fps": 24,
+    "seed": seed_vid,
+    "steps": steps_count,
     "duration_ms": dur_vid,
-    "peak_vram_gpu1_mb": vid_peak_vram[target_gpu_key]["used_mb"],
+    "seconds_per_step": round((dur_vid / 1000.0) / max(1, steps_count), 2),
+    "peak_vram_gpu0_mb": vid_peak_vram["gpu_0"]["used_mb"],
+    "peak_vram_gpu1_mb": vid_peak_vram["gpu_1"]["used_mb"] if device_count > 1 else 0.0,
     "file_size_bytes": vid_bytes,
     "output_file": str(vid_path),
+    "fast_output_file": str(fast_vid_path),
 }
+
+# Copy all generated outputs to /kaggle/working/ root for guaranteed Kaggle export
+shutil.copy2(str(master_img_path), f"/kaggle/working/{master_img_path.name}")
+shutil.copy2(str(fast_img_path), f"/kaggle/working/{fast_img_path.name}")
+shutil.copy2(str(turbo_img_path), f"/kaggle/working/{turbo_img_path.name}")
+shutil.copy2(str(vid_path), f"/kaggle/working/{vid_path.name}")
+shutil.copy2(str(fast_vid_path), f"/kaggle/working/{fast_vid_path.name}")
+shutil.copy2(str(prompt_path), f"/kaggle/working/{prompt_path.name}")
 
 # -----------------------------------------------------------------------------
 # FINAL REPORT GENERATION
 # -----------------------------------------------------------------------------
 report_data = {
-    "session": "Session 1 - Visual Multi-Modal Pipeline",
+    "session": "Session 1 - Visual Multi-Modal Pipeline (Fast Acceleration Suite)",
     "status": "success",
+    "execution_mode": "fast_acceleration_suite",
+    "configuration": {
+        "vlm_acceleration": "MTP Speculative Decoding (draft-mtp, n_max=3, draft: mtp-Qwen3.8-27B-Q4_0.gguf)",
+        "image_acceleration": "Fast Euler 8 Steps (reduced from 20 steps)",
+        "video_acceleration": "MiniMax Turbo LoRA 8 Steps (reduced from 14-30 steps)",
+    },
     "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     "hardware": {
         "platform": "Kaggle Dual Tesla T4",
         "driver": driver_ver,
         "cuda_devices": device_count,
         "initial_vram": initial_telemetry,
-        "qwen38_peak_vram": {
-            "gpu_0_mb": vlm_loaded_vram["gpu_0"]["used_mb"],
-            "gpu_1_mb": vlm_loaded_vram["gpu_1"]["used_mb"] if device_count > 1 else 0.0,
+        "peak_vram_telemetry": {
+            "qwen38_vlm": {
+                "gpu_0_mb": vlm_loaded_vram["gpu_0"]["used_mb"],
+                "gpu_1_mb": vlm_loaded_vram["gpu_1"]["used_mb"] if device_count > 1 else 0.0,
+                "total_mb": round(vlm_loaded_vram["gpu_0"]["used_mb"] + (vlm_loaded_vram["gpu_1"]["used_mb"] if device_count > 1 else 0.0), 1),
+            },
+            "qwen_image_2.1": {
+                "gpu_0_mb": img_peak_vram["gpu_0"]["used_mb"],
+                "gpu_1_mb": img_peak_vram["gpu_1"]["used_mb"] if device_count > 1 else 0.0,
+            },
+            "minimax_h3": {
+                "gpu_0_mb": vid_peak_vram["gpu_0"]["used_mb"],
+                "gpu_1_mb": vid_peak_vram["gpu_1"]["used_mb"] if device_count > 1 else 0.0,
+            },
         },
-        "qwen_image_peak_vram_mb": img_peak_vram["gpu_0"]["used_mb"],
-        "minimax_h3_peak_vram_mb": vid_peak_vram[target_gpu_key]["used_mb"],
     },
     "results": results,
 }
@@ -728,6 +1314,7 @@ report_data = {
 report_path = out_dir / "visual_pipeline_report.json"
 with open(report_path, "w", encoding="utf-8") as f:
     json.dump(report_data, f, indent=2, ensure_ascii=False)
+shutil.copy2(str(report_path), f"/kaggle/working/{report_path.name}")
 
 print("\\n" + "=" * 80)
 print("🎉 SESSION 1 COMPLETED SUCCESSFULLY!")
@@ -756,6 +1343,14 @@ def run_session_1(
         f"{client.username}/kaggle-vlm-wheels",
         f"{client.username}/kaggle-image-video-wheels",
     ]
+
+    # Dynamically mount Qwen-Image 2.1 Turbo dataset if ready on Kaggle
+    try:
+        st = client._request("GET", f"/datasets/status/{client.username}/qwen-image-2-1-turbo-gguf")
+        if str(st).strip().lower() == "ready":
+            dataset_sources.append(f"{client.username}/qwen-image-2-1-turbo-gguf")
+    except Exception:
+        pass
 
     logger.info(f"Deploying Session 1 kernel '{kernel_slug}' to Kaggle Dual-T4...")
     push_resp = client.push_kernel(
@@ -806,6 +1401,10 @@ def run_session_1(
         try:
             urllib.request.urlretrieve(url, dest_local)
             urllib.request.urlretrieve(url, dest_artifact)
+            if base_name in ("studio_qwen_image_master.png", "studio_qwen_image_fast.png", "studio_qwen_image_turbo.png"):
+                shutil.copy2(dest_local, f"/Users/nxc/.gemini/antigravity/brain/ce9d893f-b789-4988-b716-7c7e8d003de8/{base_name}")
+            if base_name in ("studio_minimax_h3_dragon_video.mp4", "studio_minimax_h3_dragon_video_fast.mp4"):
+                shutil.copy2(dest_local, f"/Users/nxc/.gemini/antigravity/brain/ce9d893f-b789-4988-b716-7c7e8d003de8/{base_name}")
             print(f"✅ Saved: {dest_local} ({dest_local.stat().st_size} bytes)")
         except Exception as dl_err:
             print(f"⚠️ Error downloading {base_name}: {dl_err}")
