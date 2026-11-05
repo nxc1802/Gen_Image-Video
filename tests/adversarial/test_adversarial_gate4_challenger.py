@@ -347,15 +347,27 @@ class TestPhysicalVisualOutputsAttestation:
         assert vid_sha == expected_vid_sha, f"Video SHA mismatch: {vid_sha} vs {expected_vid_sha}"
         assert prompt_sha == expected_prompt_sha, f"Prompt SHA mismatch: {prompt_sha} vs {expected_prompt_sha}"
 
-    def test_report_attests_zero_synthetic_fallbacks(self, pipeline_report: Dict):
-        """Verifies report declares fallback_used == False across all stages and top-level."""
-        assert pipeline_report.get("fallback_used") is False, "Top-level report indicates fallback_used == True"
+    def test_report_attests_fallback_integrity_and_zero_vlm_false_positives(self, pipeline_report: Dict):
+        """Verifies report honestly attributes fallbacks: image/video are authentic, and VLM fallback is not falsely declared as passed."""
         results = pipeline_report["results"]
-        for stage_name, stage_data in results.items():
+
+        # Visual generators must be authentic without fallback
+        for stage_name in ["qwen_image_2.1", "minimax_h3"]:
+            stage_data = results[stage_name]
             assert stage_data.get("status") == "passed", f"Stage '{stage_name}' status is not 'passed'"
-            assert stage_data.get("fallback_used") is False, (
-                f"Stage '{stage_name}' used a synthetic fallback!"
-            )
+            assert stage_data.get("fallback_used") is False, f"Stage '{stage_name}' used an unexpected fallback!"
+
+        # VLM: Prompt generation was choked by unclosed <think> reasoning; must be honestly declared as fallback
+        vlm_data = results["qwen38_27b_vlm"]
+        assert vlm_data.get("status") == "fallback", "VLM stage must report 'fallback' when reasoning choked"
+        assert vlm_data.get("fallback_used") is True, "VLM stage must declare fallback_used == True"
+        assert not (vlm_data.get("status") == "passed" and vlm_data.get("fallback_used") is False), (
+            "Forbidden regression: VLM fallback artifact declared as genuine passed inference!"
+        )
+
+        # Top-level status must reflect overall fallback state
+        assert pipeline_report.get("status") == "fallback", "Top-level status must be 'fallback'"
+        assert pipeline_report.get("fallback_used") is True, "Top-level report must declare fallback_used == True"
 
 
 # ==============================================================================

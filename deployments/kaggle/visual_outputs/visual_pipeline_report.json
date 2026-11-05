@@ -1,7 +1,7 @@
 {
   "session": "Session 1 - Visual Multi-Modal Pipeline (Fast Acceleration Suite)",
-  "status": "success",
-  "fallback_used": false,
+  "status": "fallback",
+  "fallback_used": true,
   "execution_mode": "fast_acceleration_suite",
   "requested_configuration": {
     "vlm": {
@@ -130,8 +130,9 @@
       "mounted_path": "/kaggle/input/datasets/cuongnguyen1802/qwen38-27b-gguf/Qwen3.8-27B-Q4_K_M.gguf",
       "speculative_decoding": "MTP (Multi-Token Prediction, n=3)",
       "draft_model": "/tmp/hf_cache/mtp-Qwen3.8-27B-Q4_0.gguf",
-      "status": "passed",
-      "fallback_used": false,
+      "status": "fallback",
+      "fallback_used": true,
+      "error": "Qwen3.8-27B prompt generation choked by reasoning tokens (<think> unclosed within token budget). Demo fallback prompt applied.",
       "duration_ms": 334486.72,
       "decode_tokens_per_second": 6.64,
       "end_to_end_tokens_per_second": 2.8,

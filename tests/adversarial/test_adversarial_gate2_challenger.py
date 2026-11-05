@@ -14,6 +14,8 @@ Criteria challenged:
 from datetime import datetime, timedelta, timezone
 import json
 import os
+from pathlib import Path
+import shutil
 import subprocess
 import pytest
 from unittest.mock import MagicMock, patch
@@ -323,9 +325,12 @@ class TestP05StudioSyncAdversarialChallenger:
 
     def test_studio_web_typescript_compilation(self):
         """Empirically execute npx tsc --noEmit in studio-web and verify exit code 0."""
-        cwd = "/Volumes/WorkSpace/Factory/Gen_Image:Video/factory/apps/studio-web"
+        repo_root = Path(__file__).resolve().parent.parent.parent
+        studio_web_dir = repo_root / "factory" / "apps" / "studio-web"
+        if not (studio_web_dir / "node_modules").exists() or shutil.which("npx") is None:
+            pytest.skip("studio-web/node_modules not installed or npx unavailable; skipping in Python-only environment")
         cmd = ["npx", "tsc", "--noEmit"]
-        result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+        result = subprocess.run(cmd, cwd=str(studio_web_dir), capture_output=True, text=True)
         assert result.returncode == 0, f"TypeScript build failed:\n{result.stderr}\n{result.stdout}"
 
 

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-05T05:23:24Z",
+  "timestamp": "2026-11-05T09:14:01Z",
   "environment": "simulation-local",
   "execution_mode": "pre-flight-contract-simulation",
   "verification_pipeline": [
@@ -109,7 +109,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793856204.930803,
+            "timestamp": 1793870041.573023,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -123,7 +123,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793856204.930812,
+            "timestamp": 1793870041.57303,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -137,7 +137,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793856204.9308171,
+            "timestamp": 1793870041.573036,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -151,7 +151,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793856204.9316878,
+            "timestamp": 1793870041.57393,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -165,7 +165,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793856204.9317,
+            "timestamp": 1793870041.5739431,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -336,7 +336,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793856204.931814,
+            "timestamp": 1793870041.57407,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -350,7 +350,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793856204.9318159,
+            "timestamp": 1793870041.5740721,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -364,7 +364,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793856204.931819,
+            "timestamp": 1793870041.574075,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -378,7 +378,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793856204.932621,
+            "timestamp": 1793870041.574871,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -392,7 +392,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793856204.93263,
+            "timestamp": 1793870041.574881,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -563,7 +563,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793856204.932724,
+            "timestamp": 1793870041.574983,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -577,7 +577,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793856204.932725,
+            "timestamp": 1793870041.574985,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -591,7 +591,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793856204.932728,
+            "timestamp": 1793870041.5749881,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -605,7 +605,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793856204.933336,
+            "timestamp": 1793870041.5756319,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -619,7 +619,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793856204.9333692,
+            "timestamp": 1793870041.57564,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -790,7 +790,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793856204.933451,
+            "timestamp": 1793870041.575732,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -804,7 +804,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793856204.933453,
+            "timestamp": 1793870041.575733,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -818,7 +818,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793856204.933455,
+            "timestamp": 1793870041.575735,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -832,7 +832,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793856204.9341471,
+            "timestamp": 1793870041.576394,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -846,7 +846,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793856204.934154,
+            "timestamp": 1793870041.5763998,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -1017,7 +1017,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793856204.93423,
+            "timestamp": 1793870041.576501,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -1031,7 +1031,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793856204.934232,
+            "timestamp": 1793870041.576503,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -1045,7 +1045,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793856204.9342341,
+            "timestamp": 1793870041.5765052,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -1059,7 +1059,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793856204.935408,
+            "timestamp": 1793870041.577641,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -1073,7 +1073,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793856204.935415,
+            "timestamp": 1793870041.5776482,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -1244,7 +1244,7 @@
         "snapshots": [
           {
             "stage": "pre_load_idle",
-            "timestamp": 1793856204.9355001,
+            "timestamp": 1793870041.5777311,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -1258,7 +1258,7 @@
           },
           {
             "stage": "post_load",
-            "timestamp": 1793856204.935502,
+            "timestamp": 1793870041.577733,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -1272,7 +1272,7 @@
           },
           {
             "stage": "inference_peak",
-            "timestamp": 1793856204.935505,
+            "timestamp": 1793870041.577735,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -1286,7 +1286,7 @@
           },
           {
             "stage": "post_stress",
-            "timestamp": 1793856204.936221,
+            "timestamp": 1793870041.5784562,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
@@ -1300,7 +1300,7 @@
           },
           {
             "stage": "post_recovery_clean",
-            "timestamp": 1793856204.936228,
+            "timestamp": 1793870041.578463,
             "telemetry_status": "UNAVAILABLE",
             "source": "preflight_simulation",
             "live_vram_used_mb": null,
