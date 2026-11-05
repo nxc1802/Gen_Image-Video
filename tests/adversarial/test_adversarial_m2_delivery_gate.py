@@ -424,23 +424,17 @@ class TestVector2ConcurrencyAndRaceConditions:
 
         # Critical assertions:
         assert len(errors) == 0, f"Encountered 500 Internal Server Errors: {errors}"
-        assert all(c in (200, 404) for c in status_codes), f"Unexpected status codes: {set(status_codes)}"
-        assert 200 in status_codes, "At least one request should have received 200 OK"
+        assert all(c == 200 for c in status_codes), f"All concurrent downloads must succeed (200 OK), got: {set(status_codes)}"
+        assert len(status_codes) == num_requests
 
-        # Give background task up to 1 second to complete unlink
-        cleaned_up = False
-        for _ in range(10):
-            if not file_path.exists():
-                cleaned_up = True
-                break
-            time.sleep(0.1)
+        # P0.4: Artifact must be retained on disk through the retention window
+        assert file_path.exists(), f"Residual artifact file was prematurely unlinked: {file_path}"
+        assert job_dir.exists(), f"Residual job directory was prematurely removed: {job_dir}"
 
-        assert cleaned_up, f"Residual artifact file was not unlinked: {file_path}"
-        assert not job_dir.exists(), f"Residual job directory was not removed: {job_dir}"
-
-        # Subsequent GET after cleanup must return clean 404 UnifiedError
+        # Subsequent GET (retry) must also return HTTP 200 OK with identical content
         subsequent_resp = client.get(f"/v1/jobs/{job_id}/result", headers=auth_headers)
-        assert_sanitized_error(subsequent_resp, 404, "NOT_FOUND")
+        assert subsequent_resp.status_code == 200
+        assert subsequent_resp.content == artifact_bytes
 
     def test_multiple_jobs_concurrent_lifecycle_burst(self, client: TestClient, auth_headers: Dict[str, str]):
         """Submits 20 distinct jobs in burst, writes artifacts, and downloads concurrently."""
@@ -485,10 +479,9 @@ class TestVector2ConcurrencyAndRaceConditions:
             assert code == 200, f"Job {j_id} download failed with status {code}"
             assert content == f"DATA_{j_id}".encode("utf-8")
 
-        # 4. Verify all files cleaned up
-        time.sleep(0.5)
+        # 4. Verify all files retained on disk through retention window
         for j_id in job_ids:
-            assert not (Path(SCRATCH_DIR) / j_id).exists(), f"Job directory {j_id} not cleaned up."
+            assert (Path(SCRATCH_DIR) / j_id).exists(), f"Job directory {j_id} was prematurely cleaned up."
 
 
 # ==============================================================================
@@ -630,7 +623,7 @@ class TestVector3EdgeCaseStatesAndErrorMapping:
         )
 
         res = client.get(f"/v1/jobs/{job_id}/result", headers=auth_headers)
-        assert_sanitized_error(res, 404, "NOT_FOUND")
+        assert_sanitized_error(res, 404, "ARTIFACT_NOT_FOUND")
 
 
 # ==============================================================================

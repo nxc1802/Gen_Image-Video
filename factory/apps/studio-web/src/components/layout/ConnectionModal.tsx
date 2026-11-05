@@ -8,6 +8,7 @@ export function ConnectionModal() {
   const {
     gatewayUrl,
     apiKey,
+    persistApiKey,
     isConnectionModalOpen,
     setIsConnectionModalOpen,
     saveConnectionSettings,
@@ -15,6 +16,7 @@ export function ConnectionModal() {
 
   const [urlInput, setUrlInput] = useState(gatewayUrl);
   const [keyInput, setKeyInput] = useState(apiKey);
+  const [persistKeyInput, setPersistKeyInput] = useState(persistApiKey);
   const [feedback, setFeedback] = useState<{
     type: "info" | "success" | "error";
     message: string;
@@ -25,9 +27,10 @@ export function ConnectionModal() {
     if (isConnectionModalOpen) {
       setUrlInput(gatewayUrl);
       setKeyInput(apiKey);
+      setPersistKeyInput(persistApiKey);
       setFeedback(null);
     }
-  }, [isConnectionModalOpen, gatewayUrl, apiKey]);
+  }, [isConnectionModalOpen, gatewayUrl, apiKey, persistApiKey]);
 
   if (!isConnectionModalOpen) return null;
 
@@ -38,7 +41,7 @@ export function ConnectionModal() {
       message: "Saving settings and testing Bearer token connection...",
     });
     try {
-      await saveConnectionSettings(urlInput, keyInput);
+      await saveConnectionSettings(urlInput, keyInput, persistKeyInput);
       setFeedback({
         type: "success",
         message: "Connected to Factory v4 Control Plane successfully.",
@@ -111,6 +114,25 @@ export function ConnectionModal() {
               <ShieldCheck weight="bold" className="w-3.5 h-3.5 text-emerald-600" />
               <span>Mandatory Bearer token authentication enforced on 100% of routes.</span>
             </span>
+          </div>
+
+          <div className="pt-1">
+            <label className="flex items-start gap-2.5 p-2.5 rounded-[6px] border border-hairline bg-canvas hover:bg-subtle cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                checked={persistKeyInput}
+                onChange={(e) => setPersistKeyInput(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-hairline text-ink accent-ink focus:ring-ink cursor-pointer"
+              />
+              <div className="space-y-0.5">
+                <span className="block text-xs font-mono text-ink font-medium">
+                  Remember on this device
+                </span>
+                <span className="block text-[11px] text-ink-muted leading-relaxed">
+                  Default: session-scoped (cleared on tab close). Check only on trusted, private workstations to persist API key in browser storage.
+                </span>
+              </div>
+            </label>
           </div>
 
           {feedback && (

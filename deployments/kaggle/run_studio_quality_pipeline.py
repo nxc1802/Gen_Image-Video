@@ -466,8 +466,10 @@ def run_deployment(
     # Download all generated files locally
     out_dir = repo_root / "deployments" / "kaggle" / "studio_outputs"
     out_dir.mkdir(parents=True, exist_ok=True)
-    artifact_dir = Path("/Users/nxc/.gemini/antigravity/brain/ce9d893f-b789-4988-b716-7c7e8d003de8/studio_outputs")
-    artifact_dir.mkdir(parents=True, exist_ok=True)
+    extra_artifact_dir = os.environ.get("EXTRA_ARTIFACT_DIR")
+    artifact_dir = (Path(extra_artifact_dir) / "studio_outputs") if extra_artifact_dir else None
+    if artifact_dir:
+        artifact_dir.mkdir(parents=True, exist_ok=True)
 
     print("\n" + "=" * 80)
     print("📥 DOWNLOADING PHYSICAL STUDIO-QUALITY ARTIFACTS...")
@@ -477,11 +479,12 @@ def run_deployment(
         url = f.get("url")
         base_name = Path(file_name).name
         dest_local = out_dir / base_name
-        dest_artifact = artifact_dir / base_name
         print(f"Downloading {base_name} ({file_name})...")
         try:
             urllib.request.urlretrieve(url, dest_local)
-            urllib.request.urlretrieve(url, dest_artifact)
+            if artifact_dir:
+                dest_artifact = artifact_dir / base_name
+                shutil.copy2(dest_local, dest_artifact)
             print(f"✅ Saved: {dest_local} ({dest_local.stat().st_size} bytes)")
         except Exception as dl_err:
             print(f"⚠️ Error downloading {base_name}: {dl_err}")

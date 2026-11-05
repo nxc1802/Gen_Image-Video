@@ -21,6 +21,7 @@ class ErrorCode(str, Enum):
     INVALID_MEDIA_TYPE = "INVALID_MEDIA_TYPE"
     # 404 Not Found
     NOT_FOUND = "NOT_FOUND"
+    ARTIFACT_NOT_FOUND = "ARTIFACT_NOT_FOUND"
     # 405 Method Not Allowed
     METHOD_NOT_ALLOWED = "METHOD_NOT_ALLOWED"
     # 409 Conflict
@@ -123,6 +124,11 @@ class InvalidMediaError(FactoryError):
 class NotFoundError(FactoryError):
     def __init__(self, message: str = "Requested resource not found", details: Optional[Dict[str, Any]] = None):
         super().__init__(message=message, code=ErrorCode.NOT_FOUND.value, status_code=404, details=details)
+
+
+class ArtifactNotFoundError(FactoryError):
+    def __init__(self, message: str = "Artifact file not found on scratch disk.", details: Optional[Dict[str, Any]] = None):
+        super().__init__(message=message, code=ErrorCode.ARTIFACT_NOT_FOUND.value, status_code=404, details=details)
 
 
 class ConflictError(FactoryError):

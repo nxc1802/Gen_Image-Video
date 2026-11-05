@@ -177,9 +177,12 @@ CANONICAL_MODEL_MAP: Dict[str, str] = {
     # Image
     "qwen-image": "qwen-image-2.1",
     "qwen-image-2.1": "qwen-image-2.1",
+    "qwen-image-2.1-turbo": "qwen-image-2.1",
+    "qwen-image-turbo": "qwen-image-2.1",
     "qwen2.1-image": "qwen-image-2.1",
     "qwen_image": "qwen-image-2.1",
     "qwen_image_2.1": "qwen-image-2.1",
+    "qwen_image_2.1_turbo": "qwen-image-2.1",
 
     # Video
     "wan": "wan-2.2",

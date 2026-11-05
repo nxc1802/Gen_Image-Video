@@ -333,6 +333,23 @@ export class StudioApiClient {
     return res.json();
   }
 
+  async downloadAsset(assetId: string): Promise<{ blob: Blob; filename: string }> {
+    const res = await fetch(this.endpoint(`/v1/assets/${encodeURIComponent(assetId)}/download`), {
+      headers: this.headers(false),
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to download asset ${assetId} (HTTP ${res.status})`);
+    }
+    const disposition = res.headers.get("content-disposition");
+    let filename = `${assetId}.bin`;
+    if (disposition && disposition.includes("filename=")) {
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      if (match) filename = match[1];
+    }
+    const blob = await res.blob();
+    return { blob, filename };
+  }
+
   // ==========================================
   // Real-Time Inspector SSE Telemetry Stream
   // ==========================================

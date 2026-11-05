@@ -100,6 +100,22 @@ export interface ServiceManifest {
 export type ModelStatus = 'full' | 'partial';
 export type ModelValidationStatus = 'pending_live' | 'contract_verified' | 'live_verified';
 
+export interface ModelVariant {
+  id: string;
+  display_name: string;
+  checkpoint: string;
+  format: 'safetensors' | 'gguf' | 'diffusers' | 'torch' | 'onnx';
+  quantization: 'none' | 'fp8' | 'q4_k_m' | 'q8_0' | 'awq' | 'gptq' | '4bit';
+  default_precision?: 'bf16' | 'fp16' | 'fp32';
+  recommended_steps?: number;
+  kaggle_dataset?: string;
+  huggingface_repo?: string;
+  file_name?: string;
+  sha256?: string;
+  size_bytes?: number;
+  min_vram_gb?: number;
+}
+
 export interface ModelManifest {
   apiVersion: string;
   kind: 'ModelManifest';
@@ -116,6 +132,7 @@ export interface ModelManifest {
     format: 'safetensors' | 'gguf' | 'diffusers' | 'torch' | 'onnx';
     quantization: 'none' | 'fp8' | 'q4_k_m' | 'q8_0' | 'awq' | 'gptq' | '4bit';
     default_precision: 'bf16' | 'fp16' | 'fp32';
+    variants?: Record<string, ModelVariant>;
   };
   hardware: {
     min_vram_gb: number;

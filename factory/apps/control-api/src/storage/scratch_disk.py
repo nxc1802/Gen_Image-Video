@@ -11,6 +11,7 @@ import mimetypes
 import os
 from pathlib import Path
 import shutil
+import tempfile
 import time
 from typing import Any, Dict, List, Optional, Tuple
 import uuid
@@ -52,8 +53,8 @@ class ScratchDiskConfig(BaseModel):
         description="Maximum disk quota for scratch artifacts (default: 5GB)",
     )
     cleanup_on_download: bool = Field(
-        default_factory=lambda: os.environ.get("ARTIFACT_CLEANUP_ON_DOWNLOAD", "true").lower() in ("true", "1", "yes"),
-        description="Whether to immediately unlink file upon completed client download",
+        default_factory=lambda: os.environ.get("ARTIFACT_CLEANUP_ON_DOWNLOAD", "false").lower() in ("true", "1", "yes"),
+        description="Whether to immediately unlink file upon completed client download (default: False)",
     )
 
 
@@ -137,10 +138,22 @@ class ScratchDiskManager:
     ) -> ArtifactReference:
         """Writes binary data to scratch disk and returns standardized ArtifactReference."""
         target_path = self.get_artifact_path(job_id, filename)
-        target_path.parent.mkdir(parents=True, exist_ok=True)
 
         def _write():
-            target_path.write_bytes(data)
+            parent_dir = target_path.parent
+            parent_dir.mkdir(parents=True, exist_ok=True)
+            tmp_path = None
+            try:
+                with tempfile.NamedTemporaryFile(dir=parent_dir, delete=False, prefix=".tmp_") as tmp_file:
+                    tmp_path = Path(tmp_file.name)
+                    tmp_file.write(data)
+                    tmp_file.flush()
+                    os.fsync(tmp_file.fileno())
+                os.replace(tmp_path, target_path)
+            except Exception:
+                if tmp_path and tmp_path.exists():
+                    tmp_path.unlink(missing_ok=True)
+                raise
 
         await asyncio.to_thread(_write)
 

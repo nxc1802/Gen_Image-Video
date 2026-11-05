@@ -11,7 +11,13 @@ from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 
 from factory_auth import verify_bearer_token, load_auth_config
 from factory_contracts.jobs.job_contract import FactoryJob, JobSubmissionRequest, JobState
-from factory_contracts.errors import FactoryError, InvalidRequestError, NotFoundError
+from factory_contracts.tasks import normalize_model, normalize_task
+from factory_contracts.errors import (
+    ArtifactNotFoundError,
+    FactoryError,
+    InvalidRequestError,
+    NotFoundError,
+)
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
 from factory.apps.control_api.src.storage.scratch_disk import ScratchDiskManager, get_scratch_disk
 from factory.apps.control_api.src.storage.keys import sanitize_id
@@ -99,7 +105,8 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
             status_code=503,
         )
     models = loader.load_models()
-    resolved_model = MODEL_ALIASES.get(req.model, req.model)
+    norm_model = normalize_model(req.model)
+    resolved_model = MODEL_ALIASES.get(norm_model, norm_model)
     model = models.get(resolved_model)
     if model is not None:
         req.model = resolved_model
@@ -127,13 +134,15 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
         )
 
     task = str(req.task or "").strip()
-    capability = TASK_CAPABILITY_ALIASES.get(task, task)
+    canonical_task = normalize_task(task)
+    req.task = canonical_task
+    capability = TASK_CAPABILITY_ALIASES.get(canonical_task, canonical_task)
 
     if req.service == "image":
-        if task in {"reference_conditioning", "reference"}:
+        if canonical_task in {"reference_conditioning", "reference"}:
             refs = req.inputs.get("reference_image_urls")
             capability = "multi_reference" if isinstance(refs, list) and len(refs) > 1 else "reference_image"
-        elif task == "controlnet":
+        elif canonical_task == "controlnet":
             control_type = str(req.inputs.get("control_type", "pose")).lower()
             capability = {
                 "pose": "control_pose",
@@ -148,17 +157,18 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
             "extension": "video_extension",
             "with_audio": "video_with_audio",
             "ref2va": "reference_conditioning",
-        }.get(task, capability)
+        }.get(canonical_task, capability)
 
     supported = model.capabilities.get(capability)
     if supported is not True:
         raise FactoryError(
-            message=f"Task '{task}' is not supported by model '{req.model}'.",
+            message=f"Task '{task}' (canonical: '{canonical_task}') is not supported by model '{req.model}'.",
             code="CAPABILITY_NOT_SUPPORTED",
             status_code=400,
             details={
                 "model": req.model,
                 "task": task,
+                "canonical_task": canonical_task,
                 "capability": capability,
                 "validation_status": model.validation_status.value,
             },
@@ -381,28 +391,31 @@ async def get_job_result(
         # Image delivery
         if ext in (".png", ".jpg", ".jpeg", ".webp") or service == "image":
             mime_type = "image/jpeg" if ext in (".jpg", ".jpeg") else "image/png"
-            background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
+            if scratch_disk.config.cleanup_on_download:
+                background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
             return FileResponse(
                 path=str(artifact_path),
                 media_type=mime_type,
                 headers={"Content-Disposition": f'inline; filename="{job.job_id}{ext if ext else ".png"}"'},
-                background=background_tasks,
+                background=background_tasks if scratch_disk.config.cleanup_on_download else None,
             )
 
         # Audio delivery
         if ext in (".wav", ".mp3", ".ogg", ".flac") or service in ("speech", "music"):
             mime_type = "audio/mpeg" if ext == ".mp3" else "audio/wav"
-            background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
+            if scratch_disk.config.cleanup_on_download:
+                background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
             return FileResponse(
                 path=str(artifact_path),
                 media_type=mime_type,
                 headers={"Content-Disposition": f'inline; filename="{job.job_id}{ext if ext else ".wav"}"'},
-                background=background_tasks,
+                background=background_tasks if scratch_disk.config.cleanup_on_download else None,
             )
 
         # Video delivery
         if ext in (".mp4", ".webm", ".mkv") or service in ("video", "enhancement"):
-            background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
+            if scratch_disk.config.cleanup_on_download:
+                background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
             return FileResponse(
                 path=str(artifact_path),
                 media_type="video/mp4",
@@ -410,16 +423,17 @@ async def get_job_result(
                     "Accept-Ranges": "bytes",
                     "Content-Disposition": f'attachment; filename="{job.job_id}{ext if ext else ".mp4"}"',
                 },
-                background=background_tasks,
+                background=background_tasks if scratch_disk.config.cleanup_on_download else None,
             )
 
         # Generic media delivery
-        background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
+        if scratch_disk.config.cleanup_on_download:
+            background_tasks.add_task(scratch_disk.cleanup_job_artifact, job_id, artifact_path)
         return FileResponse(
             path=str(artifact_path),
             media_type="application/octet-stream",
             headers={"Content-Disposition": f'attachment; filename="{job.job_id}{ext}"'},
-            background=background_tasks,
+            background=background_tasks if scratch_disk.config.cleanup_on_download else None,
         )
 
     # 5. SUCCEEDED State Modality Handlers (No Scratch Artifact)
@@ -474,7 +488,7 @@ async def get_job_result(
         )
 
     # Case C: Media files missing on scratch disk for SUCCEEDED job
-    raise NotFoundError("Artifact file not found on scratch disk.")
+    raise ArtifactNotFoundError("Artifact file not found on scratch disk.")
 
 
 @router.delete("/{job_id}", dependencies=[Depends(verify_bearer_token)])

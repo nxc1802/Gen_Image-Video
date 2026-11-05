@@ -327,27 +327,29 @@ class TestWorkerLeaseAuth:
             )
             assert lease_resp.lease_token is not None
 
-            # 1. Heartbeat with wrong lease_token does not extend lease
-            hb_fail = await coordinator.process_heartbeat(
-                WorkerHeartbeatRequest(
-                    worker_id="worker-hb-01",
-                    active_job_id=job.job_id,
-                    lease_token="invalid-token-1234",
-                    gpu_utilization_percent=50.0,
-                    vram_used_mb=8000.0,
+            # 1. Heartbeat with wrong lease_token raises UnauthorizedError
+            with pytest.raises(UnauthorizedError) as exc_fail:
+                await coordinator.process_heartbeat(
+                    WorkerHeartbeatRequest(
+                        worker_id="worker-hb-01",
+                        active_job_id=job.job_id,
+                        lease_token="invalid-token-1234",
+                        gpu_utilization_percent=50.0,
+                        vram_used_mb=8000.0,
+                    )
                 )
-            )
-            assert hb_fail.lease_extended_until is None
+            assert exc_fail.value.status_code == 403
 
-            # 2. Heartbeat with missing lease_token does not extend lease
-            hb_none = await coordinator.process_heartbeat(
-                WorkerHeartbeatRequest(
-                    worker_id="worker-hb-01",
-                    active_job_id=job.job_id,
-                    lease_token=None,
+            # 2. Heartbeat with missing lease_token raises UnauthorizedError
+            with pytest.raises(UnauthorizedError) as exc_none:
+                await coordinator.process_heartbeat(
+                    WorkerHeartbeatRequest(
+                        worker_id="worker-hb-01",
+                        active_job_id=job.job_id,
+                        lease_token=None,
+                    )
                 )
-            )
-            assert hb_none.lease_extended_until is None
+            assert exc_none.value.status_code == 403
 
             # 3. Heartbeat with correct token extends lease
             hb_ok = await coordinator.process_heartbeat(

@@ -63,10 +63,10 @@ def register_error_handlers(app: FastAPI) -> None:
                 "type": str(err.get("type", "value_error")),
             })
         return JSONResponse(
-            status_code=422,
+            status_code=400,
             content={
                 "error": {
-                    "code": "VALIDATION_ERROR",
+                    "code": "INVALID_REQUEST",
                     "message": "Input validation failed. Inspect details for field errors.",
                     "request_id": req_id,
                     "details": {"validation_errors": sanitized_details},

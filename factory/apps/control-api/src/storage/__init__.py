@@ -16,8 +16,13 @@ from .threshold import (
 from .router import router as storage_router, get_storage_provider
 from .scratch_disk import ScratchDiskConfig, ScratchDiskManager, get_scratch_disk
 
-# S3 is deprecated in Factory v4 Lite; alias to LocalStorageProvider for compatibility
-S3StorageProvider = LocalStorageProvider
+
+def __getattr__(name: str):
+    if name == "S3StorageProvider":
+        from .s3 import S3StorageProvider
+        return S3StorageProvider
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = [
     "StorageConfig",

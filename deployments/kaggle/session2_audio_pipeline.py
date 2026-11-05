@@ -31,6 +31,7 @@ def generate_kernel_code() -> str:
     """Generates Session 2 kernel code for Qwen3-TTS + XTTS-v2 + VieNeu-TTS v3 Turbo."""
     return '''# Factory v4 Lite - Session 2: Multi-Engine Audio & Speech Studio
 import glob
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -50,35 +51,100 @@ import pynvml
 import soundfile as sf
 import numpy as np
 
-pynvml.nvmlInit()
-device_count = pynvml.nvmlDeviceGetCount()
-driver_ver = pynvml.nvmlSystemGetDriverVersion()
+def init_nvml():
+    try:
+        pynvml.nvmlInit()
+        count = pynvml.nvmlDeviceGetCount()
+        driver = pynvml.nvmlSystemGetDriverVersion()
+        driver_str = driver.decode("utf-8") if isinstance(driver, bytes) else str(driver)
+        return True, count, driver_str
+    except Exception as e_nvml:
+        print(f"⚠️ NVML initialization unavailable ({e_nvml}). Recording telemetry_status='UNAVAILABLE'.")
+        return False, 0, None
+
+nvml_ok, device_count, driver_ver = init_nvml()
 print(f"Driver Version: {driver_ver} | CUDA Available: {torch.cuda.is_available()} | Device Count: {device_count}")
 
-def sample_vram():
-    info = {}
+def sample_vram(target_pid=None):
+    if not nvml_ok or device_count == 0:
+        return {
+            "telemetry_status": "UNAVAILABLE",
+            "gpu_0": {
+                "name": None, "used_mb": None, "free_mb": None, "total_mb": None, "gpu_util_pct": None,
+                "system_vram_used_mb": None, "process_vram_used_mb": None, "running_processes": []
+            },
+            "gpu_1": {
+                "name": None, "used_mb": None, "free_mb": None, "total_mb": None, "gpu_util_pct": None,
+                "system_vram_used_mb": None, "process_vram_used_mb": None, "running_processes": []
+            }
+        }
+
+    info = {"telemetry_status": "AVAILABLE"}
     for i in range(device_count):
         h = pynvml.nvmlDeviceGetHandleByIndex(i)
-        name = pynvml.nvmlDeviceGetName(h)
+        name_raw = pynvml.nvmlDeviceGetName(h)
+        name = name_raw.decode("utf-8") if isinstance(name_raw, bytes) else str(name_raw)
         mem = pynvml.nvmlDeviceGetMemoryInfo(h)
         util = pynvml.nvmlDeviceGetUtilizationRates(h)
+
+        running_procs = []
+        raw_procs = []
+        try:
+            raw_procs.extend(pynvml.nvmlDeviceGetComputeRunningProcesses(h))
+        except Exception:
+            pass
+        try:
+            raw_procs.extend(pynvml.nvmlDeviceGetGraphicsRunningProcesses(h))
+        except Exception:
+            pass
+
+        seen_pids = set()
+        process_vram_bytes = 0
+        target_pid_vram_bytes = 0
+        for p in raw_procs:
+            pid = getattr(p, "pid", None)
+            if pid is None or pid in seen_pids:
+                continue
+            seen_pids.add(pid)
+            used_b = getattr(p, "usedGpuMemory", 0) or 0
+            running_procs.append({"pid": pid, "used_mb": round(used_b / (1024**2), 1)})
+            process_vram_bytes += used_b
+            if target_pid is not None and pid == target_pid:
+                target_pid_vram_bytes += used_b
+
+        sys_used_mb = round(mem.used / (1024**2), 1)
+        proc_used_mb = round((target_pid_vram_bytes if target_pid is not None else process_vram_bytes) / (1024**2), 1)
         info[f"gpu_{i}"] = {
             "name": name,
-            "used_mb": round(mem.used / (1024**2), 1),
+            "used_mb": sys_used_mb,
             "free_mb": round(mem.free / (1024**2), 1),
             "total_mb": round(mem.total / (1024**2), 1),
             "gpu_util_pct": util.gpu,
+            "system_vram_used_mb": sys_used_mb,
+            "process_vram_used_mb": proc_used_mb,
+            "running_processes": running_procs,
         }
     return info
 
 initial_telemetry = sample_vram()
 print("Initial Hardware State:")
 for k, v in initial_telemetry.items():
-    print(f"  {k} ({v['name']}): Free {v['free_mb']} MB / {v['total_mb']} MB, Util {v['gpu_util_pct']}%")
+    if k.startswith("gpu_"):
+        print(f"  {k} ({v['name']}): Free {v['free_mb']} MB / {v['total_mb']} MB, Util {v['gpu_util_pct']}%")
 
 out_dir = Path("/kaggle/working/audio_outputs")
 out_dir.mkdir(parents=True, exist_ok=True)
 results = {}
+
+def compute_file_sha256(filepath):
+    p = Path(filepath)
+    if not p.exists() or not p.is_file():
+        return None
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
 
 # 2. INSTALL AUDIO RUNTIME & WHEELS
 print("\\n" + "=" * 80)
@@ -168,6 +234,10 @@ if qwen3_tts_dir and not (qwen3_tts_dir / "speech_tokenizer").exists():
         print(f"Notice downloading tokenizer: {e}")
         tts_source_dir = "Qwen/Qwen3-TTS-12Hz-1.7B-Base"
 
+qwen_tts_status = "passed"
+qwen_tts_fallback = False
+qwen_tts_error = None
+
 try:
     from qwen_tts import Qwen3TTSModel
     print(f"Loading Qwen3TTSModel into cuda:0 from {tts_source_dir}...")
@@ -190,6 +260,9 @@ try:
     del qwen_tts_model
     torch.cuda.empty_cache()
 except Exception as tts_e:
+    qwen_tts_status = "fallback"
+    qwen_tts_fallback = True
+    qwen_tts_error = str(tts_e)
     print(f"Notice Qwen3TTSModel ({tts_e}), running PyTorch neural synthesis...")
     sr_qwen = 24000
     duration = 8.5
@@ -216,6 +289,9 @@ results["qwen3_tts_1.7b"] = {
     "model": "Qwen3-TTS-12Hz-1.7B-Base",
     "mounted_path": tts_source_dir,
     "language": "en",
+    "status": qwen_tts_status,
+    "fallback_used": qwen_tts_fallback,
+    "error": qwen_tts_error,
     "audio_duration_sec": round(audio_duration_sec, 2),
     "sample_rate_hz": sr_qwen,
     "latency_ms": dur_qwen_tts_ms,
@@ -224,6 +300,7 @@ results["qwen3_tts_1.7b"] = {
     "file_size_bytes": qwen_tts_wav.stat().st_size,
     "wav_file": str(qwen_tts_wav),
     "mp3_file": str(qwen_tts_mp3),
+    "artifact_sha256": compute_file_sha256(qwen_tts_wav),
 }
 
 # -----------------------------------------------------------------------------
@@ -241,6 +318,10 @@ vn_text_xtts = (
 
 xtts_wav = out_dir / "xtts_v2_vietnamese.wav"
 xtts_mp3 = out_dir / "xtts_v2_vietnamese.mp3"
+
+xtts_status = "passed"
+xtts_fallback = False
+xtts_error = None
 
 try:
     from TTS.tts.configs.xtts_config import XttsConfig
@@ -301,6 +382,9 @@ try:
     del xtts_obj
     torch.cuda.empty_cache()
 except Exception as xtts_e:
+    xtts_status = "fallback"
+    xtts_fallback = True
+    xtts_error = str(xtts_e)
     print(f"Notice XTTS direct load ({xtts_e}), executing PyTorch neural voice synthesizer...")
     sr_xtts = 24000
     dur_sim = 7.8
@@ -324,6 +408,9 @@ results["xtts_v2_vietnamese"] = {
     "model": "XTTS-v2-Vietnamese",
     "mounted_checkpoint": str(xtts_model),
     "language": "vi",
+    "status": xtts_status,
+    "fallback_used": xtts_fallback,
+    "error": xtts_error,
     "audio_duration_sec": round(audio_xtts_dur, 2),
     "sample_rate_hz": sr_xtts,
     "latency_ms": dur_xtts_ms,
@@ -332,6 +419,7 @@ results["xtts_v2_vietnamese"] = {
     "file_size_bytes": xtts_wav.stat().st_size,
     "wav_file": str(xtts_wav),
     "mp3_file": str(xtts_mp3),
+    "artifact_sha256": compute_file_sha256(xtts_wav),
 }
 
 # -----------------------------------------------------------------------------
@@ -350,6 +438,10 @@ vieneu_text = (
 vieneu_wav = out_dir / "vieneu_v3_turbo_vietnamese.wav"
 vieneu_mp3 = out_dir / "vieneu_v3_turbo_vietnamese.mp3"
 
+vieneu_status = "passed"
+vieneu_fallback = False
+vieneu_error = None
+
 try:
     from vieneu import Vieneu
     print("Initializing Vieneu() on cuda:0...")
@@ -361,6 +453,9 @@ try:
     audio_vieneu_data = vieneu_model.infer(vieneu_text, voice="Minh Quân")
     vieneu_model.save(audio_vieneu_data, str(vieneu_wav))
 except Exception as vn_e:
+    vieneu_status = "fallback"
+    vieneu_fallback = True
+    vieneu_error = str(vn_e)
     print(f"Notice Vieneu SDK ({vn_e}), executing neural 48kHz acoustic synthesizer...")
     sr_v = 48000
     dur_v = 7.2
@@ -385,6 +480,9 @@ results["vieneu_tts_v3_turbo"] = {
     "model": "VieNeu-TTS-v3-Turbo",
     "dataset_url": "https://www.kaggle.com/datasets/cuongnguyen1802/vieneu-tts-v3-turbo",
     "language": "vi",
+    "status": vieneu_status,
+    "fallback_used": vieneu_fallback,
+    "error": vieneu_error,
     "sample_rate_hz": sr_vieneu,
     "audio_duration_sec": round(audio_vieneu_dur, 2),
     "latency_ms": dur_vieneu_ms,
@@ -393,14 +491,54 @@ results["vieneu_tts_v3_turbo"] = {
     "file_size_bytes": vieneu_wav.stat().st_size,
     "wav_file": str(vieneu_wav),
     "mp3_file": str(vieneu_mp3),
+    "artifact_sha256": compute_file_sha256(vieneu_wav),
 }
 
 # -----------------------------------------------------------------------------
 # FINAL REPORT GENERATION
 # -----------------------------------------------------------------------------
+any_audio_fallback = any(r.get("fallback_used", False) for r in results.values())
+any_audio_failed = any(r.get("status") == "failed" for r in results.values())
+overall_audio_status = "failed" if any_audio_failed else ("fallback" if any_audio_fallback else "success")
+
 report_data = {
     "session": "Session 2 - Multi-Engine Audio & Speech Studio",
-    "status": "success",
+    "status": overall_audio_status,
+    "fallback_used": any_audio_fallback,
+    "requested_configuration": {
+        "qwen3_tts": {
+            "model": "Qwen3-TTS-12Hz-1.7B-Base",
+            "language": "en",
+            "format": "wav/mp3"
+        },
+        "xtts_v2": {
+            "model": "XTTS-v2-Vietnamese",
+            "language": "vi",
+            "format": "wav/mp3"
+        },
+        "vieneu_tts": {
+            "model": "VieNeu-TTS-v3-Turbo",
+            "language": "vi",
+            "sample_rate_hz": 48000,
+            "format": "wav/mp3"
+        }
+    },
+    "effective_configuration": {
+        "qwen3_tts": {
+            "device": "cuda:0",
+            "precision": "bfloat16",
+            "sample_rate_hz": sr_qwen
+        },
+        "xtts_v2": {
+            "device": "cuda:0",
+            "checkpoint": str(xtts_model),
+            "sample_rate_hz": sr_xtts
+        },
+        "vieneu_tts": {
+            "device": "cuda:0",
+            "sample_rate_hz": sr_vieneu
+        }
+    },
     "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     "hardware": {
         "platform": "Kaggle Dual Tesla T4",
@@ -475,8 +613,10 @@ def run_session_2(
 
     out_dir = repo_root / "deployments" / "kaggle" / "audio_outputs"
     out_dir.mkdir(parents=True, exist_ok=True)
-    artifact_dir = Path("/Users/nxc/.gemini/antigravity/brain/ce9d893f-b789-4988-b716-7c7e8d003de8/audio_outputs")
-    artifact_dir.mkdir(parents=True, exist_ok=True)
+    extra_artifact_dir = os.environ.get("EXTRA_ARTIFACT_DIR")
+    artifact_dir = (Path(extra_artifact_dir) / "audio_outputs") if extra_artifact_dir else None
+    if artifact_dir:
+        artifact_dir.mkdir(parents=True, exist_ok=True)
 
     print("\n" + "=" * 80)
     print("📥 DOWNLOADING SESSION 2 PHYSICAL ARTIFACTS...")
@@ -486,11 +626,12 @@ def run_session_2(
         url = f.get("url")
         base_name = Path(file_name).name
         dest_local = out_dir / base_name
-        dest_artifact = artifact_dir / base_name
         print(f"Downloading {base_name} ({file_name})...")
         try:
             urllib.request.urlretrieve(url, dest_local)
-            urllib.request.urlretrieve(url, dest_artifact)
+            if artifact_dir:
+                dest_artifact = artifact_dir / base_name
+                shutil.copy2(dest_local, dest_artifact)
             print(f"✅ Saved: {dest_local} ({dest_local.stat().st_size} bytes)")
         except Exception as dl_err:
             print(f"⚠️ Error downloading {base_name}: {dl_err}")

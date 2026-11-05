@@ -13,9 +13,8 @@ import urllib.error
 import pytest
 
 from deployments.kaggle.runner import (
-    DEFAULT_KAGGLE_BEARER_TOKEN,
-    DEFAULT_KAGGLE_USER,
     resolve_kaggle_username,
+    resolve_kaggle_api_token,
     KaggleAPIClient,
     KaggleAPIError,
     KaggleAuthError,
@@ -43,11 +42,34 @@ from deployments.kaggle.certify_kernel import (
 class TestKaggleAPIClient:
     """Verifies Kaggle REST API v1 client token handling and operations."""
 
-    def test_default_bearer_token_and_auth_header(self):
+    def test_bearer_token_resolution_from_env_kaggle_api_token(self, monkeypatch):
+        monkeypatch.setenv("KAGGLE_API_TOKEN", "KGAT_standard_env_token_456")
+        monkeypatch.setenv("KAGGLE_USERNAME", "testuser")
         client = KaggleAPIClient()
-        assert client.api_key == DEFAULT_KAGGLE_BEARER_TOKEN
-        auth_header = client.get_auth_header()
-        assert auth_header == f"Bearer {DEFAULT_KAGGLE_BEARER_TOKEN}"
+        assert client.api_key == "KGAT_standard_env_token_456"
+        assert client.get_auth_header() == "Bearer KGAT_standard_env_token_456"
+
+    def test_bearer_token_legacy_fallback_to_kaggle_key(self, monkeypatch):
+        monkeypatch.delenv("KAGGLE_API_TOKEN", raising=False)
+        monkeypatch.setenv("KAGGLE_KEY", "KGAT_legacy_env_key_789")
+        monkeypatch.setenv("KAGGLE_USERNAME", "testuser")
+        client = KaggleAPIClient()
+        assert client.api_key == "KGAT_legacy_env_key_789"
+        assert client.get_auth_header() == "Bearer KGAT_legacy_env_key_789"
+
+    def test_explicit_api_key_takes_precedence_over_env(self, monkeypatch):
+        monkeypatch.setenv("KAGGLE_API_TOKEN", "KGAT_env_token")
+        client = KaggleAPIClient(username="testuser", api_key="KGAT_explicit_param")
+        assert client.api_key == "KGAT_explicit_param"
+        assert client.get_auth_header() == "Bearer KGAT_explicit_param"
+
+    def test_missing_api_key_raises_kaggle_auth_error(self, tmp_path, monkeypatch):
+        monkeypatch.delenv("KAGGLE_API_TOKEN", raising=False)
+        monkeypatch.delenv("KAGGLE_KEY", raising=False)
+        monkeypatch.setenv("KAGGLE_CONFIG_DIR", str(tmp_path))
+        with pytest.raises(KaggleAuthError) as exc_info:
+            KaggleAPIClient(username="testuser")
+        assert "Kaggle API key/token not configured" in str(exc_info.value)
 
     def test_basic_auth_fallback_for_legacy_key(self):
         client = KaggleAPIClient(username="testuser", api_key="plain_hex_key_12345")
@@ -101,7 +123,7 @@ class TestKaggleAPIClient:
         }).encode("utf-8")
         mock_urlopen.return_value.__enter__.return_value = mock_resp
 
-        client = KaggleAPIClient()
+        client = KaggleAPIClient(username="testuser", api_key="KGAT_mocktoken123")
         with pytest.raises(KaggleAPIError) as exc_info:
             client.push_kernel("slug", "Title", "code")
         assert "Kernel quota exceeded" in str(exc_info.value)
@@ -117,7 +139,7 @@ class TestKaggleAPIClient:
         )
         mock_urlopen.side_effect = http_error
 
-        client = KaggleAPIClient()
+        client = KaggleAPIClient(username="testuser", api_key="KGAT_mocktoken123")
         with pytest.raises(KaggleAuthError) as exc_info:
             client.push_kernel("slug", "Title", "code")
         assert exc_info.value.status_code == 401
@@ -133,7 +155,7 @@ class TestKaggleAPIClient:
         )
         mock_urlopen.side_effect = http_error
 
-        client = KaggleAPIClient()
+        client = KaggleAPIClient(username="testuser", api_key="KGAT_mocktoken123")
         with pytest.raises(KaggleAPIError) as exc_info:
             client.get_kernel_status("my-slug")
         assert exc_info.value.status_code == 500
@@ -170,7 +192,7 @@ class TestKaggleAPIClient:
         mock_urlopen.side_effect = side_effects
 
         logged_lines = []
-        client = KaggleAPIClient()
+        client = KaggleAPIClient(username="testuser", api_key="KGAT_mocktoken123")
         res = client.poll_until_complete(
             slug="test-slug",
             poll_interval_sec=0.01,
@@ -198,7 +220,7 @@ class TestKaggleAPIClient:
 
         mock_urlopen.side_effect = [ctx_s, ctx_o]
 
-        client = KaggleAPIClient()
+        client = KaggleAPIClient(username="testuser", api_key="KGAT_mocktoken123")
         with pytest.raises(KaggleKernelFailedError) as exc_info:
             client.poll_until_complete("oom-slug", poll_interval_sec=0.01)
         assert "Out of memory" in str(exc_info.value.failure_message)
@@ -709,35 +731,37 @@ class TestHardwareMemoryProfilerAndSeparatedEngines:
 
 
 class TestKaggleDynamicUsernameResolution:
-    """Verifies username resolution precedence: explicit > env > kaggle.json > fallback."""
-
-    def test_default_username_is_cuongnguyen1802(self):
-        assert DEFAULT_KAGGLE_USER == "cuongnguyen1802"
+    """Verifies username resolution precedence: explicit > env > kaggle.json > fail fast."""
 
     def test_explicit_username_precedence(self):
-        client = KaggleAPIClient(username="custom-user")
+        client = KaggleAPIClient(username="custom-user", api_key="KGAT_mocktoken")
         assert client.username == "custom-user"
 
     def test_env_var_username_precedence(self, monkeypatch):
         monkeypatch.setenv("KAGGLE_USERNAME", "env-certifier")
+        monkeypatch.setenv("KAGGLE_API_TOKEN", "KGAT_mocktoken")
         client = KaggleAPIClient()
         assert client.username == "env-certifier"
 
     def test_kaggle_json_dynamic_detection(self, tmp_path, monkeypatch):
         fake_kaggle_json = tmp_path / "kaggle.json"
-        fake_kaggle_json.write_text(json.dumps({"username": "json-user", "key": "some-key"}))
+        fake_kaggle_json.write_text(json.dumps({"username": "json-user", "key": "json-key"}))
         monkeypatch.delenv("KAGGLE_USERNAME", raising=False)
+        monkeypatch.delenv("KAGGLE_API_TOKEN", raising=False)
+        monkeypatch.delenv("KAGGLE_KEY", raising=False)
         monkeypatch.setenv("KAGGLE_CONFIG_DIR", str(tmp_path))
 
         client = KaggleAPIClient()
         assert client.username == "json-user"
+        assert client.api_key == "json-key"
 
-    def test_fallback_to_cuongnguyen1802(self, tmp_path, monkeypatch):
+    def test_missing_username_raises_kaggle_auth_error(self, tmp_path, monkeypatch):
         monkeypatch.delenv("KAGGLE_USERNAME", raising=False)
         monkeypatch.setenv("KAGGLE_CONFIG_DIR", str(tmp_path))  # empty dir, no kaggle.json
 
-        client = KaggleAPIClient()
-        assert client.username == "cuongnguyen1802"
+        with pytest.raises(KaggleAuthError) as exc_info:
+            resolve_kaggle_username()
+        assert "Kaggle username not configured" in str(exc_info.value)
 
 
 class TestGate2AssertionHardening:
@@ -1125,4 +1149,131 @@ capabilities:
             assert pipe["stage_2_infer"]["passed"] is True
             assert pipe["stage_3_validate"]["passed"] is True
             assert pipe["stage_4_profile"]["passed"] is True
+
+
+# =====================================================================
+# 9. KaggleDualT4Runner Lifecycle, Mode & Contract Tests
+# =====================================================================
+
+class TestKaggleDualT4RunnerLifecycleAndContract:
+    """Verifies KaggleDualT4Runner initialization, modes, lazy client, and kwargs."""
+
+    @pytest.fixture(autouse=True)
+    def clean_kaggle_env(self, monkeypatch, tmp_path):
+        """Ensure no ambient Kaggle credentials bleed into lifecycle tests."""
+        for k in ["KAGGLE_USERNAME", "KAGGLE_API_TOKEN", "KAGGLE_KEY"]:
+            monkeypatch.delenv(k, raising=False)
+        monkeypatch.setenv("KAGGLE_CONFIG_DIR", str(tmp_path))
+
+    def test_init_default_mode_without_credentials(self):
+        """Default instantiation must succeed without credentials and default to mode='remote'."""
+        runner = KaggleDualT4Runner()
+        assert runner.mode == "remote"
+        assert runner._client is None
+        assert isinstance(runner.kwargs, dict)
+        assert len(runner.kwargs) == 0
+
+    def test_init_mode_preflight_without_credentials(self):
+        """Instantiating with mode='preflight' must not raise and set runner.mode='preflight'."""
+        runner = KaggleDualT4Runner(mode="preflight")
+        assert runner.mode == "preflight"
+        assert runner._client is None
+
+    def test_init_mode_remote_without_credentials(self):
+        """Instantiating with mode='remote' must not raise and set runner.mode='remote'."""
+        runner = KaggleDualT4Runner(mode="remote")
+        assert runner.mode == "remote"
+        assert runner._client is None
+
+    def test_lazy_client_property_raises_auth_error_when_unconfigured(self):
+        """Accessing runner.client with no credentials raises KaggleAuthError lazily."""
+        runner = KaggleDualT4Runner(mode="preflight")
+        with pytest.raises(KaggleAuthError) as exc_info:
+            _ = runner.client
+        assert "Kaggle username not configured" in str(exc_info.value)
+
+    def test_explicit_client_injection(self):
+        """Explicitly passed client is retained and returned without environment lookup."""
+        client = KaggleAPIClient(username="mock_user", api_key="KGAT_mock_token_12345")
+        runner = KaggleDualT4Runner(client=client, mode="remote")
+        assert runner.client is client
+        assert runner._client is client
+        assert runner.client.username == "mock_user"
+
+    def test_init_accepts_arbitrary_kwargs_without_type_error(self):
+        """Extra keyword arguments must be captured in runner.kwargs without TypeError."""
+        runner = KaggleDualT4Runner(
+            mode="preflight",
+            custom_timeout=1200,
+            enable_profiling=True,
+            tag="regression-gate-check",
+        )
+        assert runner.mode == "preflight"
+        assert runner.kwargs.get("custom_timeout") == 1200
+        assert runner.kwargs.get("enable_profiling") is True
+        assert runner.kwargs.get("tag") == "regression-gate-check"
+        assert runner.extra_options.get("tag") == "regression-gate-check"
+
+    def test_run_local_certification_preflight_without_credentials(self, tmp_path):
+        """Direct local certification run completes cleanly without requiring Kaggle credentials."""
+        runner = KaggleDualT4Runner(mode="preflight")
+        out_file = tmp_path / "cert_results.json"
+        res = runner.run_local_certification(output_path=out_file)
+        assert res["all_gates_passed"] is True
+        assert res["environment"] == "simulation-local"
+        assert runner._client is None  # KaggleAPIClient was never accessed or initialized
+
+    def test_run_dispatcher_preflight(self, tmp_path):
+        """Unified runner.run() dispatcher routes to local certification in preflight mode."""
+        runner = KaggleDualT4Runner(mode="preflight")
+        out_file = tmp_path / "cert_run_dispatch.json"
+        res = runner.run(output_path=out_file)
+        assert res["all_gates_passed"] is True
+
+    def test_deploy_and_certify_remote_triggers_auth_check_when_uncredentialed(self):
+        """Calling deploy_and_certify in remote mode triggers client access and fails fast on missing auth."""
+        runner = KaggleDualT4Runner(mode="remote")
+        with pytest.raises(KaggleAuthError) as exc_info:
+            runner.deploy_and_certify(slug="test-slug")
+        assert "Kaggle username not configured" in str(exc_info.value)
+
+
+# =====================================================================
+# 10. Kaggle Deployments Module Importability Tests
+# =====================================================================
+
+class TestKaggleModulesImportabilityWithoutCredentials:
+    """Verifies that all modules under deployments.kaggle can be imported safely without credentials."""
+
+    @pytest.fixture(autouse=True)
+    def clean_env(self, monkeypatch, tmp_path):
+        for k in ["KAGGLE_USERNAME", "KAGGLE_API_TOKEN", "KAGGLE_KEY"]:
+            monkeypatch.delenv(k, raising=False)
+        monkeypatch.setenv("KAGGLE_CONFIG_DIR", str(tmp_path))
+
+    def test_import_deployments_kaggle_package(self):
+        """import deployments.kaggle must not raise KaggleAuthError."""
+        import deployments.kaggle as dk
+        assert hasattr(dk, "KaggleDualT4Runner")
+        assert hasattr(dk, "KaggleAPIClient")
+
+    @pytest.mark.parametrize("module_name", [
+        "runner",
+        "certify_kernel",
+        "prepare_datasets",
+        "smoke_runner",
+        "monitor_both_sessions",
+        "session1_visual_pipeline",
+        "session2_audio_pipeline",
+        "run_studio_quality_pipeline",
+        "run_high_quality_test",
+        "live_gpu_test",
+    ])
+    def test_submodules_import_cleanly_without_credentials(self, module_name):
+        """Every submodule in deployments.kaggle must import cleanly without raising KaggleAuthError."""
+        import importlib
+        full_name = f"deployments.kaggle.{module_name}"
+        mod = importlib.import_module(full_name)
+        assert mod is not None
+
 

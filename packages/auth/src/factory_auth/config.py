@@ -9,6 +9,8 @@ import os
 import secrets
 from typing import Optional
 
+from .jwt_auth import ALLOWED_ALGORITHMS
+
 logger = logging.getLogger(__name__)
 
 class AuthConfigError(ValueError, RuntimeError):
@@ -25,11 +27,19 @@ class AuthConfig:
     jwt_audience: Optional[str] = None
     jwt_issuer: Optional[str] = None
 
+    def __post_init__(self) -> None:
+        if self.jwt_algorithm not in ALLOWED_ALGORITHMS:
+            raise AuthConfigError(
+                f"Disallowed or unsupported JWT algorithm '{self.jwt_algorithm}'. "
+                f"Allowed algorithms: {sorted(ALLOWED_ALGORITHMS)}."
+            )
+
 
 def load_auth_config() -> AuthConfig:
     """
-    Loads authentication configuration for Factory v4 Lite.
+    Loads authentication configuration.
     Enforces fail-fast startup guard in production if FACTORY_API_KEY is missing or empty.
+    Validates JWT algorithms allowlist, issuer, and audience in production mode.
     """
     env = os.environ.get("ENVIRONMENT", os.environ.get("FACTORY_ENV", "development")).lower()
     raw_key = os.environ.get("FACTORY_API_KEY", "").strip()
@@ -49,12 +59,26 @@ def load_auth_config() -> AuthConfig:
             + "=" * 70
         )
 
+    jwt_secret = os.environ.get("JWT_SECRET_KEY", os.environ.get("FACTORY_JWT_SECRET", "")).strip() or None
+    jwt_algorithm = os.environ.get("JWT_ALGORITHM", "HS256").strip() or "HS256"
+    jwt_audience = os.environ.get("JWT_AUDIENCE", "").strip() or None
+    jwt_issuer = os.environ.get("JWT_ISSUER", "").strip() or None
+
+    if jwt_algorithm not in ALLOWED_ALGORITHMS:
+        raise AuthConfigError(
+            f"FATAL: Unsupported or disallowed JWT_ALGORITHM '{jwt_algorithm}'. "
+            f"Allowed algorithms: {sorted(ALLOWED_ALGORITHMS)}."
+        )
+
+    if env == "production" and jwt_secret and not jwt_audience:
+        raise RuntimeError("FATAL: JWT_AUDIENCE must be explicitly configured in production mode when JWT is enabled.")
+
     return AuthConfig(
         api_key=raw_key,
         environment=env,
-        jwt_secret=None,
-        jwt_algorithm="HS256",
-        jwt_audience=None,
-        jwt_issuer=None,
+        jwt_secret=jwt_secret,
+        jwt_algorithm=jwt_algorithm,
+        jwt_audience=jwt_audience,
+        jwt_issuer=jwt_issuer,
     )
 

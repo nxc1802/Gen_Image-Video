@@ -6,7 +6,9 @@ import logging
 import os
 from pathlib import Path
 import shutil
+import tempfile
 from typing import Optional
+import uuid
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, ConfigDict, Field
@@ -49,6 +51,9 @@ def get_storage_provider(request: Request) -> StorageProvider:
     if provider is not None:
         return provider
     config = load_storage_config()
+    if config.storage_backend == "s3":
+        from factory.apps.control_api.src.storage.s3 import S3StorageProvider
+        return S3StorageProvider(config)
     return LocalStorageProvider(config)
 
 
@@ -136,13 +141,23 @@ async def local_storage_upload(
     path = storage._get_path(bucket, key)
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Stream upload chunks directly to disk to prevent RAM bloat
+    # Stream upload chunks atomically via temporary file to prevent partial-read races
     total_size = 0
-    with open(path, "wb") as f:
-        async for chunk in request.stream():
-            if chunk:
-                f.write(chunk)
-                total_size += len(chunk)
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False, prefix=".tmp_") as tmp_file:
+            tmp_path = Path(tmp_file.name)
+            async for chunk in request.stream():
+                if chunk:
+                    tmp_file.write(chunk)
+                    total_size += len(chunk)
+            tmp_file.flush()
+            os.fsync(tmp_file.fileno())
+        os.replace(tmp_path, path)
+    except Exception:
+        if tmp_path and tmp_path.exists():
+            tmp_path.unlink(missing_ok=True)
+        raise
 
     # Sync artifact to scratch disk path: /tmp/factory_lite/artifacts/{job_id}/{filename}
     parts = [p for p in key.strip("/").split("/") if p]
@@ -158,7 +173,9 @@ async def local_storage_upload(
                 try:
                     os.link(str(path), str(scratch_path))
                 except OSError:
-                    shutil.copyfile(str(path), str(scratch_path))
+                    scratch_tmp = scratch_path.parent / f".tmp_{uuid.uuid4().hex}"
+                    shutil.copyfile(str(path), str(scratch_tmp))
+                    os.replace(str(scratch_tmp), str(scratch_path))
         except Exception as exc:
             logger.warning(f"Failed to sync artifact to scratch disk for job {job_id}: {exc}")
 

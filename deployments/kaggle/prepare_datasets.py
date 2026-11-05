@@ -180,8 +180,8 @@ class DatasetPreparationManager:
     """Manages discovery, verification, and automated deployment of Kaggle model datasets."""
 
     def __init__(self, username: Optional[str] = None, api_key: Optional[str] = None):
-        self.username = resolve_kaggle_username(username)
-        self.client = KaggleAPIClient(username=self.username, api_key=api_key or os.environ.get("KAGGLE_KEY"))
+        self.client = KaggleAPIClient(username=username, api_key=api_key)
+        self.username = self.client.username
         self.api_key = self.client.api_key
 
     def check_dataset_status(self, slug: str) -> Dict[str, Any]:
@@ -231,17 +231,55 @@ print("=" * 80)
 print("🚀 FACTORY V4 LITE REMOTE KAGGLE MODEL DOWNLOADER & PUBLISHER")
 print("=" * 80)
 
-# Configure Kaggle API credentials inside kernel
-KAGGLE_USER = "{self.username}"
-KAGGLE_KEY = "{self.api_key}"
+# Dynamically resolve Kaggle credentials inside kernel without embedding raw keys
+kaggle_user = os.environ.get("KAGGLE_USERNAME", "{self.username}")
+kaggle_key = os.environ.get("KAGGLE_API_TOKEN") or os.environ.get("KAGGLE_KEY")
 
-os.environ["KAGGLE_USERNAME"] = KAGGLE_USER
-os.environ["KAGGLE_KEY"] = KAGGLE_KEY
+try:
+    from kaggle_secrets import UserSecretsClient
+    secrets = UserSecretsClient()
+    if not kaggle_key:
+        try:
+            kaggle_key = secrets.get_secret("KAGGLE_API_TOKEN")
+        except Exception:
+            pass
+    if not kaggle_key:
+        try:
+            kaggle_key = secrets.get_secret("KAGGLE_KEY")
+        except Exception:
+            pass
+    try:
+        sec_user = secrets.get_secret("KAGGLE_USERNAME")
+        if sec_user:
+            kaggle_user = sec_user
+    except Exception:
+        pass
+except Exception:
+    pass
+
+if not kaggle_key:
+    kjson = Path.home() / ".kaggle" / "kaggle.json"
+    if kjson.exists():
+        try:
+            with open(kjson, "r") as f:
+                kd = json.load(f)
+                kaggle_key = kd.get("key")
+                if kd.get("username"):
+                    kaggle_user = kd.get("username")
+        except Exception:
+            pass
+
+if not kaggle_key:
+    print("❌ Fatal: Kaggle credentials missing. Set KAGGLE_API_TOKEN or KAGGLE_KEY via Kaggle Secrets or environment.")
+    sys.exit(1)
+
+os.environ["KAGGLE_USERNAME"] = kaggle_user
+os.environ["KAGGLE_KEY"] = kaggle_key
 
 kaggle_dir = Path.home() / ".kaggle"
 kaggle_dir.mkdir(parents=True, exist_ok=True)
 with open(kaggle_dir / "kaggle.json", "w") as f:
-    json.dump({{"username": KAGGLE_USER, "key": KAGGLE_KEY}}, f)
+    json.dump({{"username": kaggle_user, "key": kaggle_key}}, f)
 (kaggle_dir / "kaggle.json").chmod(0o600)
 
 try:
@@ -249,7 +287,7 @@ try:
     KaggleApi = getattr(kaggle_ext, "KaggleApi")
     k_api = KaggleApi()
     k_api.authenticate()
-    print("✅ Kaggle API authenticated successfully as", KAGGLE_USER)
+    print("✅ Kaggle API authenticated successfully as", kaggle_user)
 except Exception as e:
     print("❌ Failed to authenticate Kaggle API:", e)
     sys.exit(1)
@@ -282,7 +320,7 @@ for job in JOBS:
     files = job.get("files", [])
     snapshot = job.get("snapshot", False)
     extra_downloads = job.get("extra_downloads", [])
-    dataset_ref = f"{{KAGGLE_USER}}/{{slug}}"
+    dataset_ref = f"{{kaggle_user}}/{{slug}}"
 
     print("=" * 80)
     print(f"📦 Processing: {{title}} ({{dataset_ref}})")

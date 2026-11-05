@@ -617,62 +617,71 @@ class TestTier3CrossFeatureCombinations:
         5. Client calls GET /v1/jobs/{id}/result to download artifact.
         6. Verify immediate automatic disk cleanup (file removed from scratch disk).
         """
-        # Step 1: Submit job
-        submit_payload = {
-            "service": "image",
-            "model": "qwen-image-2.1",
-            "task": "text_to_image",
-            "inputs": {"prompt": "Lifecycle test image"},
-        }
-        submit_resp = client.post("/v1/jobs", json=submit_payload, headers=auth_headers)
-        assert submit_resp.status_code == 201
-        job_id = submit_resp.json()["job_id"]
+        scratch_disk = getattr(client.app.state, "scratch_disk", None)
+        orig_cleanup = scratch_disk.config.cleanup_on_download if scratch_disk else False
+        if scratch_disk:
+            scratch_disk.config.cleanup_on_download = True
 
-        # Step 2: Connect to event stream
-        stream_headers = dict(auth_headers)
-        stream_headers["Accept"] = "text/event-stream"
-        with client.stream("GET", f"/v1/jobs/{job_id}/events", headers=stream_headers) as stream_resp:
-            assert stream_resp.status_code == 200
+        try:
+            # Step 1: Submit job
+            submit_payload = {
+                "service": "image",
+                "model": "qwen-image-2.1",
+                "task": "text_to_image",
+                "inputs": {"prompt": "Lifecycle test image"},
+            }
+            submit_resp = client.post("/v1/jobs", json=submit_payload, headers=auth_headers)
+            assert submit_resp.status_code == 201
+            job_id = submit_resp.json()["job_id"]
 
-        # Step 3: Simulate worker writing scratch disk artifact
-        job_scratch_dir = os.path.join(SCRATCH_ARTIFACTS_DIR, job_id)
-        os.makedirs(job_scratch_dir, exist_ok=True)
-        artifact_path = os.path.join(job_scratch_dir, "output.png")
-        dummy_png_bytes = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15c4"
-        with open(artifact_path, "wb") as f:
-            f.write(dummy_png_bytes)
+            # Step 2: Connect to event stream
+            stream_headers = dict(auth_headers)
+            stream_headers["Accept"] = "text/event-stream"
+            with client.stream("GET", f"/v1/jobs/{job_id}/events", headers=stream_headers) as stream_resp:
+                assert stream_resp.status_code == 200
 
-        # Step 4: Verify file exists on scratch disk before download
-        assert os.path.exists(artifact_path), f"Artifact was not created at {artifact_path}"
+            # Step 3: Simulate worker writing scratch disk artifact
+            job_scratch_dir = os.path.join(SCRATCH_ARTIFACTS_DIR, job_id)
+            os.makedirs(job_scratch_dir, exist_ok=True)
+            artifact_path = os.path.join(job_scratch_dir, "output.png")
+            dummy_png_bytes = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15c4"
+            with open(artifact_path, "wb") as f:
+                f.write(dummy_png_bytes)
 
-        # Step 4b: Mark job as completed/succeeded before client download
-        complete_resp = client.post(
-            f"/v1/jobs/{job_id}/complete",
-            json={"artifact_path": artifact_path},
-            headers=auth_headers,
-        )
-        assert complete_resp.status_code == 200
+            # Step 4: Verify file exists on scratch disk before download
+            assert os.path.exists(artifact_path), f"Artifact was not created at {artifact_path}"
 
-        # Step 5: Client calls GET /v1/jobs/{job_id}/result
-        result_resp = client.get(f"/v1/jobs/{job_id}/result", headers=auth_headers)
-        if result_resp.status_code == 404:
-            pytest.fail(
-                f"Milestone 2 route GET /v1/jobs/{job_id}/result returned 404. "
-                "Direct artifact download and automatic disk cleanup requires M2 implementation."
+            # Step 4b: Mark job as completed/succeeded before client download
+            complete_resp = client.post(
+                f"/v1/jobs/{job_id}/complete",
+                json={"artifact_path": artifact_path},
+                headers=auth_headers,
             )
+            assert complete_resp.status_code == 200
 
-        assert result_resp.status_code == 200
-        assert result_resp.content == dummy_png_bytes
+            # Step 5: Client calls GET /v1/jobs/{job_id}/result
+            result_resp = client.get(f"/v1/jobs/{job_id}/result", headers=auth_headers)
+            if result_resp.status_code == 404:
+                pytest.fail(
+                    f"Milestone 2 route GET /v1/jobs/{job_id}/result returned 404. "
+                    "Direct artifact download and automatic disk cleanup requires M2 implementation."
+                )
 
-        # Step 6: Verify automatic disk cleanup
-        cleaned_up = False
-        for _ in range(10):
-            if not os.path.exists(artifact_path):
-                cleaned_up = True
-                break
-            time.sleep(0.1)
+            assert result_resp.status_code == 200
+            assert result_resp.content == dummy_png_bytes
 
-        assert cleaned_up, f"Automatic disk cleanup failed: {artifact_path} still exists after download."
+            # Step 6: Verify automatic disk cleanup
+            cleaned_up = False
+            for _ in range(10):
+                if not os.path.exists(artifact_path):
+                    cleaned_up = True
+                    break
+                time.sleep(0.1)
+
+            assert cleaned_up, f"Automatic disk cleanup failed: {artifact_path} still exists after download."
+        finally:
+            if scratch_disk:
+                scratch_disk.config.cleanup_on_download = orig_cleanup
 
     def test_t3_idempotent_job_submission_consistency(self, client: TestClient, auth_headers: Dict[str, str]):
         """R2 / AC: Duplicate submissions with the same idempotency_key return the same job."""

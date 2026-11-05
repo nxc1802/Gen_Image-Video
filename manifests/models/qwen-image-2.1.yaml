@@ -17,6 +17,20 @@ weights:
   format: gguf
   quantization: q4_k_m
   default_precision: bf16
+  variants:
+    turbo:
+      id: "turbo"
+      display_name: "Qwen-Image 2.1 Turbo GGUF (8 Euler steps)"
+      checkpoint: "qwen-image-2.1-turbo-Q4_K_M.gguf"
+      format: "gguf"
+      quantization: "q4_k_m"
+      default_precision: "bf16"
+      recommended_steps: 8
+      kaggle_dataset: "cuongnguyen1802/qwen-image-2-1-turbo-gguf"
+      huggingface_repo: "unsloth/Qwen-Image-2.1-Turbo-GGUF"
+      file_name: "qwen-image-2.1-turbo-Q4_K_M.gguf"
+      size_bytes: 4199565120
+      min_vram_gb: 14.0
 
 hardware:
   min_vram_gb: 14.0
@@ -38,7 +52,7 @@ status: full
 coverage_percent: 100.0
 missing_capabilities: []
 validation_status: pending_live
-validation_notes: "Pre-flight contract simulation passed for all 5 gates (PNG IHDR structure verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per LIVE_VALIDATION.md Section 10."
+validation_notes: "Pre-flight contract simulation passed for all 5 gates. Registered variants: 'turbo' (GGUF, 8 Euler steps, dataset: cuongnguyen1802/qwen-image-2-1-turbo-gguf). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per LIVE_VALIDATION.md Section 10."
 
 limits:
   max_width: 2048

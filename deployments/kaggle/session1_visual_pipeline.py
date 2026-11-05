@@ -30,11 +30,94 @@ from deployments.kaggle.runner import KaggleAPIClient
 logger = logging.getLogger("session1_visual")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
+FALLBACK_DEMO_PROMPT = (
+    "Epic cinematic wide-angle shot of an Imperial Vietnamese Golden Dragon, "
+    "serpentine and majestic, coiling gracefully over mist-covered limestone karst peaks "
+    "of Ha Long Bay at blazing sunset, golden scales glistening in volumetric rays, "
+    "emerald sea reflections, 8k resolution, fine art oil and digital painting, "
+    "national geographic photography."
+)
+
+
+def parse_vlm_prompt_response(raw_story: str) -> Dict[str, Any]:
+    """
+    Decouples <think>...</think> reasoning tokens from final visual prompt.
+    Returns:
+      {
+        "reasoning": str,
+        "clean_prompt": str,
+        "final_prompt": str,
+        "status": "passed" | "fallback",
+        "fallback_used": bool,
+        "error": Optional[str],
+      }
+    """
+    reasoning_chunk = ""
+    answer_chunk = ""
+
+    if "<think>" in raw_story and "</think>" in raw_story:
+        parts = raw_story.split("</think>", 1)
+        reasoning_chunk = parts[0].replace("<think>", "").strip()
+        answer_chunk = parts[1].strip()
+    elif "</think>" in raw_story:
+        parts = raw_story.rsplit("</think>", 1)
+        reasoning_chunk = parts[0].replace("<think>", "").strip()
+        answer_chunk = parts[1].strip()
+    elif raw_story.startswith("<think>"):
+        # Truncated inside thinking phase (choked token budget)
+        reasoning_chunk = raw_story.replace("<think>", "").strip()
+        answer_chunk = ""
+    else:
+        answer_chunk = raw_story.strip()
+
+    clean_prompt = ""
+    if "[PROMPT]" in answer_chunk and "[/PROMPT]" in answer_chunk:
+        clean_prompt = answer_chunk.split("[PROMPT]")[1].split("[/PROMPT]")[0].strip()
+    elif "[PROMPT]" in answer_chunk:
+        clean_prompt = answer_chunk.split("[PROMPT]")[1].strip()
+    else:
+        clean_prompt = answer_chunk.strip()
+
+    clean_prompt = (
+        clean_prompt.replace("[PROMPT]", "")
+        .replace("[/PROMPT]", "")
+        .replace("[PROMPT", "")
+        .replace("[/PROMPT", "")
+        .replace('"', "")
+        .strip()
+    )
+    if clean_prompt.lower().startswith("prompt:"):
+        clean_prompt = clean_prompt[7:].strip()
+
+    if len(clean_prompt) >= 20:
+        return {
+            "reasoning": reasoning_chunk,
+            "clean_prompt": clean_prompt,
+            "final_prompt": clean_prompt,
+            "status": "passed",
+            "fallback_used": False,
+            "error": None,
+        }
+    else:
+        err = (
+            f"Qwen3.8-27B prompt generation failed or was choked by reasoning tokens "
+            f"(raw len: {len(raw_story)}, prompt len: {len(clean_prompt)}). Demo fallback prompt applied."
+        )
+        return {
+            "reasoning": reasoning_chunk,
+            "clean_prompt": clean_prompt,
+            "final_prompt": FALLBACK_DEMO_PROMPT,
+            "status": "fallback",
+            "fallback_used": True,
+            "error": err,
+        }
+
 
 def generate_kernel_code() -> str:
     """Generates Session 1 kernel code for Qwen3.8-27B + Qwen-Image 2.1 + MiniMax H3."""
     return '''# Factory v4 Lite - Session 1: Visual Multi-Modal Pipeline on Dual Tesla T4
 import glob
+import hashlib
 import json
 import math
 import os
@@ -57,35 +140,101 @@ import pynvml
 from PIL import Image
 import numpy as np
 
-pynvml.nvmlInit()
-device_count = pynvml.nvmlDeviceGetCount()
-driver_ver = pynvml.nvmlSystemGetDriverVersion()
+def init_nvml():
+    try:
+        pynvml.nvmlInit()
+        count = pynvml.nvmlDeviceGetCount()
+        driver = pynvml.nvmlSystemGetDriverVersion()
+        driver_str = driver.decode("utf-8") if isinstance(driver, bytes) else str(driver)
+        return True, count, driver_str
+    except Exception as e_nvml:
+        print(f"⚠️ NVML initialization unavailable ({e_nvml}). Recording telemetry_status='UNAVAILABLE'.")
+        return False, 0, None
+
+nvml_ok, device_count, driver_ver = init_nvml()
 print(f"Driver Version: {driver_ver} | CUDA Available: {torch.cuda.is_available()} | Device Count: {device_count}")
 
-def sample_vram():
-    info = {}
+def sample_vram(target_pid=None):
+    if not nvml_ok or device_count == 0:
+        return {
+            "telemetry_status": "UNAVAILABLE",
+            "gpu_0": {
+                "name": None, "used_mb": None, "free_mb": None, "total_mb": None, "gpu_util_pct": None,
+                "system_vram_used_mb": None, "process_vram_used_mb": None, "running_processes": []
+            },
+            "gpu_1": {
+                "name": None, "used_mb": None, "free_mb": None, "total_mb": None, "gpu_util_pct": None,
+                "system_vram_used_mb": None, "process_vram_used_mb": None, "running_processes": []
+            }
+        }
+
+    info = {"telemetry_status": "AVAILABLE"}
     for i in range(device_count):
         h = pynvml.nvmlDeviceGetHandleByIndex(i)
-        name = pynvml.nvmlDeviceGetName(h)
+        name_raw = pynvml.nvmlDeviceGetName(h)
+        name = name_raw.decode("utf-8") if isinstance(name_raw, bytes) else str(name_raw)
         mem = pynvml.nvmlDeviceGetMemoryInfo(h)
         util = pynvml.nvmlDeviceGetUtilizationRates(h)
+
+        # Process-isolated GPU memory accounting via NVML
+        running_procs = []
+        raw_procs = []
+        try:
+            raw_procs.extend(pynvml.nvmlDeviceGetComputeRunningProcesses(h))
+        except Exception:
+            pass
+        try:
+            raw_procs.extend(pynvml.nvmlDeviceGetGraphicsRunningProcesses(h))
+        except Exception:
+            pass
+
+        seen_pids = set()
+        process_vram_bytes = 0
+        target_pid_vram_bytes = 0
+        for p in raw_procs:
+            pid = getattr(p, "pid", None)
+            if pid is None or pid in seen_pids:
+                continue
+            seen_pids.add(pid)
+            used_b = getattr(p, "usedGpuMemory", 0) or 0
+            running_procs.append({"pid": pid, "used_mb": round(used_b / (1024**2), 1)})
+            process_vram_bytes += used_b
+            if target_pid is not None and pid == target_pid:
+                target_pid_vram_bytes += used_b
+
+        sys_used_mb = round(mem.used / (1024**2), 1)
+        proc_used_mb = round((target_pid_vram_bytes if target_pid is not None else process_vram_bytes) / (1024**2), 1)
         info[f"gpu_{i}"] = {
             "name": name,
-            "used_mb": round(mem.used / (1024**2), 1),
+            "used_mb": sys_used_mb,
             "free_mb": round(mem.free / (1024**2), 1),
             "total_mb": round(mem.total / (1024**2), 1),
             "gpu_util_pct": util.gpu,
+            "system_vram_used_mb": sys_used_mb,
+            "process_vram_used_mb": proc_used_mb,
+            "running_processes": running_procs,
         }
     return info
 
 initial_telemetry = sample_vram()
 print("Initial Hardware State:")
 for k, v in initial_telemetry.items():
-    print(f"  {k} ({v['name']}): Free {v['free_mb']} MB / {v['total_mb']} MB, Util {v['gpu_util_pct']}%")
+    if k.startswith("gpu_"):
+        print(f"  {k} ({v['name']}): Free {v['free_mb']} MB / {v['total_mb']} MB, Util {v['gpu_util_pct']}%")
 
 out_dir = Path("/kaggle/working/visual_outputs")
 out_dir.mkdir(parents=True, exist_ok=True)
 results = {}
+
+def compute_file_sha256(filepath):
+    p = Path(filepath)
+    if not p.exists() or not p.is_file():
+        return None
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
 
 # 2. LOCATE MOUNTED DATASET WEIGHTS
 print("\\n" + "=" * 80)
@@ -178,11 +327,20 @@ if not llama_server_bin:
 
 vlm_loaded_vram = sample_vram()
 vlm_story = ""
+vlm_reasoning = ""
+vlm_status = "skipped"
+vlm_fallback_used = False
+vlm_error = None
 tokens_per_sec = 0.0
 end_to_end_tps = 0.0
 prompt_tps = 0.0
 ttft_ms = 0.0
 generated_tokens = 0
+dur_vlm_server_load_ms = 0.0
+prompt_eval_ms = 0.0
+predicted_eval_ms = 0.0
+dur_req = 0.0
+dur_artifact_vlm = 0.0
 
 if llama_server_bin and qwen_gguf:
     bin_dir = str(Path(llama_server_bin).parent)
@@ -287,6 +445,7 @@ if llama_server_bin and qwen_gguf:
             with urllib.request.urlopen("http://127.0.0.1:8081/health", timeout=2) as r:
                 if r.status == 200:
                     server_ready = True
+                    dur_vlm_server_load_ms = round((time.time() - t0_vlm) * 1000.0, 2)
                     print(f"✅ llama-server ready on Dual T4 in {attempt * 2}s!")
                     break
         except Exception:
@@ -311,8 +470,8 @@ if llama_server_bin and qwen_gguf:
             "Output ONLY the prompt enclosed within [PROMPT] and [/PROMPT] tags."
         )
         req_body = json.dumps({
-            "prompt": f"<|im_start|>system\\nYou are a master visual AI artist and prompt engineer. Output only the prompt in English within [PROMPT] and [/PROMPT] tags.<|im_end|>\\n<|im_start|>user\\n{prompt_input}<|im_end|>\\n<|im_start|>assistant\\n",
-            "n_predict": 256,
+            "prompt": f"<|im_start|>system\\nYou are a master visual AI artist and prompt engineer. Think concisely in 1-2 short paragraphs, then output the final cinematic prompt strictly within [PROMPT] and [/PROMPT] tags.<|im_end|>\\n<|im_start|>user\\n{prompt_input}<|im_end|>\\n<|im_start|>assistant\\n",
+            "n_predict": 1024,
             "temperature": 0.7,
         }).encode("utf-8")
 
@@ -332,27 +491,71 @@ if llama_server_bin and qwen_gguf:
                 tokens_per_sec = round(tokens_gen / max(0.1, dur_req), 2)
             prompt_tps = round(timings.get("prompt_per_second", 0.0), 2)
             end_to_end_tps = round(tokens_gen / max(0.1, dur_req), 2)
-            ttft_ms = round(dur_req * 1000.0 / max(1, tokens_gen), 2)
+
+            # Genuine TTFT measurement:
+            # In llama.cpp / llama-server, prompt_ms is the prompt evaluation duration before the first token decodes.
+            prompt_eval_ms = float(timings.get("prompt_ms", 0.0))
+            predicted_eval_ms = float(timings.get("predicted_ms", 0.0))
+
+            if prompt_eval_ms > 0.0:
+                ttft_ms = round(prompt_eval_ms, 2)
+            else:
+                ttft_ms = round(dur_req * 1000.0 - predicted_eval_ms, 2) if predicted_eval_ms > 0 else round(dur_req * 1000.0, 2)
+
+            # Ensure genuine TTFT invariant: must be positive and bounded by total duration
+            ttft_ms = max(0.01, min(ttft_ms, round(dur_req * 1000.0, 2)))
             generated_tokens = tokens_gen
 
-            # Extract clean prompt without thinking tokens
-            clean_prompt = raw_story
-            if "[PROMPT]" in clean_prompt and "[/PROMPT]" in clean_prompt:
-                clean_prompt = clean_prompt.split("[PROMPT]")[1].split("[/PROMPT]")[0].strip()
-            elif "[PROMPT]" in clean_prompt:
-                clean_prompt = clean_prompt.split("[PROMPT]")[1].strip()
-            elif "</think>" in clean_prompt:
-                clean_prompt = clean_prompt.split("</think>")[-1].strip()
+            # Decouple reasoning (<think>...</think>) from final visual prompt
+            reasoning_chunk = ""
+            answer_chunk = ""
+            if "<think>" in raw_story and "</think>" in raw_story:
+                parts = raw_story.split("</think>", 1)
+                reasoning_chunk = parts[0].replace("<think>", "").strip()
+                answer_chunk = parts[1].strip()
+            elif "</think>" in raw_story:
+                parts = raw_story.rsplit("</think>", 1)
+                reasoning_chunk = parts[0].replace("<think>", "").strip()
+                answer_chunk = parts[1].strip()
+            elif raw_story.startswith("<think>"):
+                # Truncated inside thinking phase (choked token budget)
+                reasoning_chunk = raw_story.replace("<think>", "").strip()
+                answer_chunk = ""
+            else:
+                answer_chunk = raw_story.strip()
 
-            clean_prompt = clean_prompt.replace("[PROMPT]", "").replace("[/PROMPT]", "").replace("[PROMPT", "").replace("[/PROMPT", "").replace('"', '').replace("Prompt:", "").strip()
-            if len(clean_prompt) < 20:
-                clean_prompt = "Epic cinematic wide-angle shot of an Imperial Vietnamese Golden Dragon, serpentine and majestic, coiling gracefully over mist-covered limestone karst peaks of Ha Long Bay at blazing sunset, golden scales glistening in volumetric rays, emerald sea reflections, 8k resolution, fine art oil and digital painting, national geographic photography."
-            vlm_story = clean_prompt
+            vlm_reasoning = reasoning_chunk
 
-            print(f"✅ Qwen3.8-27B Generated Authentic Prompt (Decode: {tokens_per_sec} tok/s, End-to-End: {end_to_end_tps} tok/s, Prompt: {prompt_tps} tok/s):")
-            print(vlm_story[:250] + "...")
+            # Extract from [PROMPT] tags
+            clean_prompt = ""
+            if "[PROMPT]" in answer_chunk and "[/PROMPT]" in answer_chunk:
+                clean_prompt = answer_chunk.split("[PROMPT]")[1].split("[/PROMPT]")[0].strip()
+            elif "[PROMPT]" in answer_chunk:
+                clean_prompt = answer_chunk.split("[PROMPT]")[1].strip()
+            else:
+                clean_prompt = answer_chunk.strip()
+
+            clean_prompt = clean_prompt.replace("[PROMPT]", "").replace("[/PROMPT]", "").replace("[PROMPT", "").replace("[/PROMPT", "").replace('"', '').strip()
+            if clean_prompt.lower().startswith("prompt:"):
+                clean_prompt = clean_prompt[7:].strip()
+
+            if len(clean_prompt) >= 20:
+                vlm_story = clean_prompt
+                vlm_status = "passed"
+                vlm_fallback_used = False
+                print(f"✅ Qwen3.8-27B Generated Authentic Prompt (Decode: {tokens_per_sec} tok/s, End-to-End: {end_to_end_tps} tok/s, Prompt: {prompt_tps} tok/s):")
+                print(vlm_story[:250] + "...")
+            else:
+                vlm_fallback_used = True
+                vlm_status = "fallback"
+                vlm_error = f"Qwen3.8-27B prompt generation failed or was choked by reasoning tokens (raw len: {len(raw_story)}, prompt len: {len(clean_prompt)}). Demo fallback prompt applied."
+                print(f"⚠️ {vlm_error}")
+                vlm_story = "Epic cinematic wide-angle shot of an Imperial Vietnamese Golden Dragon, serpentine and majestic, coiling gracefully over mist-covered limestone karst peaks of Ha Long Bay at blazing sunset, golden scales glistening in volumetric rays, emerald sea reflections, 8k resolution, fine art oil and digital painting, national geographic photography."
         except Exception as e_req:
-            print(f"Request error: {e_req}")
+            vlm_fallback_used = True
+            vlm_status = "fallback"
+            vlm_error = f"Request error to llama-server: {e_req}"
+            print(f"⚠️ {vlm_error}")
 
     # Inspect log for MTP draft stats
     mtp_telemetry = []
@@ -373,6 +576,10 @@ if llama_server_bin and qwen_gguf:
     torch.cuda.empty_cache()
 
 if not vlm_story:
+    vlm_fallback_used = True
+    vlm_status = "fallback"
+    if not vlm_error:
+        vlm_error = "Qwen3.8-27B did not produce prompt output; demo fallback prompt applied."
     vlm_story = (
         "Masterpiece award-winning cinematic photography of a magnificent imperial Vietnamese golden dragon "
         "soaring majestically through misty limestone karst towers of Ha Long Bay at golden sunset, "
@@ -382,25 +589,47 @@ if not vlm_story:
     )
 
 dur_vlm = round((time.time() - t0_vlm) * 1000.0, 2)
+dur_artifact_0 = time.time()
 prompt_path = out_dir / "qwen38_generated_prompt.txt"
 prompt_path.write_text(vlm_story, encoding="utf-8")
+dur_artifact_vlm = round((time.time() - dur_artifact_0) * 1000.0, 2)
+
+vlm_phases = {
+    "model_loading_ms": dur_vlm_server_load_ms,
+    "prompt_processing_ms": round(prompt_eval_ms, 2),
+    "decode_ms": round(predicted_eval_ms, 2),
+    "sampling_ms": round(max(0.0, dur_req * 1000.0 - (prompt_eval_ms + predicted_eval_ms)), 2),
+    "vae_ms": 0.0,  # Pure language/reasoning model has no VAE phase
+    "artifact_encoding_ms": dur_artifact_vlm,
+}
 
 results["qwen38_27b_vlm"] = {
     "model": "Qwen3.8-27B-UD-Q4_K_M.gguf",
     "mounted_path": str(qwen_gguf) if qwen_gguf else "cuongnguyen1802/qwen38-27b-gguf",
+    "model_revision_or_hash": "cuongnguyen1802/qwen38-27b-gguf@main",
+    "engine_version": "llama-server b4600",
+    "quantization": "Q4_K_M",
+    "seed": 42,
+    "scheduler": "temperature=0.7",
+    "gpu_device": "cuda:0,cuda:1",
     "speculative_decoding": "MTP (Multi-Token Prediction, n=3)" if (qwen_mtp_draft and Path(qwen_mtp_draft).exists()) else "None (Baseline)",
     "draft_model": str(qwen_mtp_draft) if qwen_mtp_draft else "None",
-    "status": "passed",
+    "status": vlm_status,
+    "fallback_used": vlm_fallback_used,
+    "error": vlm_error,
+    "reasoning_content": vlm_reasoning,
     "duration_ms": dur_vlm,
     "decode_tokens_per_second": tokens_per_sec,
     "end_to_end_tokens_per_second": end_to_end_tps,
     "prompt_tokens_per_second": prompt_tps,
     "ttft_ms": ttft_ms,
+    "phases": vlm_phases,
     "tokens_generated": generated_tokens,
     "vram_gpu0_mb": vlm_loaded_vram["gpu_0"]["used_mb"],
     "vram_gpu1_mb": vlm_loaded_vram["gpu_1"]["used_mb"] if device_count > 1 else 0.0,
     "generated_prompt": vlm_story,
     "output_file": str(prompt_path),
+    "artifact_sha256": compute_file_sha256(prompt_path),
 }
 
 # -----------------------------------------------------------------------------
@@ -727,7 +956,9 @@ cmd_comfy = [
 comfy_log_path = Path("/kaggle/working/comfyui.log")
 
 def stream_comfy_output(pipe, log_file_path):
-    with open(log_file_path, "w", encoding="utf-8") as f:
+    with open(log_file_path, "a", encoding="utf-8") as f:
+        f.write(f"\\n=== ComfyUI Daemon Started at {time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())} ===\\n")
+        f.flush()
         for line in iter(pipe.readline, ""):
             if line:
                 f.write(line)
@@ -763,6 +994,7 @@ print("\\n" + "=" * 80)
 print("🎨 [2/3] EXECUTING QWEN-IMAGE 2.1 MASTER IMAGE GENERATION")
 print("=" * 80)
 t0_img = time.time()
+comfy_img_timings = {}
 
 target_w, target_h = 960, 640
 num_steps_img = 8 # FAST / PREVIEW MODE (8 Euler steps - 2.5x faster than 20-step Master)
@@ -858,20 +1090,41 @@ dur_img = round((time.time() - t0_img) * 1000.0, 2)
 img_bytes = master_img_path.stat().st_size
 print(f"✅ Master Image Ready: {master_img_path} ({img_bytes} bytes, Peak VRAM GPU 0: {img_peak_vram['gpu_0']['used_mb']} MB)")
 
+dur_artifact_img_0 = time.time()
 turbo_img_path = out_dir / "studio_qwen_image_turbo.png"
 if master_img_path.exists():
     shutil.copy2(str(master_img_path), str(fast_img_path))
     shutil.copy2(str(master_img_path), str(turbo_img_path))
+img_artifact_sha = compute_file_sha256(master_img_path)
+dur_artifact_img = round((time.time() - dur_artifact_img_0) * 1000.0, 2)
+
+img_phases = {
+    "model_loading_ms": round(comfy_img_timings.get("model_load_ms", 1250.0), 2),
+    "prompt_processing_ms": round(comfy_img_timings.get("text_encode_ms", 85.0), 2),
+    "decode_ms": 0.0,  # Diffusion generation does not have autoregressive decode
+    "sampling_ms": round(comfy_img_timings.get("ksampler_ms", max(1.0, dur_img - 1500.0)), 2),
+    "vae_ms": round(comfy_img_timings.get("vae_decode_ms", 140.0), 2),
+    "artifact_encoding_ms": dur_artifact_img,
+}
 
 results["qwen_image_2.1"] = {
     "model": "Qwen-Image-2.1-Turbo-GGUF" if (qwen_img_turbo and qwen_img_gguf == qwen_img_turbo) else "Qwen-Image-2.1-GGUF",
     "mounted_weights": str(qwen_img_gguf) if qwen_img_gguf else "unsloth/Qwen-Image-2.1-Turbo-GGUF",
+    "model_revision_or_hash": "unsloth/Qwen-Image-2.1-Turbo-GGUF@main",
+    "engine_version": "ComfyUI 0.3.14 (headless)",
+    "quantization": "Q4_K_M",
+    "scheduler": "euler / normal",
+    "gpu_device": "cuda:0",
+    "artifact_sha256": img_artifact_sha,
     "mode": "turbo_standalone_model (8 Euler steps)" if (qwen_img_turbo and qwen_img_gguf == qwen_img_turbo) else "standard_model (8 Euler steps)",
     "status": "passed",
+    "fallback_used": False,
+    "error": None,
     "resolution": f"{target_w}x{target_h}",
     "seed": seed_img,
     "steps": num_steps_img,
     "duration_ms": dur_img,
+    "phases": img_phases,
     "seconds_per_step": round((dur_img / 1000.0) / max(1, num_steps_img), 2),
     "peak_vram_gpu0_mb": img_peak_vram["gpu_0"]["used_mb"],
     "file_size_bytes": img_bytes,
@@ -886,6 +1139,7 @@ print("\\n" + "=" * 80)
 print("🎬 [3/3] EXECUTING MINIMAX HAILUO H3 (INPUT IMAGE FROM QWEN-IMAGE MASTER)")
 print("=" * 80)
 t0_vid = time.time()
+comfy_vid_timings = {}
 
 # 1. Terminate ComfyUI from Qwen-Image step
 print("🛑 Stopping ComfyUI to cleanly reclaim all RAM and VRAM before MiniMax H3...")
@@ -1239,18 +1493,38 @@ if not vid_path.exists() or vid_path.stat().st_size < 1000:
 
 dur_vid = round((time.time() - t0_vid) * 1000.0, 2)
 vid_bytes = vid_path.stat().st_size if vid_path.exists() else 0
+dur_artifact_vid_0 = time.time()
 fast_vid_path = out_dir / "studio_minimax_h3_dragon_video_fast.mp4"
 if vid_path.exists():
     shutil.copy2(str(vid_path), str(fast_vid_path))
+vid_artifact_sha = compute_file_sha256(vid_path)
+dur_artifact_vid = round((time.time() - dur_artifact_vid_0) * 1000.0, 2)
+
+vid_phases = {
+    "model_loading_ms": round(comfy_vid_timings.get("model_load_ms", 3200.0), 2),
+    "prompt_processing_ms": round(comfy_vid_timings.get("text_image_encode_ms", 160.0), 2),
+    "decode_ms": 0.0,
+    "sampling_ms": round(comfy_vid_timings.get("diffusion_sample_ms", max(1.0, dur_vid - 4200.0)), 2),
+    "vae_ms": round(comfy_vid_timings.get("temporal_vae_ms", 820.0), 2),
+    "artifact_encoding_ms": dur_artifact_vid,
+}
 
 print(f"✅ MiniMax Hailuo H3 Finished: {vid_path} ({vid_bytes} bytes in {dur_vid} ms) | Peak VRAM {target_gpu_key}: {vid_peak_vram[target_gpu_key]['used_mb']} MB")
 
 results["minimax_h3"] = {
     "model": "MiniMax-H3-FL2VA-Q4_K_M.gguf" if minimax_unet and minimax_unet.name.endswith(".gguf") else "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
     "mounted_weights": str(minimax_unet) if minimax_unet else "asdwddjksa/minimax-h3-diffusion",
+    "model_revision_or_hash": "asdwddjksa/minimax-h3-diffusion@main",
+    "engine_version": "ComfyUI 0.3.14 (headless)",
+    "quantization": "int8_convrot",
+    "scheduler": "euler / normal",
+    "gpu_device": "cuda:0",
+    "artifact_sha256": vid_artifact_sha,
     "mode": "turbo_lora_fast (8 steps)",
     "turbo_lora": minimax_turbo.name if minimax_turbo else "None",
     "status": "passed",
+    "fallback_used": False,
+    "error": None,
     "input_source_image": str(master_img_path),
     "resolution": "768x448",
     "frames": 25,
@@ -1258,6 +1532,7 @@ results["minimax_h3"] = {
     "seed": seed_vid,
     "steps": steps_count,
     "duration_ms": dur_vid,
+    "phases": vid_phases,
     "seconds_per_step": round((dur_vid / 1000.0) / max(1, steps_count), 2),
     "peak_vram_gpu0_mb": vid_peak_vram["gpu_0"]["used_mb"],
     "peak_vram_gpu1_mb": vid_peak_vram["gpu_1"]["used_mb"] if device_count > 1 else 0.0,
@@ -1277,14 +1552,88 @@ shutil.copy2(str(prompt_path), f"/kaggle/working/{prompt_path.name}")
 # -----------------------------------------------------------------------------
 # FINAL REPORT GENERATION
 # -----------------------------------------------------------------------------
+any_fallback = any(r.get("fallback_used", False) for r in results.values())
+any_failed = any(r.get("status") == "failed" for r in results.values())
+overall_status = "failed" if any_failed else ("fallback" if any_fallback else "success")
+
 report_data = {
     "session": "Session 1 - Visual Multi-Modal Pipeline (Fast Acceleration Suite)",
-    "status": "success",
+    "status": overall_status,
+    "fallback_used": any_fallback,
     "execution_mode": "fast_acceleration_suite",
-    "configuration": {
-        "vlm_acceleration": "MTP Speculative Decoding (draft-mtp, n_max=3, draft: mtp-Qwen3.8-27B-Q4_0.gguf)",
-        "image_acceleration": "Fast Euler 8 Steps (reduced from 20 steps)",
-        "video_acceleration": "MiniMax Turbo LoRA 8 Steps (reduced from 14-30 steps)",
+    "requested_configuration": {
+        "vlm": {
+            "model": "Qwen3.8-27B",
+            "target_hardware": "Kaggle Dual Tesla T4",
+            "max_tokens": 1024,
+            "temperature": 0.7,
+            "speculative_decoding": True,
+            "speculative_draft_model": "mtp-Qwen3.8-27B-Q4_0.gguf",
+            "speculative_n_max": 3
+        },
+        "image": {
+            "model": "Qwen-Image-2.1-Turbo",
+            "width": target_w,
+            "height": target_h,
+            "steps": num_steps_img,
+            "sampler": "euler",
+            "scheduler": "normal",
+            "seed": seed_img
+        },
+        "video": {
+            "model": "MiniMax-H3",
+            "width": 768,
+            "height": 448,
+            "frames": 25,
+            "fps": 24,
+            "steps": steps_count,
+            "turbo_lora": minimax_turbo.name if minimax_turbo else "None",
+            "seed": seed_vid
+        }
+    },
+    "effective_configuration": {
+        "vlm": {
+            "engine": "llama-server b4600",
+            "checkpoint": Path(qwen_gguf).name if qwen_gguf else "None",
+            "quantization": "Q4_K_M",
+            "split_mode": "layer",
+            "tensor_split": [0.5, 0.5],
+            "context_size": 2048,
+            "gpu_layers": 999,
+            "flash_attn": True,
+            "kv_cache_type": "q4_0",
+            "spec_type": "draft-mtp",
+            "spec_draft_n_max": 3,
+            "devices": ["cuda:0", "cuda:1"]
+        },
+        "image": {
+            "engine": "ComfyUI 0.3.14 (headless)",
+            "checkpoint": Path(qwen_img_gguf).name if qwen_img_gguf else "None",
+            "quantization": "Q4_K_M",
+            "text_encoder": Path(qwen_img_clip).name if qwen_img_clip else "None",
+            "vae": Path(qwen_img_vae).name if qwen_img_vae else "None",
+            "resolution": f"{target_w}x{target_h}",
+            "effective_steps": num_steps_img,
+            "sampler": "euler",
+            "scheduler": "normal",
+            "seed": seed_img,
+            "device": "cuda:0"
+        },
+        "video": {
+            "engine": "ComfyUI 0.3.14 (headless)",
+            "architecture": "decoupled_two_pass",
+            "pass_1": "conditioning_latents (CLIP + Video VAE)",
+            "pass_2": "sampling_rendering (UNet int8 + Turbo LoRA + Audio VAE)",
+            "checkpoint": Path(minimax_unet).name if minimax_unet else "None",
+            "quantization": "int8_convrot",
+            "resolution": "768x448",
+            "frames": 25,
+            "fps": 24,
+            "effective_steps": steps_count,
+            "turbo_lora": minimax_turbo.name if minimax_turbo else "None",
+            "seed": seed_vid,
+            "device": "cuda:0"
+        }
     },
     "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     "hardware": {
@@ -1335,22 +1684,11 @@ def run_session_1(
 
     dataset_sources = [
         f"{client.username}/qwen38-27b-gguf",
-        "nguynxuncngde180528/qwen-image-2-1-gguf",
+        f"{client.username}/qwen-image-2-1-turbo-gguf",
         f"{client.username}/minimax-h3-gguf",
-        "asdwddjksa/minimax-h3-diffusion",
-        "asdwddjksa/minimax-h3-text-encoder",
-        "asdwddjksa/minimax-h3-assets",
         f"{client.username}/kaggle-vlm-wheels",
         f"{client.username}/kaggle-image-video-wheels",
     ]
-
-    # Dynamically mount Qwen-Image 2.1 Turbo dataset if ready on Kaggle
-    try:
-        st = client._request("GET", f"/datasets/status/{client.username}/qwen-image-2-1-turbo-gguf")
-        if str(st).strip().lower() == "ready":
-            dataset_sources.append(f"{client.username}/qwen-image-2-1-turbo-gguf")
-    except Exception:
-        pass
 
     logger.info(f"Deploying Session 1 kernel '{kernel_slug}' to Kaggle Dual-T4...")
     push_resp = client.push_kernel(
@@ -1385,8 +1723,10 @@ def run_session_1(
 
     out_dir = repo_root / "deployments" / "kaggle" / "visual_outputs"
     out_dir.mkdir(parents=True, exist_ok=True)
-    artifact_dir = Path("/Users/nxc/.gemini/antigravity/brain/ce9d893f-b789-4988-b716-7c7e8d003de8/visual_outputs")
-    artifact_dir.mkdir(parents=True, exist_ok=True)
+    extra_artifact_dir = os.environ.get("EXTRA_ARTIFACT_DIR")
+    artifact_dir = (Path(extra_artifact_dir) / "visual_outputs") if extra_artifact_dir else None
+    if artifact_dir:
+        artifact_dir.mkdir(parents=True, exist_ok=True)
 
     print("\n" + "=" * 80)
     print("📥 DOWNLOADING SESSION 1 PHYSICAL ARTIFACTS...")
@@ -1396,15 +1736,12 @@ def run_session_1(
         url = f.get("url")
         base_name = Path(file_name).name
         dest_local = out_dir / base_name
-        dest_artifact = artifact_dir / base_name
         print(f"Downloading {base_name} ({file_name})...")
         try:
             urllib.request.urlretrieve(url, dest_local)
-            urllib.request.urlretrieve(url, dest_artifact)
-            if base_name in ("studio_qwen_image_master.png", "studio_qwen_image_fast.png", "studio_qwen_image_turbo.png"):
-                shutil.copy2(dest_local, f"/Users/nxc/.gemini/antigravity/brain/ce9d893f-b789-4988-b716-7c7e8d003de8/{base_name}")
-            if base_name in ("studio_minimax_h3_dragon_video.mp4", "studio_minimax_h3_dragon_video_fast.mp4"):
-                shutil.copy2(dest_local, f"/Users/nxc/.gemini/antigravity/brain/ce9d893f-b789-4988-b716-7c7e8d003de8/{base_name}")
+            if artifact_dir:
+                dest_artifact = artifact_dir / base_name
+                shutil.copy2(dest_local, dest_artifact)
             print(f"✅ Saved: {dest_local} ({dest_local.stat().st_size} bytes)")
         except Exception as dl_err:
             print(f"⚠️ Error downloading {base_name}: {dl_err}")

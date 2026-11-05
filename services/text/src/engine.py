@@ -19,6 +19,75 @@ from services.text.src.multimodal import extract_content_text_and_media
 OFFLINE_MODELS = {"offline-model", "qwen-offline", "failing-model", "failing-text-model"}
 
 
+def decouple_think_tokens(raw_text: str | None) -> tuple[str | None, str | None]:
+    """
+    Decouples <think>...</think> reasoning tokens from final generated content.
+    Returns (reasoning_content, clean_content).
+    """
+    if not raw_text:
+        return None, raw_text
+
+    if "<think>" in raw_text and "</think>" in raw_text:
+        parts = raw_text.split("</think>", 1)
+        reasoning = parts[0].replace("<think>", "").strip()
+        clean = parts[1].strip()
+        return (reasoning if reasoning else None), clean
+    elif "</think>" in raw_text:
+        parts = raw_text.rsplit("</think>", 1)
+        reasoning = parts[0].replace("<think>", "").strip()
+        clean = parts[1].strip()
+        return (reasoning if reasoning else None), clean
+    elif raw_text.startswith("<think>"):
+        reasoning = raw_text.replace("<think>", "").strip()
+        return (reasoning if reasoning else None), ""
+    else:
+        return None, raw_text
+
+
+class StreamingReasoningFilter:
+    """
+    Stateful SSE line filter that detects <think> tags across streaming chunks.
+    Isolates tokens inside <think> into delta.reasoning_content and tokens outside into delta.content.
+    """
+    def __init__(self):
+        self.in_think = False
+
+    def process_chunk_delta(self, delta: dict) -> dict:
+        content = delta.get("content")
+        if content is None:
+            return delta
+
+        res = dict(delta)
+        if "reasoning_content" in delta and delta["reasoning_content"]:
+            return delta
+
+        text = content
+        if "<think>" in text:
+            self.in_think = True
+            text = text.replace("<think>", "")
+
+        if "</think>" in text:
+            parts = text.split("</think>", 1)
+            reasoning_part = parts[0]
+            answer_part = parts[1]
+            self.in_think = False
+            res.pop("content", None)
+            if reasoning_part:
+                res["reasoning_content"] = reasoning_part
+            if answer_part:
+                res["content"] = answer_part
+            return res
+
+        res.pop("content", None)
+        if self.in_think:
+            if text:
+                res["reasoning_content"] = text
+        else:
+            if text:
+                res["content"] = text
+        return res
+
+
 class TextEngine:
     def __init__(self, upstream_url: str | None = None, timeout: float = 120.0):
         self.upstream_url = (upstream_url or os.environ.get("VLLM_TEXT_URL") or "").rstrip("/")
@@ -39,6 +108,14 @@ class TextEngine:
             raise ModelUnavailableError(message=f"Model '{request.model}' is offline.")
         if not request.messages:
             raise InvalidRequestError("Field 'messages' must be a non-empty array.")
+        if request.reasoning_effort:
+            norm = request.reasoning_effort.lower()
+            if norm not in {"low", "medium", "high"}:
+                raise InvalidRequestError(
+                    message="Field 'reasoning_effort' must be one of: 'low', 'medium', 'high'.",
+                    details={"reasoning_effort": request.reasoning_effort},
+                )
+            request.reasoning_effort = norm
         total_chars = 0
         for msg in request.messages:
             text, _ = extract_content_text_and_media(msg.content)
@@ -72,7 +149,18 @@ class TextEngine:
                         message="Native vLLM text backend rejected the request.",
                         details={"status_code": response.status_code},
                     )
-                return response.json()
+                data = response.json()
+                if isinstance(data, dict) and "choices" in data:
+                    for choice in data.get("choices", []):
+                        msg = choice.get("message")
+                        if isinstance(msg, dict):
+                            raw_content = msg.get("content")
+                            if raw_content and ("<think>" in raw_content or "</think>" in raw_content):
+                                r_content, c_content = decouple_think_tokens(raw_content)
+                                if r_content is not None:
+                                    msg["reasoning_content"] = r_content
+                                msg["content"] = c_content
+                return data
         except ModelUnavailableError:
             raise
         except (httpx.HTTPError, ValueError) as exc:
@@ -86,6 +174,7 @@ class TextEngine:
         self._require_upstream()
         payload = request.model_dump(mode="json", exclude_none=True)
         payload["stream"] = True
+        filter_obj = StreamingReasoningFilter()
         try:
             async with httpx.AsyncClient(timeout=None) as client:
                 async with client.stream(
@@ -101,10 +190,23 @@ class TextEngine:
                             details={"status_code": response.status_code, "body_bytes": len(body)},
                         )
                     async for line in response.aiter_lines():
-                        if line:
-                            yield f"{line}\n"
-                        else:
+                        if not line:
                             yield "\n"
+                            continue
+                        if line.startswith("data: ") and line.strip() != "data: [DONE]":
+                            payload_str = line[6:].strip()
+                            try:
+                                chunk_data = json.loads(payload_str)
+                                choices = chunk_data.get("choices", [])
+                                for choice in choices:
+                                    delta = choice.get("delta")
+                                    if isinstance(delta, dict):
+                                        choice["delta"] = filter_obj.process_chunk_delta(delta)
+                                yield f"data: {json.dumps(chunk_data)}\n"
+                            except Exception:
+                                yield f"{line}\n"
+                        else:
+                            yield f"{line}\n"
         except ModelUnavailableError:
             raise
         except httpx.HTTPError as exc:

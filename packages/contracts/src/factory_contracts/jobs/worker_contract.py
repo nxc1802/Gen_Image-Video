@@ -40,6 +40,10 @@ class WorkerHeartbeatRequest(BaseModel):
     telemetry_status: str = Field(default="UNAVAILABLE", description="'AVAILABLE' or 'UNAVAILABLE'")
     gpu_utilization_percent: Optional[float] = Field(default=None, ge=0.0, le=100.0)
     vram_used_mb: Optional[float] = Field(default=None, ge=0.0)
+    vram_total_mb: Optional[float] = Field(default=None, ge=0.0)
+    system_vram_used_mb: Optional[float] = Field(default=None, ge=0.0)
+    process_vram_used_mb: Optional[float] = Field(default=None, ge=0.0)
+    gpu_name: Optional[str] = Field(default=None, description="Name of GPU device")
     temperature_c: Optional[float] = Field(default=None, description="GPU temperature in Celsius")
 
 

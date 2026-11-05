@@ -20,7 +20,7 @@ from factory.apps.control_api.src.api.routers.health import router as health_rou
 from factory.apps.control_api.src.api.routers.models import router as models_router
 from factory.apps.control_api.src.api.routers.jobs import router as jobs_router
 from factory.apps.control_api.src.api.routers.workers import router as workers_router
-from factory.apps.control_api.src.api.routers.inspector import router as inspector_router
+from factory.apps.control_api.src.api.routers.inspector import router as inspector_router, memory_router
 from factory.apps.control_api.src.api.routers.assets import router as assets_router
 from factory.apps.control_api.src.assets.service import AssetService, MAX_PAYLOAD_SIZE
 from factory.apps.control_api.src.storage.router import router as storage_router
@@ -53,9 +53,13 @@ async def lifespan(app: FastAPI):
     await scratch_disk.initialize()
     app.state.scratch_disk = scratch_disk
 
-    # Storage Provider (Local scratch disk for Factory v4 Lite compatibility)
+    # Storage Provider (S3 when configured, Local scratch disk otherwise)
     storage_config = load_storage_config()
-    storage_provider = LocalStorageProvider(storage_config)
+    if storage_config.storage_backend == "s3":
+        from factory.apps.control_api.src.storage.s3 import S3StorageProvider
+        storage_provider = S3StorageProvider(storage_config)
+    else:
+        storage_provider = LocalStorageProvider(storage_config)
     app.state.storage_provider = storage_provider
 
     # 2. Initialize In-Memory Queue & Lifecycle Engine
@@ -136,6 +140,7 @@ app.include_router(jobs_router)
 app.include_router(workers_router)
 app.include_router(storage_router)
 app.include_router(inspector_router)
+app.include_router(memory_router)
 app.include_router(assets_router)
 
 

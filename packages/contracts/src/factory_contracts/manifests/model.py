@@ -48,6 +48,38 @@ class AllocationPolicy(str, Enum):
     OFFLOAD_RAM = "offload_ram"
 
 
+class ModelVariantSpec(BaseModel):
+    """Specification of a quantization, distilled, or fine-tuned variant of a model."""
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(..., pattern=r"^[a-z0-9-._]+$", description="Variant identifier, e.g. 'turbo' or 'q4_k_m'")
+    display_name: str = Field(..., description="Human-readable title of variant")
+    checkpoint: str = Field(..., description="Variant checkpoint path, filename, or Hugging Face repo")
+    format: ModelWeightFormat = Field(default=ModelWeightFormat.GGUF)
+    quantization: QuantizationType = Field(default=QuantizationType.Q4_K_M)
+    default_precision: PrecisionType = Field(default=PrecisionType.BF16)
+    recommended_steps: Optional[int] = Field(default=None, ge=1, le=100, description="Recommended inference steps (e.g. 8 for Turbo)")
+    kaggle_dataset: Optional[str] = Field(
+        default=None,
+        description="Linked Kaggle dataset slug, e.g. 'cuongnguyen1802/qwen-image-2-1-turbo-gguf'"
+    )
+    huggingface_repo: Optional[str] = Field(
+        default=None,
+        description="Source Hugging Face repository, e.g. 'unsloth/Qwen-Image-2.1-Turbo-GGUF'"
+    )
+    file_name: Optional[str] = Field(
+        default=None,
+        description="Target file name within dataset, e.g. 'qwen-image-2.1-turbo-Q4_K_M.gguf'"
+    )
+    sha256: Optional[str] = Field(
+        default=None,
+        pattern=r"^[a-f0-9]{64}$",
+        description="SHA256 checksum of variant weights"
+    )
+    size_bytes: Optional[int] = Field(default=None, ge=1, description="Size in bytes")
+    min_vram_gb: Optional[float] = Field(default=None, ge=1.0, description="Minimum dedicated VRAM in GB")
+
+
 class ModelWeightsSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -59,6 +91,10 @@ class ModelWeightsSpec(BaseModel):
     format: ModelWeightFormat = Field(default=ModelWeightFormat.SAFETENSORS)
     quantization: QuantizationType = Field(default=QuantizationType.NONE)
     default_precision: PrecisionType = Field(default=PrecisionType.BF16)
+    variants: Dict[str, ModelVariantSpec] = Field(
+        default_factory=dict,
+        description="Dictionary mapping variant IDs (e.g. 'turbo') to variant specifications"
+    )
 
 
 class ModelHardwareSpec(BaseModel):

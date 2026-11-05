@@ -6,6 +6,7 @@ import asyncio
 import hashlib
 import hmac
 import os
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -119,11 +120,23 @@ class LocalStorageProvider(StorageProvider):
     ) -> StorageObjectMetadata:
         target_bucket = bucket or self.config.s3_bucket_name
         path = self._get_path(target_bucket, key)
-        path.parent.mkdir(parents=True, exist_ok=True)
         sha256 = compute_bytes_sha256(data)
 
         def _write():
-            path.write_bytes(data)
+            parent_dir = path.parent
+            parent_dir.mkdir(parents=True, exist_ok=True)
+            tmp_path = None
+            try:
+                with tempfile.NamedTemporaryFile(dir=parent_dir, delete=False, prefix=".tmp_") as tmp_file:
+                    tmp_path = Path(tmp_file.name)
+                    tmp_file.write(data)
+                    tmp_file.flush()
+                    os.fsync(tmp_file.fileno())
+                os.replace(tmp_path, path)
+            except Exception:
+                if tmp_path and tmp_path.exists():
+                    tmp_path.unlink(missing_ok=True)
+                raise
 
         await asyncio.to_thread(_write)
 

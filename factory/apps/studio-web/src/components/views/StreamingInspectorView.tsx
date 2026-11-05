@@ -220,7 +220,7 @@ export function StreamingInspectorView() {
               <span className="text-xs font-mono text-ink-muted">GPU 0 VRAM</span>
               <div className="text-xl font-mono font-bold text-ink mt-1">
                 {telemetry?.gpu_0_vram_used_gb != null
-                  ? `${telemetry.gpu_0_vram_used_gb.toFixed(1)} / 15.0 GB`
+                  ? `${telemetry.gpu_0_vram_used_gb.toFixed(1)} / ${(telemetry.gpu_0_vram_total_gb ?? 15.0).toFixed(1)} GB`
                   : "-- / Unavailable"}
               </div>
             </div>
@@ -228,7 +228,7 @@ export function StreamingInspectorView() {
               <span className="text-xs font-mono text-ink-muted">GPU 1 VRAM</span>
               <div className="text-xl font-mono font-bold text-ink mt-1">
                 {telemetry?.gpu_1_vram_used_gb != null
-                  ? `${telemetry.gpu_1_vram_used_gb.toFixed(1)} / 15.0 GB`
+                  ? `${telemetry.gpu_1_vram_used_gb.toFixed(1)} / ${(telemetry.gpu_1_vram_total_gb ?? 15.0).toFixed(1)} GB`
                   : "-- / Unavailable"}
               </div>
             </div>

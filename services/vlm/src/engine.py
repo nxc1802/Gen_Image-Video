@@ -1,12 +1,14 @@
 """
 Strict compatibility proxy for the native vLLM VLM service.
 """
+import json
 import os
 from typing import AsyncIterator
 
 import httpx
 
 from factory_contracts.errors import InvalidRequestError, ModelUnavailableError
+from services.text.src.engine import StreamingReasoningFilter, decouple_think_tokens
 from services.text.src.models import ChatCompletionRequest
 from services.vlm.src.processor import MultimodalMediaProcessor
 
@@ -33,6 +35,14 @@ class VLMEngine:
             raise ModelUnavailableError(message=f"Model '{request.model}' is offline.")
         if not request.messages:
             raise InvalidRequestError("Field 'messages' must be a non-empty array.")
+        if request.reasoning_effort:
+            norm = request.reasoning_effort.lower()
+            if norm not in {"low", "medium", "high"}:
+                raise InvalidRequestError(
+                    message="Field 'reasoning_effort' must be one of: 'low', 'medium', 'high'.",
+                    details={"reasoning_effort": request.reasoning_effort},
+                )
+            request.reasoning_effort = norm
         processor = MultimodalMediaProcessor()
         for msg in request.messages:
             processor.parse_multimodal_content(msg.content)
@@ -56,7 +66,18 @@ class VLMEngine:
                         message="Native vLLM VLM backend rejected the request.",
                         details={"status_code": response.status_code},
                     )
-                return response.json()
+                data = response.json()
+                if isinstance(data, dict) and "choices" in data:
+                    for choice in data.get("choices", []):
+                        msg = choice.get("message")
+                        if isinstance(msg, dict):
+                            raw_content = msg.get("content")
+                            if raw_content and ("<think>" in raw_content or "</think>" in raw_content):
+                                r_content, c_content = decouple_think_tokens(raw_content)
+                                if r_content is not None:
+                                    msg["reasoning_content"] = r_content
+                                msg["content"] = c_content
+                return data
         except ModelUnavailableError:
             raise
         except (httpx.HTTPError, ValueError) as exc:
@@ -70,6 +91,7 @@ class VLMEngine:
         self._require_upstream()
         payload = request.model_dump(mode="json", exclude_none=True)
         payload["stream"] = True
+        filter_obj = StreamingReasoningFilter()
         try:
             async with httpx.AsyncClient(timeout=None) as client:
                 async with client.stream(
@@ -85,7 +107,23 @@ class VLMEngine:
                             details={"status_code": response.status_code},
                         )
                     async for line in response.aiter_lines():
-                        yield f"{line}\n" if line else "\n"
+                        if not line:
+                            yield "\n"
+                            continue
+                        if line.startswith("data: ") and line.strip() != "data: [DONE]":
+                            payload_str = line[6:].strip()
+                            try:
+                                chunk_data = json.loads(payload_str)
+                                choices = chunk_data.get("choices", [])
+                                for choice in choices:
+                                    delta = choice.get("delta")
+                                    if isinstance(delta, dict):
+                                        choice["delta"] = filter_obj.process_chunk_delta(delta)
+                                yield f"data: {json.dumps(chunk_data)}\n"
+                            except Exception:
+                                yield f"{line}\n"
+                        else:
+                            yield f"{line}\n"
         except ModelUnavailableError:
             raise
         except httpx.HTTPError as exc:

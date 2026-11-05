@@ -294,16 +294,18 @@ class JobLifecycleManager:
                         "worker_id": worker_id,
                     },
                 )
-            # If lease_token is provided, verify it matches (in Lite mode, lease_token is optional)
-            if lease_token and job.worker.lease_token and lease_token != job.worker.lease_token:
-                raise UnauthorizedError(
-                    message=f"Worker '{worker_id}' is not authorized to update job '{job.job_id}' under active lease.",
-                    status_code=403,
-                    details={
-                        "job_id": job.job_id,
-                        "worker_id": worker_id,
-                    },
-                )
+            # Strict lease_token verification for non-admin callers
+            if caller_role != "admin" and job.worker.lease_token:
+                if caller_worker_id or caller_role == "worker" or lease_token:
+                    if not lease_token or lease_token != job.worker.lease_token:
+                        raise UnauthorizedError(
+                            message=f"Invalid or missing lease token for job '{job.job_id}'.",
+                            status_code=403,
+                            details={
+                                "job_id": job.job_id,
+                                "worker_id": worker_id,
+                            },
+                        )
             expires_at = getattr(job.worker, "lease_expires_at", None) or getattr(job.worker, "expires_at", None)
             if expires_at:
                 now = datetime.now(timezone.utc)

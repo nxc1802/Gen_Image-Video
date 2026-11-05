@@ -72,6 +72,22 @@ export interface CapabilityManifest {
   };
 }
 
+export interface ModelVariant {
+  id: string;
+  display_name: string;
+  checkpoint: string;
+  format: 'safetensors' | 'gguf' | 'diffusers' | 'torch' | 'onnx' | string;
+  quantization: 'none' | 'fp8' | 'q4_k_m' | 'q8_0' | 'awq' | 'gptq' | '4bit' | string;
+  default_precision?: 'bf16' | 'fp16' | 'fp32' | string;
+  recommended_steps?: number;
+  kaggle_dataset?: string;
+  huggingface_repo?: string;
+  file_name?: string;
+  sha256?: string;
+  size_bytes?: number;
+  min_vram_gb?: number;
+}
+
 export interface ModelHardware {
   min_vram_gb: number;
   preferred_gpu?: string;
@@ -90,6 +106,15 @@ export interface ModelManifest {
   validation_notes?: string | null;
   hardware: ModelHardware;
   capabilities: Record<string, boolean>;
+  weights?: {
+    primary_checkpoint?: string;
+    components?: Record<string, string>;
+    format?: string;
+    quantization?: string;
+    default_precision?: string;
+    variants?: Record<string, ModelVariant>;
+  };
+  variants?: Record<string, ModelVariant>;
   limits?: {
     max_width?: number;
     max_height?: number;
@@ -142,16 +167,21 @@ export type JobState =
 export interface JobProgress {
   stage: string;
   step: number;
-  total_steps: number;
+  total: number;
+  total_steps?: number;
   percent: number;
   message?: string;
+  preview_url?: string | null;
 }
 
 export interface JobArtifact {
-  name: string;
+  artifact_id: string;
+  name?: string;
   type: string;
+  mime_type: string;
   storage_path: string;
   download_url?: string;
+  url?: string;
   sha256?: string;
   size_bytes?: number;
 }
@@ -188,6 +218,7 @@ export interface JobSubmissionPayload {
   task: string;
   inputs: Record<string, any>;
   priority?: number;
+  idempotency_key?: string;
 }
 
 export interface JobLifecycleEvent {

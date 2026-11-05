@@ -18,8 +18,6 @@ import pytest
 import yaml
 
 from deployments.kaggle.runner import (
-    DEFAULT_KAGGLE_BEARER_TOKEN,
-    DEFAULT_KAGGLE_USER,
     KaggleAPIClient,
     KaggleAPIError,
     KaggleAuthError,
@@ -45,6 +43,11 @@ from deployments.kaggle.certify_kernel import (
 
 class TestKaggleAPIClientAdversarialResilience:
     """Stress tests Kaggle REST API v1 client error handling and resilience."""
+
+    @pytest.fixture(autouse=True)
+    def mock_kaggle_env(self, monkeypatch):
+        monkeypatch.setenv("KAGGLE_USERNAME", "adv-user")
+        monkeypatch.setenv("KAGGLE_API_TOKEN", "KGAT_advtoken123")
 
     @pytest.mark.parametrize("status_code,expected_error_cls", [
         (401, KaggleAuthError),
@@ -751,4 +754,60 @@ class TestGate2ProbesAndProfilerInvariants:
                 assert s["peak_vram_mb"] >= 0.0
                 assert s["headroom_mb"] >= 0.0
                 assert s["timestamp"] > 0.0
+
+
+# =====================================================================
+# 6. KaggleDualT4Runner Adversarial Contract & Resilient Kwargs
+# =====================================================================
+
+class TestKaggleDualT4RunnerAdversarialContract:
+    """Adversarial testing of KaggleDualT4Runner kwargs, mode sanitization, and auth boundaries."""
+
+    @pytest.fixture(autouse=True)
+    def clean_kaggle_env(self, monkeypatch, tmp_path):
+        for k in ["KAGGLE_USERNAME", "KAGGLE_API_TOKEN", "KAGGLE_KEY"]:
+            monkeypatch.delenv(k, raising=False)
+        monkeypatch.setenv("KAGGLE_CONFIG_DIR", str(tmp_path))
+
+    @pytest.mark.parametrize("raw_mode,expected_mode", [
+        ("preflight", "preflight"),
+        ("PREFLIGHT", "preflight"),
+        ("  preflight  ", "preflight"),
+        ("remote", "remote"),
+        ("REMOTE", "remote"),
+        ("  remote\n", "remote"),
+    ])
+    def test_mode_sanitization_and_normalization(self, raw_mode, expected_mode):
+        """Runner must case-fold and strip whitespace from mode parameter."""
+        runner = KaggleDualT4Runner(mode=raw_mode)
+        assert runner.mode == expected_mode
+
+    def test_adversarial_hostile_kwargs_injection(self):
+        """Runner must accept hostile, malformed, or arbitrary kwargs without crashing."""
+        hostile_kwargs = {
+            "sql_injection": "'; DROP TABLE kernels; --",
+            "xss_payload": "<script>alert(1)</script>",
+            "path_traversal": "../../../../etc/passwd",
+            "extreme_integer": 10**100,
+            "nested_dict": {"k": [1, 2, 3]},
+            "none_value": None,
+        }
+        runner = KaggleDualT4Runner(mode="preflight", **hostile_kwargs)
+        assert runner.mode == "preflight"
+        for k, v in hostile_kwargs.items():
+            assert runner.kwargs.get(k) == v
+            assert runner.extra_options.get(k) == v
+
+    def test_tampering_client_reset_retains_auth_boundary(self):
+        """Setting runner._client = None forces re-authentication and maintains security boundary."""
+        client = KaggleAPIClient(username="u", api_key="KGAT_validtoken123")
+        runner = KaggleDualT4Runner(client=client, mode="remote")
+        assert runner.client is client
+
+        # Adversarially tamper with internal client reference
+        runner._client = None
+        # Must re-attempt resolution and fail because environment has no credentials
+        with pytest.raises(KaggleAuthError):
+            _ = runner.client
+
 

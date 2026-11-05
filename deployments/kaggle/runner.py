@@ -3,7 +3,7 @@ deployments.kaggle.runner
 Kaggle Dual-T4 Certification Runner Infrastructure using Kaggle REST API v1.
 
 Features:
-- Bearer token authentication support (token format: KGAT_3d7139436bbefa39a3616a3f9285568f)
+- Bearer token authentication support (token format: KGAT_...)
 - Pushes certification kernel payload configuring dual-T4 GPU (enableGpu=True, enableInternet=True)
 - Monitors execution status (queued, running, complete, error)
 - Streams stdout/stderr output logs
@@ -25,9 +25,32 @@ import urllib.request
 
 logger = logging.getLogger("kaggle_runner")
 
-DEFAULT_KAGGLE_BEARER_TOKEN = "KGAT_3d7139436bbefa39a3616a3f9285568f"
-DEFAULT_KAGGLE_USER = "cuongnguyen1802"
 KAGGLE_API_BASE_URL = "https://www.kaggle.com/api/v1"
+
+
+class KaggleAPIError(Exception):
+    """Base exception for Kaggle REST API errors."""
+    def __init__(self, message: str, status_code: Optional[int] = None, response_body: Optional[str] = None):
+        super().__init__(message)
+        self.status_code = status_code
+        self.response_body = response_body
+
+
+class KaggleAuthError(KaggleAPIError):
+    """Raised when authentication with Kaggle fails (HTTP 401/403 or missing credentials)."""
+    pass
+
+
+class KaggleTimeoutError(KaggleAPIError):
+    """Raised when kernel execution or polling times out."""
+    pass
+
+
+class KaggleKernelFailedError(KaggleAPIError):
+    """Raised when a Kaggle kernel execution finishes in error/failed status."""
+    def __init__(self, message: str, failure_message: Optional[str] = None):
+        super().__init__(message)
+        self.failure_message = failure_message
 
 
 def resolve_kaggle_username(explicit_username: Optional[str] = None) -> str:
@@ -36,7 +59,7 @@ def resolve_kaggle_username(explicit_username: Optional[str] = None) -> str:
     1. Explicitly passed parameter
     2. KAGGLE_USERNAME environment variable
     3. ~/.kaggle/kaggle.json (or $KAGGLE_CONFIG_DIR/kaggle.json) 'username' field
-    4. DEFAULT_KAGGLE_USER fallback ('cuongnguyen1802')
+    Raises KaggleAuthError if username cannot be resolved.
     """
     if explicit_username and explicit_username.strip():
         return explicit_username.strip()
@@ -57,32 +80,48 @@ def resolve_kaggle_username(explicit_username: Optional[str] = None) -> str:
         except Exception as e:
             logger.debug(f"Failed to read Kaggle username from {kaggle_json_path}: {e}")
 
-    return DEFAULT_KAGGLE_USER
+    raise KaggleAuthError(
+        "Kaggle username not configured. Provide via parameter, "
+        "KAGGLE_USERNAME environment variable, or ~/.kaggle/kaggle.json"
+    )
 
 
-class KaggleAPIError(Exception):
-    """Base exception for Kaggle REST API errors."""
-    def __init__(self, message: str, status_code: Optional[int] = None, response_body: Optional[str] = None):
-        super().__init__(message)
-        self.status_code = status_code
-        self.response_body = response_body
+def resolve_kaggle_api_token(explicit_api_key: Optional[str] = None) -> str:
+    """
+    Dynamically resolves the Kaggle API token/key with the following precedence:
+    1. Explicitly passed parameter
+    2. KAGGLE_API_TOKEN environment variable (standardized)
+    3. KAGGLE_KEY environment variable (legacy fallback)
+    4. ~/.kaggle/kaggle.json (or $KAGGLE_CONFIG_DIR/kaggle.json) 'key' field
+    Raises KaggleAuthError if token cannot be resolved.
+    """
+    if explicit_api_key and explicit_api_key.strip():
+        return explicit_api_key.strip()
 
+    env_token = os.environ.get("KAGGLE_API_TOKEN")
+    if env_token and env_token.strip():
+        return env_token.strip()
 
-class KaggleAuthError(KaggleAPIError):
-    """Raised when authentication with Kaggle fails (HTTP 401/403)."""
-    pass
+    legacy_key = os.environ.get("KAGGLE_KEY")
+    if legacy_key and legacy_key.strip():
+        return legacy_key.strip()
 
+    config_dir = os.environ.get("KAGGLE_CONFIG_DIR")
+    kaggle_json_path = (Path(config_dir) if config_dir else Path.home() / ".kaggle") / "kaggle.json"
+    if kaggle_json_path.is_file():
+        try:
+            with open(kaggle_json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                file_key = data.get("key")
+                if file_key and isinstance(file_key, str) and file_key.strip():
+                    return file_key.strip()
+        except Exception as e:
+            logger.debug(f"Failed to read Kaggle key from {kaggle_json_path}: {e}")
 
-class KaggleTimeoutError(KaggleAPIError):
-    """Raised when kernel execution or polling times out."""
-    pass
-
-
-class KaggleKernelFailedError(KaggleAPIError):
-    """Raised when a Kaggle kernel execution finishes in error/failed status."""
-    def __init__(self, message: str, failure_message: Optional[str] = None):
-        super().__init__(message)
-        self.failure_message = failure_message
+    raise KaggleAuthError(
+        "Kaggle API key/token not configured. Provide via parameter, "
+        "KAGGLE_API_TOKEN or KAGGLE_KEY environment variable, or ~/.kaggle/kaggle.json"
+    )
 
 
 class KaggleAPIClient:
@@ -95,8 +134,12 @@ class KaggleAPIClient:
         base_url: str = KAGGLE_API_BASE_URL,
     ):
         self.username = resolve_kaggle_username(username)
-        self.api_key = api_key or os.environ.get("KAGGLE_KEY") or DEFAULT_KAGGLE_BEARER_TOKEN
+        self.api_key = resolve_kaggle_api_token(api_key)
         self.base_url = base_url.rstrip("/")
+
+    def __repr__(self) -> str:
+        masked = f"{self.api_key[:4]}...{self.api_key[-4:]}" if len(self.api_key) > 8 else "***"
+        return f"KaggleAPIClient(username='{self.username}', api_key='{masked}', base_url='{self.base_url}')"
 
     def get_auth_header(self) -> str:
         """Returns Authorization header using Bearer token for KGAT_ tokens, or Basic auth."""
@@ -272,9 +315,24 @@ class KaggleDualT4Runner:
         self,
         client: Optional[KaggleAPIClient] = None,
         workspace_dir: Optional[str | Path] = None,
+        mode: str = "remote",
+        **kwargs: Any,
     ):
-        self.client = client or KaggleAPIClient()
+        if isinstance(client, str) and client.lower() in ("preflight", "remote", "auto", "local"):
+            mode = client
+            client = None
+
+        self.mode = mode.lower().strip() if isinstance(mode, str) else "remote"
+        self._client = client
         self.workspace_dir = Path(workspace_dir or Path(__file__).resolve().parent.parent.parent)
+        self.kwargs = kwargs
+        self.extra_options = kwargs
+
+    @property
+    def client(self) -> KaggleAPIClient:
+        if self._client is None:
+            self._client = KaggleAPIClient()
+        return self._client
 
     def prepare_kernel_script(self) -> str:
         """Reads certify_kernel.py and wraps it for standalone execution in Kaggle."""
@@ -331,12 +389,24 @@ class KaggleDualT4Runner:
         from deployments.kaggle.certify_kernel import Tier1ModelCertifier
 
         out = output_path or (self.workspace_dir / "deployments" / "kaggle" / "certification_results.json")
+        certifier_mode = self.mode if self.mode in ("preflight", "live", "auto") else "preflight"
         certifier = Tier1ModelCertifier(
             manifests_dir=self.workspace_dir / "manifests",
-            mode="preflight",
+            mode=certifier_mode,
         )
         results = certifier.execute_all(output_path=out)
         return results
+
+    def run(
+        self,
+        output_path: Optional[str | Path] = None,
+        slug: str = "factory-dual-t4-certification",
+        **kwargs: Any,
+    ) -> Dict[str, Any]:
+        """Unified entrypoint dispatching to local or remote certification based on self.mode."""
+        if self.mode in ("preflight", "local"):
+            return self.run_local_certification(output_path=output_path)
+        return self.deploy_and_certify(slug=slug, **kwargs)
 
 
 def main():
@@ -348,7 +418,11 @@ def main():
     parser.add_argument("--out", default="deployments/kaggle/certification_results.json", help="Output JSON path")
     args = parser.parse_args()
 
-    runner = KaggleDualT4Runner(client=KaggleAPIClient(username=args.user, api_key=args.token))
+    mode = "preflight" if args.local else "remote"
+    client = None
+    if not args.local and (args.user or args.token):
+        client = KaggleAPIClient(username=args.user, api_key=args.token)
+    runner = KaggleDualT4Runner(client=client, mode=mode)
 
     if args.local:
         print("Running Tier 1 model certification locally...")

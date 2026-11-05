@@ -24,11 +24,50 @@ const DEFAULT_CONTROL_URL =
 // Never embed a production credential in a NEXT_PUBLIC_* build variable.
 const DEFAULT_API_KEY = "";
 
+// Storage keys for browser storage
+const STORAGE_KEYS = {
+  CONTROL_URL: "studio_control_url",
+  API_KEY: "studio_api_key",
+  REMEMBER_KEY: "studio_remember_api_key",
+} as const;
+
+function safeGetStorage(storage: Storage | null, key: string): string | null {
+  if (!storage) return null;
+  try {
+    return storage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeSetStorage(
+  storage: Storage | null,
+  key: string,
+  value: string
+): void {
+  if (!storage) return;
+  try {
+    storage.setItem(key, value);
+  } catch {
+    // Graceful fallback to in-memory state on quota or permission error
+  }
+}
+
+function safeRemoveStorage(storage: Storage | null, key: string): void {
+  if (!storage) return;
+  try {
+    storage.removeItem(key);
+  } catch {
+    // Ignore removal errors
+  }
+}
+
 interface StudioContextValue {
   activeView: StudioViewId;
   setActiveView: (v: StudioViewId) => void;
   gatewayUrl: string;
   apiKey: string;
+  persistApiKey: boolean;
   connectionStatus: "online" | "offline" | "connecting";
   services: ServiceManifest[];
   models: ModelManifest[];
@@ -40,7 +79,11 @@ interface StudioContextValue {
   apiClient: StudioApiClient;
   refreshManifests: (silent?: boolean) => Promise<void>;
   refreshJobs: () => Promise<void>;
-  saveConnectionSettings: (newUrl: string, newKey: string) => Promise<void>;
+  saveConnectionSettings: (
+    newUrl: string,
+    newKey: string,
+    persistKey?: boolean
+  ) => Promise<void>;
   isConnectionModalOpen: boolean;
   setIsConnectionModalOpen: (open: boolean) => void;
 }
@@ -51,6 +94,7 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   const [activeView, setActiveView] = useState<StudioViewId>("console");
   const [gatewayUrl, setGatewayUrl] = useState<string>(DEFAULT_CONTROL_URL);
   const [apiKey, setApiKey] = useState<string>(DEFAULT_API_KEY);
+  const [persistApiKey, setPersistApiKey] = useState<boolean>(false);
   const [connectionStatus, setConnectionStatus] = useState<
     "online" | "offline" | "connecting"
   >("connecting");
@@ -65,17 +109,56 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   const [isConnectionModalOpen, setIsConnectionModalOpen] =
     useState<boolean>(false);
 
-  // Restore saved connection settings from localStorage
+  // Restore saved connection settings from browser storage
+  // Prioritizes session-scoped storage (sessionStorage) or explicit opt-in persistent storage (localStorage)
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const savedUrl = localStorage.getItem("studio_control_url");
-    const savedKey = localStorage.getItem("studio_api_key");
 
+    // 1. Base URL is non-sensitive configuration, can be restored from localStorage
+    const savedUrl = safeGetStorage(
+      window.localStorage,
+      STORAGE_KEYS.CONTROL_URL
+    );
     if (savedUrl) {
       setGatewayUrl(savedUrl);
     }
-    if (savedKey) {
-      setApiKey(savedKey);
+
+    // 2. Determine API Key retrieval with security precedence
+    const hasPersistOptIn =
+      safeGetStorage(window.localStorage, STORAGE_KEYS.REMEMBER_KEY) === "true";
+    const localSavedKey = safeGetStorage(
+      window.localStorage,
+      STORAGE_KEYS.API_KEY
+    );
+    const sessionSavedKey = safeGetStorage(
+      window.sessionStorage,
+      STORAGE_KEYS.API_KEY
+    );
+
+    if (sessionSavedKey) {
+      // Active tab session has precedence
+      setApiKey(sessionSavedKey);
+      setPersistApiKey(hasPersistOptIn);
+    } else if (hasPersistOptIn && localSavedKey) {
+      // Explicit opt-in persistent storage
+      setApiKey(localSavedKey);
+      setPersistApiKey(true);
+      safeSetStorage(
+        window.sessionStorage,
+        STORAGE_KEYS.API_KEY,
+        localSavedKey
+      );
+    } else if (localSavedKey && !hasPersistOptIn) {
+      // MIGRATION / CLEANUP: Legacy key was left in localStorage without explicit opt-in.
+      // Migrate to session-scoped storage immediately and purge from permanent localStorage.
+      setApiKey(localSavedKey);
+      setPersistApiKey(false);
+      safeSetStorage(
+        window.sessionStorage,
+        STORAGE_KEYS.API_KEY,
+        localSavedKey
+      );
+      safeRemoveStorage(window.localStorage, STORAGE_KEYS.API_KEY);
     }
   }, []);
 
@@ -152,16 +235,53 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
 
   // Save connection settings
   const saveConnectionSettings = useCallback(
-    async (newUrl: string, newKey: string) => {
+    async (newUrl: string, newKey: string, persistKey = false) => {
       const cleanedUrl = cleanGatewayUrl(newUrl, DEFAULT_CONTROL_URL);
       const cleanedKey = newKey.trim();
 
       setGatewayUrl(cleanedUrl);
       setApiKey(cleanedKey);
+      setPersistApiKey(persistKey);
 
       if (typeof window !== "undefined") {
-        localStorage.setItem("studio_control_url", cleanedUrl);
-        localStorage.setItem("studio_api_key", cleanedKey);
+        safeSetStorage(
+          window.localStorage,
+          STORAGE_KEYS.CONTROL_URL,
+          cleanedUrl
+        );
+
+        if (!cleanedKey) {
+          // Clear credentials completely
+          safeRemoveStorage(window.sessionStorage, STORAGE_KEYS.API_KEY);
+          safeRemoveStorage(window.localStorage, STORAGE_KEYS.API_KEY);
+          safeRemoveStorage(window.localStorage, STORAGE_KEYS.REMEMBER_KEY);
+        } else if (persistKey) {
+          // Explicit opt-in persistent storage
+          safeSetStorage(
+            window.sessionStorage,
+            STORAGE_KEYS.API_KEY,
+            cleanedKey
+          );
+          safeSetStorage(
+            window.localStorage,
+            STORAGE_KEYS.API_KEY,
+            cleanedKey
+          );
+          safeSetStorage(
+            window.localStorage,
+            STORAGE_KEYS.REMEMBER_KEY,
+            "true"
+          );
+        } else {
+          // Default session-scoped storage: write to sessionStorage, purge from localStorage
+          safeSetStorage(
+            window.sessionStorage,
+            STORAGE_KEYS.API_KEY,
+            cleanedKey
+          );
+          safeRemoveStorage(window.localStorage, STORAGE_KEYS.API_KEY);
+          safeRemoveStorage(window.localStorage, STORAGE_KEYS.REMEMBER_KEY);
+        }
       }
 
       setConnectionStatus("connecting");
@@ -186,6 +306,7 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         setActiveView,
         gatewayUrl,
         apiKey,
+        persistApiKey,
         connectionStatus,
         services,
         models,

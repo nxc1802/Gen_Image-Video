@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
 
+from factory_contracts.errors import UnauthorizedError
 from factory_contracts.jobs.job_contract import JobState
 from factory_contracts.jobs.worker_contract import (
     WorkerHeartbeatRequest,
@@ -302,29 +303,73 @@ class LeaseCoordinator:
                 if job.state == JobState.CANCELLED:
                     cancel_requested = True
                 elif job.state in (JobState.RUNNING, JobState.STREAMING):
-                    if (
-                        job.worker is not None
-                        and job.worker.worker_id == req.worker_id
-                        and req.lease_token
-                        and job.worker.lease_token == req.lease_token
-                    ):
-                        now = datetime.now(timezone.utc)
-                        extended_until = now + timedelta(seconds=300)
-                        await self.repository.extend_lease(
-                            worker_id=req.worker_id,
-                            job_id=req.active_job_id,
-                            new_expires_at=extended_until,
+                    if job.worker is None or job.worker.worker_id != req.worker_id:
+                        raise UnauthorizedError(
+                            message=f"Worker '{req.worker_id}' is not the active lessee of job '{req.active_job_id}'.",
+                            status_code=403,
+                            details={"job_id": req.active_job_id, "worker_id": req.worker_id},
                         )
 
+                    if job.worker.lease_token and req.lease_token != job.worker.lease_token:
+                        raise UnauthorizedError(
+                            message=f"Invalid lease token provided for active job '{req.active_job_id}'.",
+                            status_code=403,
+                            details={"job_id": req.active_job_id, "worker_id": req.worker_id},
+                        )
+
+                    now = datetime.now(timezone.utc)
+                    expires_at = getattr(job.worker, "lease_expires_at", None)
+                    if expires_at and expires_at.tzinfo is None:
+                        expires_at = expires_at.replace(tzinfo=timezone.utc)
+                    if expires_at and now > expires_at:
+                        raise UnauthorizedError(
+                            message=f"Lease for job '{req.active_job_id}' has expired.",
+                            status_code=403,
+                            details={"job_id": req.active_job_id, "worker_id": req.worker_id},
+                        )
+
+                    extended_until = now + timedelta(seconds=300)
+                    await self.repository.extend_lease(
+                        worker_id=req.worker_id,
+                        job_id=req.active_job_id,
+                        new_expires_at=extended_until,
+                    )
+
         # Update telemetry VRAM metrics
-        if req.vram_used_mb is not None:
-            vram_gb = round(req.vram_used_mb / 1024.0, 1)
-            worker = await self.repository.get_worker(req.worker_id)
-            gpu_device = worker.get("gpu_device") if worker else None
-            if gpu_device == 1 or "gpu-1" in req.worker_id or "gpu_1" in req.worker_id or "gpu1" in req.worker_id:
+        used_mb = req.system_vram_used_mb if req.system_vram_used_mb is not None else req.vram_used_mb
+        worker = await self.repository.get_worker(req.worker_id)
+        gpu_device = worker.get("gpu_device") if worker else None
+        is_gpu_1 = gpu_device == 1 or "gpu-1" in req.worker_id or "gpu_1" in req.worker_id or "gpu1" in req.worker_id
+
+        if used_mb is not None:
+            vram_gb = round(used_mb / 1024.0, 1)
+            if is_gpu_1:
                 metrics.set_gpu_vram(gpu_1_gb=vram_gb)
             else:
                 metrics.set_gpu_vram(gpu_0_gb=vram_gb)
+
+        if req.vram_total_mb is not None:
+            total_gb = round(req.vram_total_mb / 1024.0, 1)
+            if is_gpu_1:
+                metrics.set_gpu_totals(gpu_1_total_gb=total_gb)
+            else:
+                metrics.set_gpu_totals(gpu_0_total_gb=total_gb)
+
+        if req.process_vram_used_mb is not None:
+            proc_gb = round(req.process_vram_used_mb / 1024.0, 2)
+            if is_gpu_1:
+                metrics.set_gpu_process_vram(gpu_1_proc_gb=proc_gb)
+            else:
+                metrics.set_gpu_process_vram(gpu_0_proc_gb=proc_gb)
+
+        if req.gpu_name:
+            if is_gpu_1:
+                metrics.set_gpu_names(gpu_1_name=req.gpu_name)
+            else:
+                metrics.set_gpu_names(gpu_0_name=req.gpu_name)
+
+        if req.telemetry_status:
+            metrics.set_telemetry_status(req.telemetry_status)
 
         await self.repository.upsert_worker_heartbeat(
             worker_id=req.worker_id,

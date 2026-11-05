@@ -29,6 +29,11 @@ async def stream_studio_inspector(
         telemetry_payload = {
             "gpu_0_vram_used_gb": snapshot.get("gpu_0_vram_used_gb"),
             "gpu_1_vram_used_gb": snapshot.get("gpu_1_vram_used_gb"),
+            "gpu_0_vram_total_gb": snapshot.get("gpu_0_vram_total_gb"),
+            "gpu_1_vram_total_gb": snapshot.get("gpu_1_vram_total_gb"),
+            "gpu_0_process_vram_gb": snapshot.get("gpu_0_process_vram_gb"),
+            "gpu_1_process_vram_gb": snapshot.get("gpu_1_process_vram_gb"),
+            "telemetry_status": snapshot.get("telemetry_status", "UNAVAILABLE"),
             "active_jobs": snapshot.get("active_jobs", 0),
             "queue_depth": snapshot.get("queue_depth", 0),
         }
