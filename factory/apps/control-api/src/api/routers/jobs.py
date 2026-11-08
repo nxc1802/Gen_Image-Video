@@ -194,7 +194,12 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
             "extension": "video_extension",
             "with_audio": "video_with_audio",
             "ref2va": "reference_conditioning",
-        }.get(canonical_task, capability)
+            "reference_conditioning": "reference_conditioning",
+            "reference_image": "reference_conditioning",
+        }.get(canonical_task, {
+            "reference_image": "reference_conditioning",
+        }.get(capability, capability))
+
 
     supported = model.capabilities.get(capability)
     if supported is not True or (hasattr(model, "missing_capabilities") and capability in model.missing_capabilities):
@@ -264,6 +269,33 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
                     message=f"Invalid steps '{steps_val}' for turbo variant (must be an integer between 1 and 25).",
                     details={"model": req.model, "variant": variant_name, "steps": steps_val, "error_code": "INVALID_INPUT"},
                 )
+
+    # Enforce model dimension limits if declared
+
+    if hasattr(model, "limits") and model.limits and req.inputs:
+        max_w = getattr(model.limits, "max_width", None)
+        max_h = getattr(model.limits, "max_height", None)
+        if max_w and "width" in req.inputs:
+            try:
+                w_val = int(req.inputs["width"])
+                if w_val > max_w:
+                    raise InvalidRequestError(
+                        message=f"Requested width {w_val} exceeds maximum allowed width {max_w} for model '{req.model}'.",
+                        details={"width": w_val, "max_width": max_w, "model": req.model, "error_code": "INVALID_INPUT"},
+                    )
+            except (ValueError, TypeError):
+                pass
+        if max_h and "height" in req.inputs:
+            try:
+                h_val = int(req.inputs["height"])
+                if h_val > max_h:
+                    raise InvalidRequestError(
+                        message=f"Requested height {h_val} exceeds maximum allowed height {max_h} for model '{req.model}'.",
+                        details={"height": h_val, "max_height": max_h, "model": req.model, "error_code": "INVALID_INPUT"},
+                    )
+            except (ValueError, TypeError):
+                pass
+
 
 
 

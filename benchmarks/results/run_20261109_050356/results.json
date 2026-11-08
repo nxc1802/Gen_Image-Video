@@ -1,0 +1,4043 @@
+{
+  "run_id": "run_20261109_050356",
+  "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+  "timestamp": "2026-11-08T22:03:59Z",
+  "mode": "full",
+  "hardware": {
+    "cuda_available": false,
+    "gpu_count": 0,
+    "gpu_names": [],
+    "nvml_available": false,
+    "max_allocatable_vram_mb": 14540.0
+  },
+  "summary": {
+    "total_cases": 91,
+    "pass_rate_percent": 9.9,
+    "status_counts": {
+      "PASS": 9,
+      "FAIL": 0,
+      "ERROR": 0,
+      "HARDWARE_BLOCKED": 0,
+      "BACKEND_UNAVAILABLE": 82,
+      "NOT_IMPLEMENTED": 0,
+      "NOT_RUN": 0
+    },
+    "model_stats": {
+      "qwen-text": {
+        "total": 6,
+        "pass": 1,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 5,
+        "error": 0,
+        "latencies_ms": [
+          51.0,
+          55.98,
+          34.43,
+          32.73,
+          33.14,
+          33.86
+        ],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "qwen-vlm": {
+        "total": 5,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 5,
+        "error": 0,
+        "latencies_ms": [
+          33.24,
+          32.12,
+          32.57,
+          33.02,
+          33.18
+        ],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "qwen-decision": {
+        "total": 3,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 3,
+        "error": 0,
+        "latencies_ms": [
+          33.21,
+          32.64,
+          33.96
+        ],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "qwen-embedding": {
+        "total": 3,
+        "pass": 1,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 2,
+        "error": 0,
+        "latencies_ms": [
+          33.84,
+          50.49,
+          32.89
+        ],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "qwen-speech": {
+        "total": 4,
+        "pass": 1,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 3,
+        "error": 0,
+        "latencies_ms": [
+          32.62,
+          32.45,
+          32.52,
+          32.07
+        ],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "qwen-image-2.1": {
+        "total": 13,
+        "pass": 1,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 12,
+        "error": 0,
+        "latencies_ms": [
+          32.35,
+          32.88,
+          32.61,
+          33.06,
+          33.5,
+          33.5,
+          33.18,
+          32.96,
+          32.83,
+          32.3,
+          32.74,
+          32.89,
+          32.67
+        ],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "wan-2.2": {
+        "total": 5,
+        "pass": 1,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 4,
+        "error": 0,
+        "latencies_ms": [
+          33.22,
+          33.55,
+          33.14,
+          33.42,
+          32.78
+        ],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "minimax-h3": {
+        "total": 6,
+        "pass": 1,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 5,
+        "error": 0,
+        "latencies_ms": [
+          38.79,
+          40.04,
+          41.34,
+          39.06,
+          37.34,
+          32.92
+        ],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "ace-step-1.5": {
+        "total": 35,
+        "pass": 2,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 33,
+        "error": 0,
+        "latencies_ms": [
+          38.05,
+          42.88,
+          36.31,
+          32.72,
+          33.59,
+          33.8,
+          33.64,
+          33.11,
+          32.83,
+          32.72,
+          32.59,
+          33.03,
+          32.73,
+          32.73,
+          32.95,
+          48.98,
+          33.4,
+          33.34,
+          33.35,
+          32.61,
+          33.04,
+          32.89,
+          33.22,
+          33.63,
+          32.68,
+          32.95,
+          33.52,
+          33.81,
+          34.21,
+          33.0,
+          39.56,
+          41.84,
+          42.29,
+          32.69,
+          32.79
+        ],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "yue2": {
+        "total": 7,
+        "pass": 1,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 6,
+        "error": 0,
+        "latencies_ms": [
+          39.02,
+          44.14,
+          37.58,
+          32.79,
+          33.6,
+          34.12,
+          33.21
+        ],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "enhancement-suite-v1": {
+        "total": 4,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 4,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      }
+    }
+  },
+  "cases": [
+    {
+      "case_id": "BM-TXT-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "chat_completion",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 51.0,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-text' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-TXT-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "responses_api",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 55.98,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-text' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-TXT-03",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "structured_output",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 34.43,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-text' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-TXT-04",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "tool_calling",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.73,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-text' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-TXT-05",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "streaming",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.14,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-text' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-VLM-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-vlm",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "image_chat",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.24,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-vlm' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-VLM-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-vlm",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "responses_api",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.12,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-vlm' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-VLM-03",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-vlm",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_chat",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.57,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-vlm' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-VLM-04",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-vlm",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "visual_grounding",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.02,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-vlm' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-VLM-05",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-vlm",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "document_qa",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.18,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-vlm' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-DEC-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-decision",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "predicate_evaluation",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.21,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-decision' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-DEC-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-decision",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "choice_routing",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.64,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-decision' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-DEC-03",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-decision",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "score_ranking",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.96,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-decision' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-EMB-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-embedding",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_embedding",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.84,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-embedding' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-EMB-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-embedding",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "reranking",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 50.49,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-embedding' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-SPH-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-speech",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "speech_to_text",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.62,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-speech' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-SPH-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-speech",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_speech",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.45,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-speech' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-SPH-03",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-speech",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "voice_cloning",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.52,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-speech' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_image",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.35,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "text_to_image",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.88,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-03",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "image_to_image",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.61,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-04",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "image_to_image",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.06,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-05",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "inpaint",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.5,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-06",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "outpaint",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.5,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-07",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "instruction_edit",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.18,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-08",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "reference_image",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.96,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-09",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "multi_reference",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.83,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-10",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "controlnet",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.3,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-11",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "control_pose",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.74,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-12",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "control_depth",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.89,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-WAN-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "wan-2.2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_video",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.22,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'wan-2.2' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-WAN-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "wan-2.2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "image_to_video",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.55,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'wan-2.2' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-WAN-03",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "wan-2.2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "first_last_frame_to_video",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.14,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'wan-2.2' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-WAN-04",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "wan-2.2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_extension",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.42,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'wan-2.2' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-MMX-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_video",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 38.79,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'minimax-h3' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-MMX-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "image_to_video",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 40.04,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'minimax-h3' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-MMX-03",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "first_last_frame_to_video",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 41.34,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'minimax-h3' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-MMX-04",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_with_audio",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 39.06,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'minimax-h3' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-MMX-05",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "reference_conditioning",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 37.34,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'minimax-h3' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 38.05,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 42.88,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-03",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 36.31,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-04",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.72,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-05",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.59,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-06",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.8,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-07",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.64,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-08",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.11,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-09",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.83,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-10",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.72,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-11",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "reference_audio",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.59,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-12",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "reference_audio",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.03,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-13",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "reference_audio",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.73,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-14",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "reference_audio",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.73,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-15",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "reference_audio",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.95,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-16",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "cover",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 48.98,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-17",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "cover",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.4,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-18",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "cover",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.34,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-19",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "cover",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.35,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-20",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "cover",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.61,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-21",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "repaint",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.04,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-22",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "repaint",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.89,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-23",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "repaint",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.22,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-24",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "repaint",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.63,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-25",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "repaint",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.68,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-26",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "extract",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.95,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-27",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "extract",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.52,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-28",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "lego",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.81,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-29",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "lego",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 34.21,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-30",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "complete",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.0,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-31",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "complete",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 39.56,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-32",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "music_extend",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 41.84,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-33",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "music_extend",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 42.29,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 39.02,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 44.14,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-03",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "symbolic_score",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 37.58,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-04",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "custom_score",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.79,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-05",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "score_edit",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.6,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-06",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "song_variation",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 34.12,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ENH-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "enhancement-suite-v1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "image_super_resolution",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": null,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration."
+      }
+    },
+    {
+      "case_id": "BM-ENH-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "enhancement-suite-v1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_super_resolution",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": null,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration."
+      }
+    },
+    {
+      "case_id": "BM-ENH-03",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "enhancement-suite-v1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "frame_interpolation",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": null,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration."
+      }
+    },
+    {
+      "case_id": "BM-ENH-04",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "enhancement-suite-v1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "audio_enhancement",
+      "backend": "native",
+      "mode": "full",
+      "status": "BACKEND_UNAVAILABLE",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": null,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration."
+      }
+    },
+    {
+      "case_id": "BM-NEG-01",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_video",
+      "backend": "native",
+      "mode": "full",
+      "status": "PASS",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.86,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'text_to_video' (canonical: 'text_to_video') is not supported by model 'qwen-text'.\",\"request_id\":\"req-fd600ed8-13d4-477a-9893-76c71c28452c\",\"details\":{\"model\":\"qwen-text\",\"task\":\"text_to_video\",\"canonical_task\":\"text_to_video\",\"capability\":\"text_to_video\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-02",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-embedding",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "multimodal_embedding",
+      "backend": "native",
+      "mode": "full",
+      "status": "PASS",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.89,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'multimodal_embedding' (canonical: 'multimodal_embedding') is not supported by model 'qwen-embedding'.\",\"request_id\":\"req-9052e299-9dff-43f6-a56b-fbe04ec47f18\",\"details\":{\"model\":\"qwen-embedding\",\"task\":\"multimodal_embedding\",\"canonical_task\":\"multimodal_embedding\",\"capability\":\"multimodal_embedding\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-03",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-speech",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "word_timestamps",
+      "backend": "native",
+      "mode": "full",
+      "status": "PASS",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.07,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'word_timestamps' (canonical: 'word_timestamps') is not supported by model 'qwen-speech'.\",\"request_id\":\"req-1a18cdb1-1cfb-4a68-8f48-0cd88eef9ba8\",\"details\":{\"model\":\"qwen-speech\",\"task\":\"word_timestamps\",\"canonical_task\":\"word_timestamps\",\"capability\":\"word_timestamps\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-04",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_image",
+      "backend": "native",
+      "mode": "full",
+      "status": "PASS",
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.67,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400: {\"error\":{\"code\":\"INVALID_REQUEST\",\"message\":\"Requested width 4096 exceeds maximum allowed width 2048 for model 'qwen-image-2.1'.\",\"request_id\":\"req-51a6321e-da95-49cf-9515-a49c69b8aafd\",\"details\":{\"width\":4096,\"max_width\":2048,\"model\":\"qwen-image-2.1\",\"error_code\":\"INVALID_INPUT\"}}}",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-05",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "wan-2.2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_with_audio",
+      "backend": "native",
+      "mode": "full",
+      "status": "PASS",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.78,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'video_with_audio' (canonical: 'video_with_audio') is not supported by model 'wan-2.2'.\",\"request_id\":\"req-0a6bcfb3-d87e-4531-bf46-e69a5ad9e2bf\",\"details\":{\"model\":\"wan-2.2\",\"task\":\"video_with_audio\",\"canonical_task\":\"video_with_audio\",\"capability\":\"video_with_audio\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-06",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_extension",
+      "backend": "native",
+      "mode": "full",
+      "status": "PASS",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.92,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'video_extension' (canonical: 'video_extension') is not supported by model 'minimax-h3'.\",\"request_id\":\"req-ab31c93e-25bc-454a-9f6b-0cb6a94c1c68\",\"details\":{\"model\":\"minimax-h3\",\"task\":\"video_extension\",\"canonical_task\":\"video_extension\",\"capability\":\"video_extension\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-07",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "extract",
+      "backend": "native",
+      "mode": "full",
+      "status": "PASS",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.69,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400: {\"error\":{\"code\":\"UNSUPPORTED_CAPABILITY\",\"message\":\"Variant 'turbo' is not supported for task 'extract' by model 'ace-step-1.5'.\",\"request_id\":\"req-5df66532-d179-4eb3-b866-3deb27a3f7a8\",\"details\":{\"model\":\"ace-step-1.5\",\"variant\":\"turbo\",\"task\":\"extract\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-08",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "music_extend",
+      "backend": "native",
+      "mode": "full",
+      "status": "PASS",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.79,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400: {\"error\":{\"code\":\"UNSUPPORTED_CAPABILITY\",\"message\":\"Variant 'sft' is not supported for task 'music_extend' by model 'ace-step-1.5'.\",\"request_id\":\"req-dde1f726-ce09-4ed0-b019-5caddc7c5d4d\",\"details\":{\"model\":\"ace-step-1.5\",\"variant\":\"sft\",\"task\":\"music_extend\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-09",
+      "run_id": "run_20261109_050356",
+      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "cover_edit",
+      "backend": "native",
+      "mode": "full",
+      "status": "PASS",
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 33.21,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'cover_edit' (canonical: 'cover_edit') is not supported by model 'yue2'.\",\"request_id\":\"req-cca4c585-60e7-4aad-b6ba-6ea016eb6c3d\",\"details\":{\"model\":\"yue2\",\"task\":\"cover_edit\",\"canonical_task\":\"cover_edit\",\"capability\":\"cover_edit\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    }
+  ]
+}

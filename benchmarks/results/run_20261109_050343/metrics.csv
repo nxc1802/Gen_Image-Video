@@ -1,0 +1,92 @@
+case_id,model_id,task,variant,mode,status,target_gpu,min_vram_gb,e2e_latency_ms,inference_time_ms,load_time_ms,peak_vram_mb_gpu0,peak_vram_mb_gpu1,output_bytes,artifact_mime,artifact_sha256,artifact_dimensions,artifact_duration_seconds,artifact_validated,error_code,error_message
+BM-TXT-01,qwen-text,chat_completion,standard,smoke,BACKEND_UNAVAILABLE,0,12.0,44.55,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-text' is not actively resident on GPU 0.
+BM-TXT-02,qwen-text,responses_api,standard,smoke,BACKEND_UNAVAILABLE,0,12.0,33.46,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-text' is not actively resident on GPU 0.
+BM-TXT-03,qwen-text,structured_output,standard,smoke,BACKEND_UNAVAILABLE,0,12.0,35.24,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-text' is not actively resident on GPU 0.
+BM-TXT-04,qwen-text,tool_calling,standard,smoke,BACKEND_UNAVAILABLE,0,12.0,33.0,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-text' is not actively resident on GPU 0.
+BM-TXT-05,qwen-text,streaming,standard,smoke,BACKEND_UNAVAILABLE,0,12.0,33.27,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-text' is not actively resident on GPU 0.
+BM-VLM-01,qwen-vlm,image_chat,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,33.33,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-vlm' is not actively resident on GPU 0.
+BM-VLM-02,qwen-vlm,responses_api,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,32.94,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-vlm' is not actively resident on GPU 0.
+BM-VLM-03,qwen-vlm,video_chat,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,32.42,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-vlm' is not actively resident on GPU 0.
+BM-VLM-04,qwen-vlm,visual_grounding,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,33.65,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-vlm' is not actively resident on GPU 0.
+BM-VLM-05,qwen-vlm,document_qa,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,33.2,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-vlm' is not actively resident on GPU 0.
+BM-DEC-01,qwen-decision,predicate_evaluation,standard,smoke,BACKEND_UNAVAILABLE,0,6.0,33.58,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-decision' is not actively resident on GPU 0.
+BM-DEC-02,qwen-decision,choice_routing,standard,smoke,BACKEND_UNAVAILABLE,0,6.0,33.4,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-decision' is not actively resident on GPU 0.
+BM-DEC-03,qwen-decision,score_ranking,standard,smoke,BACKEND_UNAVAILABLE,0,6.0,33.56,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-decision' is not actively resident on GPU 0.
+BM-EMB-01,qwen-embedding,text_embedding,standard,smoke,BACKEND_UNAVAILABLE,1,4.0,36.03,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-embedding' is not actively resident on GPU 1.
+BM-EMB-02,qwen-embedding,reranking,standard,smoke,BACKEND_UNAVAILABLE,1,4.0,65.79,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-embedding' is not actively resident on GPU 1.
+BM-SPH-01,qwen-speech,speech_to_text,standard,smoke,BACKEND_UNAVAILABLE,0,8.0,39.36,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-speech' is not actively resident on GPU 0.
+BM-SPH-02,qwen-speech,text_to_speech,standard,smoke,BACKEND_UNAVAILABLE,0,8.0,36.6,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-speech' is not actively resident on GPU 0.
+BM-SPH-03,qwen-speech,voice_cloning,standard,smoke,BACKEND_UNAVAILABLE,0,8.0,45.05,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-speech' is not actively resident on GPU 0.
+BM-IMG-01,qwen-image-2.1,text_to_image,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,32.93,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-IMG-02,qwen-image-2.1,text_to_image,turbo,smoke,BACKEND_UNAVAILABLE,0,14.0,33.18,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-IMG-03,qwen-image-2.1,image_to_image,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,33.78,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-IMG-04,qwen-image-2.1,image_to_image,turbo,smoke,BACKEND_UNAVAILABLE,0,14.0,32.71,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-IMG-05,qwen-image-2.1,inpaint,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,34.79,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-IMG-06,qwen-image-2.1,outpaint,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,37.11,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-IMG-07,qwen-image-2.1,instruction_edit,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,32.95,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-IMG-08,qwen-image-2.1,reference_image,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,32.52,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-IMG-09,qwen-image-2.1,multi_reference,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,32.5,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-IMG-10,qwen-image-2.1,controlnet,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,32.89,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-IMG-11,qwen-image-2.1,control_pose,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,32.98,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-IMG-12,qwen-image-2.1,control_depth,standard,smoke,BACKEND_UNAVAILABLE,0,14.0,33.0,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0.
+BM-WAN-01,wan-2.2,text_to_video,standard,smoke,BACKEND_UNAVAILABLE,1,14.0,32.75,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'wan-2.2' is not actively resident on GPU 1.
+BM-WAN-02,wan-2.2,image_to_video,standard,smoke,BACKEND_UNAVAILABLE,1,14.0,34.55,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'wan-2.2' is not actively resident on GPU 1.
+BM-WAN-03,wan-2.2,first_last_frame_to_video,standard,smoke,BACKEND_UNAVAILABLE,1,14.0,38.83,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'wan-2.2' is not actively resident on GPU 1.
+BM-WAN-04,wan-2.2,video_extension,standard,smoke,BACKEND_UNAVAILABLE,1,14.0,33.53,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'wan-2.2' is not actively resident on GPU 1.
+BM-MMX-01,minimax-h3,text_to_video,standard,smoke,BACKEND_UNAVAILABLE,1,14.0,33.12,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'minimax-h3' is not actively resident on GPU 1.
+BM-MMX-02,minimax-h3,image_to_video,standard,smoke,BACKEND_UNAVAILABLE,1,14.0,32.86,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'minimax-h3' is not actively resident on GPU 1.
+BM-MMX-03,minimax-h3,first_last_frame_to_video,standard,smoke,BACKEND_UNAVAILABLE,1,14.0,33.5,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'minimax-h3' is not actively resident on GPU 1.
+BM-MMX-04,minimax-h3,video_with_audio,standard,smoke,BACKEND_UNAVAILABLE,1,14.0,33.22,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'minimax-h3' is not actively resident on GPU 1.
+BM-MMX-05,minimax-h3,reference_conditioning,standard,smoke,BACKEND_UNAVAILABLE,1,14.0,38.72,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'minimax-h3' is not actively resident on GPU 1.
+BM-ACE-01,ace-step-1.5,text_to_music,standard,smoke,BACKEND_UNAVAILABLE,1,6.0,32.68,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-02,ace-step-1.5,text_to_music,base,smoke,BACKEND_UNAVAILABLE,1,6.0,33.35,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-03,ace-step-1.5,text_to_music,turbo,smoke,BACKEND_UNAVAILABLE,1,6.0,33.96,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-04,ace-step-1.5,text_to_music,sft,smoke,BACKEND_UNAVAILABLE,1,6.0,33.65,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-05,ace-step-1.5,text_to_music,xl_base,smoke,BACKEND_UNAVAILABLE,1,12.0,32.9,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-06,ace-step-1.5,lyrics_to_music,standard,smoke,BACKEND_UNAVAILABLE,1,6.0,33.4,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-07,ace-step-1.5,lyrics_to_music,base,smoke,BACKEND_UNAVAILABLE,1,6.0,33.34,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-08,ace-step-1.5,lyrics_to_music,turbo,smoke,BACKEND_UNAVAILABLE,1,6.0,37.3,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-09,ace-step-1.5,lyrics_to_music,sft,smoke,BACKEND_UNAVAILABLE,1,6.0,41.55,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-10,ace-step-1.5,lyrics_to_music,xl_base,smoke,BACKEND_UNAVAILABLE,1,12.0,40.33,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-11,ace-step-1.5,reference_audio,standard,smoke,BACKEND_UNAVAILABLE,1,6.0,37.08,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-12,ace-step-1.5,reference_audio,base,smoke,BACKEND_UNAVAILABLE,1,6.0,39.94,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-13,ace-step-1.5,reference_audio,turbo,smoke,BACKEND_UNAVAILABLE,1,6.0,37.81,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-14,ace-step-1.5,reference_audio,sft,smoke,BACKEND_UNAVAILABLE,1,6.0,33.89,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-15,ace-step-1.5,reference_audio,xl_base,smoke,BACKEND_UNAVAILABLE,1,12.0,33.91,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-16,ace-step-1.5,cover,standard,smoke,BACKEND_UNAVAILABLE,1,6.0,51.49,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-17,ace-step-1.5,cover,base,smoke,BACKEND_UNAVAILABLE,1,6.0,32.97,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-18,ace-step-1.5,cover,turbo,smoke,BACKEND_UNAVAILABLE,1,6.0,32.69,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-19,ace-step-1.5,cover,sft,smoke,BACKEND_UNAVAILABLE,1,6.0,32.87,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-20,ace-step-1.5,cover,xl_base,smoke,BACKEND_UNAVAILABLE,1,12.0,32.5,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-21,ace-step-1.5,repaint,standard,smoke,BACKEND_UNAVAILABLE,1,6.0,33.41,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-22,ace-step-1.5,repaint,base,smoke,BACKEND_UNAVAILABLE,1,6.0,32.69,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-23,ace-step-1.5,repaint,turbo,smoke,BACKEND_UNAVAILABLE,1,6.0,33.48,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-24,ace-step-1.5,repaint,sft,smoke,BACKEND_UNAVAILABLE,1,6.0,33.39,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-25,ace-step-1.5,repaint,xl_base,smoke,BACKEND_UNAVAILABLE,1,12.0,34.04,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-26,ace-step-1.5,extract,base,smoke,BACKEND_UNAVAILABLE,1,6.0,33.49,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-27,ace-step-1.5,extract,xl_base,smoke,BACKEND_UNAVAILABLE,1,12.0,32.84,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-28,ace-step-1.5,lego,base,smoke,BACKEND_UNAVAILABLE,1,6.0,33.09,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-29,ace-step-1.5,lego,xl_base,smoke,BACKEND_UNAVAILABLE,1,12.0,33.03,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-30,ace-step-1.5,complete,base,smoke,BACKEND_UNAVAILABLE,1,6.0,33.44,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-31,ace-step-1.5,complete,xl_base,smoke,BACKEND_UNAVAILABLE,1,12.0,32.85,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-32,ace-step-1.5,music_extend,base,smoke,BACKEND_UNAVAILABLE,1,6.0,32.83,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-ACE-33,ace-step-1.5,music_extend,xl_base,smoke,BACKEND_UNAVAILABLE,1,12.0,36.18,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1.
+BM-YUE-01,yue2,text_to_music,standard,smoke,BACKEND_UNAVAILABLE,1,12.0,35.3,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'yue2' is not actively resident on GPU 1.
+BM-YUE-02,yue2,lyrics_to_music,standard,smoke,BACKEND_UNAVAILABLE,1,12.0,33.9,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'yue2' is not actively resident on GPU 1.
+BM-YUE-03,yue2,symbolic_score,standard,smoke,BACKEND_UNAVAILABLE,1,12.0,33.12,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'yue2' is not actively resident on GPU 1.
+BM-YUE-04,yue2,custom_score,standard,smoke,BACKEND_UNAVAILABLE,1,12.0,34.11,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'yue2' is not actively resident on GPU 1.
+BM-YUE-05,yue2,score_edit,standard,smoke,BACKEND_UNAVAILABLE,1,12.0,32.94,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'yue2' is not actively resident on GPU 1.
+BM-YUE-06,yue2,song_variation,standard,smoke,BACKEND_UNAVAILABLE,1,12.0,32.73,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Live inference engine for 'yue2' is not actively resident on GPU 1.
+BM-ENH-01,enhancement-suite-v1,image_super_resolution,standard,smoke,BACKEND_UNAVAILABLE,1,6.0,,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration.
+BM-ENH-02,enhancement-suite-v1,video_super_resolution,standard,smoke,BACKEND_UNAVAILABLE,1,6.0,,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration.
+BM-ENH-03,enhancement-suite-v1,frame_interpolation,standard,smoke,BACKEND_UNAVAILABLE,1,6.0,,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration.
+BM-ENH-04,enhancement-suite-v1,audio_enhancement,standard,smoke,BACKEND_UNAVAILABLE,1,6.0,,,,,,0,,,,,False,BACKEND_UNAVAILABLE,Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration.
+BM-NEG-01,qwen-text,text_to_video,standard,smoke,PASS,0,12.0,32.47,,,,,0,,,,,False,,
+BM-NEG-02,qwen-embedding,multimodal_embedding,standard,smoke,PASS,1,4.0,32.41,,,,,0,,,,,False,,
+BM-NEG-03,qwen-speech,word_timestamps,standard,smoke,PASS,0,8.0,32.53,,,,,0,,,,,False,,
+BM-NEG-04,qwen-image-2.1,text_to_image,standard,smoke,PASS,0,14.0,32.96,,,,,0,,,,,False,,
+BM-NEG-05,wan-2.2,video_with_audio,standard,smoke,PASS,1,14.0,43.82,,,,,0,,,,,False,,
+BM-NEG-06,minimax-h3,video_extension,standard,smoke,PASS,1,14.0,48.1,,,,,0,,,,,False,,
+BM-NEG-07,ace-step-1.5,extract,turbo,smoke,PASS,1,6.0,46.71,,,,,0,,,,,False,,
+BM-NEG-08,ace-step-1.5,music_extend,sft,smoke,PASS,1,6.0,39.0,,,,,0,,,,,False,,
+BM-NEG-09,yue2,cover_edit,standard,smoke,PASS,1,12.0,40.95,,,,,0,,,,,False,,

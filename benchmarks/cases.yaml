@@ -1,0 +1,1587 @@
+version: "2.0"
+description: "Unified declarative benchmark catalog covering 100% of declared tasks and variants across all 11 model manifests in Factory v4 Lite (Plan §4.4, §6.2, §6.6)"
+total_cases: 91
+
+cases:
+  # =========================================================================
+  # 1. Qwen Text (5 declared task-variant pairs)
+  # =========================================================================
+  - id: "BM-TXT-01"
+    name: "Qwen Text Chat Completion Standard"
+    model: "qwen-text"
+    task: "chat_completion"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      messages:
+        - role: "user"
+          content: "Explain the architectural difference between unified memory and discrete GPU memory."
+      max_tokens: 128
+      temperature: 0.7
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 10
+      rules:
+        is_chat: true
+
+  - id: "BM-TXT-02"
+    name: "Qwen Text Responses API Standard"
+    model: "qwen-text"
+    task: "responses_api"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Respond concisely: What is the primary function of an inference control plane?"
+      max_tokens: 64
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 10
+
+  - id: "BM-TXT-03"
+    name: "Qwen Text Structured Output Standard"
+    model: "qwen-text"
+    task: "structured_output"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Extract the status and code from: Server returned 200 OK."
+      schema:
+        type: "object"
+        properties:
+          status: {"type": "string"}
+          code: {"type": "integer"}
+        required: ["status", "code"]
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 15
+
+  - id: "BM-TXT-04"
+    name: "Qwen Text Tool Calling Standard"
+    model: "qwen-text"
+    task: "tool_calling"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      messages:
+        - role: "user"
+          content: "What is the temperature in Tokyo right now?"
+      tools:
+        - type: "function"
+          function:
+            name: "get_weather"
+            parameters:
+              type: "object"
+              properties:
+                location: {"type": "string"}
+              required: ["location"]
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 15
+
+  - id: "BM-TXT-05"
+    name: "Qwen Text Streaming Standard"
+    model: "qwen-text"
+    task: "streaming"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      messages:
+        - role: "user"
+          content: "Count from 1 to 5."
+      stream: true
+      max_tokens: 32
+    expected_output:
+      mime: "text/plain"
+      format: "text"
+      min_bytes: 5
+
+  # =========================================================================
+  # 2. Qwen VLM (5 declared task-variant pairs)
+  # =========================================================================
+  - id: "BM-VLM-01"
+    name: "Qwen VLM Image Chat Standard"
+    model: "qwen-vlm"
+    task: "image_chat"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Describe this image in detail."
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 10
+
+  - id: "BM-VLM-02"
+    name: "Qwen VLM Responses API Standard"
+    model: "qwen-vlm"
+    task: "responses_api"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Identify the dominant visual object."
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 10
+
+  - id: "BM-VLM-03"
+    name: "Qwen VLM Video Chat Standard"
+    model: "qwen-vlm"
+    task: "video_chat"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Summarize motion in this video sequence."
+      video_frames:
+        - "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+        - "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 10
+
+  - id: "BM-VLM-04"
+    name: "Qwen VLM Visual Grounding Standard"
+    model: "qwen-vlm"
+    task: "visual_grounding"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Locate the center pixel in the image."
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 15
+
+  - id: "BM-VLM-05"
+    name: "Qwen VLM Document QA Standard"
+    model: "qwen-vlm"
+    task: "document_qa"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Extract the heading text from this document page."
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 10
+
+  # =========================================================================
+  # 3. Qwen Decision (3 declared task-variant pairs)
+  # =========================================================================
+  - id: "BM-DEC-01"
+    name: "Qwen Decision Predicate Evaluation Standard"
+    model: "qwen-decision"
+    task: "predicate_evaluation"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      predicate: "User query is an image generation request."
+      context: "Please create a high-resolution image of a cyberpunk skyline at dusk."
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 15
+      rules:
+        is_decision: true
+
+  - id: "BM-DEC-02"
+    name: "Qwen Decision Choice Routing Standard"
+    model: "qwen-decision"
+    task: "choice_routing"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Routing request for generating cinematic 4k video."
+      choices: ["text-service", "video-service", "speech-service", "music-service"]
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 15
+      rules:
+        is_decision: true
+
+  - id: "BM-DEC-03"
+    name: "Qwen Decision Score Ranking Standard"
+    model: "qwen-decision"
+    task: "score_ranking"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      criteria: "Logical consistency and relevance to machine learning."
+      candidates:
+        - "Gradient descent iteratively minimizes loss."
+        - "Baking a cake requires flour and sugar."
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 20
+      rules:
+        is_decision: true
+
+  # =========================================================================
+  # 4. Qwen Embedding (2 declared task-variant pairs)
+  # =========================================================================
+  - id: "BM-EMB-01"
+    name: "Qwen Text Embedding Standard"
+    model: "qwen-embedding"
+    task: "text_embedding"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 4.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      text: "Factory v4 Lite provides verified model inference on dual GPU hardware."
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 64
+      rules:
+        is_embedding: true
+        expected_dim: 1024
+
+  - id: "BM-EMB-02"
+    name: "Qwen Reranking Standard"
+    model: "qwen-embedding"
+    task: "reranking"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 4.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      query: "distributed dual GPU inference"
+      documents:
+        - "Factory Lite schedules jobs across GPU 0 and GPU 1 partitions."
+        - "The sun rises in the east and sets in the west."
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 30
+
+  # =========================================================================
+  # 5. Qwen Speech (3 declared task-variant pairs)
+  # =========================================================================
+  - id: "BM-SPH-01"
+    name: "Qwen Speech-to-Text Standard"
+    model: "qwen-speech"
+    task: "speech_to_text"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 8.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      audio_url: "https://example.com/fixtures/sample_speech_16k.wav"
+    expected_output:
+      mime: "application/json"
+      format: "json"
+      min_bytes: 10
+
+  - id: "BM-SPH-02"
+    name: "Qwen Text-to-Speech Standard"
+    model: "qwen-speech"
+    task: "text_to_speech"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 8.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      text: "Welcome to Factory AI Studio. Dual-T4 deployment is verified and operational."
+      voice: "standard_en_female"
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+      rules:
+        min_duration: 1.0
+
+  - id: "BM-SPH-03"
+    name: "Qwen Voice Cloning Standard"
+    model: "qwen-speech"
+    task: "voice_cloning"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 8.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      text: "Cloned speech audio generation test."
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # =========================================================================
+  # 6. Qwen-Image 2.1 (12 declared task-variant pairs)
+  # =========================================================================
+  - id: "BM-IMG-01"
+    name: "Qwen-Image 2.1 Text-to-Image Standard"
+    model: "qwen-image-2.1"
+    task: "text_to_image"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "A crystalline mountain lake at golden hour, sharp focus, 8k"
+      steps: 30
+      width: 512
+      height: 512
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+      rules:
+        exact_width: 512
+        exact_height: 512
+
+  - id: "BM-IMG-02"
+    name: "Qwen-Image 2.1 Text-to-Image Turbo"
+    model: "qwen-image-2.1"
+    task: "text_to_image"
+    variant: "turbo"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "High speed cinematic sports car in rain, neon reflections"
+      steps: 8
+      width: 512
+      height: 512
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+      rules:
+        exact_width: 512
+        exact_height: 512
+
+  - id: "BM-IMG-03"
+    name: "Qwen-Image 2.1 Image-to-Image Standard"
+    model: "qwen-image-2.1"
+    task: "image_to_image"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      prompt: "Transform into an oil painting portrait"
+      strength: 0.75
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+
+  - id: "BM-IMG-04"
+    name: "Qwen-Image 2.1 Image-to-Image Turbo"
+    model: "qwen-image-2.1"
+    task: "image_to_image"
+    variant: "turbo"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      prompt: "Transform into watercolor sketch"
+      steps: 8
+      strength: 0.7
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+
+  - id: "BM-IMG-05"
+    name: "Qwen-Image 2.1 Inpaint Standard"
+    model: "qwen-image-2.1"
+    task: "inpaint"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      mask: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+      prompt: "A bright glowing crystal"
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+
+  - id: "BM-IMG-06"
+    name: "Qwen-Image 2.1 Outpaint Standard"
+    model: "qwen-image-2.1"
+    task: "outpaint"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      prompt: "Expand canvas with dense pine forest"
+      expand_pixels: 64
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+
+  - id: "BM-IMG-07"
+    name: "Qwen-Image 2.1 Instruction Edit Standard"
+    model: "qwen-image-2.1"
+    task: "instruction_edit"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      instruction: "Add autumn leaves falling across the scene"
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+
+  - id: "BM-IMG-08"
+    name: "Qwen-Image 2.1 Reference Image Standard"
+    model: "qwen-image-2.1"
+    task: "reference_image"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Character standing on a balcony overlooking the sea"
+      reference_image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+
+  - id: "BM-IMG-09"
+    name: "Qwen-Image 2.1 Multi-Reference Standard"
+    model: "qwen-image-2.1"
+    task: "multi_reference"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Combining character style and background landscape"
+      reference_images:
+        - "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+        - "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+
+  - id: "BM-IMG-10"
+    name: "Qwen-Image 2.1 ControlNet Standard"
+    model: "qwen-image-2.1"
+    task: "controlnet"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Architectural blueprint rendering"
+      control_image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      control_type: "pose"
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+
+  - id: "BM-IMG-11"
+    name: "Qwen-Image 2.1 Control Pose Standard"
+    model: "qwen-image-2.1"
+    task: "control_pose"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "A martial artist executing a high kick"
+      pose_image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+
+  - id: "BM-IMG-12"
+    name: "Qwen-Image 2.1 Control Depth Standard"
+    model: "qwen-image-2.1"
+    task: "control_depth"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Interior room with natural window lighting"
+      depth_map: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 5000
+
+  # =========================================================================
+  # 7. Wan 2.2 Video (4 declared task-variant pairs)
+  # =========================================================================
+  - id: "BM-WAN-01"
+    name: "Wan 2.2 Text-to-Video Standard"
+    model: "wan-2.2"
+    task: "text_to_video"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Ocean waves crashing against rugged cliffs at sunset, slow motion"
+      frames: 25
+      width: 512
+      height: 384
+    expected_output:
+      mime: "video/mp4"
+      format: "mp4"
+      min_bytes: 10000
+      rules:
+        min_duration: 1.0
+
+  - id: "BM-WAN-02"
+    name: "Wan 2.2 Image-to-Video Standard"
+    model: "wan-2.2"
+    task: "image_to_video"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      prompt: "Animate gentle breeze blowing through blooming cherry blossoms"
+      frames: 25
+    expected_output:
+      mime: "video/mp4"
+      format: "mp4"
+      min_bytes: 10000
+
+  - id: "BM-WAN-03"
+    name: "Wan 2.2 First-and-Last-Frame Video Standard"
+    model: "wan-2.2"
+    task: "first_last_frame_to_video"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      first_frame: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      last_frame: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      prompt: "Smooth temporal transition between day and night"
+      frames: 25
+    expected_output:
+      mime: "video/mp4"
+      format: "mp4"
+      min_bytes: 10000
+
+  - id: "BM-WAN-04"
+    name: "Wan 2.2 Video Extension Standard"
+    model: "wan-2.2"
+    task: "video_extension"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      video_url: "https://example.com/fixtures/base_video_5s.mp4"
+      extend_seconds: 2.0
+    expected_output:
+      mime: "video/mp4"
+      format: "mp4"
+      min_bytes: 10000
+
+  # =========================================================================
+  # 8. MiniMax H3 Video (5 declared task-variant pairs)
+  # =========================================================================
+  - id: "BM-MMX-01"
+    name: "MiniMax H3 Text-to-Video Standard"
+    model: "minimax-h3"
+    task: "text_to_video"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "A futuristic hover vehicle navigating through a rainy neon cityscape"
+      frames: 30
+      width: 512
+      height: 384
+    expected_output:
+      mime: "video/mp4"
+      format: "mp4"
+      min_bytes: 10000
+
+  - id: "BM-MMX-02"
+    name: "MiniMax H3 Image-to-Video Standard"
+    model: "minimax-h3"
+    task: "image_to_video"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      prompt: "The character turns their head toward the camera and smiles"
+      frames: 30
+    expected_output:
+      mime: "video/mp4"
+      format: "mp4"
+      min_bytes: 10000
+
+  - id: "BM-MMX-03"
+    name: "MiniMax H3 First-and-Last-Frame Video Standard"
+    model: "minimax-h3"
+    task: "first_last_frame_to_video"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      first_frame: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      last_frame: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      prompt: "Continuous camera panning movement"
+    expected_output:
+      mime: "video/mp4"
+      format: "mp4"
+      min_bytes: 10000
+
+  - id: "BM-MMX-04"
+    name: "MiniMax H3 Video with Audio Standard"
+    model: "minimax-h3"
+    task: "video_with_audio"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "A thunderous waterfall cascading down a gorge with ambient roar"
+      frames: 30
+    expected_output:
+      mime: "video/mp4"
+      format: "mp4"
+      min_bytes: 15000
+
+  - id: "BM-MMX-05"
+    name: "MiniMax H3 Reference Conditioning Standard"
+    model: "minimax-h3"
+    task: "reference_conditioning"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 14.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Cinematic sequence maintaining exact reference lighting"
+      reference_image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    expected_output:
+      mime: "video/mp4"
+      format: "mp4"
+      min_bytes: 10000
+
+  # =========================================================================
+  # 9. ACE-Step 1.5 Music (33 declared task-variant pairs)
+  # =========================================================================
+  # 9.1 text_to_music (5 variants)
+  - id: "BM-ACE-01"
+    name: "ACE-Step 1.5 Text-to-Music Standard"
+    model: "ace-step-1.5"
+    task: "text_to_music"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Upbeat electronic synthwave with punchy bassline"
+      duration_seconds: 15.0
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-02"
+    name: "ACE-Step 1.5 Text-to-Music Base"
+    model: "ace-step-1.5"
+    task: "text_to_music"
+    variant: "base"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Lofi hip hop beats to relax to, vinyl crackle"
+      duration_seconds: 15.0
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-03"
+    name: "ACE-Step 1.5 Text-to-Music Turbo"
+    model: "ace-step-1.5"
+    task: "text_to_music"
+    variant: "turbo"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Fast tempo retro video game chiptune"
+      duration_seconds: 10.0
+      steps: 8
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-04"
+    name: "ACE-Step 1.5 Text-to-Music SFT"
+    model: "ace-step-1.5"
+    task: "text_to_music"
+    variant: "sft"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Acoustic folk ballad with gentle guitar strumming"
+      duration_seconds: 10.0
+      steps: 25
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-05"
+    name: "ACE-Step 1.5 Text-to-Music XL Base"
+    model: "ace-step-1.5"
+    task: "text_to_music"
+    variant: "xl_base"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Orchestral cinematic film score with soaring strings"
+      duration_seconds: 15.0
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # 9.2 lyrics_to_music (5 variants)
+  - id: "BM-ACE-06"
+    name: "ACE-Step 1.5 Lyrics-to-Music Standard"
+    model: "ace-step-1.5"
+    task: "lyrics_to_music"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      lyrics: "[Verse]\nUnder the neon sky\nWe watch the world go by"
+      genre: "synthpop"
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-07"
+    name: "ACE-Step 1.5 Lyrics-to-Music Base"
+    model: "ace-step-1.5"
+    task: "lyrics_to_music"
+    variant: "base"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      lyrics: "[Chorus]\nGolden horizons calling my name\nNothing will ever feel the same"
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-08"
+    name: "ACE-Step 1.5 Lyrics-to-Music Turbo"
+    model: "ace-step-1.5"
+    task: "lyrics_to_music"
+    variant: "turbo"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      lyrics: "[Verse]\nRolling down the highway fast"
+      steps: 8
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-09"
+    name: "ACE-Step 1.5 Lyrics-to-Music SFT"
+    model: "ace-step-1.5"
+    task: "lyrics_to_music"
+    variant: "sft"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      lyrics: "[Verse]\nWhispers in the autumn breeze"
+      steps: 25
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-10"
+    name: "ACE-Step 1.5 Lyrics-to-Music XL Base"
+    model: "ace-step-1.5"
+    task: "lyrics_to_music"
+    variant: "xl_base"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      lyrics: "[Chorus]\nSymphony of stars above"
+      genre: "orchestral"
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # 9.3 reference_audio (5 variants)
+  - id: "BM-ACE-11"
+    name: "ACE-Step 1.5 Reference Audio Standard"
+    model: "ace-step-1.5"
+    task: "reference_audio"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Continue the melodic progression"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-12"
+    name: "ACE-Step 1.5 Reference Audio Base"
+    model: "ace-step-1.5"
+    task: "reference_audio"
+    variant: "base"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Generate matching harmony"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-13"
+    name: "ACE-Step 1.5 Reference Audio Turbo"
+    model: "ace-step-1.5"
+    task: "reference_audio"
+    variant: "turbo"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Fast turnaround reference match"
+      steps: 8
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-14"
+    name: "ACE-Step 1.5 Reference Audio SFT"
+    model: "ace-step-1.5"
+    task: "reference_audio"
+    variant: "sft"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Refined acoustic reference audio match"
+      steps: 25
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-15"
+    name: "ACE-Step 1.5 Reference Audio XL Base"
+    model: "ace-step-1.5"
+    task: "reference_audio"
+    variant: "xl_base"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "High-fidelity orchestral reference continuation"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # 9.4 cover (5 variants)
+  - id: "BM-ACE-16"
+    name: "ACE-Step 1.5 Cover Standard"
+    model: "ace-step-1.5"
+    task: "cover"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Acoustic jazz reinterpretation"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-17"
+    name: "ACE-Step 1.5 Cover Base"
+    model: "ace-step-1.5"
+    task: "cover"
+    variant: "base"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Rock cover"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-18"
+    name: "ACE-Step 1.5 Cover Turbo"
+    model: "ace-step-1.5"
+    task: "cover"
+    variant: "turbo"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Upbeat electronic cover"
+      steps: 8
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-19"
+    name: "ACE-Step 1.5 Cover SFT"
+    model: "ace-step-1.5"
+    task: "cover"
+    variant: "sft"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Piano cover"
+      steps: 25
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-20"
+    name: "ACE-Step 1.5 Cover XL Base"
+    model: "ace-step-1.5"
+    task: "cover"
+    variant: "xl_base"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Symphonic cover"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # 9.5 repaint (5 variants)
+  - id: "BM-ACE-21"
+    name: "ACE-Step 1.5 Repaint Standard"
+    model: "ace-step-1.5"
+    task: "repaint"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Replace guitar solo with saxophone"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      start_time: 4.0
+      end_time: 8.0
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-22"
+    name: "ACE-Step 1.5 Repaint Base"
+    model: "ace-step-1.5"
+    task: "repaint"
+    variant: "base"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Repaint segment"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      start_time: 2.0
+      end_time: 5.0
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-23"
+    name: "ACE-Step 1.5 Repaint Turbo"
+    model: "ace-step-1.5"
+    task: "repaint"
+    variant: "turbo"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Turbo repaint segment"
+      steps: 8
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      start_time: 1.0
+      end_time: 4.0
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-24"
+    name: "ACE-Step 1.5 Repaint SFT"
+    model: "ace-step-1.5"
+    task: "repaint"
+    variant: "sft"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "SFT repaint segment"
+      steps: 25
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      start_time: 1.0
+      end_time: 3.0
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-25"
+    name: "ACE-Step 1.5 Repaint XL Base"
+    model: "ace-step-1.5"
+    task: "repaint"
+    variant: "xl_base"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "XL repaint section"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      start_time: 5.0
+      end_time: 10.0
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # 9.6 extract (base & xl_base)
+  - id: "BM-ACE-26"
+    name: "ACE-Step 1.5 Extract Base"
+    model: "ace-step-1.5"
+    task: "extract"
+    variant: "base"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Extract vocal stem"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      stem: "vocals"
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-27"
+    name: "ACE-Step 1.5 Extract XL Base"
+    model: "ace-step-1.5"
+    task: "extract"
+    variant: "xl_base"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Extract drum stem"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      stem: "drums"
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # 9.7 lego (base & xl_base)
+  - id: "BM-ACE-28"
+    name: "ACE-Step 1.5 Lego Base"
+    model: "ace-step-1.5"
+    task: "lego"
+    variant: "base"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Assemble rhythm track and bassline"
+      stems:
+        drums: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+        bass: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-29"
+    name: "ACE-Step 1.5 Lego XL Base"
+    model: "ace-step-1.5"
+    task: "lego"
+    variant: "xl_base"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Assemble orchestral movement"
+      stems:
+        strings: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # 9.8 complete (base & xl_base)
+  - id: "BM-ACE-30"
+    name: "ACE-Step 1.5 Complete Base"
+    model: "ace-step-1.5"
+    task: "complete"
+    variant: "base"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Complete missing backing track accompaniment"
+      vocal_track: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-31"
+    name: "ACE-Step 1.5 Complete XL Base"
+    model: "ace-step-1.5"
+    task: "complete"
+    variant: "xl_base"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Complete symphony finale"
+      melody_track: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # 9.9 music_extend (base & xl_base)
+  - id: "BM-ACE-32"
+    name: "ACE-Step 1.5 Music Extend Base"
+    model: "ace-step-1.5"
+    task: "music_extend"
+    variant: "base"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      extend_seconds: 15.0
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-ACE-33"
+    name: "ACE-Step 1.5 Music Extend XL Base"
+    model: "ace-step-1.5"
+    task: "music_extend"
+    variant: "xl_base"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      extend_seconds: 20.0
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # =========================================================================
+  # 10. YuE2 Music (6 declared task-variant pairs)
+  # =========================================================================
+  - id: "BM-YUE-01"
+    name: "YuE2 Text-to-Music Standard"
+    model: "yue2"
+    task: "text_to_music"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Emotional piano and cello melody with subtle percussion"
+      duration_seconds: 20.0
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-YUE-02"
+    name: "YuE2 Lyrics-to-Music Standard"
+    model: "yue2"
+    task: "lyrics_to_music"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      lyrics: "[Verse]\nShadows stretch across the floor\nRaindrops tapping on the door"
+      style: "indie folk"
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-YUE-03"
+    name: "YuE2 Symbolic Score Standard"
+    model: "yue2"
+    task: "symbolic_score"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      prompt: "Compose an ABC symbolic notation score for a traditional waltz in 3/4"
+    expected_output:
+      mime: "text/plain"
+      format: "text"
+      min_bytes: 20
+      rules:
+        is_abc_score: true
+
+  - id: "BM-YUE-04"
+    name: "YuE2 Custom Score Standard"
+    model: "yue2"
+    task: "custom_score"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      score: "X:1\nT:Simple Tune\nM:4/4\nK:C\nCDEF GABc|"
+      instruments: ["piano", "strings"]
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  - id: "BM-YUE-05"
+    name: "YuE2 Score Edit Standard"
+    model: "yue2"
+    task: "score_edit"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      base_score: "X:1\nT:Base Melody\nM:4/4\nK:C\nC2 D2 E2 F2|"
+      instruction: "Transpose melody up by 2 semitones to D major"
+    expected_output:
+      mime: "text/plain"
+      format: "text"
+      min_bytes: 20
+      rules:
+        is_abc_score: true
+
+  - id: "BM-YUE-06"
+    name: "YuE2 Song Variation Standard"
+    model: "yue2"
+    task: "song_variation"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      variation_strength: 0.5
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # =========================================================================
+  # 11. Enhancement Suite (4 declared task-variant pairs, unbacked blocker)
+  # =========================================================================
+  - id: "BM-ENH-01"
+    name: "Enhancement Image Super-Resolution Standard"
+    model: "enhancement-suite-v1"
+    task: "image_super_resolution"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      scale: 4
+    expected_status: "BACKEND_UNAVAILABLE"
+    expected_output:
+      mime: "image/png"
+      format: "png"
+      min_bytes: 1000
+
+  - id: "BM-ENH-02"
+    name: "Enhancement Video Super-Resolution Standard"
+    model: "enhancement-suite-v1"
+    task: "video_super_resolution"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      video_url: "https://example.com/fixtures/lowres_video.mp4"
+      scale: 2
+    expected_status: "BACKEND_UNAVAILABLE"
+    expected_output:
+      mime: "video/mp4"
+      format: "mp4"
+      min_bytes: 10000
+
+  - id: "BM-ENH-03"
+    name: "Enhancement Frame Interpolation Standard"
+    model: "enhancement-suite-v1"
+    task: "frame_interpolation"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      video_url: "https://example.com/fixtures/base_video.mp4"
+      multiplier: 2
+    expected_status: "BACKEND_UNAVAILABLE"
+    expected_output:
+      mime: "video/mp4"
+      format: "mp4"
+      min_bytes: 10000
+
+  - id: "BM-ENH-04"
+    name: "Enhancement Audio Enhancement Standard"
+    model: "enhancement-suite-v1"
+    task: "audio_enhancement"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full", "perf"]
+    inputs:
+      audio_url: "https://example.com/fixtures/noisy_audio.wav"
+    expected_status: "BACKEND_UNAVAILABLE"
+    expected_output:
+      mime: "audio/wav"
+      format: "wav"
+      min_bytes: 1024
+
+  # =========================================================================
+  # 12. Negative & Capability Rejection Cases (9 cases)
+  # =========================================================================
+  - id: "BM-NEG-01"
+    name: "Reject Unsupported Task on Qwen Text"
+    model: "qwen-text"
+    task: "text_to_video"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 12.0
+    modes: ["smoke", "full"]
+    is_negative: true
+    inputs:
+      prompt: "Generate a video clip."
+    expected_status: "PASS"
+    expected_error_code: "CAPABILITY_NOT_SUPPORTED"
+
+  - id: "BM-NEG-02"
+    name: "Reject Unimplemented Multimodal Embedding on Qwen Embedding"
+    model: "qwen-embedding"
+    task: "multimodal_embedding"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 4.0
+    modes: ["smoke", "full"]
+    is_negative: true
+    inputs:
+      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    expected_status: "PASS"
+    expected_error_code: "CAPABILITY_NOT_SUPPORTED"
+
+  - id: "BM-NEG-03"
+    name: "Reject Unimplemented Word Timestamps on Qwen Speech"
+    model: "qwen-speech"
+    task: "word_timestamps"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 8.0
+    modes: ["smoke", "full"]
+    is_negative: true
+    inputs:
+      audio_url: "https://example.com/test.wav"
+    expected_status: "PASS"
+    expected_error_code: "CAPABILITY_NOT_SUPPORTED"
+
+  - id: "BM-NEG-04"
+    name: "Reject Oversized Dimension Beyond Limit on Qwen Image"
+    model: "qwen-image-2.1"
+    task: "text_to_image"
+    variant: "standard"
+    target_gpu: 0
+    min_vram_gb: 14.0
+    modes: ["smoke", "full"]
+    is_negative: true
+    inputs:
+      prompt: "Ultra huge image"
+      width: 4096
+      height: 4096
+    expected_status: "PASS"
+    expected_error_code: "INVALID_INPUT"
+
+  - id: "BM-NEG-05"
+    name: "Reject Unimplemented Video with Audio on Wan 2.2"
+    model: "wan-2.2"
+    task: "video_with_audio"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 14.0
+    modes: ["smoke", "full"]
+    is_negative: true
+    inputs:
+      prompt: "Video with audio"
+    expected_status: "PASS"
+    expected_error_code: "CAPABILITY_NOT_SUPPORTED"
+
+  - id: "BM-NEG-06"
+    name: "Reject Unimplemented Video Extension on MiniMax H3"
+    model: "minimax-h3"
+    task: "video_extension"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 14.0
+    modes: ["smoke", "full"]
+    is_negative: true
+    inputs:
+      video_url: "https://example.com/video.mp4"
+    expected_status: "PASS"
+    expected_error_code: "CAPABILITY_NOT_SUPPORTED"
+
+  - id: "BM-NEG-07"
+    name: "Reject Specialized Extract Task on ACE-Step 1.5 Turbo"
+    model: "ace-step-1.5"
+    task: "extract"
+    variant: "turbo"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full"]
+    is_negative: true
+    inputs:
+      prompt: "Extract stem"
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      stem: "vocals"
+    expected_status: "PASS"
+    expected_error_code: "CAPABILITY_NOT_SUPPORTED"
+
+  - id: "BM-NEG-08"
+    name: "Reject Specialized Music Extend on ACE-Step 1.5 SFT"
+    model: "ace-step-1.5"
+    task: "music_extend"
+    variant: "sft"
+    target_gpu: 1
+    min_vram_gb: 6.0
+    modes: ["smoke", "full"]
+    is_negative: true
+    inputs:
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+      extend_seconds: 10.0
+    expected_status: "PASS"
+    expected_error_code: "CAPABILITY_NOT_SUPPORTED"
+
+  - id: "BM-NEG-09"
+    name: "Reject Unimplemented Cover Edit on YuE2"
+    model: "yue2"
+    task: "cover_edit"
+    variant: "standard"
+    target_gpu: 1
+    min_vram_gb: 12.0
+    modes: ["smoke", "full"]
+    is_negative: true
+    inputs:
+      reference_audio: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="
+    expected_status: "PASS"
+    expected_error_code: "CAPABILITY_NOT_SUPPORTED"

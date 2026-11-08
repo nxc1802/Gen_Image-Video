@@ -20,6 +20,11 @@ from deployments.kaggle.smoke_runner import (
     SmokeReport,
     StageResult,
 )
+from deployments.kaggle.bootstrap import (
+    KaggleBootstrap,
+    BootstrapResult,
+    HardwareReport,
+)
 
 __all__ = [
     "KaggleAPIClient",
@@ -35,4 +40,8 @@ __all__ = [
     "ModelSmokeRunner",
     "SmokeReport",
     "StageResult",
+    "KaggleBootstrap",
+    "BootstrapResult",
+    "HardwareReport",
 ]
+
