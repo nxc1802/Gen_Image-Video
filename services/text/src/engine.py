@@ -29,17 +29,26 @@ def decouple_think_tokens(raw_text: str | None) -> tuple[str | None, str | None]
 
     if "<think>" in raw_text and "</think>" in raw_text:
         parts = raw_text.split("</think>", 1)
-        reasoning = parts[0].replace("<think>", "").strip()
+        think_part = parts[0]
         clean = parts[1].strip()
+        if "<think>" in think_part:
+            pre, r = think_part.split("<think>", 1)
+            reasoning = r.strip()
+            if pre.strip():
+                clean = f"{pre.strip()} {clean}".strip()
+        else:
+            reasoning = think_part.strip()
         return (reasoning if reasoning else None), clean
     elif "</think>" in raw_text:
         parts = raw_text.rsplit("</think>", 1)
         reasoning = parts[0].replace("<think>", "").strip()
         clean = parts[1].strip()
         return (reasoning if reasoning else None), clean
-    elif raw_text.startswith("<think>"):
-        reasoning = raw_text.replace("<think>", "").strip()
-        return (reasoning if reasoning else None), ""
+    elif "<think>" in raw_text:
+        parts = raw_text.split("<think>", 1)
+        clean = parts[0].strip()
+        reasoning = parts[1].strip()
+        return (reasoning if reasoning else None), clean
     else:
         return None, raw_text
 

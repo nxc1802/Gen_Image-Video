@@ -17,6 +17,12 @@ from .error_contract import (
     ServiceUnavailableError,
     GatewayTimeoutError,
     InternalServerError,
+    ModelNotLoadedError,
+    InsufficientVRAMError,
+    BackendCrashedError,
+    UnsupportedCapabilityError,
+    WeightsMissingError,
+    classify_worker_error,
 )
 
 __all__ = [
@@ -38,4 +44,10 @@ __all__ = [
     "ServiceUnavailableError",
     "GatewayTimeoutError",
     "InternalServerError",
+    "ModelNotLoadedError",
+    "InsufficientVRAMError",
+    "BackendCrashedError",
+    "UnsupportedCapabilityError",
+    "WeightsMissingError",
+    "classify_worker_error",
 ]

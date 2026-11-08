@@ -1,0 +1,129 @@
+version: "1.0"
+description: "Hardware profiles for Factory v4 Lite multi-tier benchmark execution (§9.5)"
+
+profiles:
+  kaggle-dual-t4:
+    name: "Kaggle Dual Tesla T4"
+    platform: "kaggle"
+    device_type: "nvidia_cuda"
+    gpu_count: 2
+    devices:
+      - index: 0
+        name: "Tesla T4"
+        total_vram_mb: 15360.0
+        static_limit_mb: 14540.0
+        allowed_services:
+          - "text-service"
+          - "decision-service"
+          - "vision-service"
+          - "speech-service"
+          - "image-service"
+        allowed_models:
+          - "qwen-text"
+          - "qwen-decision"
+          - "qwen-vlm"
+          - "qwen-speech"
+          - "qwen-image-2.1"
+      - index: 1
+        name: "Tesla T4"
+        total_vram_mb: 15360.0
+        static_limit_mb: 14540.0
+        allowed_services:
+          - "embed-service"
+          - "rerank-service"
+          - "video-service"
+          - "music-service"
+          - "enhancement-service"
+        allowed_models:
+          - "qwen-embedding"
+          - "wan-2.2"
+          - "minimax-h3"
+          - "ace-step-1.5"
+          - "enhancement-suite-v1"
+          - "yue2"
+    precision_support:
+      fp16: true
+      bf16: false
+      fp32: true
+      int8: true
+      int4: true
+    cuda_version: "13.0"
+    driver_version: "580.178.04"
+    shared_memory_topology: "discrete_pcie_no_nvlink"
+    constraints:
+      - "Cards do NOT share unified address space (no unified 32GB memory)"
+      - "Static model load ceiling is 14.2 GB per card to preserve >=800 MB activation headroom"
+      - "PyTorch native BF16 for YuE2-3B unsupported on T4; requires quantized GGUF or marks HARDWARE_BLOCKED"
+
+  colab-single-t4:
+    name: "Google Colab Single Tesla T4"
+    platform: "colab"
+    device_type: "nvidia_cuda"
+    gpu_count: 1
+    devices:
+      - index: 0
+        name: "Tesla T4"
+        total_vram_mb: 15360.0
+        static_limit_mb: 14540.0
+        allowed_services:
+          - "all_services"
+        allowed_models:
+          - "all_models"
+    precision_support:
+      fp16: true
+      bf16: false
+      fp32: true
+      int8: true
+      int4: true
+    cuda_version: "12.2"
+    driver_version: "535.104.05"
+    shared_memory_topology: "single_card"
+    constraints:
+      - "Single GPU card: dual-GPU concurrent executions (GPU-03, GPU-05) are HARDWARE_BLOCKED"
+      - "Requires sequential evict-and-load model lifecycle management"
+
+  nvidia-bf16-24gb:
+    name: "NVIDIA BF16 >=24GB (A10G/A5000/L4/A100)"
+    platform: "cloud-reference"
+    device_type: "nvidia_cuda"
+    gpu_count: 1
+    devices:
+      - index: 0
+        name: "NVIDIA RTX A5000 / A10G / L4 / A100"
+        total_vram_mb: 24576.0
+        static_limit_mb: 23000.0
+        allowed_services:
+          - "all_services"
+        allowed_models:
+          - "all_models"
+    precision_support:
+      fp16: true
+      bf16: true
+      fp32: true
+      int8: true
+      int4: true
+    cuda_version: "12.4"
+    driver_version: "550.54.14"
+    shared_memory_topology: "single_high_vram"
+    constraints:
+      - "Full official hardware support for YuE2 PyTorch native BF16 pipeline and Wan 2.2 A14B"
+
+  darwin-apple-silicon-local:
+    name: "Darwin Apple Silicon Local"
+    platform: "darwin"
+    device_type: "mps_cpu"
+    gpu_count: 0
+    devices: []
+    precision_support:
+      fp16: false
+      bf16: false
+      fp32: true
+      int8: false
+      int4: false
+    cuda_version: null
+    driver_version: null
+    shared_memory_topology: "unified_soc_memory"
+    constraints:
+      - "Host lacks NVIDIA CUDA driver and discrete Tesla T4 accelerators"
+      - "In-memory control API, routing, queues, lease coordinators, adversarial suites run natively"
+      - "Real CUDA GPU inference jobs are classified honestly as HARDWARE_BLOCKED without fabricating fake passes"

@@ -1,0 +1,166 @@
+version: "1.0"
+description: "Prompts B-M01 to B-M12 for ACE-Step 1.5 vs YuE2 comparative benchmark evaluation (Plan §10.3)"
+
+evaluation_guidelines:
+  sample_count_per_condition: 3
+  rtf_definition: "generation_wall_clock_seconds / output_audio_seconds"
+  fairness_rules:
+    - "Use shared lyrics/style descriptors where supported"
+    - "Generate at least three independent samples per condition"
+    - "Report hardware-normalized context rather than misleading absolute rankings"
+    - "Separate cold-start model load time from warm inference latency"
+    - "Human listening rubric: 1-5 scale across 8 dimensions (Plan §10.4)"
+
+test_cases:
+  B-M01:
+    family: "English pop"
+    evaluation_focus: "Lyrics, structure, vocals"
+    prompt: "Catchy modern synthpop anthem with upbeat tempo, punchy electronic drums, warm analog synths, and clear expressive female lead vocals"
+    lyrics: |
+      [Verse 1]
+      Neon lights reflect against the rain
+      Washing all the memories down the drain
+      [Chorus]
+      We can fly above the stormy skies
+      Looking at tomorrow through your eyes
+    style: "Synthpop, 120 BPM, Bright, Melodic"
+    instrumental: false
+    target_duration_seconds: 60
+
+  B-M02:
+    family: "Vietnamese ballad"
+    evaluation_focus: "Vietnamese pronunciation, melody"
+    prompt: "Acoustic piano and string quartet Vietnamese ballad with emotional acoustic phrasing and clear tonal articulation"
+    lyrics: |
+      [Verse 1]
+      Chiều buông hạt mưa rơi nhẹ bên thềm xưa
+      Nghe tiếng lá thu bay xao xác trong gió
+      [Chorus]
+      Còn mãi những kỷ niệm dấu yêu một thời
+      Lời hẹn ước năm nào gửi theo mây trời
+    style: "Vietnamese Ballad, 75 BPM, Melancholic, Acoustic"
+    instrumental: false
+    target_duration_seconds: 60
+
+  B-M03:
+    family: "Japanese pop"
+    evaluation_focus: "Multilingual singing"
+    prompt: "Energetic J-Pop anime opening theme featuring fast electric guitar riffs, brass accents, driving drum kit, and dynamic vocals"
+    lyrics: |
+      [Verse 1]
+      青い空を見上げて
+      果てしない旅が始まる
+      [Chorus]
+      どんな闇も越えてゆこう
+      君と描く光のストーリー
+    style: "J-Pop, Anime Rock, 160 BPM, Driving"
+    instrumental: false
+    target_duration_seconds: 60
+
+  B-M04:
+    family: "Cinematic instrumental"
+    evaluation_focus: "Timbre, arrangement, realism"
+    prompt: "Epic orchestral cinematic overture, soaring french horns, heavy timpani, galloping cello ostinato, building to a heroic crescendo"
+    lyrics: ""
+    style: "Orchestral Cinematic, 110 BPM, Grand, Heroic"
+    instrumental: true
+    target_duration_seconds: 90
+
+  B-M05:
+    family: "EDM/electronic"
+    evaluation_focus: "Rhythm, progression, energy"
+    prompt: "Progressive house festival banger with euphoric piano chords, rising white-noise sweeps, rolling 128 BPM sub-bass, and a stadium drop"
+    lyrics: |
+      [Intro]
+      Feel the surge ignite the night
+      [Drop]
+      Raise your hands into the light
+    style: "Progressive House, 128 BPM, Euphoric, Stadium"
+    instrumental: false
+    target_duration_seconds: 60
+
+  B-M06:
+    family: "Acoustic/jazz"
+    evaluation_focus: "Harmony, musicality, instrumentation"
+    prompt: "Late-night smoky jazz ballad featuring walking upright bass, brushed snare, delicate Rhodes electric piano, and muted trumpet solos"
+    lyrics: |
+      [Verse 1]
+      Midnight whispers in a quiet cafe
+      Shadows dancing as the record plays
+    style: "Cool Jazz, 80 BPM, Warm, Sophisticated"
+    instrumental: false
+    target_duration_seconds: 75
+
+  B-M07:
+    family: "Complex lyrics"
+    evaluation_focus: "Verse/chorus consistency"
+    prompt: "Narrative folk rock song with intricate rhyming verse and dynamic chorus shifts with acoustic 12-string guitar and vocal harmony"
+    lyrics: |
+      [Verse 1]
+      The clock tower struck eleven times before the winter dawn
+      A solitary silhouette across the frozen lawn
+      [Chorus]
+      Time remembers what we left behind
+      Carved in stone and etched into the mind
+      [Verse 2]
+      Footsteps faded on the bridge where ancient rivers bend
+      Every winding cobblestone must lead us to the end
+    style: "Folk Rock, 95 BPM, Acoustic, Narrative"
+    instrumental: false
+    target_duration_seconds: 90
+
+  B-M08:
+    family: "Long song"
+    evaluation_focus: "Long-range coherence and memory"
+    prompt: "Extended multi-movement progressive rock suite transitioning from atmospheric ambient guitar to driving rhythm section and melodic guitar solo"
+    lyrics: |
+      [Part I - Morning]
+      Awakening among the hills
+      [Part II - Journey]
+      Across the valleys far away
+      [Part III - Evening]
+      The stars return to guide the way
+    style: "Prog Rock, 105 BPM, Multi-movement"
+    instrumental: false
+    target_duration_seconds: 180
+
+  B-M09:
+    family: "Style reference"
+    evaluation_focus: "Prompt/reference adherence"
+    prompt: "Vintage 1980s city pop arrangement with slap bass, brass stabs, sparkling DX7 keyboards, and smooth lead vocals"
+    lyrics: |
+      [Verse]
+      Cruising down the coastal highway under midnight neon glow
+    style: "Japanese City Pop, 115 BPM, Groovy, Nostalgic"
+    instrumental: false
+    target_duration_seconds: 60
+
+  B-M10:
+    family: "Cover"
+    evaluation_focus: "Melody preservation vs arrangement change"
+    prompt: "Reimagine the provided source acoustic melody into an electronic synthwave arrangement with arpeggiated basslines and gating reverb"
+    lyrics: ""
+    style: "Synthwave / Retrowave, 118 BPM"
+    instrumental: false
+    target_duration_seconds: 60
+
+  B-M11:
+    family: "Editing"
+    evaluation_focus: "ACE audio repaint vs YuE2 composition edit, using task-specific rubrics"
+    prompt: "Replace interval between 00:15 and 00:30 with an energetic electric guitar solo while preserving surrounding verses exactly"
+    lyrics: ""
+    style: "Guitar Solo Replacement, 120 BPM"
+    instrumental: false
+    target_duration_seconds: 60
+
+  B-M12:
+    family: "Repeated generation"
+    evaluation_focus: "Diversity, stability, latency variance"
+    prompt: "Evaluate consistency across 5 independent seeds for a modern R&B track with silky vocals, 808 bass, and lush chord voicings"
+    lyrics: |
+      [Chorus]
+      Under the moonlight, running out of time
+      Searching for rhythm in this heart of mine
+    style: "Modern R&B, 90 BPM, Smooth"
+    instrumental: false
+    target_duration_seconds: 60

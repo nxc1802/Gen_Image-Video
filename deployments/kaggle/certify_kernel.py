@@ -47,7 +47,7 @@ class DualT4HardwareTopology:
     GPU_0_MODELS = ["qwen-text", "qwen-decision", "qwen-vlm", "qwen-image-2.1", "qwen-speech"]
 
     GPU_1_SERVICES = ["embed-service", "rerank-service", "video-service", "music-service", "enhancement-service"]
-    GPU_1_MODELS = ["qwen-embedding", "wan-2.2", "minimax-h3", "ace-step-1.5", "enhancement-suite-v1"]
+    GPU_1_MODELS = ["qwen-embedding", "wan-2.2", "minimax-h3", "ace-step-1.5", "enhancement-suite-v1", "yue2"]
 
     def __init__(self):
         self._active_models: Dict[int, Optional[str]] = {0: None, 1: None}
@@ -57,7 +57,7 @@ class DualT4HardwareTopology:
         clean_id = model_id.lower().strip()
         if any(k in clean_id for k in ["text", "decision", "vlm", "speech", "image"]):
             return 0
-        if any(k in clean_id for k in ["embed", "rerank", "video", "wan", "minimax", "ace", "music", "step", "enhancement"]):
+        if any(k in clean_id for k in ["embed", "rerank", "video", "wan", "minimax", "ace", "music", "step", "enhancement", "yue"]):
             return 1
         return 0
 
@@ -1166,6 +1166,8 @@ class PreflightContractSimulator:
             },
             "pre_flight_simulation_passed": False,
             "live_gpu_verified": False,
+            "live_pass": False,
+            "certification_classification": "SIMULATED_PENDING",
             "models": {},
             "all_gates_passed": False,
         }
@@ -1455,6 +1457,8 @@ class PreflightContractSimulator:
 
         self.results["all_gates_passed"] = all_passed
         self.results["pre_flight_simulation_passed"] = all_passed
+        self.results["live_pass"] = False
+        self.results["certification_classification"] = "SIMULATED_PASS" if all_passed else "SIMULATED_FAILED"
 
         if output_path:
             out = Path(output_path)
@@ -1767,6 +1771,15 @@ class KaggleLiveKernelExecutor:
                 all_passed = False
 
         self.results["all_gates_passed"] = all_passed
+        # Simulated or synthetic runs cannot carry LIVE_PASS
+        has_real_inference = bool(self.results["models"]) and all(
+            m.get("profiling", {}).get("source") == "live_nvml" and m.get("profiling", {}).get("live_vram_mb") is not None
+            for m in self.results["models"].values()
+        )
+        self.results["live_pass"] = all_passed and has_real_inference
+        self.results["certification_classification"] = (
+            "LIVE_PASS" if (all_passed and has_real_inference) else ("SIMULATED_PASS" if all_passed else "FAILED")
+        )
 
         if output_path:
             out = Path(output_path)

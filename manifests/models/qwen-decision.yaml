@@ -32,3 +32,42 @@ validation_notes: "Pre-flight contract simulation passed for all 5 gates (predic
 
 limits:
   max_context_tokens: 8192
+
+revision: "1.0.0"
+dependencies:
+  - "vllm>=0.6.0"
+  - "torch>=2.4.0"
+
+task_variant_matrix:
+  predicate_evaluation:
+    - standard
+  choice_routing:
+    - standard
+  score_ranking:
+    - standard
+
+validated_hardware_profiles:
+  - "kaggle-dual-t4"
+  - "colab-single-t4"
+
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+
+capabilities_truth:
+  predicate_evaluation:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  choice_routing:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  score_ranking:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null

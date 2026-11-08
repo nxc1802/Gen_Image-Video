@@ -110,6 +110,21 @@ class VideoParameterMapper:
                 if "8_end" in workflow:
                     workflow["8_end"]["inputs"]["image"] = end_val
 
+            # FIX-12: Bind actual reference into MiniMax H3 8_ref node for Ref2VA
+            if task in ("reference_conditioning", "reference", "ref2va", "video.ref2va") or "8_ref" in workflow:
+                ref_val = (
+                    staged.get("reference_image_url")
+                    or staged.get("reference_image")
+                    or inputs.get("reference_image_filename")
+                    or inputs.get("reference_image_url")
+                    or inputs.get("reference_image")
+                    or staged.get("image_url")
+                    or inputs.get("image_filename")
+                    or inputs.get("image_url", "ref.png")
+                )
+                if "8_ref" in workflow:
+                    workflow["8_ref"]["inputs"]["image"] = ref_val
+
         else:
             # Wan2.2
             if task in ("image_to_video", "i2v"):

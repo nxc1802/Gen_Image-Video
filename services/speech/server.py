@@ -153,8 +153,31 @@ async def create_transcription(request: Request):
 
         validate_factory_asset_url(audio_url)
 
+        # Ingest actual audio bytes from the trusted Factory asset URL (FIX-08)
+        audio_bytes = None
+        if audio_url.startswith("data:"):
+            import base64
+            _, encoded = audio_url.split(",", 1)
+            audio_bytes = base64.b64decode(encoded)
+        elif audio_url.startswith("file://"):
+            audio_bytes = Path(audio_url[7:]).read_bytes()
+        elif os.path.exists(audio_url):
+            audio_bytes = Path(audio_url).read_bytes()
+        else:
+            try:
+                with httpx.Client(timeout=30.0) as cl:
+                    resp = cl.get(audio_url)
+                    resp.raise_for_status()
+                    audio_bytes = resp.content
+            except Exception as e:
+                raise InvalidRequestError(f"Failed to ingest audio asset from '{audio_url}': {e}")
+
+        if not audio_bytes:
+            raise InvalidRequestError("Ingested audio asset is empty.")
+
         res = asr_engine.transcribe(
-            audio_url=audio_url,
+            audio_bytes=audio_bytes,
+            audio_url=None,
             language=payload.get("language"),
             model=payload.get("model", "qwen3-asr"),
             temperature=payload.get("temperature", 0.0),

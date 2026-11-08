@@ -34,3 +34,57 @@ validation_notes: "Pre-flight contract simulation passed for all 5 gates (multim
 
 limits:
   max_context_tokens: 16384
+
+revision: "2.0.0"
+dependencies:
+  - "vllm>=0.6.0"
+  - "torch>=2.4.0"
+  - "torchvision"
+
+task_variant_matrix:
+  image_chat:
+    - standard
+  responses_api:
+    - standard
+  video_chat:
+    - standard
+  visual_grounding:
+    - standard
+  document_qa:
+    - standard
+
+validated_hardware_profiles:
+  - "kaggle-dual-t4"
+  - "colab-single-t4"
+
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+
+capabilities_truth:
+  image_chat:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  responses_api:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  video_chat:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  visual_grounding:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  document_qa:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null

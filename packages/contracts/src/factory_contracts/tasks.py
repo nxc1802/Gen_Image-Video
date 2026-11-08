@@ -90,6 +90,27 @@ CANONICAL_TASK_MAP: Dict[str, str] = {
     "a2a": "audio_to_audio",
     "audio_to_audio": "audio_to_audio",
 
+    "music.cover": "cover",
+    "cover": "cover",
+
+    "music.repaint": "repaint",
+    "repaint": "repaint",
+
+    "music.reference": "reference_audio",
+    "reference_audio": "reference_audio",
+
+    "music.extract": "extract",
+    "extract": "extract",
+
+    "music.lego": "lego",
+    "lego": "lego",
+
+    "music.complete": "complete",
+    "complete": "complete",
+
+    "music.extend": "music_extend",
+    "music_extend": "music_extend",
+
     # Speech Capability IDs & Aliases -> Canonical Task
     "speech.tts": "speech_synthesis",
     "speech.synthesis": "speech_synthesis",
@@ -155,6 +176,13 @@ CANONICAL_TO_CAPABILITY_MAP: Dict[str, str] = {
     "text_to_music": "music.t2m",
     "lyrics_to_music": "music.lyrics",
     "audio_to_audio": "music.a2a",
+    "cover": "music.cover",
+    "repaint": "music.repaint",
+    "reference_audio": "music.reference",
+    "extract": "music.extract",
+    "lego": "music.lego",
+    "complete": "music.complete",
+    "music_extend": "music.extend",
     "speech_synthesis": "speech.tts",
     "speech_transcription": "speech.asr",
     "image_super_resolution": "enhance.sr_image",
@@ -198,14 +226,14 @@ CANONICAL_MODEL_MAP: Dict[str, str] = {
     "ace-step-1.5": "ace-step-1.5",
     "ace_step": "ace-step-1.5",
     "ace_step_1.5": "ace-step-1.5",
+    "yue": "yue2",
+    "yue2": "yue2",
+    "yue-music": "yue2",
 
     # Text & VLM
     "qwen-text": "qwen-text",
-    "qwen-2.5-72b": "qwen-text",
-    "qwen-2.5-72b-instruct": "qwen-text",
     "qwen_text": "qwen-text",
     "qwen-vlm": "qwen-vlm",
-    "qwen-2.5-vl-72b": "qwen-vlm",
     "qwen_vlm": "qwen-vlm",
 
     # Decision & Embedding
@@ -232,6 +260,7 @@ MODEL_TO_FAMILY_MAP: Dict[str, str] = {
     "wan-2.2": "wan",
     "minimax-h3": "minimax",
     "ace-step-1.5": "ace-step",
+    "yue2": "yue-music",
     "qwen-text": "qwen-text",
     "qwen-vlm": "qwen-vlm",
     "qwen-decision": "qwen-decision",

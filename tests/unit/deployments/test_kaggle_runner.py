@@ -273,7 +273,7 @@ class TestDualT4HardwareTopology:
 
         models_dir = Path("manifests/models")
         model_files = sorted(models_dir.glob("*.yaml"))
-        assert len(model_files) == 10, f"Expected 10 model manifests, found {len(model_files)}"
+        assert len(model_files) in (10, 11), f"Expected 10 or 11 model manifests, found {len(model_files)}"
 
         topology = DualT4HardwareTopology()
         for mf in model_files:

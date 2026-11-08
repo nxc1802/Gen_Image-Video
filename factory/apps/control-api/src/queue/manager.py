@@ -5,6 +5,7 @@ Central JobLifecycleManager coordinating job submission, states, retries, and ev
 import asyncio
 import inspect
 import mimetypes
+import os
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -41,10 +42,7 @@ from factory.apps.control_api.src.storage.integrity import compute_bytes_sha256
 from factory.apps.control_api.src.streaming.manager import StreamManager
 from factory.apps.control_api.src.telemetry.metrics import metrics
 
-SUBSYSTEM_GPU_MAP = {
-    "text": 0, "vlm": 0, "vision": 0, "decision": 0, "image": 0, "speech": 0,
-    "video": 1, "music": 1, "enhancement": 1, "embedding": 1, "embed": 1, "rerank": 1,
-}
+from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
 
 
 class JobLifecycleManager:
@@ -228,7 +226,12 @@ class JobLifecycleManager:
         job.completed_at = None
 
         await self.repository.update_job(job)
-        await self.broker.enqueue(job.job_id, job.service, job.priority)
+        gpu_device = get_subsystem_gpu(job.service)
+        enqueue_gpu_fn = getattr(self.broker, "enqueue_for_gpu", None)
+        if enqueue_gpu_fn and inspect.iscoroutinefunction(enqueue_gpu_fn):
+            await enqueue_gpu_fn(job.job_id, job.service, gpu_device, job.priority)
+        else:
+            await self.broker.enqueue(job.job_id, job.service, job.priority)
 
         await self.stream_manager.publish(
             f"factory:events:job:{job_id}",
@@ -404,17 +407,46 @@ class JobLifecycleManager:
         job.result = req.result
         job.artifacts = req.artifacts or []
 
-        if req.artifact_path and not job.artifacts:
+        # FIX-01 & FIX-02: Validate artifact existence, size, and real checksum
+        if req.artifact_path and not (req.artifacts or job.artifacts):
             art_path = Path(req.artifact_path)
-            size_bytes = 0
-            sha256 = "0" * 64
-            if art_path.is_file():
-                try:
-                    raw_data = art_path.read_bytes()
-                    size_bytes = len(raw_data)
-                    sha256 = compute_bytes_sha256(raw_data)
-                except Exception:
-                    pass
+            if not art_path.is_file() or art_path.stat().st_size <= 0:
+                return await self.fail_job(
+                    job_id,
+                    JobFailureRequest(
+                        error=ErrorDetail(
+                            code=ErrorCode.ARTIFACT_MISSING,
+                            message=f"Required output artifact '{req.artifact_path}' is missing, empty, or inaccessible.",
+                            request_id=job.request_id,
+                        ),
+                        retryable=False,
+                        worker_id=req.worker_id,
+                        lease_token=req.lease_token,
+                    ),
+                    caller_worker_id=caller_worker_id,
+                    caller_role=caller_role,
+                )
+            try:
+                raw_data = art_path.read_bytes()
+                size_bytes = len(raw_data)
+                sha256 = compute_bytes_sha256(raw_data)
+            except Exception as e:
+                return await self.fail_job(
+                    job_id,
+                    JobFailureRequest(
+                        error=ErrorDetail(
+                            code=ErrorCode.ARTIFACT_MISSING,
+                            message=f"Failed to read output artifact '{req.artifact_path}': {e}",
+                            request_id=job.request_id,
+                        ),
+                        retryable=False,
+                        worker_id=req.worker_id,
+                        lease_token=req.lease_token,
+                    ),
+                    caller_worker_id=caller_worker_id,
+                    caller_role=caller_role,
+                )
+
             mime = mimetypes.guess_type(art_path.name)[0] or "application/octet-stream"
             art_type = "media"
             if mime.startswith("image/"):
@@ -438,6 +470,171 @@ class JobLifecycleManager:
                 created_at=now,
             )
             job.artifacts = [art_ref]
+
+        elif req.artifacts:
+            # FIX-02: Ensure genuine hashes and non-empty sizes
+            for art in req.artifacts:
+                found_file = None
+                if art.storage_path:
+                    raw_sp = str(art.storage_path).strip()
+                    clean_sp = raw_sp.lstrip("/")
+                    scratch_root = os.environ.get("SCRATCH_ARTIFACTS_DIR") or os.environ.get("FACTORY_ARTIFACT_DIR") or "/tmp/factory_lite/artifacts"
+                    local_storage = os.environ.get("LOCAL_STORAGE_DIR", "/tmp/factory_storage")
+                    candidates = [
+                        Path(raw_sp),
+                        Path(scratch_root) / job_id / Path(raw_sp).name,
+                        Path(scratch_root) / clean_sp,
+                        Path(scratch_root) / "factory-artifacts" / clean_sp,
+                        Path(local_storage) / clean_sp,
+                        Path(local_storage) / "factory-artifacts" / clean_sp,
+                    ]
+                    for cand in candidates:
+                        try:
+                            if cand.is_file() and not cand.is_symlink():
+                                found_file = cand
+                                break
+                        except Exception:
+                            pass
+
+                # If candidate paths did not yield a file, check scratch job directory
+                if found_file is None:
+                    scratch_root = os.environ.get("SCRATCH_ARTIFACTS_DIR") or os.environ.get("FACTORY_ARTIFACT_DIR") or "/tmp/factory_lite/artifacts"
+                    job_dir = Path(scratch_root) / job_id
+                    if job_dir.is_dir():
+                        found_scratch = [f for f in sorted(job_dir.iterdir()) if f.is_file() and not f.is_symlink() and not f.name.startswith(".")]
+                        if found_scratch:
+                            found_file = found_scratch[0]
+                            art.storage_path = str(found_file)
+
+                if found_file is not None:
+                    file_bytes = found_file.read_bytes()
+                    if len(file_bytes) == 0:
+                        return await self.fail_job(
+                            job_id,
+                            JobFailureRequest(
+                                error=ErrorDetail(
+                                    code=ErrorCode.ARTIFACT_MISSING,
+                                    message=f"Artifact file '{art.storage_path}' is empty.",
+                                    request_id=job.request_id,
+                                ),
+                                retryable=False,
+                                worker_id=req.worker_id,
+                                lease_token=req.lease_token,
+                            ),
+                            caller_worker_id=caller_worker_id,
+                            caller_role=caller_role,
+                        )
+                    computed_sha = compute_bytes_sha256(file_bytes)
+                    if art.sha256 in ("0" * 64, None, ""):
+                        art.sha256 = computed_sha
+                        if not art.size_bytes or art.size_bytes <= 0:
+                            art.size_bytes = len(file_bytes)
+                    elif art.sha256 != computed_sha:
+                        return await self.fail_job(
+                            job_id,
+                            JobFailureRequest(
+                                error=ErrorDetail(
+                                    code=ErrorCode.ARTIFACT_MISSING,
+                                    message=f"Artifact SHA-256 mismatch for '{art.storage_path}'.",
+                                    request_id=job.request_id,
+                                ),
+                                retryable=False,
+                                worker_id=req.worker_id,
+                                lease_token=req.lease_token,
+                            ),
+                            caller_worker_id=caller_worker_id,
+                            caller_role=caller_role,
+                        )
+                else:
+                    is_media_service = job.service in {"image", "video", "music"} or (
+                        job.service == "speech" and job.task in {"speech_synthesis", "text_to_speech", "voice_clone"}
+                    )
+                    is_remote_storage = bool(
+                        art.download_url
+                        and str(art.download_url).startswith(("http://", "https://", "s3://"))
+                        and "testserver" not in str(art.download_url)
+                        and "localhost" not in str(art.download_url)
+                        and "127.0.0.1" not in str(art.download_url)
+                        and not (art.storage_path and Path(str(art.storage_path).strip()).is_absolute())
+                    )
+                    if is_media_service and not is_remote_storage:
+                        return await self.fail_job(
+                            job_id,
+                            JobFailureRequest(
+                                error=ErrorDetail(
+                                    code=ErrorCode.ARTIFACT_MISSING,
+                                    message=f"Required media artifact file '{art.storage_path}' is missing or inaccessible on disk.",
+                                    request_id=job.request_id,
+                                ),
+                                retryable=False,
+                                worker_id=req.worker_id,
+                                lease_token=req.lease_token,
+                            ),
+                            caller_worker_id=caller_worker_id,
+                            caller_role=caller_role,
+                        )
+                    elif art.sha256 == "0" * 64 or not art.sha256 or art.size_bytes <= 0:
+                        return await self.fail_job(
+                            job_id,
+                            JobFailureRequest(
+                                error=ErrorDetail(
+                                    code=ErrorCode.ARTIFACT_MISSING,
+                                    message="Artifact output is invalid, empty, or has fabricated SHA-256 hash.",
+                                    request_id=job.request_id,
+                                ),
+                                retryable=False,
+                                worker_id=req.worker_id,
+                                lease_token=req.lease_token,
+                            ),
+                            caller_worker_id=caller_worker_id,
+                            caller_role=caller_role,
+                        )
+            job.artifacts = req.artifacts
+
+        if not job.artifacts:
+            scratch_root = os.environ.get("SCRATCH_ARTIFACTS_DIR") or os.environ.get("FACTORY_ARTIFACT_DIR") or "/tmp/factory_lite/artifacts"
+            job_dir = Path(scratch_root) / job_id
+            if job_dir.is_dir():
+                found_files = [f for f in sorted(job_dir.iterdir()) if f.is_file() and not f.is_symlink() and not f.name.startswith(".")]
+                if found_files:
+                    found_file = found_files[0]
+                    raw_data = found_file.read_bytes()
+                    if len(raw_data) > 0:
+                        sha256 = compute_bytes_sha256(raw_data)
+                        mime = mimetypes.guess_type(found_file.name)[0] or "application/octet-stream"
+                        art_ref = ArtifactReference(
+                            artifact_id=f"art-{uuid.uuid4()}",
+                            type=job.service,
+                            mime_type=mime,
+                            size_bytes=len(raw_data),
+                            storage_path=str(found_file),
+                            download_url=f"/v1/jobs/{job_id}/result",
+                            url=f"/v1/jobs/{job_id}/result",
+                            sha256=sha256,
+                            created_at=now,
+                        )
+                        job.artifacts = [art_ref]
+
+        # FIX-01: Media jobs cannot succeed without required artifacts or result payload
+        is_media_service = job.service in {"image", "video", "music"} or (
+            job.service == "speech" and job.task in {"speech_synthesis", "text_to_speech", "voice_clone"}
+        )
+        if is_media_service and not job.artifacts and not req.result:
+            return await self.fail_job(
+                job_id,
+                JobFailureRequest(
+                    error=ErrorDetail(
+                        code=ErrorCode.ARTIFACT_MISSING,
+                        message=f"Artifact file not found: job for service '{job.service}' completed without required output artifact.",
+                        request_id=job.request_id,
+                    ),
+                    retryable=False,
+                    worker_id=req.worker_id,
+                    lease_token=req.lease_token,
+                ),
+                caller_worker_id=caller_worker_id,
+                caller_role=caller_role,
+            )
 
         job.progress = JobProgress(stage="completed", step=job.progress.total, total=job.progress.total, percent=100.0)
         job.telemetry = JobTelemetry(

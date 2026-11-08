@@ -15,7 +15,7 @@ from urllib.parse import urlparse
 from typing import Any, Dict, List, Optional
 import httpx
 
-from factory_contracts.errors.error_contract import ErrorDetail
+from factory_contracts.errors.error_contract import ErrorDetail, classify_worker_error
 from factory.apps.control_api.src.assets.ssrf import validate_target_url
 from factory.apps.control_api.src.assets.transport import PinningAsyncHTTPTransport
 from factory_contracts.jobs.job_contract import FactoryJob
@@ -277,8 +277,10 @@ class ImageWorkerDaemon:
 
         hb_task = asyncio.create_task(heartbeat_loop())
 
+        current_stage = "loading"
         try:
             # 1. Report loading stage
+            current_stage = "staging_assets"
             await self.report_progress(client, job_id, stage="loading", step=0, total=20, percent=0.0, message="Staging assets", worker_id=self.config.worker_id, lease_token=lease_token)
 
             # 2. Stage remote assets
@@ -296,6 +298,7 @@ class ImageWorkerDaemon:
                             staged_files[ref_url] = staged_fname
 
             # 3. Build ComfyUI Prompt Graph
+            current_stage = "building_prompt"
             prompt_dict = self.prompt_builder.build_prompt(
                 task=job.task,
                 inputs=job.inputs,
@@ -317,8 +320,9 @@ class ImageWorkerDaemon:
                 )
 
             # 5. Execute only against a live ComfyUI backend.
+            current_stage = "sampling"
             if not await self.comfy_client.is_ready():
-                raise RuntimeError("ComfyUI image backend is unavailable; simulation fallback is disabled.")
+                raise ConnectionError("ComfyUI image backend is unavailable; simulation fallback is disabled.")
 
             prompt_id = await self.comfy_client.queue_prompt(prompt_dict, client_id=job_id)
             outputs = await self.comfy_client.listen_execution(
@@ -331,6 +335,7 @@ class ImageWorkerDaemon:
                 raise RuntimeError("ComfyUI image execution completed without output metadata.")
 
             # 6. Resolve the exact files reported by ComfyUI and upload them to Factory Storage.
+            current_stage = "collecting_artifacts"
             artifacts = await self.artifact_collector.collect_and_upload(client, job_id, outputs)
             duration_ms = (time.time() - start_time) * 1000.0
 
@@ -342,15 +347,18 @@ class ImageWorkerDaemon:
             logger.info(f"Job {job_id} cancelled.")
             await self.fail_job(client, job_id, "JOB_CANCELLED", "Job was cancelled by user.", request_id=job.request_id, retryable=False, worker_id=self.config.worker_id, lease_token=lease_token)
         except Exception as e:
-            logger.error(f"Error processing job {job_id}: {e}")
-            # Sanitize error detail strictly: no leaked paths or traces
+            code, msg, retryable = classify_worker_error(e, subsystem="image", stage=current_stage)
+            logger.error(
+                f"Image worker job failure: job_id={job_id} request_id={job.request_id} "
+                f"task={job.task} stage={current_stage} error_code={code.value} retryable={retryable}: {e}"
+            )
             await self.fail_job(
                 client,
                 job_id,
-                "SERVICE_UNAVAILABLE",
-                "Image generation backend failed. Inspect correlated worker logs.",
+                code.value,
+                msg,
                 request_id=job.request_id,
-                retryable=True,
+                retryable=retryable,
                 worker_id=self.config.worker_id,
                 lease_token=lease_token,
             )
@@ -376,45 +384,11 @@ class ImageWorkerDaemon:
             if self._http_client is None:
                 await client.aclose()
 
-    async def _listen_wakeup_bus(self) -> None:
-        """Listens on Redis priority wakeup bus for image subsystem jobs."""
-        redis_url = getattr(self.config, "redis_url", None) or os.environ.get("REDIS_URL") or os.environ.get("FACTORY_REDIS_URL")
-        if not redis_url:
-            return
-        while self._running and not self._stop_event.is_set():
-            try:
-                import redis.asyncio as aioredis
-                r = aioredis.from_url(redis_url, decode_responses=True)
-                pubsub = r.pubsub()
-                await pubsub.subscribe("factory:wakeup:image")
-                try:
-                    async for msg in pubsub.listen():
-                        if not self._running or self._stop_event.is_set():
-                            break
-                        if msg and msg.get("type") == "message":
-                            self._wakeup_event.set()
-                finally:
-                    try:
-                        await pubsub.unsubscribe("factory:wakeup:image")
-                        await pubsub.close()
-                        await r.close()
-                    except Exception:
-                        pass
-            except asyncio.CancelledError:
-                break
-            except Exception as e:
-                logger.debug(f"Redis wakeup bus error: {e}")
-                await asyncio.sleep(2.0)
-
     async def run(self) -> None:
         """Runs the continuous worker lease loop until stopped."""
         self._running = True
         self._stop_event.clear()
         self._wakeup_event.clear()
-
-        redis_url = getattr(self.config, "redis_url", None) or os.environ.get("REDIS_URL") or os.environ.get("FACTORY_REDIS_URL")
-        if redis_url:
-            self._wakeup_task = asyncio.create_task(self._listen_wakeup_bus())
 
         logger.info(f"Starting Image Worker loop for {self.config.worker_id}...")
         while self._running and not self._stop_event.is_set():

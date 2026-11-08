@@ -16,6 +16,12 @@ from .broker import (
 from .scheduler import InMemoryScheduler
 from .leasing import LeaseCoordinator
 from .manager import JobLifecycleManager
+from .model_runtime import (
+    ModelRuntimeManager,
+    RuntimeState,
+    RuntimeLease,
+    ModelRuntime,
+)
 
 
 __all__ = [
@@ -30,4 +36,8 @@ __all__ = [
     "InMemoryScheduler",
     "LeaseCoordinator",
     "JobLifecycleManager",
+    "ModelRuntimeManager",
+    "RuntimeState",
+    "RuntimeLease",
+    "ModelRuntime",
 ]

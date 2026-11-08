@@ -25,6 +25,9 @@
     ],
     "telemetry_attested": true
   },
+  "execution_mode": "synthetic_tensor_benchmark",
+  "live_pass": false,
+  "certification_classification": "SYNTHETIC_PASS",
   "all_modalities_tested": 9,
   "all_passed": true,
   "results": {

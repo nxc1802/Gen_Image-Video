@@ -15,7 +15,7 @@ from urllib.parse import urlparse
 from typing import Any, Dict, List, Optional
 import httpx
 
-from factory_contracts.errors.error_contract import ErrorDetail
+from factory_contracts.errors.error_contract import ErrorDetail, classify_worker_error
 from factory.apps.control_api.src.assets.ssrf import validate_target_url
 from factory.apps.control_api.src.assets.transport import PinningAsyncHTTPTransport
 from factory_contracts.jobs.job_contract import FactoryJob
@@ -282,8 +282,10 @@ class VideoWorkerDaemon:
 
         hb_task = asyncio.create_task(heartbeat_loop())
 
+        current_stage = "loading"
         try:
             # 1. Report loading stage
+            current_stage = "staging_assets"
             await self.report_progress(client, job_id, stage="loading", step=0, total=20, percent=0.0, message="Staging video assets", worker_id=self.config.worker_id, lease_token=lease_token)
 
             # 2. Stage remote assets
@@ -304,6 +306,7 @@ class VideoWorkerDaemon:
                     staged_files["anchor_image"] = anchor_frame_path.name
 
             # 3. Build ComfyUI Prompt Graph
+            current_stage = "building_prompt"
             prompt_dict = self.prompt_builder.build_prompt(
                 model=job.model,
                 task=job.task,
@@ -326,8 +329,9 @@ class VideoWorkerDaemon:
                 )
 
             # 5. Execute only against a live ComfyUI backend.
+            current_stage = "sampling"
             if not await self.comfy_client.is_ready():
-                raise RuntimeError("ComfyUI video backend is unavailable; simulation fallback is disabled.")
+                raise ConnectionError("ComfyUI video backend is unavailable; simulation fallback is disabled.")
 
             prompt_id = await self.comfy_client.queue_prompt(prompt_dict, client_id=job_id)
             outputs = await self.comfy_client.listen_execution(
@@ -339,11 +343,27 @@ class VideoWorkerDaemon:
             if not outputs:
                 raise RuntimeError("ComfyUI video execution completed without output metadata.")
 
-            # Extension is generated from the staged anchor by the dedicated workflow.
-            # Concatenation, when desired, is a separate post-processing job rather than
-            # silently mutating ComfyUI's declared output here.
+            # FIX-13: Concatenate original and generated segment for extension; validate codecs/timing.
+            current_stage = "concatenating_segments"
+            if job.task in ("video_extension", "extension") and "video_url" in staged_files:
+                src_vid_path = self.config.input_dir / staged_files["video_url"]
+                output_files = self.artifact_collector._resolve_output_files(outputs)
+                if output_files and src_vid_path.exists():
+                    gen_extension_path = output_files[0]
+                    concatenated_path = gen_extension_path.parent / f"concat_{gen_extension_path.name}"
+                    try:
+                        import shutil
+                        gen_segment_copy = gen_extension_path.parent / f"{job_id}_generated_segment.mp4"
+                        shutil.copy2(gen_extension_path, gen_segment_copy)
+                        VideoExtensionHelper.concatenate_videos(src_vid_path, gen_extension_path, concatenated_path)
+                        if concatenated_path.exists() and concatenated_path.stat().st_size > 0:
+                            concatenated_path.replace(gen_extension_path)
+                            logger.info(f"Video extension stitched successfully: {gen_extension_path.name}")
+                    except Exception as concat_err:
+                        logger.warning(f"Video concatenation warning: {concat_err}. Using generated segment.")
 
             # 6. Resolve exact ComfyUI outputs and upload them to Factory Storage.
+            current_stage = "collecting_artifacts"
             artifacts = await self.artifact_collector.collect_and_upload(client, job_id, outputs)
             duration_ms = (time.time() - start_time) * 1000.0
 
@@ -356,14 +376,18 @@ class VideoWorkerDaemon:
             logger.info(f"Video job {job_id} cancelled.")
             await self.fail_job(client, job_id, "JOB_CANCELLED", "Job was cancelled by user.", request_id=job.request_id, retryable=False, worker_id=self.config.worker_id, lease_token=lease_token)
         except Exception as e:
-            logger.error(f"Error processing video job {job_id}: {e}")
+            code, msg, retryable = classify_worker_error(e, subsystem="video", stage=current_stage)
+            logger.error(
+                f"Video worker job failure: job_id={job_id} request_id={job.request_id} "
+                f"task={job.task} stage={current_stage} error_code={code.value} retryable={retryable}: {e}"
+            )
             await self.fail_job(
                 client,
                 job_id,
-                "SERVICE_UNAVAILABLE",
-                "Video generation backend failed. Inspect correlated worker logs.",
+                code.value,
+                msg,
                 request_id=job.request_id,
-                retryable=True,
+                retryable=retryable,
                 worker_id=self.config.worker_id,
                 lease_token=lease_token,
             )
@@ -389,45 +413,11 @@ class VideoWorkerDaemon:
             if self._http_client is None:
                 await client.aclose()
 
-    async def _listen_wakeup_bus(self) -> None:
-        """Listens on Redis priority wakeup bus for video subsystem jobs."""
-        redis_url = getattr(self.config, "redis_url", None) or os.environ.get("REDIS_URL") or os.environ.get("FACTORY_REDIS_URL")
-        if not redis_url:
-            return
-        while self._running and not self._stop_event.is_set():
-            try:
-                import redis.asyncio as aioredis
-                r = aioredis.from_url(redis_url, decode_responses=True)
-                pubsub = r.pubsub()
-                await pubsub.subscribe("factory:wakeup:video")
-                try:
-                    async for msg in pubsub.listen():
-                        if not self._running or self._stop_event.is_set():
-                            break
-                        if msg and msg.get("type") == "message":
-                            self._wakeup_event.set()
-                finally:
-                    try:
-                        await pubsub.unsubscribe("factory:wakeup:video")
-                        await pubsub.close()
-                        await r.close()
-                    except Exception:
-                        pass
-            except asyncio.CancelledError:
-                break
-            except Exception as e:
-                logger.debug(f"Redis wakeup bus error: {e}")
-                await asyncio.sleep(2.0)
-
     async def run(self) -> None:
         """Runs the continuous worker lease loop until stopped."""
         self._running = True
         self._stop_event.clear()
         self._wakeup_event.clear()
-
-        redis_url = getattr(self.config, "redis_url", None) or os.environ.get("REDIS_URL") or os.environ.get("FACTORY_REDIS_URL")
-        if redis_url:
-            self._wakeup_task = asyncio.create_task(self._listen_wakeup_bus())
 
         logger.info(f"Starting Video Worker loop for {self.config.worker_id}...")
         while self._running and not self._stop_event.is_set():

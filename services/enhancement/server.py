@@ -91,12 +91,25 @@ class AudioEnhanceRequest(BaseModel):
 @app.get("/health")
 @app.get("/healthz")
 async def health_check():
+    backend_status = {
+        "image_sr": bool(os.environ.get("IMAGE_SR_BACKEND_URL", "").strip()),
+        "video_sr": bool(os.environ.get("VIDEO_SR_BACKEND_URL", "").strip()),
+        "frame_interpolation": bool(
+            os.environ.get("RIFE_BACKEND_URL", "").strip()
+            or os.environ.get("INTERPOLATION_BACKEND_URL", "").strip()
+        ),
+        "audio_enhancement": bool(os.environ.get("AUDIO_ENHANCE_BACKEND_URL", "").strip()),
+    }
+    infer_ready = any(backend_status.values())
+
     return {
         "status": "healthy",
         "service": "enhancement-service",
         "version": "1.0.0",
         "subsystem": "enhancement",
         "gpu_device": 1,
+        "infer_ready": infer_ready,
+        "backends": backend_status,
     }
 
 

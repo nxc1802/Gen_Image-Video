@@ -34,3 +34,56 @@ validation_notes: "Pre-flight contract simulation passed for all 5 gates. Pendin
 
 limits:
   max_context_tokens: 32768
+
+revision: "2.5.0"
+dependencies:
+  - "vllm>=0.6.0"
+  - "torch>=2.4.0"
+
+task_variant_matrix:
+  chat_completion:
+    - standard
+  responses_api:
+    - standard
+  structured_output:
+    - standard
+  tool_calling:
+    - standard
+  streaming:
+    - standard
+
+validated_hardware_profiles:
+  - "kaggle-dual-t4"
+  - "colab-single-t4"
+
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+
+capabilities_truth:
+  chat_completion:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  responses_api:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  structured_output:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  tool_calling:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  streaming:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null

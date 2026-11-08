@@ -182,7 +182,7 @@ export function StreamingInspectorView() {
           }`}
         >
           <ChatTeardropDots weight="bold" className="w-3.5 h-3.5" />
-          <span>SSE Token Stream (vLLM)</span>
+          <span>Token Stream (Demo Simulation)</span>
         </button>
 
         <button
@@ -195,7 +195,7 @@ export function StreamingInspectorView() {
           }`}
         >
           <Waveform weight="bold" className="w-3.5 h-3.5" />
-          <span>WebSocket Audio Stream (TTS / ASR)</span>
+          <span>Audio Stream (Synthetic Demo)</span>
         </button>
 
         <button
@@ -208,7 +208,7 @@ export function StreamingInspectorView() {
           }`}
         >
           <Sliders weight="bold" className="w-3.5 h-3.5" />
-          <span>ComfyUI Step Monitor</span>
+          <span>ComfyUI Monitor (Static Preview)</span>
         </button>
       </div>
 
@@ -281,11 +281,16 @@ export function StreamingInspectorView() {
           <div className="p-5 rounded-[10px] bg-surface border border-hairline space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-mono font-bold text-ink">
-                  vLLM Token Stream Visualizer
-                </h3>
-                <p className="text-xs text-ink-muted">
-                  Measures streaming throughput, reasoning tags, and per-token latencies.
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-mono font-bold text-ink">
+                    vLLM Token Stream Visualizer
+                  </h3>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    DEMO SIMULATION
+                  </span>
+                </div>
+                <p className="text-xs text-ink-muted mt-0.5">
+                  Demonstration visualizer for streaming tokens, reasoning tags, and client-side rendering.
                 </p>
               </div>
               <button
@@ -295,27 +300,29 @@ export function StreamingInspectorView() {
                 className="px-3 py-1.5 rounded-[6px] bg-ink text-surface text-xs font-mono font-medium flex items-center gap-1.5 disabled:opacity-50"
               >
                 <Play weight="bold" className="w-3.5 h-3.5" />
-                <span>{isTokenStreaming ? "Streaming..." : "Simulate Stream"}</span>
+                <span>{isTokenStreaming ? "Simulating..." : "Run Demo Simulation"}</span>
               </button>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
-                <span className="text-[10px] font-mono text-ink-muted">Throughput</span>
-                <div className="text-lg font-mono font-bold text-ink">{tokenRate} tok/s</div>
+                <span className="text-[10px] font-mono text-ink-muted">Simulated Rate</span>
+                <div className="text-lg font-mono font-bold text-ink">
+                  {isTokenStreaming ? `${tokenRate} tok/s` : "--"}
+                </div>
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
-                <span className="text-[10px] font-mono text-ink-muted">Total Characters</span>
+                <span className="text-[10px] font-mono text-ink-muted">Characters</span>
                 <div className="text-lg font-mono font-bold text-ink">{tokenStreamText.length}</div>
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
-                <span className="text-[10px] font-mono text-ink-muted">Encoding</span>
-                <div className="text-lg font-mono font-bold text-ink">UTF-8</div>
+                <span className="text-[10px] font-mono text-ink-muted">Source</span>
+                <div className="text-lg font-mono font-bold text-ink">Synthetic Client</div>
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
-                <span className="text-[10px] font-mono text-ink-muted">Status</span>
+                <span className="text-[10px] font-mono text-ink-muted">Stream Status</span>
                 <div className="text-lg font-mono font-bold text-spot-greenText">
-                  {isTokenStreaming ? "ACTIVE" : "READY"}
+                  {isTokenStreaming ? "SIMULATING" : "IDLE"}
                 </div>
               </div>
             </div>
@@ -328,7 +335,7 @@ export function StreamingInspectorView() {
                 </span>
               ) : (
                 <span className="text-ink-muted">
-                  Click &ldquo;Simulate Stream&rdquo; to test real-time delta rendering...
+                  [DEMO] Click &ldquo;Run Demo Simulation&rdquo; to test real-time delta text rendering...
                 </span>
               )}
             </div>
@@ -342,11 +349,16 @@ export function StreamingInspectorView() {
           <div className="p-5 rounded-[10px] bg-surface border border-hairline space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-mono font-bold text-ink">
-                  WebSocket Audio Stream Monitor
-                </h3>
-                <p className="text-xs text-ink-muted">
-                  Inspects chunked PCM audio streaming, live Web Audio API waveform, and sample rate negotiation.
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-mono font-bold text-ink">
+                    WebSocket Audio Stream Monitor
+                  </h3>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    SYNTHETIC WAVEFORM
+                  </span>
+                </div>
+                <p className="text-xs text-ink-muted mt-0.5">
+                  Inspects chunked PCM audio streaming contract and waveform canvas visualization.
                 </p>
               </div>
               <div className="text-right text-xs font-mono text-ink-muted">
@@ -356,20 +368,20 @@ export function StreamingInspectorView() {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
-                <span className="text-[10px] font-mono text-ink-muted">Sample Rate</span>
+                <span className="text-[10px] font-mono text-ink-muted">Target Sample Rate</span>
                 <div className="text-lg font-mono font-bold text-ink">{audioSampleRate} Hz</div>
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
-                <span className="text-[10px] font-mono text-ink-muted">Format</span>
+                <span className="text-[10px] font-mono text-ink-muted">Target Format</span>
                 <div className="text-lg font-mono font-bold text-ink">16-bit Mono PCM</div>
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
-                <span className="text-[10px] font-mono text-ink-muted">Audio Engine</span>
-                <div className="text-lg font-mono font-bold text-ink">Qwen3-TTS / ASR</div>
+                <span className="text-[10px] font-mono text-ink-muted">Telemetry Mode</span>
+                <div className="text-lg font-mono font-bold text-amber-600">Synthetic Demo</div>
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
-                <span className="text-[10px] font-mono text-ink-muted">Buffer Status</span>
-                <div className="text-lg font-mono font-bold text-spot-greenText">READY</div>
+                <span className="text-[10px] font-mono text-ink-muted">WebSocket Link</span>
+                <div className="text-lg font-mono font-bold text-ink-muted">Awaiting Job</div>
               </div>
             </div>
 
@@ -379,10 +391,10 @@ export function StreamingInspectorView() {
                 ref={canvasRef}
                 width={700}
                 height={120}
-                className="w-full h-28"
+                className="w-full h-28 opacity-80"
               />
-              <span className="text-[10px] font-mono text-[#82858F] mt-2">
-                Live Waveform Visualizer (Web Audio API PCM decoder)
+              <span className="text-[10px] font-mono text-amber-400 mt-2">
+                [SYNTHETIC DEMO] Math-generated sinusoidal preview (no live WebSocket audio packet received)
               </span>
             </div>
           </div>
@@ -395,11 +407,16 @@ export function StreamingInspectorView() {
           <div className="p-5 rounded-[10px] bg-surface border border-hairline space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-mono font-bold text-ink">
-                  ComfyUI Execution &amp; Denoising Step Monitor
-                </h3>
-                <p className="text-xs text-ink-muted">
-                  Live tracking of ComfyUI headless `/prompt` WebSocket event packets and latent progress frames.
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-mono font-bold text-ink">
+                    ComfyUI Execution &amp; Denoising Step Monitor
+                  </h3>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    STATIC PREVIEW
+                  </span>
+                </div>
+                <p className="text-xs text-ink-muted mt-0.5">
+                  Static layout preview of ComfyUI headless `/prompt` WebSocket event packets and latent progress frames.
                 </p>
               </div>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
@@ -409,7 +426,7 @@ export function StreamingInspectorView() {
 
             <div className="space-y-3 p-4 rounded-[8px] bg-canvas border border-hairline">
               <div className="flex items-center justify-between text-xs font-mono">
-                <span className="font-semibold text-ink">{comfyStage}</span>
+                <span className="font-semibold text-ink">{comfyStage} [PREVIEW]</span>
                 <span className="font-bold text-ink">
                   Step {comfyStep} / {comfyTotalSteps} ({Math.round((comfyStep / comfyTotalSteps) * 100)}%)
                 </span>
@@ -420,16 +437,19 @@ export function StreamingInspectorView() {
                   style={{ width: `${(comfyStep / comfyTotalSteps) * 100}%` }}
                 />
               </div>
+              <div className="text-[10px] font-mono text-ink-muted">
+                * Note: Demonstrates step progression component layout. Live jobs stream actual step indices via ComfyUI WebSocket.
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline text-xs font-mono space-y-1">
-                <div className="text-[11px] font-semibold text-ink">Active ComfyUI Node</div>
+                <div className="text-[11px] font-semibold text-ink">Sample Node Configuration</div>
                 <div className="text-ink-secondary">KSampler (WanVideoSampler)</div>
                 <div className="text-[10px] text-ink-muted">Node ID: 28 · Class: WanVideoSampler</div>
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline text-xs font-mono space-y-1">
-                <div className="text-[11px] font-semibold text-ink">GPU Allocation</div>
+                <div className="text-[11px] font-semibold text-ink">Target Hardware Profile</div>
                 <div className="text-ink-secondary">GPU 1 (NVIDIA Tesla T4 16GB)</div>
                 <div className="text-[10px] text-ink-muted">Memory Pinning: Low-VRAM / Stream Offload</div>
               </div>

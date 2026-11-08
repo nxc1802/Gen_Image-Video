@@ -35,6 +35,20 @@ NEVER                    -> mock PNG containers, mock MP4 headers, pseudo embedd
 - **Ephemeral Artifacts**: All generated media resides exclusively in `/tmp/factory_lite/artifacts/{job_id}/` and is automatically unlinked upon completed client download or TTL expiration.
 - **Dual T4 GPU Scheduling**: Strict 1-job-per-GPU concurrency lock per discrete GPU device (GPU 0: Text/VLM/Image/Speech, GPU 1: Video/Music/Embedding).
 
+## Single Working Deploy Path
+
+Factory v4 Lite requires zero external infrastructure (no PostgreSQL, Redis, or S3).
+Launch the Control Plane with:
+
+```bash
+# 1. Install dependencies
+uv sync --all-packages
+
+# 2. Set API Key and launch server
+export FACTORY_API_KEY="sk-factory-prod-secret-token"
+uv run uvicorn factory_control_api.server:app --host 0.0.0.0 --port 8000
+```
+
 ## Quick Verification
 
 ```bash

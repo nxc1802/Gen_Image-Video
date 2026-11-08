@@ -37,12 +37,34 @@ class ImageParameterMapper:
         if seed is None or seed < 0:
             seed = random.randint(0, 2**32 - 1)
 
-        steps = inputs.get("steps", 20)
+        variant = str(inputs.get("variant", "")).lower().strip()
+        is_turbo = variant == "turbo" or "turbo" in str(inputs.get("model", "")).lower()
+
+        # Reject incompatible variant/task combinations (§5.2)
+        if variant == "turbo" and task in ("inpaint", "outpaint", "instruction_edit", "controlnet"):
+            raise ValueError(f"Task '{task}' does not support turbo variant weights.")
+
+        default_steps = 8 if is_turbo else 20
+        steps = inputs.get("steps", default_steps)
+
+        # Validate step bounds (§5.2)
+        if steps is not None:
+            if not isinstance(steps, int) or steps < 1 or steps > 100:
+                raise ValueError(f"Invalid steps '{steps}': must be an integer between 1 and 100.")
+            if is_turbo and steps > 25:
+                raise ValueError(f"Incompatible steps '{steps}' for turbo variant (expected <= 25).")
         cfg = inputs.get("cfg", 1.0)
         sampler_name = inputs.get("sampler_name", "euler")
         scheduler = inputs.get("scheduler", "simple")
         width = inputs.get("width", 1024)
         height = inputs.get("height", 1024)
+
+        # FIX-11: Choose real Standard/Turbo checkpoint based on variant
+        if "478" in workflow and "unet_name" in workflow["478"].get("inputs", {}):
+            if is_turbo:
+                workflow["478"]["inputs"]["unet_name"] = "qwen-image-2.1-turbo-Q4_K_M.gguf"
+            else:
+                workflow["478"]["inputs"]["unet_name"] = "qwen-image-2.1-Q4_K_M.gguf"
 
         # Standard KSampler update if node "476" exists
         if "476" in workflow:
@@ -64,7 +86,7 @@ class ImageParameterMapper:
             text_node["resolution"] = width
 
         # Standard EmptyLatentImage update if node "474" exists as EmptyLatentImage
-        if "474" in workflow and workflow["474"]["class_type"] == "EmptyLatentImage":
+        if "474" in workflow and workflow["474"].get("class_type") == "EmptyLatentImage":
             workflow["474"]["inputs"]["width"] = width
             workflow["474"]["inputs"]["height"] = height
 

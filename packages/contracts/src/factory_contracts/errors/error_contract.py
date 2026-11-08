@@ -50,6 +50,17 @@ class ErrorCode(str, Enum):
     # 500 Internal Error
     INTERNAL_ERROR = "INTERNAL_ERROR"
     INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR"
+    # Unified §4.1 Error Taxonomy Codes
+    INVALID_INPUT = "INVALID_INPUT"
+    UNSUPPORTED_CAPABILITY = "UNSUPPORTED_CAPABILITY"
+    WEIGHTS_MISSING = "WEIGHTS_MISSING"
+    MODEL_NOT_LOADED = "MODEL_NOT_LOADED"
+    INSUFFICIENT_VRAM = "INSUFFICIENT_VRAM"
+    BACKEND_UNAVAILABLE = "BACKEND_UNAVAILABLE"
+    INFERENCE_TIMEOUT = "INFERENCE_TIMEOUT"
+    BACKEND_CRASHED = "BACKEND_CRASHED"
+    ARTIFACT_MISSING = "ARTIFACT_MISSING"
+    LICENSE_RESTRICTED = "LICENSE_RESTRICTED"
 
 
 class ErrorDetail(BaseModel):
@@ -147,8 +158,18 @@ class RateLimitExceededError(FactoryError):
 
 
 class ModelUnavailableError(FactoryError):
-    def __init__(self, message: str = "Requested model is currently unavailable", details: Optional[Dict[str, Any]] = None):
-        super().__init__(message=message, code=ErrorCode.MODEL_UNAVAILABLE.value, status_code=503, details=details)
+    def __init__(
+        self,
+        message: str = "Requested model is currently unavailable",
+        details: Optional[Dict[str, Any]] = None,
+        code: Optional[str] = None,
+    ):
+        super().__init__(
+            message=message,
+            code=code or ErrorCode.MODEL_UNAVAILABLE.value,
+            status_code=503,
+            details=details,
+        )
 
 
 class ServiceUnavailableError(FactoryError):
@@ -164,3 +185,78 @@ class GatewayTimeoutError(FactoryError):
 class InternalServerError(FactoryError):
     def __init__(self, message: str = "An unexpected internal server error occurred", details: Optional[Dict[str, Any]] = None):
         super().__init__(message=message, code=ErrorCode.INTERNAL_SERVER_ERROR.value, status_code=500, details=details)
+
+
+class ModelNotLoadedError(FactoryError):
+    def __init__(self, message: str = "Requested model is not loaded in GPU runtime", details: Optional[Dict[str, Any]] = None):
+        super().__init__(message=message, code=ErrorCode.MODEL_NOT_LOADED.value, status_code=503, details=details)
+
+
+class InsufficientVRAMError(FactoryError):
+    def __init__(self, message: str = "Insufficient GPU VRAM available to load or execute model", details: Optional[Dict[str, Any]] = None):
+        super().__init__(message=message, code=ErrorCode.INSUFFICIENT_VRAM.value, status_code=503, details=details)
+
+
+class BackendCrashedError(FactoryError):
+    def __init__(self, message: str = "Backend process crashed during runtime execution", details: Optional[Dict[str, Any]] = None):
+        super().__init__(message=message, code=ErrorCode.BACKEND_CRASHED.value, status_code=500, details=details)
+
+
+class UnsupportedCapabilityError(FactoryError):
+    def __init__(self, message: str = "Requested task or variant capability is not supported by model", details: Optional[Dict[str, Any]] = None):
+        super().__init__(message=message, code=ErrorCode.UNSUPPORTED_CAPABILITY.value, status_code=400, details=details)
+
+
+class WeightsMissingError(FactoryError):
+    def __init__(self, message: str = "Required checkpoint weights or model files are missing", details: Optional[Dict[str, Any]] = None):
+        super().__init__(message=message, code=ErrorCode.WEIGHTS_MISSING.value, status_code=503, details=details)
+
+
+def classify_worker_error(
+    exc: Exception,
+    subsystem: str = "backend",
+    stage: str = "execution",
+) -> tuple[ErrorCode, str, bool]:
+    """
+    Classifies worker runtime exceptions into the actionable §4.1 ErrorCode taxonomy
+    with stage and retry semantics.
+    Returns (error_code, sanitized_message, retryable).
+    Guarantees sanitized output without leaking stack traces or local paths.
+    """
+    err_str = str(exc).lower()
+
+    # 1. Invalid input
+    if isinstance(exc, (ValueError, InvalidRequestError, InvalidMediaError)) or "invalid" in err_str or "unsupported parameter" in err_str:
+        return (ErrorCode.INVALID_INPUT, f"Invalid input parameters for {subsystem} generation.", False)
+
+    # 2. Unsupported capability
+    if isinstance(exc, UnsupportedCapabilityError) or "capability" in err_str or "not supported" in err_str or "unsupported" in err_str:
+        return (ErrorCode.UNSUPPORTED_CAPABILITY, f"Task or capability unsupported by {subsystem}.", False)
+
+    # 3. Timeouts
+    if isinstance(exc, (TimeoutError, GatewayTimeoutError)) or "timeout" in err_str or "timed out" in err_str:
+        return (ErrorCode.INFERENCE_TIMEOUT, f"{subsystem.capitalize()} inference timed out during stage '{stage}'.", True)
+
+    # 4. Out of Memory (OOM) / VRAM
+    if "out of memory" in err_str or "cuda oom" in err_str or "insufficient vram" in err_str or "oom" in err_str:
+        return (ErrorCode.INSUFFICIENT_VRAM, f"Insufficient GPU VRAM to complete {subsystem} job.", False)
+
+    # 5. Missing Weights / Checkpoint
+    if "weights" in err_str or "checkpoint" in err_str or ("not found" in err_str and ("gguf" in err_str or "safetensors" in err_str or "pth" in err_str)):
+        return (ErrorCode.WEIGHTS_MISSING, f"Required model weights or checkpoints missing for {subsystem}.", False)
+
+    # 6. Artifact missing / empty
+    if "artifact" in err_str or "output metadata" in err_str or "empty output" in err_str or "0 bytes" in err_str:
+        return (ErrorCode.ARTIFACT_MISSING, f"Expected {subsystem} output artifact was missing or empty.", False)
+
+    # 7. Backend crashed
+    if "crash" in err_str or "sigkill" in err_str or "terminated" in err_str or "died" in err_str:
+        return (ErrorCode.BACKEND_CRASHED, f"{subsystem.capitalize()} backend process crashed during {stage}.", True)
+
+    # 8. Backend / service unavailable
+    if isinstance(exc, (ConnectionError, ConnectionRefusedError, ModelUnavailableError, ServiceUnavailableError)) or "connection refused" in err_str or "unavailable" in err_str:
+        return (ErrorCode.BACKEND_UNAVAILABLE, f"{subsystem.capitalize()} backend is unavailable or unreachable.", True)
+
+    # Default
+    return (ErrorCode.BACKEND_UNAVAILABLE, f"{subsystem.capitalize()} backend encountered an error. Inspect correlated worker logs.", True)
+

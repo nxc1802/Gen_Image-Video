@@ -144,9 +144,11 @@ jobs:
 
       - name: Run Python dependency vulnerability audit
         run: |
-          uv audit || echo "Warning: uv audit detected advisories, review dependabot PRs."
+          # Blocking: fails CI for defined severe vulnerabilities
+          uv audit
 
       - name: Run npm audit for Studio Web
         working-directory: factory/apps/studio-web
         run: |
-          npm audit --audit-level=high || echo "Warning: npm audit detected advisories, review dependabot PRs."
+          # Blocking: fails CI for defined critical vulnerabilities
+          npm audit --audit-level=critical

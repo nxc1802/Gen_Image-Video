@@ -105,32 +105,23 @@ class TestP02ReasoningAdversarialChallenger:
         body = res.json()
         assert body["error"]["code"] == "INVALID_REQUEST"
 
-    @pytest.mark.xfail(
-        reason="VULNERABILITY: services/text/src/models.py silently ignores non-string or empty effort instead of HTTP 400 rejection",
-        strict=True,
-    )
     @pytest.mark.parametrize("vulnerable_payload", [
         {"reasoning": {"effort": 999}},
         {"reasoning": {"effort": True}},
         {"reasoning_effort": ""},
     ])
     def test_non_string_or_empty_effort_rejected_400_vulnerability(self, text_client, vulnerable_payload):
-        """Discovered vulnerability: Non-string reasoning.effort or empty string bypasses HTTP 400 validation."""
+        """Resolved vulnerability: Non-string reasoning.effort or empty string rejected with HTTP 400 validation."""
         payload = {
             "model": "qwen-2.5-72b-instruct",
             "messages": [{"role": "user", "content": "Adversarial bypass test"}],
             **vulnerable_payload,
         }
         res = text_client.post("/v1/chat/completions", headers=AUTH_HEADERS, json=payload)
-        # Should be 400, but currently returns 503 because it bypasses Pydantic validation
-        assert res.status_code == 400, f"Bypassed validation! Got status {res.status_code}"
+        assert res.status_code == 400, f"Expected HTTP 400, got status {res.status_code}"
 
-    @pytest.mark.xfail(
-        reason="VULNERABILITY: decouple_think_tokens fails to isolate unclosed <think> when preceded by newline",
-        strict=True,
-    )
     def test_unclosed_think_with_leading_whitespace_vulnerability(self):
-        """Discovered vulnerability: LLMs emitting '\\n<think>' that run out of tokens fail to decouple."""
+        """Resolved vulnerability: LLMs emitting '\\n<think>' that run out of tokens decouple cleanly."""
         r, c = decouple_think_tokens("\n<think>Deliberating before truncation")
         # Should decouple reasoning and keep clean empty
         assert r == "Deliberating before truncation"

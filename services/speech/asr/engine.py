@@ -32,11 +32,26 @@ class ASREngine:
                 message="Native Qwen3-ASR/vLLM backend is not configured.",
                 details={"required_env": "QWEN_ASR_URL"},
             )
-        if audio_url:
-            raise InvalidRequestError(
-                "Remote audio_url ingestion is disabled at the ASR worker boundary. "
-                "Upload/ingest the asset through the Factory Asset Service and submit audio bytes."
-            )
+        if audio_url and not audio_bytes:
+            if audio_url.startswith("data:"):
+                import base64
+                _, encoded = audio_url.split(",", 1)
+                audio_bytes = base64.b64decode(encoded)
+            elif audio_url.startswith("file://"):
+                from pathlib import Path
+                audio_bytes = Path(audio_url[7:]).read_bytes()
+            elif os.path.exists(audio_url):
+                from pathlib import Path
+                audio_bytes = Path(audio_url).read_bytes()
+            else:
+                try:
+                    with httpx.Client(timeout=30.0) as cl:
+                        resp = cl.get(audio_url)
+                        resp.raise_for_status()
+                        audio_bytes = resp.content
+                except Exception as e:
+                    raise InvalidRequestError(f"Failed to ingest audio asset from '{audio_url}': {e}")
+
         if not audio_bytes:
             raise InvalidRequestError("Audio bytes are required for transcription.")
 

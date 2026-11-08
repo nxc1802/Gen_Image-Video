@@ -29,7 +29,7 @@ for _subpath in [
         sys.path.insert(0, str(_subpath))
 
 import httpx
-from factory_contracts.errors.error_contract import ErrorCode, ErrorDetail
+from factory_contracts.errors.error_contract import ErrorCode, ErrorDetail, classify_worker_error
 from factory_contracts.jobs.job_contract import ArtifactReference, FactoryJob
 from factory_contracts.jobs.worker_contract import (
     JobCompletionRequest,
@@ -167,9 +167,11 @@ class EnhancementWorker:
         t0 = time.time()
         logger.info(f"Enhancing media for job {job.job_id} task={job.task}...")
 
+        current_stage = "loading_media"
         try:
             await self.report_progress(http_client, job.job_id, 2, 20.0, "loading_media")
 
+            current_stage = "processing"
             if job.task == "image_super_resolution":
                 res = self.image_sr.process(job.inputs)
                 ext = "png"
@@ -185,6 +187,7 @@ class EnhancementWorker:
             else:
                 raise ValueError(f"Unknown enhancement task: {job.task}")
 
+            current_stage = "encoding_output"
             await self.report_progress(http_client, job.job_id, 8, 80.0, "encoding_output")
 
             artifact = ArtifactReference(
@@ -215,14 +218,19 @@ class EnhancementWorker:
             return res.status_code in (200, 201)
 
         except Exception as e:
-            logger.error(f"Enhancement failed on job {job.job_id}: {e}")
+            code, msg, retryable = classify_worker_error(e, subsystem="enhancement", stage=current_stage)
+            logger.error(
+                f"Enhancement worker job failure: job_id={job.job_id} request_id={job.request_id} "
+                f"task={job.task} stage={current_stage} error_code={code.value} retryable={retryable}: {e}"
+            )
             fail_req = JobFailureRequest(
                 error=ErrorDetail(
-                    code=ErrorCode.SERVICE_UNAVAILABLE,
-                    message="Enhancement backend failed. Inspect correlated worker logs.",
+                    code=code,
+                    message=msg,
                     request_id=job.request_id,
+                    details={"stage": current_stage},
                 ),
-                retryable=True,
+                retryable=retryable,
                 worker_id=self.worker_id,
                 lease_token=self._active_lease_token,
             )

@@ -33,3 +33,51 @@ missing_capabilities:
 
 limits:
   max_duration_seconds: 300.0
+
+validation_status: pending_live
+validation_notes: "ASR and TTS pipelines configured for dual_gpu_split. Word alignment remains gated."
+
+revision: "3.0.0"
+dependencies:
+  - "torch>=2.4.0"
+  - "torchaudio"
+  - "transformers"
+
+task_variant_matrix:
+  speech_to_text:
+    - standard
+  text_to_speech:
+    - standard
+  voice_cloning:
+    - standard
+
+validated_hardware_profiles:
+  - "kaggle-dual-t4"
+  - "colab-single-t4"
+
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+
+capabilities_truth:
+  speech_to_text:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  text_to_speech:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  voice_cloning:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  word_timestamps:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null

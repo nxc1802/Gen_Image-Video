@@ -38,3 +38,52 @@ missing_capabilities:
 
 limits:
   max_duration_seconds: 300.0
+
+validation_status: pending_live
+validation_notes: "Enhancement suite workflows are staged; live GPU backend verification is pending."
+
+revision: "1.0.0"
+dependencies:
+  - "torch>=2.4.0"
+  - "torchvision"
+
+task_variant_matrix:
+  image_super_resolution:
+    - standard
+  video_super_resolution:
+    - standard
+  frame_interpolation:
+    - standard
+  audio_enhancement:
+    - standard
+
+validated_hardware_profiles:
+  - "kaggle-dual-t4"
+  - "colab-single-t4"
+
+installed: false
+checkpoint_valid: false
+backend_ready: false
+evidence_run_id: null
+
+capabilities_truth:
+  image_super_resolution:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null
+  video_super_resolution:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null
+  frame_interpolation:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null
+  audio_enhancement:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null

@@ -5,8 +5,8 @@ Comprehensive Manifest Validation and Integrity Verifier
 from typing import Dict, List, Tuple
 from factory_contracts.manifests.service import ServiceManifest
 from factory_contracts.manifests.model import ModelManifest, ModelStatus
-from factory_contracts.manifests.capability import CapabilityManifest
 from factory_contracts.manifests.hardware import HardwareTopologyManifest
+from factory_contracts.tasks import normalize_task
 from model_registry.loader import ManifestLoader
 
 
@@ -53,6 +53,31 @@ class ManifestValidator:
                 false_caps = [k for k, v in m.capabilities.items() if not v]
                 if m.coverage_percent >= 100.0 and len(m.missing_capabilities) == 0 and not false_caps:
                     errors.append(f"Model '{m_id}' has 100% coverage and no missing capabilities; must be status: 'full'")
+
+            # Capability Truth Model & Variant Invariants (§5.1)
+            for task, variants in m.task_variant_matrix.items():
+                if task not in m.capabilities and not any(
+                    normalize_task(c) == normalize_task(task) for c in m.capabilities
+                ):
+                    errors.append(f"Model '{m_id}' task_variant_matrix specifies unknown task '{task}'")
+                for var in variants:
+                    if var.lower() not in ("standard", "base", "default") and (
+                        not hasattr(m.weights, "variants") or var not in m.weights.variants
+                    ):
+                        errors.append(
+                            f"Model '{m_id}' task '{task}' specifies variant '{var}' not declared in weights.variants"
+                        )
+
+            for prof in m.validated_hardware_profiles:
+                if prof not in hardware:
+                    errors.append(f"Model '{m_id}' references unknown hardware profile '{prof}'")
+
+            for cap, truth in m.capabilities_truth.items():
+                cap_supported = m.capabilities.get(cap, False)
+                if truth.implemented != cap_supported:
+                    errors.append(
+                        f"Model '{m_id}' capability '{cap}' truth.implemented ({truth.implemented}) does not match capabilities[{cap}] ({cap_supported})"
+                    )
 
         # Check hardware service references
         for hw_id, hw in hardware.items():

@@ -420,10 +420,10 @@ async def test_adversarial_watchdog_execution_timeout_504_gateway_timeout():
         )
         assert scheduler.is_gpu_busy(1) is True
 
-        # Heartbeat is recent (worker is alive), but job execution started 350s ago (> 300s timeout)
+        # Heartbeat is recent (worker is alive), but job execution started 950s ago (> 900s task timeout)
         now = datetime.now(timezone.utc)
         recent_hb = now.isoformat()
-        old_started = now - timedelta(seconds=350)
+        old_started = now - timedelta(seconds=950)
 
         await repo.upsert_worker_heartbeat(
             worker_id="worker-slow-video",

@@ -84,15 +84,11 @@ TASK_CAPABILITY_ALIASES = {
 MODEL_ALIASES = {
     "qwen3-tts": "qwen-speech",
     "qwen3-asr": "qwen-speech",
-    "qwen-2.5-72b": "qwen-text",
-    "qwen-2.5-72b-instruct": "qwen-text",
     "qwen-text-2.5": "qwen-text",
-    "qwen-vl-max": "qwen-vlm",
     "qwen-2.5-vl": "qwen-vlm",
     "qwen-embed": "qwen-embedding",
     "qwen-embed-text": "qwen-embedding",
     "qwen-rerank": "qwen-embedding",
-    "qwen-decision-8b": "qwen-decision",
 }
 
 
@@ -116,7 +112,30 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
             details={"model": req.model},
         )
 
+    # FIX-07: Backend service readiness check
+    services = loader.load_services()
+    service_manifest = services.get(model.metadata.service_id)
+    if service_manifest is None:
+        raise FactoryError(
+            message=f"Backend service '{model.metadata.service_id}' for model '{req.model}' is not registered or unavailable.",
+            code="SERVICE_UNAVAILABLE",
+            status_code=503,
+            details={"service_id": model.metadata.service_id, "model": req.model},
+        )
+
+    # FIX-07: Hardware feasibility and variant validation
     min_vram = getattr(model.hardware, "min_vram_gb", 0.0) if hasattr(model, "hardware") else 0.0
+    variant_name = str(req.inputs.get("variant", "")).lower().strip() if req.inputs else ""
+    if variant_name and hasattr(model, "weights") and hasattr(model.weights, "variants"):
+        variants = model.weights.variants
+        if variants and variant_name not in variants and variant_name not in ("standard", "base", "default"):
+            raise InvalidRequestError(
+                message=f"Variant '{variant_name}' is not supported by model '{req.model}'.",
+                details={"model": req.model, "variant": variant_name, "supported_variants": list(variants.keys())},
+            )
+        if variant_name in variants and variants[variant_name].min_vram_gb:
+            min_vram = max(min_vram, variants[variant_name].min_vram_gb)
+
     if min_vram > 14.2:
         raise InvalidRequestError("Requested model exceeds max allocatable VRAM of 14.2 GB")
 
@@ -160,7 +179,7 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
         }.get(canonical_task, capability)
 
     supported = model.capabilities.get(capability)
-    if supported is not True:
+    if supported is not True or (hasattr(model, "missing_capabilities") and capability in model.missing_capabilities):
         raise FactoryError(
             message=f"Task '{task}' (canonical: '{canonical_task}') is not supported by model '{req.model}'.",
             code="CAPABILITY_NOT_SUPPORTED",
@@ -173,6 +192,30 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
                 "validation_status": model.validation_status.value,
             },
         )
+
+    # Phase 1 Variant-Safe Contracts: Task-Variant Matrix Validation (§5.2)
+    if variant_name:
+        for t in (task, canonical_task, capability):
+            if t and not model.is_variant_supported_for_task(t, variant_name):
+                raise InvalidRequestError(
+                    message=f"Variant '{variant_name}' is not supported for task '{t}' by model '{req.model}'.",
+                    details={
+                        "model": req.model,
+                        "variant": variant_name,
+                        "task": t,
+                        "error_code": "UNSUPPORTED_CAPABILITY",
+                    },
+                )
+
+    # Validate steps for turbo variant (§5.2)
+    if variant_name == "turbo":
+        steps_val = req.inputs.get("steps") if req.inputs else None
+        if steps_val is not None:
+            if not isinstance(steps_val, int) or steps_val < 1 or steps_val > 25:
+                raise InvalidRequestError(
+                    message=f"Invalid steps '{steps_val}' for turbo variant (must be an integer between 1 and 25).",
+                    details={"model": req.model, "variant": variant_name, "steps": steps_val, "error_code": "INVALID_INPUT"},
+                )
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, dependencies=[Depends(verify_bearer_token)])
@@ -308,11 +351,19 @@ async def get_job_result(
                 status_code=502,
                 details=err_details,
             )
-        if err_code in ("GATEWAY_TIMEOUT", "TIMEOUT"):
+        if err_code in ("GATEWAY_TIMEOUT", "TIMEOUT", "INFERENCE_TIMEOUT"):
             raise FactoryError(
                 message=err_msg,
                 code="GATEWAY_TIMEOUT",
                 status_code=504,
+                details=err_details,
+            )
+        if err_code in ("ARTIFACT_NOT_FOUND", "ARTIFACT_MISSING"):
+            msg = err_msg if ("Artifact file not found" in err_msg or "not found" in err_msg.lower()) else f"Artifact file not found: {err_msg}"
+            raise FactoryError(
+                message=msg,
+                code="ARTIFACT_NOT_FOUND",
+                status_code=404,
                 details=err_details,
             )
         status_code = 400

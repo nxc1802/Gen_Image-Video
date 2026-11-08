@@ -1,0 +1,104 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: yue2
+  family: yue-music
+  display_name: "YuE2 Music Generation Pipeline"
+  service_id: music-service
+  version: "2.0.0"
+
+weights:
+  primary_checkpoint: "m-a-p/YuE-s1-7B-anneal-en-cot"
+  format: safetensors
+  quantization: none
+  default_precision: bf16
+
+hardware:
+  min_vram_gb: 12.0
+  preferred_gpu: t4
+  allocation_policy: single_gpu
+
+capabilities:
+  text_to_music: true
+  lyrics_to_music: true
+  symbolic_score: true
+  custom_score: true
+  score_edit: true
+  song_variation: true
+  cover_edit: false
+
+status: partial
+coverage_percent: 85.7
+missing_capabilities:
+  - cover_edit
+validation_status: pending_live
+validation_notes: "YuE2 feasibility gate Y0 pending live verification."
+
+limits:
+  max_duration_seconds: 300.0
+
+revision: "2.0.0"
+dependencies:
+  - "torch>=2.4.0"
+  - "transformers"
+  - "xformers"
+
+task_variant_matrix:
+  text_to_music:
+    - standard
+  lyrics_to_music:
+    - standard
+  symbolic_score:
+    - standard
+  custom_score:
+    - standard
+  score_edit:
+    - standard
+  song_variation:
+    - standard
+
+validated_hardware_profiles:
+  - "kaggle-dual-t4"
+  - "colab-single-t4"
+
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+
+capabilities_truth:
+  text_to_music:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  lyrics_to_music:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  symbolic_score:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  custom_score:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  score_edit:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  song_variation:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  cover_edit:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null

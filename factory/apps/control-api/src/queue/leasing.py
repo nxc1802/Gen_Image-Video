@@ -24,11 +24,7 @@ from factory_contracts.tasks import (
 from factory.apps.control_api.src.queue.broker.base import BaseQueueBroker
 from factory.apps.control_api.src.queue.repository.base import BaseJobRepository
 from factory.apps.control_api.src.telemetry.metrics import metrics
-
-SUBSYSTEM_GPU_MAP: Dict[str, int] = {
-    "text": 0, "vlm": 0, "vision": 0, "decision": 0, "image": 0, "speech": 0,
-    "video": 1, "music": 1, "enhancement": 1, "embedding": 1, "embed": 1, "rerank": 1,
-}
+from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
 
 # Authoritative Declarative Manifest Capabilities per Subsystem
 SUBSYSTEM_MANIFEST_CAPABILITIES: Dict[str, Dict[str, List[str]]] = {

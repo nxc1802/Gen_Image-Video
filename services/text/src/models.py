@@ -41,12 +41,19 @@ class ChatCompletionRequest(BaseModel):
 
     @model_validator(mode="after")
     def resolve_reasoning_effort(self) -> "ChatCompletionRequest":
-        if not self.reasoning_effort and self.reasoning:
-            effort = self.reasoning.get("effort")
-            if effort and isinstance(effort, str):
-                self.reasoning_effort = effort.lower()
-        if self.reasoning_effort:
-            norm = self.reasoning_effort.lower()
+        if self.reasoning is not None:
+            if not isinstance(self.reasoning, dict):
+                raise ValueError("Field 'reasoning' must be an object.")
+            if "effort" in self.reasoning:
+                effort = self.reasoning.get("effort")
+                if not isinstance(effort, str) or not effort.strip():
+                    raise ValueError("Field 'reasoning.effort' must be a non-empty string: 'low', 'medium', 'high'.")
+                if not self.reasoning_effort:
+                    self.reasoning_effort = effort.lower()
+        if self.reasoning_effort is not None:
+            if not isinstance(self.reasoning_effort, str) or not self.reasoning_effort.strip():
+                raise ValueError("Field 'reasoning_effort' must be a non-empty string: 'low', 'medium', 'high'.")
+            norm = self.reasoning_effort.lower().strip()
             if norm not in {"low", "medium", "high"}:
                 raise ValueError("Field 'reasoning_effort' must be one of: 'low', 'medium', 'high'.")
             self.reasoning_effort = norm

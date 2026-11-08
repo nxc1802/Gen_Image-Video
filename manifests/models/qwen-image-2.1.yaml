@@ -57,3 +57,90 @@ validation_notes: "Pre-flight contract simulation passed for all 5 gates. Regist
 limits:
   max_width: 2048
   max_height: 2048
+
+revision: "2.1.0"
+dependencies:
+  - "torch>=2.4.0"
+  - "diffusers"
+  - "gguf"
+  - "comfyui"
+
+task_variant_matrix:
+  text_to_image:
+    - standard
+    - turbo
+  image_to_image:
+    - standard
+    - turbo
+  inpaint:
+    - standard
+  outpaint:
+    - standard
+  instruction_edit:
+    - standard
+  reference_image:
+    - standard
+  multi_reference:
+    - standard
+  controlnet:
+    - standard
+  control_pose:
+    - standard
+  control_depth:
+    - standard
+
+validated_hardware_profiles:
+  - "kaggle-dual-t4"
+  - "colab-single-t4"
+
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+
+capabilities_truth:
+  text_to_image:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  image_to_image:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  inpaint:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  outpaint:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  instruction_edit:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  reference_image:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  multi_reference:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  control_pose:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  control_depth:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null

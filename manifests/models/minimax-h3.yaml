@@ -41,3 +41,63 @@ limits:
   max_height: 720
   max_frames: 121
   max_duration_seconds: 6.0
+
+revision: "3.0.0"
+dependencies:
+  - "torch>=2.4.0"
+  - "diffusers"
+  - "imageio"
+  - "imageio-ffmpeg"
+
+task_variant_matrix:
+  text_to_video:
+    - standard
+  image_to_video:
+    - standard
+  first_last_frame_to_video:
+    - standard
+  video_with_audio:
+    - standard
+  reference_conditioning:
+    - standard
+
+validated_hardware_profiles:
+  - "kaggle-dual-t4"
+  - "colab-single-t4"
+
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+
+capabilities_truth:
+  text_to_video:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  image_to_video:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  first_last_frame_to_video:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  video_with_audio:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  reference_conditioning:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  video_extension:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null

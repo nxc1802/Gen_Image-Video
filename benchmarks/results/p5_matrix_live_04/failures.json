@@ -1,0 +1,1570 @@
+[
+  {
+    "test_id": "GPU-01",
+    "group": "gpu_runtime",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "gpu_lifecycle",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_UNAVAILABLE",
+      "root_cause": "Host platform 'Darwin' (arm64) lacks NVIDIA CUDA GPUs (0 devices). Hardware execution requires Kaggle Dual Tesla T4.",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Execute on Kaggle Dual-T4 kernel or NVIDIA GPU host with nvidia-smi and CUDA driver installed."
+    }
+  },
+  {
+    "test_id": "GPU-02",
+    "group": "gpu_runtime",
+    "status": "HARDWARE_BLOCKED",
+    "model": "wan-2.2",
+    "task": "model_switching",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_UNAVAILABLE",
+      "root_cause": "Host platform 'Darwin' (arm64) lacks NVIDIA CUDA GPUs (0 devices). Hardware execution requires Kaggle Dual Tesla T4.",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Execute on Kaggle Dual-T4 kernel or NVIDIA GPU host with nvidia-smi and CUDA driver installed."
+    }
+  },
+  {
+    "test_id": "GPU-03",
+    "group": "gpu_runtime",
+    "status": "HARDWARE_BLOCKED",
+    "model": "system",
+    "task": "dual_gpu_concurrency",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_UNAVAILABLE",
+      "root_cause": "Host platform 'Darwin' (arm64) lacks NVIDIA CUDA GPUs (0 devices). Hardware execution requires Kaggle Dual Tesla T4.",
+      "hardware_requirement": "gpu_dual",
+      "remediation": "Execute on Kaggle Dual-T4 kernel or NVIDIA GPU host with nvidia-smi and CUDA driver installed."
+    }
+  },
+  {
+    "test_id": "GPU-04",
+    "group": "gpu_runtime",
+    "status": "HARDWARE_BLOCKED",
+    "model": "system",
+    "task": "same_gpu_exclusion",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_UNAVAILABLE",
+      "root_cause": "Host platform 'Darwin' (arm64) lacks NVIDIA CUDA GPUs (0 devices). Hardware execution requires Kaggle Dual Tesla T4.",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Execute on Kaggle Dual-T4 kernel or NVIDIA GPU host with nvidia-smi and CUDA driver installed."
+    }
+  },
+  {
+    "test_id": "GPU-05",
+    "group": "gpu_runtime",
+    "status": "HARDWARE_BLOCKED",
+    "model": "system",
+    "task": "atomic_dual_reservation",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_UNAVAILABLE",
+      "root_cause": "Host platform 'Darwin' (arm64) lacks NVIDIA CUDA GPUs (0 devices). Hardware execution requires Kaggle Dual Tesla T4.",
+      "hardware_requirement": "gpu_dual",
+      "remediation": "Execute on Kaggle Dual-T4 kernel or NVIDIA GPU host with nvidia-smi and CUDA driver installed."
+    }
+  },
+  {
+    "test_id": "GPU-06",
+    "group": "gpu_runtime",
+    "status": "HARDWARE_BLOCKED",
+    "model": "system",
+    "task": "crash_recovery",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_UNAVAILABLE",
+      "root_cause": "Host platform 'Darwin' (arm64) lacks NVIDIA CUDA GPUs (0 devices). Hardware execution requires Kaggle Dual Tesla T4.",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Execute on Kaggle Dual-T4 kernel or NVIDIA GPU host with nvidia-smi and CUDA driver installed."
+    }
+  },
+  {
+    "test_id": "GPU-07",
+    "group": "gpu_runtime",
+    "status": "HARDWARE_BLOCKED",
+    "model": "system",
+    "task": "cancel_during_load",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_UNAVAILABLE",
+      "root_cause": "Host platform 'Darwin' (arm64) lacks NVIDIA CUDA GPUs (0 devices). Hardware execution requires Kaggle Dual Tesla T4.",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Execute on Kaggle Dual-T4 kernel or NVIDIA GPU host with nvidia-smi and CUDA driver installed."
+    }
+  },
+  {
+    "test_id": "GPU-08",
+    "group": "gpu_runtime",
+    "status": "HARDWARE_BLOCKED",
+    "model": "system",
+    "task": "heartbeat_timeout_cycle",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_UNAVAILABLE",
+      "root_cause": "Host platform 'Darwin' (arm64) lacks NVIDIA CUDA GPUs (0 devices). Hardware execution requires Kaggle Dual Tesla T4.",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Execute on Kaggle Dual-T4 kernel or NVIDIA GPU host with nvidia-smi and CUDA driver installed."
+    }
+  },
+  {
+    "test_id": "GPU-09",
+    "group": "gpu_runtime",
+    "status": "HARDWARE_BLOCKED",
+    "model": "system",
+    "task": "multi_model_pipeline",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_UNAVAILABLE",
+      "root_cause": "Host platform 'Darwin' (arm64) lacks NVIDIA CUDA GPUs (0 devices). Hardware execution requires Kaggle Dual Tesla T4.",
+      "hardware_requirement": "dual_t4",
+      "remediation": "Execute on Kaggle Dual-T4 kernel or NVIDIA GPU host with nvidia-smi and CUDA driver installed."
+    }
+  },
+  {
+    "test_id": "GPU-10",
+    "group": "gpu_runtime",
+    "status": "HARDWARE_BLOCKED",
+    "model": "system",
+    "task": "vram_leak_benchmark",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_UNAVAILABLE",
+      "root_cause": "Host platform 'Darwin' (arm64) lacks NVIDIA CUDA GPUs (0 devices). Hardware execution requires Kaggle Dual Tesla T4.",
+      "hardware_requirement": "dual_t4",
+      "remediation": "Execute on Kaggle Dual-T4 kernel or NVIDIA GPU host with nvidia-smi and CUDA driver installed."
+    }
+  },
+  {
+    "test_id": "T01",
+    "group": "text",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-text",
+    "task": "text_chat",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-text' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "T02",
+    "group": "text",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-text",
+    "task": "text_json",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-text' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "T03",
+    "group": "text",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-text",
+    "task": "text_tool_call",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-text' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "T04",
+    "group": "text",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-text",
+    "task": "text_stream",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-text' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "T05",
+    "group": "text",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-text",
+    "task": "text_context",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-text' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "V01",
+    "group": "vlm",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-vlm",
+    "task": "vlm_image_qa",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-vlm' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "V02",
+    "group": "vlm",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-vlm",
+    "task": "vlm_multi_image",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-vlm' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "V03",
+    "group": "vlm",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-vlm",
+    "task": "vlm_video_frames",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-vlm' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "V04",
+    "group": "vlm",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-vlm",
+    "task": "vlm_document_qa",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-vlm' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "V05",
+    "group": "vlm",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-vlm",
+    "task": "vlm_grounding",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-vlm' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "D01",
+    "group": "decision",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-decision",
+    "task": "predicate_evaluation",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-decision' requires any hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "any",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "D02",
+    "group": "decision",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-decision",
+    "task": "route_selection",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-decision' requires any hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "any",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "D03",
+    "group": "decision",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-decision",
+    "task": "ranking_evaluation",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-decision' requires any hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "any",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "E01",
+    "group": "embedding",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-embedding",
+    "task": "text_embedding",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-embedding' requires any hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "any",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "E02",
+    "group": "embedding",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-embedding",
+    "task": "batch_embedding",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-embedding' requires any hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "any",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "E03",
+    "group": "embedding",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-embedding",
+    "task": "semantic_retrieval",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-embedding' requires any hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "any",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "E04",
+    "group": "embedding",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-embedding",
+    "task": "document_reranking",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-embedding' requires any hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "any",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "S01",
+    "group": "speech",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-speech",
+    "task": "speech_asr",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-speech' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "S02",
+    "group": "speech",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-speech",
+    "task": "speech_tts",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-speech' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "S03",
+    "group": "speech",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-speech",
+    "task": "voice_cloning",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-speech' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "S04",
+    "group": "speech",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-speech",
+    "task": "streaming_asr",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-speech' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "S05",
+    "group": "speech",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-speech",
+    "task": "word_alignment",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-speech' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "S06",
+    "group": "speech",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-speech",
+    "task": "speech_speed",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-speech' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "S07",
+    "group": "speech",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-speech",
+    "task": "audio_transcode",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-speech' requires any hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "any",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "S10",
+    "group": "speech",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-speech",
+    "task": "long_audio_chunking",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-speech' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "S11",
+    "group": "speech",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-speech",
+    "task": "speech_concurrency",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-speech' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I01",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "text_to_image",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I02",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "image_to_image",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I03",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "image_edit",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I04",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "inpaint",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I05",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "outpaint",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I06",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "reference_image",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I07",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "multi_reference",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I08",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "controlnet_pose",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I09",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "controlnet_depth",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I11",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "seed_determinism",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I12",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "cfg_step_tuning",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "I13",
+    "group": "image",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "resolution_grid",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "W01",
+    "group": "wan_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "wan-2.2",
+    "task": "text_to_video",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'wan-2.2' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "W02",
+    "group": "wan_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "wan-2.2",
+    "task": "text_to_video",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'wan-2.2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "W03",
+    "group": "wan_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "wan-2.2",
+    "task": "image_to_video",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'wan-2.2' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "W04",
+    "group": "wan_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "wan-2.2",
+    "task": "first_last_to_video",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'wan-2.2' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "W05",
+    "group": "wan_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "wan-2.2",
+    "task": "video_extension",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'wan-2.2' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "W06",
+    "group": "wan_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "wan-2.2",
+    "task": "continuity_benchmark",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'wan-2.2' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "H01",
+    "group": "minimax_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "minimax-h3",
+    "task": "text_to_video",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'minimax-h3' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "H02",
+    "group": "minimax_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "minimax-h3",
+    "task": "image_to_video",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'minimax-h3' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "H03",
+    "group": "minimax_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "minimax-h3",
+    "task": "first_last_to_video",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'minimax-h3' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "H04",
+    "group": "minimax_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "minimax-h3",
+    "task": "reference_to_video",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'minimax-h3' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "H05",
+    "group": "minimax_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "minimax-h3",
+    "task": "av_synchronization",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'minimax-h3' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "H06",
+    "group": "minimax_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "minimax-h3",
+    "task": "audio_presence",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'minimax-h3' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "H07",
+    "group": "minimax_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "minimax-h3",
+    "task": "semantic_adherence",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'minimax-h3' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "H08",
+    "group": "minimax_video",
+    "status": "HARDWARE_BLOCKED",
+    "model": "minimax-h3",
+    "task": "video_duration_compliance",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'minimax-h3' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-01",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "text_to_music",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-02",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "lyrics_to_music",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-03",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "instrumental",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-05",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "thinking_mode",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-07",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "reference_audio",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-08",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "cover",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-09",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "repaint",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-09b",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "cover",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-11",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "extract",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-12",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "lego",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-13",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "complete",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-14",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "music_extend",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-15",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "lyrics_to_music",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-16",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "batch_generation",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-19",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "audio_understanding",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-20",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "lyrics_timestamp",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-21",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "quality_scoring",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires any hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "any",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-22",
+    "group": "acestep",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "lora_inference",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "ACE-23",
+    "group": "acestep",
+    "status": "NOT_IMPLEMENTED",
+    "model": "ace-step-1.5",
+    "task": "lora_training",
+    "error": {
+      "code": "NOT_IMPLEMENTED",
+      "classification": "FEATURE_OPTIONAL_UNIMPLEMENTED",
+      "root_cause": "ACE-Step LoRA training pipeline is designated as optional advanced workflow; training worker is not implemented.",
+      "hardware_requirement": "any",
+      "remediation": "Deploy LoRA fine-tuning worker or train offline using upstream ACE-Step repository."
+    }
+  },
+  {
+    "test_id": "YUE-01",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "lyrics_to_music",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-04",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "text_to_music",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-05",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "custom_score",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-07",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "semantic_generation",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-08",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "acoustic_synthesis",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-09",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "audio_decode",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-10",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "custom_score",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-11",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "song_variation",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-12",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "audio_to_score",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-13",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "cover",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-14",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "cover",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-18",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "quantization_benchmark",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "YUE-19",
+    "group": "yue2",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "long_song_benchmark",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "EN01",
+    "group": "enhancement",
+    "status": "HARDWARE_BLOCKED",
+    "model": "enhancement-suite-v1",
+    "task": "image_super_resolution",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'enhancement-suite-v1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "EN02",
+    "group": "enhancement",
+    "status": "HARDWARE_BLOCKED",
+    "model": "enhancement-suite-v1",
+    "task": "image_super_resolution",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'enhancement-suite-v1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "EN03",
+    "group": "enhancement",
+    "status": "HARDWARE_BLOCKED",
+    "model": "enhancement-suite-v1",
+    "task": "video_super_resolution",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'enhancement-suite-v1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "EN04",
+    "group": "enhancement",
+    "status": "HARDWARE_BLOCKED",
+    "model": "enhancement-suite-v1",
+    "task": "frame_interpolation",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'enhancement-suite-v1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "EN05",
+    "group": "enhancement",
+    "status": "HARDWARE_BLOCKED",
+    "model": "enhancement-suite-v1",
+    "task": "audio_enhancement",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'enhancement-suite-v1' requires any hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "any",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "EN06",
+    "group": "enhancement",
+    "status": "HARDWARE_BLOCKED",
+    "model": "enhancement-suite-v1",
+    "task": "cross_media_enhancement",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'enhancement-suite-v1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P01",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "pipeline_text_to_image",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P02",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-image-2.1",
+    "task": "pipeline_image_edit",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-image-2.1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P03",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "wan-2.2",
+    "task": "pipeline_image_to_video",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'wan-2.2' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P04",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "minimax-h3",
+    "task": "pipeline_text_to_video_audio",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'minimax-h3' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P05",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "wan-2.2",
+    "task": "pipeline_video_extend",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'wan-2.2' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P06",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "enhancement-suite-v1",
+    "task": "pipeline_video_interpolate",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'enhancement-suite-v1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P07",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "enhancement-suite-v1",
+    "task": "pipeline_image_sr",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'enhancement-suite-v1' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P08",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "qwen-speech",
+    "task": "pipeline_asr_tts",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'qwen-speech' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P09",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "ace-step-1.5",
+    "task": "pipeline_music_cover_repaint",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'ace-step-1.5' requires gpu_single hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "gpu_single",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P10",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "yue2",
+    "task": "pipeline_score_edit_render",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'yue2' requires bf16_24gb hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "bf16_24gb",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P11",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "enhancement-suite-v1",
+    "task": "pipeline_music_enhancement",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'enhancement-suite-v1' requires any hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "any",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  },
+  {
+    "test_id": "P12",
+    "group": "cross_feature",
+    "status": "HARDWARE_BLOCKED",
+    "model": "system",
+    "task": "pipeline_mixed_stress",
+    "error": {
+      "code": "HARDWARE_BLOCKED",
+      "classification": "CUDA_ACCELERATOR_UNAVAILABLE",
+      "root_cause": "Host system 'Darwin' (arm64) lacks NVIDIA CUDA GPUs and weights. Model 'system' requires dual_t4 hardware (Kaggle Dual-T4 or BF16 >=24GB).",
+      "hardware_requirement": "dual_t4",
+      "remediation": "Deploy kernel to Kaggle Dual Tesla T4 server or dedicated cloud GPU instance."
+    }
+  }
+]

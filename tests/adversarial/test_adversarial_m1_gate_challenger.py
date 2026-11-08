@@ -152,17 +152,28 @@ class TestSingleApiKeyAuth:
         times_almost = []
         times_diff = []
 
-        iterations = 2000
-        for _ in range(iterations):
-            t0 = time.perf_counter_ns()
-            secrets.compare_digest(almost_matching, cfg.api_key)
-            t1 = time.perf_counter_ns()
-            times_almost.append(t1 - t0)
+        iterations = 4000
+        for i in range(iterations):
+            if i % 2 == 0:
+                t0 = time.perf_counter_ns()
+                secrets.compare_digest(almost_matching, cfg.api_key)
+                t1 = time.perf_counter_ns()
+                times_almost.append(t1 - t0)
 
-            t2 = time.perf_counter_ns()
-            secrets.compare_digest(completely_different, cfg.api_key)
-            t3 = time.perf_counter_ns()
-            times_diff.append(t3 - t2)
+                t2 = time.perf_counter_ns()
+                secrets.compare_digest(completely_different, cfg.api_key)
+                t3 = time.perf_counter_ns()
+                times_diff.append(t3 - t2)
+            else:
+                t2 = time.perf_counter_ns()
+                secrets.compare_digest(completely_different, cfg.api_key)
+                t3 = time.perf_counter_ns()
+                times_diff.append(t3 - t2)
+
+                t0 = time.perf_counter_ns()
+                secrets.compare_digest(almost_matching, cfg.api_key)
+                t1 = time.perf_counter_ns()
+                times_almost.append(t1 - t0)
 
         mean_almost = statistics.mean(times_almost)
         mean_diff = statistics.mean(times_diff)

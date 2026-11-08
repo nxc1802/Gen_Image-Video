@@ -126,6 +126,16 @@ class ModelMetadata(BaseModel):
     version: str = Field(..., description="Model version")
 
 
+class CapabilityTruthLevel(BaseModel):
+    """Represents a model capability through Declared, Implemented, and Live Verified levels."""
+    model_config = ConfigDict(extra="forbid")
+
+    declared: bool = Field(default=True, description="Feature declared by upstream model card / specification")
+    implemented: bool = Field(default=False, description="Factory has real workflow, worker, adapter and artifact path")
+    live_verified: bool = Field(default=False, description="Verified through real model execution on hardware profile")
+    evidence_run_id: Optional[str] = Field(default=None, description="Artifact or run proof of verification")
+
+
 class ModelManifest(BaseModel):
     """Declarative definition of a Model Family with strict capability completeness enforcement."""
     model_config = ConfigDict(extra="forbid")
@@ -151,6 +161,26 @@ class ModelManifest(BaseModel):
     )
     validation_notes: Optional[str] = Field(default=None)
     limits: ModelLimitsSpec = Field(default_factory=ModelLimitsSpec)
+
+    # Capability Truth Model & Lifecycle Fields (§5.1)
+    revision: Optional[str] = Field(default="main", description="Model revision, Git tag, or checkpoint commit")
+    dependencies: List[str] = Field(default_factory=list, description="Required runtime dependencies and packages")
+    task_variant_matrix: Dict[str, List[str]] = Field(
+        default_factory=dict,
+        description="Matrix mapping tasks to supported variant IDs (e.g. {'text_to_image': ['standard', 'turbo']})"
+    )
+    validated_hardware_profiles: List[str] = Field(
+        default_factory=list,
+        description="Hardware profiles on which model has been verified (e.g. ['kaggle-dual-t4'])"
+    )
+    installed: bool = Field(default=False, description="Whether model weights/runtime are installed locally")
+    checkpoint_valid: bool = Field(default=False, description="Whether checkpoint weights pass checksum/integrity")
+    backend_ready: bool = Field(default=False, description="Whether target backend is ready for inference")
+    evidence_run_id: Optional[str] = Field(default=None, description="Proof evidence run identifier")
+    capabilities_truth: Dict[str, CapabilityTruthLevel] = Field(
+        default_factory=dict,
+        description="Truth model tracking declared, implemented, and live-verified status per capability"
+    )
 
     @model_validator(mode="after")
     def verify_completeness_integrity(self) -> "ModelManifest":
@@ -182,4 +212,46 @@ class ModelManifest(BaseModel):
                     f"Model '{self.metadata.id}' has 100% coverage and no missing capabilities; "
                     "it must be marked status: 'full'"
                 )
+
+        # Auto-populate capabilities_truth if not explicitly defined
+        for cap, val in self.capabilities.items():
+            if cap not in self.capabilities_truth:
+                is_live = (self.validation_status == ModelValidationStatus.LIVE_VERIFIED and bool(val))
+                self.capabilities_truth[cap] = CapabilityTruthLevel(
+                    declared=True,
+                    implemented=bool(val),
+                    live_verified=is_live,
+                    evidence_run_id=self.evidence_run_id if is_live else None,
+                )
+            else:
+                # Synchronize implemented flag with capabilities dictionary
+                truth = self.capabilities_truth[cap]
+                truth.implemented = bool(val)
+                if not val:
+                    truth.live_verified = False
+
         return self
+
+    def get_capability_truth(self, task: str) -> CapabilityTruthLevel:
+        """Returns the 3-level capability truth state for the given task."""
+        if task in self.capabilities_truth:
+            return self.capabilities_truth[task]
+        val = self.capabilities.get(task, False)
+        is_live = (self.validation_status == ModelValidationStatus.LIVE_VERIFIED and val)
+        return CapabilityTruthLevel(
+            declared=val,
+            implemented=val,
+            live_verified=is_live,
+            evidence_run_id=self.evidence_run_id if is_live else None,
+        )
+
+    def is_variant_supported_for_task(self, task: str, variant: Optional[str] = None) -> bool:
+        """Checks if the given variant is supported for the specified task."""
+        norm_variant = str(variant or "").strip().lower()
+        if not norm_variant or norm_variant in ("standard", "base", "default"):
+            return True
+        if self.task_variant_matrix and task in self.task_variant_matrix:
+            return norm_variant in [v.lower() for v in self.task_variant_matrix[task]]
+        if hasattr(self.weights, "variants") and self.weights.variants:
+            return norm_variant in self.weights.variants
+        return False

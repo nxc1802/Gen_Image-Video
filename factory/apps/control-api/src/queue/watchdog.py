@@ -13,12 +13,9 @@ from factory_contracts.errors import ErrorDetail
 from factory_contracts.jobs.job_contract import JobState
 from factory_contracts.jobs.worker_contract import JobFailureRequest
 
-logger = logging.getLogger(__name__)
+from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
 
-SUBSYSTEM_GPU_MAP = {
-    "text": 0, "vlm": 0, "vision": 0, "decision": 0, "image": 0, "speech": 0,
-    "video": 1, "music": 1, "enhancement": 1, "embedding": 1, "embed": 1, "rerank": 1,
-}
+logger = logging.getLogger(__name__)
 
 SERVICE_EXECUTION_TIMEOUTS = {
     "text": 300.0,
@@ -33,6 +30,34 @@ SERVICE_EXECUTION_TIMEOUTS = {
     "music": 600.0,
     "video": 900.0,
     "enhancement": 600.0,
+}
+
+TASK_EXECUTION_TIMEOUTS = {
+    "video_extension": 1200.0,
+    "video.extension": 1200.0,
+    "extension": 1200.0,
+    "first_last_frame_to_video": 900.0,
+    "video.fl2v": 900.0,
+    "fl2v": 900.0,
+    "text_to_video": 900.0,
+    "video.t2v": 900.0,
+    "t2v": 900.0,
+    "image_to_video": 900.0,
+    "video.i2v": 900.0,
+    "i2v": 900.0,
+    "cover": 900.0,
+    "repaint": 900.0,
+    "text_to_music": 600.0,
+    "lyrics_to_music": 600.0,
+    "instruction_edit": 450.0,
+    "controlnet": 450.0,
+}
+
+MODEL_EXECUTION_TIMEOUTS = {
+    "wan-2.2": 1200.0,
+    "minimax-h3": 900.0,
+    "ace-step-1.5": 600.0,
+    "qwen-image-2.1": 300.0,
 }
 
 
@@ -111,21 +136,65 @@ async def check_active_jobs_watchdog(
             started_at = started_at.replace(tzinfo=timezone.utc)
         exec_elapsed = (now - started_at).total_seconds()
 
-        # Task/modality specific execution timeout budget
+        # Task/modality/model specific execution timeout budget
         service_key = (job.service or "").lower()
-        if service_timeouts and service_key in service_timeouts:
-            timeout_threshold = service_timeouts[service_key]
+        task_key = (job.task or "").lower()
+        model_key = (job.model or "").lower()
+
+        # Priority 1: job.inputs timeout overrides
+        timeout_threshold = None
+        if job.inputs and isinstance(job.inputs, dict):
+            for t_field in ("timeout", "timeout_seconds", "execution_timeout"):
+                if job.inputs.get(t_field) is not None:
+                    try:
+                        timeout_threshold = float(job.inputs[t_field])
+                        break
+                    except (ValueError, TypeError):
+                        pass
+
+        # Priority 2: Custom service_timeouts (if provided): task_key, then model_key, then service_key
+        if timeout_threshold is None and service_timeouts is not None and service_timeouts is not SERVICE_EXECUTION_TIMEOUTS:
+            if task_key and task_key in service_timeouts:
+                timeout_threshold = float(service_timeouts[task_key])
+            elif model_key and model_key in service_timeouts:
+                timeout_threshold = float(service_timeouts[model_key])
+            elif service_key and service_key in service_timeouts:
+                if task_key and task_key in TASK_EXECUTION_TIMEOUTS:
+                    timeout_threshold = float(TASK_EXECUTION_TIMEOUTS[task_key])
+                elif model_key and model_key in MODEL_EXECUTION_TIMEOUTS:
+                    timeout_threshold = float(MODEL_EXECUTION_TIMEOUTS[model_key])
+                else:
+                    timeout_threshold = float(service_timeouts[service_key])
+
+        # Priority 3: Module constants in order: TASK -> MODEL -> SERVICE
+        if timeout_threshold is None:
+            if task_key and task_key in TASK_EXECUTION_TIMEOUTS:
+                timeout_threshold = float(TASK_EXECUTION_TIMEOUTS[task_key])
+            elif model_key and model_key in MODEL_EXECUTION_TIMEOUTS:
+                timeout_threshold = float(MODEL_EXECUTION_TIMEOUTS[model_key])
+            elif service_key and service_key in SERVICE_EXECUTION_TIMEOUTS:
+                timeout_threshold = float(SERVICE_EXECUTION_TIMEOUTS[service_key])
+
+        # Priority 4: Default job timeout seconds
+        if timeout_threshold is None:
+            timeout_threshold = float(default_job_timeout_seconds)
+
+        # Heartbeat-aware deadline: if worker is actively heartbeating and making progress,
+        # ensure slow valid video/music generation is not killed prematurely.
+        if hb_elapsed <= heartbeat_timeout_seconds and (job.progress and (job.progress.percent or 0.0) > 0.0):
+            progress_ratio = max(0.0, min(1.0, float(job.progress.percent) / 100.0))
+            effective_timeout = timeout_threshold * (1.0 + progress_ratio * 0.5)
         else:
-            timeout_threshold = default_job_timeout_seconds
+            effective_timeout = timeout_threshold
 
         fail_code = None
         fail_msg = None
         if hb_elapsed > heartbeat_timeout_seconds:
             fail_code = "WORKER_DISCONNECTED"
             fail_msg = f"Worker heartbeat timed out after {int(hb_elapsed)}s (threshold: {int(heartbeat_timeout_seconds)}s)."
-        elif exec_elapsed > timeout_threshold:
+        elif exec_elapsed > effective_timeout:
             fail_code = "TIMEOUT"
-            fail_msg = f"Job execution duration {int(exec_elapsed)}s exceeded timeout threshold {int(timeout_threshold)}s."
+            fail_msg = f"Job execution duration {int(exec_elapsed)}s exceeded timeout threshold {int(effective_timeout)}s."
 
         if fail_code:
             logger.warning(
@@ -164,7 +233,7 @@ async def watchdog_loop(
     service_timeouts: Optional[dict] = None,
 ) -> None:
     """Continuous background loop executing watchdog sweep every interval_seconds."""
-    timeouts = service_timeouts if service_timeouts is not None else SERVICE_EXECUTION_TIMEOUTS
+    timeouts = service_timeouts
     while True:
         try:
             await asyncio.sleep(interval_seconds)

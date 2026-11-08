@@ -1,0 +1,31 @@
+{
+  "run_id": "p5_matrix_live_04",
+  "timestamp": "2026-11-08T11:44:04Z",
+  "hardware_profile": "darwin-apple-silicon-local",
+  "git_commit": "07db68a68c0d78b7265548b8a31598c725fcb877",
+  "environment": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "python_version": "3.12.13",
+    "cuda_available": false,
+    "gpu_count": 0,
+    "gpu_names": []
+  },
+  "cases_evaluated": 163,
+  "total_planned_cases": 163,
+  "status_summary": {
+    "PASS": 51,
+    "HARDWARE_BLOCKED": 111,
+    "NOT_IMPLEMENTED": 1,
+    "FAIL": 0,
+    "ERROR": 0,
+    "BLOCKED": 0,
+    "SKIPPED": 0,
+    "NOT_RUN": 0
+  },
+  "artifacts": {
+    "results_jsonl": "benchmarks/results/p5_matrix_live_04/results.jsonl",
+    "metrics_csv": "benchmarks/results/p5_matrix_live_04/metrics.csv",
+    "failures_json": "benchmarks/results/p5_matrix_live_04/failures.json"
+  }
+}

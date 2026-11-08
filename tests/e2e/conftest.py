@@ -51,18 +51,58 @@ def invalid_auth_headers() -> Dict[str, str]:
 
 
 @pytest.fixture
-def client(contract_server: FactoryContractServer) -> Generator[httpx.Client, None, None]:
+def contract_mock_client(contract_server: FactoryContractServer) -> Generator[httpx.Client, None, None]:
+    """Explicitly uses MockTransport for contract simulation. Never counts as live inference."""
+    transport = httpx.MockTransport(contract_server.handle_request)
+    headers = {"X-Factory-Test-Mode": "contract-mock"}
+    with httpx.Client(transport=transport, base_url=BASE_URL, headers=headers, timeout=30.0) as cl:
+        yield cl
+
+
+@pytest.fixture
+def live_client() -> Generator[httpx.Client, None, None]:
+    """Requires real running Factory cluster with FACTORY_E2E_LIVE=1."""
+    if not LIVE_MODE:
+        pytest.skip(
+            "Test requires live cluster (set FACTORY_E2E_LIVE=1). "
+            "Default mock transport does not count as live inference."
+        )
+    headers = {"X-Factory-Test-Mode": "live-e2e"}
+    with httpx.Client(base_url=BASE_URL, headers=headers, timeout=30.0) as cl:
+        yield cl
+
+
+@pytest.fixture
+def client(
+    request: pytest.FixtureRequest,
+    contract_server: FactoryContractServer,
+    contract_mock_client: httpx.Client,
+) -> Generator[httpx.Client, None, None]:
     """
     HTTP client configured for E2E tests.
-    Uses MockTransport in simulation mode; uses real networking in live mode.
+    Uses contract_mock_client by default. If test is marked 'live_e2e', requires LIVE_MODE.
+    Default MockTransport tests never count as live inference.
     """
-    if LIVE_MODE:
-        with httpx.Client(base_url=BASE_URL, timeout=30.0) as cl:
+    if request.node.get_closest_marker("live_e2e"):
+        if not LIVE_MODE:
+            pytest.skip(
+                "Test marked live_e2e requires live cluster (set FACTORY_E2E_LIVE=1). "
+                "Contract mock transport does not count as live inference."
+            )
+        headers = {"X-Factory-Test-Mode": "live-e2e"}
+        with httpx.Client(base_url=BASE_URL, headers=headers, timeout=30.0) as cl:
             yield cl
     else:
-        transport = httpx.MockTransport(contract_server.handle_request)
-        with httpx.Client(transport=transport, base_url=BASE_URL, timeout=30.0) as cl:
-            yield cl
+        yield contract_mock_client
+
+
+def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
+    """Labels all tests under tests/e2e as contract_mock unless explicitly marked live_e2e."""
+    for item in items:
+        if "tests/e2e" in str(item.fspath):
+            if not item.get_closest_marker("live_e2e"):
+                item.add_marker(pytest.mark.contract_mock)
+
 
 
 def assert_sanitized_error(response: httpx.Response, expected_status: int, expected_code: str):

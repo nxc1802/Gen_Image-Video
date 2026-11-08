@@ -10,6 +10,7 @@ from typing import Any, AsyncGenerator, Dict, List, Optional, Set, Tuple
 
 from factory.apps.control_api.src.queue.broker.base import BaseQueueBroker
 from factory.apps.control_api.src.queue.broker.memory_broker import MemoryQueueBroker
+from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
 
 
 class InMemoryScheduler(MemoryQueueBroker):
@@ -62,32 +63,57 @@ class InMemoryScheduler(MemoryQueueBroker):
                     return job_id
             return None
 
+    def acquire_gpus(self, gpu_devices: List[int], job_id: str) -> bool:
+        """
+        Atomically acquires exclusive execution leases on multiple GPU devices.
+        If ANY requested device is busy, acquires NONE and returns False.
+        Never leaves a dual-GPU job half-leased.
+        """
+        if not gpu_devices:
+            return False
+        # Pre-check all devices atomically
+        for dev in gpu_devices:
+            if self.is_gpu_busy(dev):
+                return False
+        # Acquire all requested devices
+        for dev in gpu_devices:
+            self._active_gpu_jobs[dev] = job_id
+            self._gpu_busy[dev] = True
+        return True
+
+    def release_gpus(self, gpu_devices: Optional[List[int]], job_id: str) -> bool:
+        """
+        Releases multiple GPU devices held by job_id.
+        """
+        released_any = False
+        target_devs = gpu_devices if gpu_devices is not None else list(self._active_gpu_jobs.keys())
+        for dev in target_devs:
+            if dev in self._active_gpu_jobs and self._active_gpu_jobs[dev] == job_id:
+                self._active_gpu_jobs[dev] = None
+                self._gpu_busy[dev] = False
+                released_any = True
+        # Safety sweep: clear any device tagged with job_id
+        for dev, active_id in list(self._active_gpu_jobs.items()):
+            if active_id == job_id:
+                self._active_gpu_jobs[dev] = None
+                self._gpu_busy[dev] = False
+                released_any = True
+        return released_any
+
     def acquire_gpu(self, gpu_device: int, job_id: str) -> bool:
         """
         Acquires exclusive execution lease on the specified GPU device.
         Enforces strict max_concurrent_services: 1 bound.
         """
-        if self._active_gpu_jobs.get(gpu_device) is not None:
-            return False
-        self._active_gpu_jobs[gpu_device] = job_id
-        self._gpu_busy[gpu_device] = True
-        return True
+        return self.acquire_gpus([gpu_device], job_id)
 
     def release_gpu(self, gpu_device: Optional[int], job_id: str) -> bool:
         """
         Releases GPU partition held by job_id.
         """
-        if gpu_device is not None and gpu_device in self._active_gpu_jobs:
-            if self._active_gpu_jobs[gpu_device] == job_id:
-                self._active_gpu_jobs[gpu_device] = None
-                self._gpu_busy[gpu_device] = False
-                return True
-        for dev, active_id in list(self._active_gpu_jobs.items()):
-            if active_id == job_id:
-                self._active_gpu_jobs[dev] = None
-                self._gpu_busy[dev] = False
-                return True
-        return False
+        if gpu_device is None:
+            return self.release_gpus(None, job_id)
+        return self.release_gpus([gpu_device], job_id)
 
     def set_gpu_busy(self, gpu_device: int, busy: bool) -> None:
         self._gpu_busy[gpu_device] = busy
