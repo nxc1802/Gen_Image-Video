@@ -98,14 +98,33 @@ class ModelSmokeRunner:
             return StageResult(stage="infer", status="failed", duration_ms=elapsed, error=str(exc)), None
 
     def run_validate_stage(self, model_id: str, service: str, output: Any) -> StageResult:
-        """Stage 3: Validate - Verify real output payload integrity."""
+        """Stage 3: Validate - Verify real output payload integrity and container magic bytes."""
         t0 = time.time()
         try:
             if output is None:
                 raise ValueError("Inference produced None output.")
             if isinstance(output, (bytes, bytearray)):
-                if len(output) == 0:
+                raw_bytes = bytes(output)
+                if len(raw_bytes) == 0:
                     raise ValueError("Inference output binary is empty (0 bytes).")
+                # Image verification
+                if service == "image" or "image" in model_id:
+                    if len(raw_bytes) < 16:
+                        raise ValueError(f"Image binary output too small: {len(raw_bytes)} bytes.")
+                    if not (raw_bytes.startswith(b"\x89PNG\r\n\x1a\n") or raw_bytes.startswith(b"\xff\xd8\xff") or raw_bytes.startswith(b"RIFF")):
+                        raise ValueError("Image output lacks valid PNG, JPEG, or WEBP magic header.")
+                # Video verification
+                elif service == "video" or "wan" in model_id or "minimax" in model_id:
+                    if len(raw_bytes) < 32:
+                        raise ValueError(f"Video binary output too small: {len(raw_bytes)} bytes.")
+                    if b"ftyp" not in raw_bytes[:64] and not raw_bytes.startswith(b"\x1a\x45\xdf\xa3"):
+                        raise ValueError("Video output lacks valid MP4 ftyp or WebM container magic.")
+                # Audio / speech / music verification
+                elif service in ("speech", "music") or "speech" in model_id or "step" in model_id or "yue" in model_id:
+                    if len(raw_bytes) < 32:
+                        raise ValueError(f"Audio binary output too small: {len(raw_bytes)} bytes.")
+                    if not (raw_bytes.startswith(b"RIFF") or raw_bytes.startswith(b"ID3") or raw_bytes.startswith(b"\xff\xfb") or raw_bytes.startswith(b"\xff\xf3") or raw_bytes.startswith(b"fLaC")):
+                        raise ValueError("Audio output lacks valid WAV/RIFF, MP3, or FLAC header.")
             elif isinstance(output, str):
                 if not output.strip():
                     raise ValueError("Inference text output is empty.")
@@ -120,6 +139,7 @@ class ModelSmokeRunner:
         except Exception as exc:
             elapsed = (time.time() - t0) * 1000.0
             return StageResult(stage="validate", status="failed", duration_ms=elapsed, error=str(exc))
+
 
     def run_profile_stage(self, model_id: str, infer_duration_ms: float) -> tuple[StageResult, Optional[float]]:
         """Stage 4: Profile - Record hardware metrics via NVML."""

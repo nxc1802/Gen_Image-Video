@@ -35,7 +35,11 @@ weights:
 hardware:
   min_vram_gb: 14.0
   preferred_gpu: t4
+  preferred_gpu_index: 0
+  quantization_format: q4_k_m
+  offload_ram_gb: 0.0
   allocation_policy: single_gpu
+
 
 capabilities:
   text_to_image: true

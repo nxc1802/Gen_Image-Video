@@ -202,9 +202,12 @@ class BackendCrashedError(FactoryError):
         super().__init__(message=message, code=ErrorCode.BACKEND_CRASHED.value, status_code=500, details=details)
 
 
-class UnsupportedCapabilityError(FactoryError):
+class UnsupportedCapabilityError(InvalidRequestError):
     def __init__(self, message: str = "Requested task or variant capability is not supported by model", details: Optional[Dict[str, Any]] = None):
-        super().__init__(message=message, code=ErrorCode.UNSUPPORTED_CAPABILITY.value, status_code=400, details=details)
+        super().__init__(message=message, details=details)
+        self.code = ErrorCode.UNSUPPORTED_CAPABILITY.value
+        self.status_code = 400
+
 
 
 class WeightsMissingError(FactoryError):
@@ -225,13 +228,20 @@ def classify_worker_error(
     """
     err_str = str(exc).lower()
 
-    # 1. Invalid input
+    # 1. Unsupported capability (must precede InvalidRequestError since UnsupportedCapabilityError subclasses it)
+    if (
+        isinstance(exc, UnsupportedCapabilityError)
+        or "capability" in err_str
+        or "not supported" in err_str
+        or "task unsupported" in err_str
+        or "variant unsupported" in err_str
+        or ("unsupported" in err_str and "unsupported parameter" not in err_str)
+    ):
+        return (ErrorCode.UNSUPPORTED_CAPABILITY, f"Task or capability unsupported by {subsystem}.", False)
+
+    # 2. Invalid input
     if isinstance(exc, (ValueError, InvalidRequestError, InvalidMediaError)) or "invalid" in err_str or "unsupported parameter" in err_str:
         return (ErrorCode.INVALID_INPUT, f"Invalid input parameters for {subsystem} generation.", False)
-
-    # 2. Unsupported capability
-    if isinstance(exc, UnsupportedCapabilityError) or "capability" in err_str or "not supported" in err_str or "unsupported" in err_str:
-        return (ErrorCode.UNSUPPORTED_CAPABILITY, f"Task or capability unsupported by {subsystem}.", False)
 
     # 3. Timeouts
     if isinstance(exc, (TimeoutError, GatewayTimeoutError)) or "timeout" in err_str or "timed out" in err_str:

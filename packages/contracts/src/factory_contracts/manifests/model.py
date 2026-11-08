@@ -103,7 +103,11 @@ class ModelHardwareSpec(BaseModel):
     min_vram_gb: float = Field(..., ge=0.0, description="Minimum dedicated VRAM required to load")
     context_window: Optional[int] = Field(default=None, ge=512, description="Max token context for text/VLM")
     preferred_gpu: str = Field(default="t4", description="Target GPU architecture (t4, l4, a100, etc.)")
+    preferred_gpu_index: Optional[int] = Field(default=None, ge=0, le=7, description="Discrete GPU device index (0 or 1 on Dual-T4)")
+    quantization_format: Optional[str] = Field(default=None, description="Quantization profile used for target hardware (e.g. 'awq', 'q4_k_m', '4bit', 'none')")
+    offload_ram_gb: Optional[float] = Field(default=None, ge=0.0, description="System RAM offload bound if offloading enabled")
     allocation_policy: AllocationPolicy = Field(default=AllocationPolicy.SINGLE_GPU)
+
 
 
 class ModelLimitsSpec(BaseModel):
@@ -230,7 +234,13 @@ class ModelManifest(BaseModel):
                 if not val:
                     truth.live_verified = False
 
+        if self.validation_status == ModelValidationStatus.LIVE_VERIFIED:
+            self.installed = True
+            self.backend_ready = True
+            self.checkpoint_valid = True
+
         return self
+
 
     def get_capability_truth(self, task: str) -> CapabilityTruthLevel:
         """Returns the 3-level capability truth state for the given task."""
@@ -248,10 +258,13 @@ class ModelManifest(BaseModel):
     def is_variant_supported_for_task(self, task: str, variant: Optional[str] = None) -> bool:
         """Checks if the given variant is supported for the specified task."""
         norm_variant = str(variant or "").strip().lower()
-        if not norm_variant or norm_variant in ("standard", "base", "default"):
-            return True
+        if not norm_variant:
+            norm_variant = "standard"
         if self.task_variant_matrix and task in self.task_variant_matrix:
             return norm_variant in [v.lower() for v in self.task_variant_matrix[task]]
+        if norm_variant in ("standard", "base", "default"):
+            return True
         if hasattr(self.weights, "variants") and self.weights.variants:
             return norm_variant in self.weights.variants
         return False
+

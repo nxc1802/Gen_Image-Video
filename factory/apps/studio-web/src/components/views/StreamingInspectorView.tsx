@@ -285,7 +285,7 @@ export function StreamingInspectorView() {
                   <h3 className="text-sm font-mono font-bold text-ink">
                     vLLM Token Stream Visualizer
                   </h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300">
                     DEMO SIMULATION
                   </span>
                 </div>
@@ -303,6 +303,11 @@ export function StreamingInspectorView() {
                 <span>{isTokenStreaming ? "Simulating..." : "Run Demo Simulation"}</span>
               </button>
             </div>
+
+            <div className="p-2.5 rounded-[6px] bg-amber-50 border border-amber-200 text-amber-800 text-xs font-mono">
+              ⚠️ <strong>DEMO / SIMULATION MODE:</strong> This view demonstrates client-side streaming token rendering using a synthetic word loop. It does not represent live model execution or real engine telemetry.
+            </div>
+
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
@@ -353,7 +358,7 @@ export function StreamingInspectorView() {
                   <h3 className="text-sm font-mono font-bold text-ink">
                     WebSocket Audio Stream Monitor
                   </h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300">
                     SYNTHETIC WAVEFORM
                   </span>
                 </div>
@@ -364,6 +369,10 @@ export function StreamingInspectorView() {
               <div className="text-right text-xs font-mono text-ink-muted">
                 <span>Protocol: /v1/jobs/{"{id}"}/ws</span>
               </div>
+            </div>
+
+            <div className="p-2.5 rounded-[6px] bg-amber-50 border border-amber-200 text-amber-800 text-xs font-mono">
+              ⚠️ <strong>DEMO / SIMULATION MODE:</strong> Mathematical sine-wave canvas animation for audio waveform inspector layout preview. No live WebSocket audio packets are connected.
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -411,7 +420,7 @@ export function StreamingInspectorView() {
                   <h3 className="text-sm font-mono font-bold text-ink">
                     ComfyUI Execution &amp; Denoising Step Monitor
                   </h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300">
                     STATIC PREVIEW
                   </span>
                 </div>
@@ -423,6 +432,11 @@ export function StreamingInspectorView() {
                 COMFYUI_WS
               </span>
             </div>
+
+            <div className="p-2.5 rounded-[6px] bg-amber-50 border border-amber-200 text-amber-800 text-xs font-mono">
+              ⚠️ <strong>DEMO / PREVIEW MODE:</strong> Static preview of ComfyUI progress layout. Live jobs stream actual step indices via ComfyUI WebSocket.
+            </div>
+
 
             <div className="space-y-3 p-4 rounded-[8px] bg-canvas border border-hairline">
               <div className="flex items-center justify-between text-xs font-mono">

@@ -292,5 +292,6 @@ pytest tests/unit/gpu/test_gpu_lifecycle_p1.py -v
 
 ### Verification Hashes
 - **Git Commit Baseline:** `07db68a68c0d78b7265548b8a31598c725fcb877`
-- **Results Artifact:** `/Volumes/WorkSpace/Factory/Gen_Image:Video/benchmarks/results/p5_matrix_live_04/results.jsonl`
-- **Evaluation Cases Hash:** `/Volumes/WorkSpace/Factory/Gen_Image:Video/benchmarks/configs/evaluation_cases.yaml`
+- **Results Artifact:** `benchmarks/results/p5_matrix_live_04/results.jsonl`
+- **Evaluation Cases Hash:** `benchmarks/configs/evaluation_cases.yaml`
+

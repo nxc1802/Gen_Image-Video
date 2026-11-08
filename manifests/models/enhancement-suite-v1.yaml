@@ -20,7 +20,11 @@ weights:
 hardware:
   min_vram_gb: 6.0
   preferred_gpu: t4
+  preferred_gpu_index: 1
+  quantization_format: none
+  offload_ram_gb: 0.0
   allocation_policy: single_gpu
+
 
 capabilities:
   image_super_resolution: false

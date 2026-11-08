@@ -18,7 +18,11 @@ weights:
 hardware:
   min_vram_gb: 8.0
   preferred_gpu: t4
+  preferred_gpu_index: 0
+  quantization_format: none
+  offload_ram_gb: 0.0
   allocation_policy: dual_gpu_split
+
 
 capabilities:
   speech_to_text: true

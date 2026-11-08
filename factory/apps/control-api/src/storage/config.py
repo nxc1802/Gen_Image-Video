@@ -43,8 +43,9 @@ class StorageConfig(BaseModel):
 def load_storage_config() -> StorageConfig:
     env = os.environ.get("ENVIRONMENT", os.environ.get("FACTORY_ENV", "development")).lower().strip()
     backend = os.environ.get("STORAGE_BACKEND", "local").lower().strip() or "local"
-    if backend not in {"local", "s3"}:
-        raise RuntimeError(f"Unsupported STORAGE_BACKEND '{backend}'. Supported backends: 'local', 's3'.")
+    if backend not in {"local", "ephemeral_disk", "ephemeral", "s3"}:
+        raise RuntimeError(f"Unsupported STORAGE_BACKEND '{backend}'. Supported backends: 'local', 'ephemeral_disk', 's3'.")
+
 
     s3_endpoint = os.environ.get("S3_ENDPOINT_URL", "").strip() or None
     s3_public_endpoint = os.environ.get("S3_PUBLIC_ENDPOINT_URL", "").strip() or None

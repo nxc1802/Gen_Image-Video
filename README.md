@@ -32,7 +32,7 @@ NEVER                    -> mock PNG containers, mock MP4 headers, pseudo embedd
 
 - **Zero External Infrastructure**: No PostgreSQL, SQLite server, Redis broker, S3/MinIO bucket, or Alembic migrations required.
 - **Single API Key Security**: Constant-time verification using `FACTORY_API_KEY` via `Authorization: Bearer <key>`.
-- **Ephemeral Artifacts**: All generated media resides exclusively in `/tmp/factory_lite/artifacts/{job_id}/` and is automatically unlinked upon completed client download or TTL expiration.
+- **Ephemeral Artifacts**: All generated media resides exclusively in `/tmp/factory_lite/artifacts/{job_id}/` and is retained on disk until TTL expiration (`ARTIFACT_TTL_SECONDS=3600` by default), or automatically unlinked upon completed download when `ARTIFACT_CLEANUP_ON_DOWNLOAD=true`.
 - **Dual T4 GPU Scheduling**: Strict 1-job-per-GPU concurrency lock per discrete GPU device (GPU 0: Text/VLM/Image/Speech, GPU 1: Video/Music/Embedding).
 
 ## Single Working Deploy Path
@@ -47,6 +47,7 @@ uv sync --all-packages
 # 2. Set API Key and launch server
 export FACTORY_API_KEY="sk-factory-prod-secret-token"
 uv run uvicorn factory_control_api.server:app --host 0.0.0.0 --port 8000
+# (or: uv run uvicorn factory_control_api:app --host 0.0.0.0 --port 8000)
 ```
 
 ## Quick Verification
@@ -55,8 +56,9 @@ uv run uvicorn factory_control_api.server:app --host 0.0.0.0 --port 8000
 uv sync --all-packages
 uv run python -m compileall -q factory packages services tests
 uv run factory-manifest validate --path manifests
-uv run pytest tests/unit tests/security tests/contract tests/adversarial tests/e2e -q
+uv run pytest tests/test_preflight.py tests/unit tests/security tests/contract tests/e2e -q
 
 cd factory/apps/studio-web
 npm run build
 ```
+

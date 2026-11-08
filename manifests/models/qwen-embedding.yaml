@@ -19,7 +19,11 @@ hardware:
   min_vram_gb: 4.0
   context_window: 8192
   preferred_gpu: t4
+  preferred_gpu_index: 1
+  quantization_format: none
+  offload_ram_gb: 0.0
   allocation_policy: single_gpu
+
 
 capabilities:
   text_embedding: true

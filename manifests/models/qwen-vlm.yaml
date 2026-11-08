@@ -17,7 +17,11 @@ hardware:
   min_vram_gb: 14.0
   context_window: 16384
   preferred_gpu: t4
+  preferred_gpu_index: 0
+  quantization_format: awq
+  offload_ram_gb: 0.0
   allocation_policy: single_gpu
+
 
 capabilities:
   image_chat: true

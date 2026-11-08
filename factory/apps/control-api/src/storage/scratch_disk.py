@@ -62,8 +62,10 @@ class ScratchDiskManager:
     """
     High-performance, zero-external-dependency scratch disk manager.
     Coordinates local artifact persistence, security containment boundaries,
-    synchronous post-download cleanup, and periodic background TTL/LRU sweepers.
+    configurable post-download cleanup (when enabled via ARTIFACT_CLEANUP_ON_DOWNLOAD=true;
+    default False to support concurrent downloads), and periodic background TTL/LRU sweepers.
     """
+
 
     def __init__(self, config: Optional[ScratchDiskConfig] = None):
         self.config = config or ScratchDiskConfig()

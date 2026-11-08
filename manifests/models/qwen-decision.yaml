@@ -17,7 +17,11 @@ hardware:
   min_vram_gb: 6.0
   context_window: 8192
   preferred_gpu: t4
+  preferred_gpu_index: 0
+  quantization_format: none
+  offload_ram_gb: 0.0
   allocation_policy: single_gpu
+
 
 capabilities:
   predicate_evaluation: true

@@ -16,8 +16,11 @@ from factory_contracts.errors import (
     ArtifactNotFoundError,
     FactoryError,
     InvalidRequestError,
+    ModelUnavailableError,
     NotFoundError,
+    UnsupportedCapabilityError,
 )
+
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
 from factory.apps.control_api.src.storage.scratch_disk import ScratchDiskManager, get_scratch_disk
 from factory.apps.control_api.src.storage.keys import sanitize_id
@@ -112,16 +115,6 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
             details={"model": req.model},
         )
 
-    # FIX-07: Backend service readiness check
-    services = loader.load_services()
-    service_manifest = services.get(model.metadata.service_id)
-    if service_manifest is None:
-        raise FactoryError(
-            message=f"Backend service '{model.metadata.service_id}' for model '{req.model}' is not registered or unavailable.",
-            code="SERVICE_UNAVAILABLE",
-            status_code=503,
-            details={"service_id": model.metadata.service_id, "model": req.model},
-        )
 
     # FIX-07: Hardware feasibility and variant validation
     min_vram = getattr(model.hardware, "min_vram_gb", 0.0) if hasattr(model, "hardware") else 0.0
@@ -138,6 +131,31 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
 
     if min_vram > 14.2:
         raise InvalidRequestError("Requested model exceeds max allocatable VRAM of 14.2 GB")
+
+    # FIX-07: Backend service readiness check
+    services = loader.load_services()
+    service_manifest = services.get(model.metadata.service_id)
+    if service_manifest is None:
+        raise FactoryError(
+            message=f"Backend service '{model.metadata.service_id}' for model '{req.model}' is not registered or unavailable.",
+            code="SERVICE_UNAVAILABLE",
+            status_code=503,
+            details={"service_id": model.metadata.service_id, "model": req.model},
+        )
+
+    # C2: Fail closed if model backend is marked offline or not installed
+    if not getattr(model, "backend_ready", True) or not getattr(model, "installed", True):
+        raise FactoryError(
+            message=f"Backend for model '{req.model}' is offline or not installed.",
+            code="BACKEND_UNAVAILABLE",
+            status_code=503,
+            details={
+                "model": req.model,
+                "service_id": model.metadata.service_id,
+                "backend_ready": getattr(model, "backend_ready", False),
+                "installed": getattr(model, "installed", False),
+            },
+        )
 
     expected_service_id = SERVICE_IDS.get(req.service)
     if expected_service_id is None or model.metadata.service_id != expected_service_id:
@@ -190,14 +208,44 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
                 "canonical_task": canonical_task,
                 "capability": capability,
                 "validation_status": model.validation_status.value,
+                "error_code": "UNSUPPORTED_CAPABILITY",
             },
         )
 
-    # Phase 1 Variant-Safe Contracts: Task-Variant Matrix Validation (§5.2)
-    if variant_name:
+    # Capability Truth: Fail closed if capability is declared but not implemented in truth model
+    if hasattr(model, "capabilities_truth") and capability in model.capabilities_truth:
+        cap_truth = model.capabilities_truth[capability]
+        if not cap_truth.implemented:
+            raise UnsupportedCapabilityError(
+                message=f"Capability '{capability}' is declared but not implemented for model '{req.model}'.",
+                details={
+                    "model": req.model,
+                    "task": task,
+                    "canonical_task": canonical_task,
+                    "capability": capability,
+                    "error_code": "UNSUPPORTED_CAPABILITY",
+                },
+            )
+
+    # Phase 1 Variant-Safe Contracts: Task-Variant Matrix Validation (§5.2 & C2)
+    effective_variant = variant_name or "standard"
+    if hasattr(model, "task_variant_matrix") and model.task_variant_matrix:
+        for t in (task, canonical_task, capability):
+            if t and t in model.task_variant_matrix:
+                if not model.is_variant_supported_for_task(t, effective_variant):
+                    raise UnsupportedCapabilityError(
+                        message=f"Variant '{effective_variant}' is not supported for task '{t}' by model '{req.model}'.",
+                        details={
+                            "model": req.model,
+                            "variant": effective_variant,
+                            "task": t,
+                            "error_code": "UNSUPPORTED_CAPABILITY",
+                        },
+                    )
+    elif variant_name:
         for t in (task, canonical_task, capability):
             if t and not model.is_variant_supported_for_task(t, variant_name):
-                raise InvalidRequestError(
+                raise UnsupportedCapabilityError(
                     message=f"Variant '{variant_name}' is not supported for task '{t}' by model '{req.model}'.",
                     details={
                         "model": req.model,
@@ -216,6 +264,7 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
                     message=f"Invalid steps '{steps_val}' for turbo variant (must be an integer between 1 and 25).",
                     details={"model": req.model, "variant": variant_name, "steps": steps_val, "error_code": "INVALID_INPUT"},
                 )
+
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, dependencies=[Depends(verify_bearer_token)])

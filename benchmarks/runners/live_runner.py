@@ -30,9 +30,19 @@ import uuid
 import yaml
 
 # Pre-configure environment for in-memory Factory Lite operation before importing app
-BENCHMARK_API_KEY = "sk-factory-lite-benchmark-key-2026"
+BENCHMARK_API_KEY = os.environ.get("FACTORY_API_KEY")
+if not BENCHMARK_API_KEY:
+    try:
+        from kaggle_secrets import UserSecretsClient
+        BENCHMARK_API_KEY = UserSecretsClient().get_secret("FACTORY_API_KEY")
+    except Exception:
+        pass
+if not BENCHMARK_API_KEY:
+    import secrets
+    BENCHMARK_API_KEY = f"sk-benchmark-{secrets.token_urlsafe(24)}"
 os.environ["FACTORY_API_KEY"] = BENCHMARK_API_KEY
 os.environ["ENVIRONMENT"] = "test"
+
 os.environ["FACTORY_ENV"] = "test"
 os.environ["STORAGE_BACKEND"] = "local"
 os.environ["FACTORY_DB_BACKEND"] = "memory"

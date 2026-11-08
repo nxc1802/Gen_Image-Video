@@ -16,7 +16,11 @@ weights:
 hardware:
   min_vram_gb: 14.0
   preferred_gpu: t4
+  preferred_gpu_index: 1
+  quantization_format: "4bit"
+  offload_ram_gb: 0.0
   allocation_policy: single_gpu
+
 
 capabilities:
   text_to_video: true
