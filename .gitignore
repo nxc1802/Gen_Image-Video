@@ -26,7 +26,6 @@ Thumbs.db
 # Runtime & Generated Outputs
 .agents/
 .factory_storage/
-legacy/v3/artifacts/
 test_outputs/
 benchmark_outputs/
 public_url.txt
@@ -34,7 +33,6 @@ current_url.txt
 *.active_colab_account*.txt
 *.mp4
 *.wav
-!legacy/v3/all-in-one/audio/default_speaker.wav
 *.png
 *.jpg
 *.jpeg

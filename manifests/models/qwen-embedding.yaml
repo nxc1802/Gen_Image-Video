@@ -31,7 +31,7 @@ coverage_percent: 66.67
 missing_capabilities:
   - multimodal_embedding
 validation_status: pending_live
-validation_notes: "Pre-flight contract simulation passed for all 5 gates (unit L2 norm tolerance verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 1) per LIVE_VALIDATION.md Section 10."
+validation_notes: "Pre-flight contract simulation passed for all 5 gates (unit L2 norm tolerance verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 1) per BENCHMARK.md."
 
 limits:
   max_context_tokens: 8192

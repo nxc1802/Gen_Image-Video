@@ -39,7 +39,6 @@ factory-control-api = { workspace = true }
 target-version = "py311"
 line-length = 100
 exclude = [
-    "legacy",
     ".git",
     "__pycache__",
     "build",
@@ -66,7 +65,6 @@ pythonpath = [
     "packages/client-sdk/python/src",
 ]
 norecursedirs = [
-    "legacy",
     "node_modules",
     ".git",
     "__pycache__",
