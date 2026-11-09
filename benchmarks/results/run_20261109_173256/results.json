@@ -1,0 +1,4370 @@
+{
+  "run_id": "run_20261109_173256",
+  "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+  "timestamp": "2026-11-09T10:33:08Z",
+  "mode": "smoke",
+  "hardware": {
+    "cuda_available": false,
+    "gpu_count": 0,
+    "gpu_names": [],
+    "nvml_available": false,
+    "max_allocatable_vram_mb": 14540.0
+  },
+  "summary": {
+    "total_cases": 91,
+    "pass_rate_percent": 0.0,
+    "inference_metrics": {
+      "total": 82,
+      "pass": 0,
+      "pass_rate_percent": 0.0,
+      "backend_unavailable": 82,
+      "hardware_blocked": 0,
+      "failed": 0
+    },
+    "contract_metrics": {
+      "total": 9,
+      "pass": 9,
+      "failed": 0,
+      "pass_rate_percent": 100.0
+    },
+    "status_counts": {
+      "PASS": 0,
+      "INFERENCE_PASS": 0,
+      "CONTRACT_PASS": 9,
+      "FAIL": 0,
+      "CONTRACT_FAIL": 0,
+      "ERROR": 0,
+      "HARDWARE_BLOCKED": 0,
+      "BACKEND_UNAVAILABLE": 82,
+      "NOT_IMPLEMENTED": 0,
+      "NOT_RUN": 0
+    },
+    "model_stats": {
+      "qwen-text": {
+        "total": 6,
+        "inference_total": 5,
+        "inference_pass": 0,
+        "contract_total": 1,
+        "contract_pass": 1,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 5,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "qwen-vlm": {
+        "total": 5,
+        "inference_total": 5,
+        "inference_pass": 0,
+        "contract_total": 0,
+        "contract_pass": 0,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 5,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "qwen-decision": {
+        "total": 3,
+        "inference_total": 3,
+        "inference_pass": 0,
+        "contract_total": 0,
+        "contract_pass": 0,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 3,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "qwen-embedding": {
+        "total": 3,
+        "inference_total": 2,
+        "inference_pass": 0,
+        "contract_total": 1,
+        "contract_pass": 1,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 2,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "qwen-speech": {
+        "total": 4,
+        "inference_total": 3,
+        "inference_pass": 0,
+        "contract_total": 1,
+        "contract_pass": 1,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 3,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "qwen-image-2.1": {
+        "total": 13,
+        "inference_total": 12,
+        "inference_pass": 0,
+        "contract_total": 1,
+        "contract_pass": 1,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 12,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "wan-2.2": {
+        "total": 5,
+        "inference_total": 4,
+        "inference_pass": 0,
+        "contract_total": 1,
+        "contract_pass": 1,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 4,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "minimax-h3": {
+        "total": 6,
+        "inference_total": 5,
+        "inference_pass": 0,
+        "contract_total": 1,
+        "contract_pass": 1,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 5,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "ace-step-1.5": {
+        "total": 35,
+        "inference_total": 33,
+        "inference_pass": 0,
+        "contract_total": 2,
+        "contract_pass": 2,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 33,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "yue2": {
+        "total": 7,
+        "inference_total": 6,
+        "inference_pass": 0,
+        "contract_total": 1,
+        "contract_pass": 1,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 6,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      },
+      "enhancement-suite-v1": {
+        "total": 4,
+        "inference_total": 4,
+        "inference_pass": 0,
+        "contract_total": 0,
+        "contract_pass": 0,
+        "pass": 0,
+        "fail": 0,
+        "blocked": 0,
+        "backend_unavailable": 4,
+        "error": 0,
+        "latencies_ms": [],
+        "peak_vram_gpu0": 0.0,
+        "peak_vram_gpu1": 0.0
+      }
+    }
+  },
+  "inference_metrics": {
+    "total": 82,
+    "pass": 0,
+    "pass_rate_percent": 0.0,
+    "backend_unavailable": 82,
+    "hardware_blocked": 0,
+    "failed": 0
+  },
+  "contract_metrics": {
+    "total": 9,
+    "pass": 9,
+    "failed": 0,
+    "pass_rate_percent": 100.0
+  },
+  "model_stats": {
+    "qwen-text": {
+      "total": 6,
+      "inference_total": 5,
+      "inference_pass": 0,
+      "contract_total": 1,
+      "contract_pass": 1,
+      "pass": 0,
+      "fail": 0,
+      "blocked": 0,
+      "backend_unavailable": 5,
+      "error": 0,
+      "latencies_ms": [],
+      "peak_vram_gpu0": 0.0,
+      "peak_vram_gpu1": 0.0
+    },
+    "qwen-vlm": {
+      "total": 5,
+      "inference_total": 5,
+      "inference_pass": 0,
+      "contract_total": 0,
+      "contract_pass": 0,
+      "pass": 0,
+      "fail": 0,
+      "blocked": 0,
+      "backend_unavailable": 5,
+      "error": 0,
+      "latencies_ms": [],
+      "peak_vram_gpu0": 0.0,
+      "peak_vram_gpu1": 0.0
+    },
+    "qwen-decision": {
+      "total": 3,
+      "inference_total": 3,
+      "inference_pass": 0,
+      "contract_total": 0,
+      "contract_pass": 0,
+      "pass": 0,
+      "fail": 0,
+      "blocked": 0,
+      "backend_unavailable": 3,
+      "error": 0,
+      "latencies_ms": [],
+      "peak_vram_gpu0": 0.0,
+      "peak_vram_gpu1": 0.0
+    },
+    "qwen-embedding": {
+      "total": 3,
+      "inference_total": 2,
+      "inference_pass": 0,
+      "contract_total": 1,
+      "contract_pass": 1,
+      "pass": 0,
+      "fail": 0,
+      "blocked": 0,
+      "backend_unavailable": 2,
+      "error": 0,
+      "latencies_ms": [],
+      "peak_vram_gpu0": 0.0,
+      "peak_vram_gpu1": 0.0
+    },
+    "qwen-speech": {
+      "total": 4,
+      "inference_total": 3,
+      "inference_pass": 0,
+      "contract_total": 1,
+      "contract_pass": 1,
+      "pass": 0,
+      "fail": 0,
+      "blocked": 0,
+      "backend_unavailable": 3,
+      "error": 0,
+      "latencies_ms": [],
+      "peak_vram_gpu0": 0.0,
+      "peak_vram_gpu1": 0.0
+    },
+    "qwen-image-2.1": {
+      "total": 13,
+      "inference_total": 12,
+      "inference_pass": 0,
+      "contract_total": 1,
+      "contract_pass": 1,
+      "pass": 0,
+      "fail": 0,
+      "blocked": 0,
+      "backend_unavailable": 12,
+      "error": 0,
+      "latencies_ms": [],
+      "peak_vram_gpu0": 0.0,
+      "peak_vram_gpu1": 0.0
+    },
+    "wan-2.2": {
+      "total": 5,
+      "inference_total": 4,
+      "inference_pass": 0,
+      "contract_total": 1,
+      "contract_pass": 1,
+      "pass": 0,
+      "fail": 0,
+      "blocked": 0,
+      "backend_unavailable": 4,
+      "error": 0,
+      "latencies_ms": [],
+      "peak_vram_gpu0": 0.0,
+      "peak_vram_gpu1": 0.0
+    },
+    "minimax-h3": {
+      "total": 6,
+      "inference_total": 5,
+      "inference_pass": 0,
+      "contract_total": 1,
+      "contract_pass": 1,
+      "pass": 0,
+      "fail": 0,
+      "blocked": 0,
+      "backend_unavailable": 5,
+      "error": 0,
+      "latencies_ms": [],
+      "peak_vram_gpu0": 0.0,
+      "peak_vram_gpu1": 0.0
+    },
+    "ace-step-1.5": {
+      "total": 35,
+      "inference_total": 33,
+      "inference_pass": 0,
+      "contract_total": 2,
+      "contract_pass": 2,
+      "pass": 0,
+      "fail": 0,
+      "blocked": 0,
+      "backend_unavailable": 33,
+      "error": 0,
+      "latencies_ms": [],
+      "peak_vram_gpu0": 0.0,
+      "peak_vram_gpu1": 0.0
+    },
+    "yue2": {
+      "total": 7,
+      "inference_total": 6,
+      "inference_pass": 0,
+      "contract_total": 1,
+      "contract_pass": 1,
+      "pass": 0,
+      "fail": 0,
+      "blocked": 0,
+      "backend_unavailable": 6,
+      "error": 0,
+      "latencies_ms": [],
+      "peak_vram_gpu0": 0.0,
+      "peak_vram_gpu1": 0.0
+    },
+    "enhancement-suite-v1": {
+      "total": 4,
+      "inference_total": 4,
+      "inference_pass": 0,
+      "contract_total": 0,
+      "contract_pass": 0,
+      "pass": 0,
+      "fail": 0,
+      "blocked": 0,
+      "backend_unavailable": 4,
+      "error": 0,
+      "latencies_ms": [],
+      "peak_vram_gpu0": 0.0,
+      "peak_vram_gpu1": 0.0
+    }
+  },
+  "cases": [
+    {
+      "case_id": "BM-TXT-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "chat_completion",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 136.57,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-9b0edace-0ddb-491f-9dd3-f27d89a55a9c' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-text' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-TXT-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "responses_api",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 145.36,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-b0aa6ebb-6809-4d52-86ae-347f48997330' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-text' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-TXT-03",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "structured_output",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 149.69,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-4e064458-c585-4785-be34-d4c22ac037d7' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-text' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-TXT-04",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "tool_calling",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 149.26,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-dd380f70-379b-4c9d-a2ef-bbd9d07bfa89' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-text' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-TXT-05",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "streaming",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 146.93,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-9d54a489-8997-4eba-a6af-fc3783ae5f71' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-text' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-VLM-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-vlm",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "image_chat",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 134.83,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-60d3d11a-15e0-485d-8bf2-e020f8a5961a' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-vlm' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-VLM-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-vlm",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "responses_api",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 163.45,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-dc33e31b-bb55-4606-81b6-80c0f7eb08c7' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-vlm' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-VLM-03",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-vlm",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_chat",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 136.23,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-c6f84d1d-be6c-4fa1-af03-eb1e8c6c3a7b' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-vlm' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-VLM-04",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-vlm",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "visual_grounding",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 310.68,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-870828df-e5e9-4ddf-981c-787fefd3a247' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-vlm' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-VLM-05",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-vlm",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "document_qa",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 149.3,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-24014d60-7a09-47f4-8f87-e8d86f2ba7f1' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-vlm' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-DEC-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-decision",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "predicate_evaluation",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 184.49,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-f8c24724-6f8c-4937-a815-f8b7e1a75dfb' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-decision' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-DEC-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-decision",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "choice_routing",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 184.51,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-02d20a95-804b-48e5-961c-967c718c9910' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-decision' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-DEC-03",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-decision",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "score_ranking",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 254.92,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-9dbc5d8d-ad6e-463a-9f83-3517628b91ee' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-decision' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-EMB-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-embedding",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_embedding",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 160.65,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-d0bad152-cd26-4c9d-a34c-f2ecb68c145a' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-embedding' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-EMB-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-embedding",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "reranking",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 143.25,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-67830fd0-782e-486f-a390-ff45d2eb4fcc' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-embedding' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-SPH-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-speech",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "speech_to_text",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 132.84,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-122886fd-70db-4bc8-858b-148aba351221' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-speech' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-SPH-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-speech",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_speech",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 141.61,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-38811cb1-a734-44c9-9e76-e80a3b0f3736' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-speech' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-SPH-03",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-speech",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "voice_cloning",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 143.37,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-b7a5ecc3-c8d6-4bc5-b18c-d666580cc0b7' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-speech' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_image",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 131.22,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-54604574-e7b9-448a-8d00-02df08a1fc6a' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "text_to_image",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 141.46,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-ab212f1b-700d-4f59-9a2c-711c2ebf1297' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-03",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "image_to_image",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 145.94,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-96299eeb-8f69-425c-939b-44c8636ffa4d' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-04",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "image_to_image",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 137.87,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-e4e96044-b81f-4f81-bae0-1b2555ae0d23' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-05",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "inpaint",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 145.46,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-5700c349-113f-4570-9387-a32827c4e40a' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-06",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "outpaint",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 140.78,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-113c4b37-b44e-4d1a-b4c8-3d9b86360699' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-07",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "instruction_edit",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 142.27,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-f2407249-6ac7-4d8f-93c7-527129ab7405' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-08",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "reference_image",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 146.89,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-41cbd579-cebe-4464-8a7e-e4e599c5f43f' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-09",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "multi_reference",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 133.31,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-b805bea4-408e-4f7c-93c1-94b84e252790' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-10",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "controlnet",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 136.3,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-3b6dc45c-8234-420e-bc0c-e365b71dccd7' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-11",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "control_pose",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 142.63,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-74d35eb1-e18c-4827-b0f0-61f98c24de75' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-IMG-12",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "control_depth",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 132.23,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-f177daf2-7cb5-4650-9e1f-438628c055af' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
+      }
+    },
+    {
+      "case_id": "BM-WAN-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "wan-2.2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_video",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 140.42,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-75bf741b-bc5c-4852-89aa-6cbc9c9f6159' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'wan-2.2' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-WAN-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "wan-2.2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "image_to_video",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 143.8,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-af02b080-03c6-4ba0-85d3-fa3ffe786d75' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'wan-2.2' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-WAN-03",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "wan-2.2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "first_last_frame_to_video",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 138.87,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-9b800fe0-93ce-42a5-8b4c-c4d97359f1bb' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'wan-2.2' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-WAN-04",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "wan-2.2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_extension",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 138.41,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-29f15590-a7f0-4e53-b432-3c86248d2d1a' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'wan-2.2' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-MMX-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_video",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 138.41,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-e44cff04-a351-4dc3-9880-33f672783bc1' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'minimax-h3' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-MMX-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "image_to_video",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 149.9,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-a578c3f5-e543-48f4-85b5-2bef74933ecc' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'minimax-h3' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-MMX-03",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "first_last_frame_to_video",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 144.37,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-14fbcb92-0db2-4430-8e80-24d766b3e7a0' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'minimax-h3' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-MMX-04",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_with_audio",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 142.66,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-9c77127c-46d6-48ef-abe2-9c0cdb25f4b1' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'minimax-h3' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-MMX-05",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "reference_conditioning",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 142.75,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-f9637921-65c9-413d-b2fc-0c2fecb54ea7' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'minimax-h3' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 143.96,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-a3d66b0b-7167-41c9-99fb-1d26f0dd3b18' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 135.0,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-914b2268-1cff-494f-9494-9a860685e877' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-03",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 148.62,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-3bc2f6ce-28f1-4aca-88c1-6aeacd6c8c7b' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-04",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 143.52,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-f5d50045-4c6c-43c6-b823-a2d2281baac3' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-05",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 139.62,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-6f32c3ae-c138-4bf1-a8be-72ec69c1a779' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-06",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 174.08,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-9f6c5db0-b582-4efb-87bd-97629f510824' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-07",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 159.37,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-0296d4f0-7135-46c0-bcda-dc86d797dbac' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-08",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 157.65,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-60359b51-0c05-43af-bd55-a001fbbf4fa4' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-09",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 157.09,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-875b399e-a3e7-45bc-b76c-f1be59d44561' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-10",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 152.53,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-7f0a3b72-61a6-4955-bc0a-5a3f9f25578d' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-11",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "reference_audio",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 152.37,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-c1891f6c-ea1e-4211-ae08-20912a1b8626' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-12",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "reference_audio",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 162.29,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-0c0e32a5-8e43-4efc-b292-abd410fed878' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-13",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "reference_audio",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 147.52,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-ad73f940-baaa-46e9-92ce-43e98f723f40' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-14",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "reference_audio",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 140.03,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-fa9870d1-3244-44ea-9348-dcadd4496cd5' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-15",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "reference_audio",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 147.03,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-1ec26a82-a02b-4e25-8623-421d5f842d8f' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-16",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "cover",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 133.2,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-2bdbb9ea-6b89-4bb6-a477-f5c8607d5ace' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-17",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "cover",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 144.21,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-9a7f95e6-9f02-41cd-99b8-c8361c157516' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-18",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "cover",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 144.53,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-95be2e5e-c05d-45f2-9584-8762d0f6f88c' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-19",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "cover",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 131.15,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-148d9ac7-ecb8-4cca-8cbf-6a7ecc3bc5bb' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-20",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "cover",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 156.09,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-423a10ca-9188-4577-b777-e1a056e9b82a' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-21",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "repaint",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 168.66,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-419e9b9c-5418-47b3-b7d5-7fdb367c7413' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-22",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "repaint",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 142.9,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-1e6c22e9-8e54-4466-83a7-6e8aa26ffe5d' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-23",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "repaint",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 149.37,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-32785778-7738-4a7d-9d00-6b48f1e41f31' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-24",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "repaint",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 139.21,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-9673c6a3-fed1-4793-97e4-ae89917eb219' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-25",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "repaint",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 132.22,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-a5231e36-aae2-4dd8-b745-4adc908fa0a4' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-26",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "extract",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 142.3,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-f7d25b40-b6e9-4a5c-986e-ad35058a78da' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-27",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "extract",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 134.77,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-f31eab64-7768-4f62-848b-211dd2a27b27' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-28",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "lego",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 137.8,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-f525c222-72b5-4b51-8d90-18a42b2464c9' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-29",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "lego",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 142.54,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-2d9205d7-002f-45d3-af48-a152dea1d861' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-30",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "complete",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 144.06,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-ab709f09-6005-4716-81ab-d78e6eca27f1' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-31",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "complete",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 144.56,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-a8317037-3778-4377-96a8-24f3f899a29c' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-32",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "base",
+      "task": "music_extend",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 139.02,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-1751bbb9-cdb3-4523-9b2c-d24dcda9548e' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ACE-33",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "xl_base",
+      "task": "music_extend",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 138.54,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-c125d2a0-e29e-4e24-990c-b5dca9131f42' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 138.31,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-f63fcf95-9288-4006-89ad-6a55bd229e79' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'yue2' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "lyrics_to_music",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 148.3,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-7efeba02-a83c-4558-9d0e-7c3992a1f24b' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'yue2' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-03",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "symbolic_score",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 142.21,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-31b0846f-516b-4b81-b0ec-8fe38ac99cc6' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'yue2' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-04",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "custom_score",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 130.44,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-f37851bd-56ba-4e98-90e6-96c6d0aca508' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'yue2' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-05",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "score_edit",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 143.93,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-1d8874cd-e442-4d0d-ad2b-b94917855605' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'yue2' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-YUE-06",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "song_variation",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 136.89,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "QUEUE_TIMEOUT",
+        "message": "Job 'job-e2ea903a-e8b3-4426-aa71-c2602dfede9e' not leased by worker after 0.1s in state 'QUEUED'. Backend inference daemon for 'yue2' is not resident on GPU 1."
+      }
+    },
+    {
+      "case_id": "BM-ENH-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "enhancement-suite-v1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "image_super_resolution",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": null,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration."
+      }
+    },
+    {
+      "case_id": "BM-ENH-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "enhancement-suite-v1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_super_resolution",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": null,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration."
+      }
+    },
+    {
+      "case_id": "BM-ENH-03",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "enhancement-suite-v1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "frame_interpolation",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": null,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration."
+      }
+    },
+    {
+      "case_id": "BM-ENH-04",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "enhancement-suite-v1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "audio_enhancement",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "BACKEND_UNAVAILABLE",
+      "contract_pass": null,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": null,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": null,
+        "nvml_trace_samples": 0
+      },
+      "error": {
+        "code": "BACKEND_UNAVAILABLE",
+        "message": "Model engine or weights not ready/installed for 'enhancement-suite-v1' per manifest declaration."
+      }
+    },
+    {
+      "case_id": "BM-NEG-01",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-text",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_video",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "PASS",
+      "contract_pass": true,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 70.41,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'text_to_video' (canonical: 'text_to_video') is not supported by model 'qwen-text'.\",\"request_id\":\"req-6e415771-45f5-4c06-bce9-06602c906d26\"",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-02",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-embedding",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "multimodal_embedding",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "PASS",
+      "contract_pass": true,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 57.68,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'multimodal_embedding' (canonical: 'multimodal_embedding') is not supported by model 'qwen-embedding'.\",\"request_id\":\"req-946724da-020f-4618",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-03",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-speech",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "word_timestamps",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "PASS",
+      "contract_pass": true,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 76.24,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'word_timestamps' (canonical: 'word_timestamps') is not supported by model 'qwen-speech'.\",\"request_id\":\"req-0f5b80f5-2d8b-49f9-ac7a-8aab573",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-04",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "qwen-image-2.1",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "text_to_image",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "PASS",
+      "contract_pass": true,
+      "inference_pass": false,
+      "target_gpu": 0,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 43.92,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400 [INVALID_REQUEST]: {\"error\":{\"code\":\"INVALID_REQUEST\",\"message\":\"Requested width 4096 exceeds maximum allowed width 2048 for model 'qwen-image-2.1'.\",\"request_id\":\"req-b2c3522b-f045-4c8f-83b0-6c9247e77741\",\"details\":{\"w",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-05",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "wan-2.2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_with_audio",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "PASS",
+      "contract_pass": true,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 52.85,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'video_with_audio' (canonical: 'video_with_audio') is not supported by model 'wan-2.2'.\",\"request_id\":\"req-c955cf74-7bd6-4689-bad3-dd517f955",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-06",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "minimax-h3",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "video_extension",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "PASS",
+      "contract_pass": true,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 40.53,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'video_extension' (canonical: 'video_extension') is not supported by model 'minimax-h3'.\",\"request_id\":\"req-4af4c55d-3fee-48ba-b1b2-27d70ff8",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-07",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "turbo",
+      "task": "extract",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "PASS",
+      "contract_pass": true,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 34.79,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400 [UNSUPPORTED_CAPABILITY]: {\"error\":{\"code\":\"UNSUPPORTED_CAPABILITY\",\"message\":\"Variant 'turbo' is not supported for task 'extract' by model 'ace-step-1.5'.\",\"request_id\":\"req-5fd7d515-b8d1-4aed-af40-c1bd5bde6fbe\",\"details\":{\"m",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-08",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "ace-step-1.5",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "sft",
+      "task": "music_extend",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "PASS",
+      "contract_pass": true,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 32.64,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400 [UNSUPPORTED_CAPABILITY]: {\"error\":{\"code\":\"UNSUPPORTED_CAPABILITY\",\"message\":\"Variant 'sft' is not supported for task 'music_extend' by model 'ace-step-1.5'.\",\"request_id\":\"req-f082c9ba-1077-460c-95bb-26a7a5f44dce\",\"details\":",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BM-NEG-09",
+      "run_id": "run_20261109_173256",
+      "git_commit": "6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea",
+      "model_id": "yue2",
+      "checkpoint": {
+        "repo": null,
+        "revision": null,
+        "hash": null
+      },
+      "variant": "standard",
+      "task": "cover_edit",
+      "backend": "native",
+      "mode": "smoke",
+      "status": "PASS",
+      "contract_pass": true,
+      "inference_pass": false,
+      "target_gpu": 1,
+      "input_reference": null,
+      "load_time_ms": null,
+      "inference_time_ms": null,
+      "e2e_latency_ms": 31.86,
+      "peak_vram_mb": {
+        "gpu_0": null,
+        "gpu_1": null
+      },
+      "output": {
+        "path": null,
+        "bytes": 0,
+        "mime": null,
+        "sha256": null,
+        "dimensions": null,
+        "duration_seconds": null,
+        "validated": false
+      },
+      "evidence": {
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'cover_edit' (canonical: 'cover_edit') is not supported by model 'yue2'.\",\"request_id\":\"req-f6b921e7-2fad-4b5f-85eb-fbdb855d4463\",\"details\":",
+        "nvml_trace_samples": 0
+      },
+      "error": null
+    }
+  ]
+}

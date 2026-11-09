@@ -40,6 +40,7 @@ MP3_SYNC_WORDS = (b"\xff\xfb", b"\xff\xf3", b"\xff\xfa", b"\xff\xf2")
 @dataclass
 class ValidationResult:
     valid: bool
+    error_code: Optional[str] = None
     mime_type: Optional[str] = None
     format: Optional[str] = None
     size_bytes: int = 0
@@ -110,30 +111,49 @@ def detect_binary_container(data: bytes) -> Tuple[Optional[str], Optional[str]]:
 def extract_image_metadata(data: bytes, format_hint: Optional[str] = None) -> Tuple[Optional[Tuple[int, int]], Dict[str, Any]]:
     """
     Decodes image and extracts dimensions and metadata using Pillow.
-    Fully verifies chunk structure and container decode integrity.
-    Rejects truncated headers, invalid chunks, or corrupted image streams.
+    Pass 1: img.verify() checks container markers and chunk structure.
+    Pass 2: Reopen stream and call img.load() to force full decompression of all raster scanlines.
+    Detects truncated JPEGs and corrupted WebP bitstreams.
     """
+    meta: Dict[str, Any] = {}
     try:
         from PIL import Image
+        # Pass 1: Container verify
         bio = io.BytesIO(data)
         with Image.open(bio) as img:
             img.verify()
+
+        # Pass 2: Full pixel raster decompression
         with Image.open(io.BytesIO(data)) as img:
             fmt = img.format
             if format_hint and fmt and fmt.upper() != format_hint.upper():
-                return None, {}
+                meta["error_code"] = "IMAGE_FORMAT_MISMATCH"
+                return None, meta
+
+            # Force complete decompression of all raster scanlines
+            img.load()
+
             w, h = img.size
             if w <= 0 or h <= 0:
-                return None, {}
-            return (w, h), {
+                meta["error_code"] = "IMAGE_DIMENSION_OUT_OF_BOUNDS"
+                return None, meta
+
+            meta.update({
                 "format": fmt,
                 "mode": img.mode,
                 "width": w,
                 "height": h,
-            }
+            })
+            return (w, h), meta
+    except OSError as e:
+        err_msg = str(e).lower()
+        if "truncated" in err_msg or "failed to read next frame" in err_msg:
+            meta["error_code"] = "IMAGE_TRUNCATED"
+        else:
+            meta["error_code"] = "IMAGE_DECODE_FAILED"
     except Exception:
-        pass
-    return None, {}
+        meta["error_code"] = "IMAGE_DECODE_FAILED"
+    return None, meta
 
 
 def extract_png_metadata(data: bytes) -> Tuple[Optional[Tuple[int, int]], Dict[str, Any]]:
@@ -142,7 +162,7 @@ def extract_png_metadata(data: bytes) -> Tuple[Optional[Tuple[int, int]], Dict[s
     Extracts dimensions, bit depth, and color type.
     """
     if len(data) < 29 or not data.startswith(PNG_MAGIC):
-        return None, {}
+        return None, {"error_code": "IMAGE_CORRUPTED"}
 
     # Strict decodability verification via Pillow
     dims, meta = extract_image_metadata(data, format_hint="PNG")
@@ -151,7 +171,7 @@ def extract_png_metadata(data: bytes) -> Tuple[Optional[Tuple[int, int]], Dict[s
         try:
             import PIL  # noqa: F401
             # If PIL is installed and failed verification, the image is corrupt
-            return None, {}
+            return None, meta
         except ImportError:
             pass
 
@@ -160,7 +180,7 @@ def extract_png_metadata(data: bytes) -> Tuple[Optional[Tuple[int, int]], Dict[s
             if ihdr_type == b"IHDR":
                 width, height = struct.unpack(">II", data[16:24])
                 if width <= 0 or height <= 0:
-                    return None, {}
+                    return None, {"error_code": "IMAGE_DIMENSION_OUT_OF_BOUNDS"}
                 bit_depth, color_type, compression, filter_method, interlace = struct.unpack(
                     ">BBBBB", data[24:29]
                 )
@@ -171,7 +191,7 @@ def extract_png_metadata(data: bytes) -> Tuple[Optional[Tuple[int, int]], Dict[s
                     "interlace": interlace,
                 }
         except Exception:
-            return None, {}
+            return None, {"error_code": "IMAGE_CORRUPTED"}
 
     # Augment with PNG-specific chunk attributes if available
     try:
@@ -192,8 +212,12 @@ def extract_png_metadata(data: bytes) -> Tuple[Optional[Tuple[int, int]], Dict[s
     return dims, meta
 
 
-def extract_wav_metadata(data: bytes) -> Tuple[Optional[float], Dict[str, Any]]:
-    """Parses WAV audio using stdlib wave to extract duration and format details."""
+def extract_wav_metadata(data: bytes, check_silence: bool = False) -> Tuple[Optional[float], Dict[str, Any]]:
+    """
+    Parses WAV audio using stdlib wave to extract duration, format details,
+    and detects digital silence via PCM sample RMS amplitude.
+    """
+    meta: Dict[str, Any] = {}
     try:
         with wave.open(io.BytesIO(data), "rb") as wf:
             channels = wf.getnchannels()
@@ -201,23 +225,61 @@ def extract_wav_metadata(data: bytes) -> Tuple[Optional[float], Dict[str, Any]]:
             framerate = wf.getframerate()
             n_frames = wf.getnframes()
             if framerate <= 0 or channels <= 0 or sample_width <= 0:
-                return None, {}
-            duration = n_frames / float(framerate)
-            return round(duration, 3), {
+                meta["error_code"] = "AUDIO_CONTAINER_CORRUPT"
+                return None, meta
+            if n_frames == 0:
+                meta["error_code"] = "AUDIO_ZERO_SAMPLES"
+                return None, meta
+
+            duration = round(n_frames / float(framerate), 3)
+
+            # Read sample frames to detect digital silence
+            raw_frames = wf.readframes(n_frames)
+            rms = 0.0
+            max_amp = 0.0
+            if raw_frames:
+                total_samples = n_frames * channels
+                if sample_width == 2:
+                    sample_count = min(total_samples, len(raw_frames) // 2)
+                    samples = struct.unpack(f"<{sample_count}h", raw_frames[:sample_count * 2])
+                    max_amp = max(abs(s) for s in samples) / 32768.0
+                    sum_sq = sum(float(s * s) for s in samples)
+                    rms = math.sqrt(sum_sq / sample_count) / 32768.0
+                elif sample_width == 1:
+                    sample_count = min(total_samples, len(raw_frames))
+                    samples = [(b - 128) / 128.0 for b in raw_frames[:sample_count]]
+                    max_amp = max(abs(s) for s in samples)
+                    sum_sq = sum(s * s for s in samples)
+                    rms = math.sqrt(sum_sq / sample_count)
+                elif sample_width in (3, 4):
+                    max_amp = 1.0 if any(b != 0 for b in raw_frames) else 0.0
+                    rms = max_amp
+
+            meta.update({
                 "channels": channels,
                 "sample_width_bytes": sample_width,
                 "framerate_hz": framerate,
                 "n_frames": n_frames,
-            }
+                "rms_amplitude": round(rms, 6),
+                "peak_amplitude": round(max_amp, 6),
+            })
+
+            if rms < 1e-4 and max_amp == 0.0:
+                meta["error_code"] = "AUDIO_SILENT"
+                meta["is_silent"] = True
+                if check_silence:
+                    return None, meta
+
+            return duration, meta
     except Exception:
-        pass
-    return None, {}
+        meta["error_code"] = "AUDIO_CONTAINER_CORRUPT"
+    return None, meta
 
 
-def extract_mp4_metadata(data: bytes) -> Tuple[Optional[float], Optional[Tuple[int, int]], Dict[str, Any]]:
+def extract_mp4_metadata(data: bytes, require_mdat: bool = False) -> Tuple[Optional[float], Optional[Tuple[int, int]], Dict[str, Any]]:
     """
-    Parses MP4 / ISO BMFF container to locate ftyp brand, mvhd duration,
-    and tkhd track dimensions without third-party dependencies.
+    Parses MP4 / ISO BMFF container to validate box offsets, atom containment,
+    ftyp brand, mvhd duration, tkhd track dimensions, and mdat media payload.
     """
     duration: Optional[float] = None
     dimensions: Optional[Tuple[int, int]] = None
@@ -226,6 +288,10 @@ def extract_mp4_metadata(data: bytes) -> Tuple[Optional[float], Optional[Tuple[i
     try:
         offset = 0
         total_len = len(data)
+        found_ftyp = False
+        found_moov = False
+        found_mdat = False
+        mdat_size = 0
 
         while offset + 8 <= total_len:
             box_size = struct.unpack(">I", data[offset:offset+4])[0]
@@ -234,7 +300,8 @@ def extract_mp4_metadata(data: bytes) -> Tuple[Optional[float], Optional[Tuple[i
             if box_size == 1:
                 # 64-bit box size
                 if offset + 16 > total_len:
-                    break
+                    meta["error_code"] = "VIDEO_CONTAINER_CORRUPT"
+                    return None, None, meta
                 box_size = struct.unpack(">Q", data[offset+8:offset+16])[0]
                 payload_offset = offset + 16
             elif box_size == 0:
@@ -244,13 +311,26 @@ def extract_mp4_metadata(data: bytes) -> Tuple[Optional[float], Optional[Tuple[i
                 payload_offset = offset + 8
 
             if box_size < 8:
-                break
+                meta["error_code"] = "VIDEO_CONTAINER_CORRUPT"
+                return None, None, meta
+
+            # Atom containment check: box boundary must stay within total_len
+            if offset + box_size > total_len:
+                meta["error_code"] = "VIDEO_CONTAINER_CORRUPT"
+                return None, None, meta
 
             if box_type == b"ftyp":
+                found_ftyp = True
                 major_brand = data[payload_offset:payload_offset+4].decode("ascii", errors="ignore")
                 meta["major_brand"] = major_brand
 
+            elif box_type == b"mdat":
+                found_mdat = True
+                mdat_size = box_size - (payload_offset - offset)
+                meta["mdat_size"] = mdat_size
+
             elif box_type == b"moov":
+                found_moov = True
                 # Recurse into moov container
                 moov_end = min(offset + box_size, total_len)
                 sub_offset = payload_offset
@@ -297,8 +377,40 @@ def extract_mp4_metadata(data: bytes) -> Tuple[Optional[float], Optional[Tuple[i
                     sub_offset += sub_size
 
             offset += box_size
+
+        if not found_ftyp or not found_moov:
+            meta["error_code"] = "VIDEO_CONTAINER_CORRUPT"
+            return None, None, meta
+
+        meta["has_mdat"] = found_mdat
+        if not found_mdat or mdat_size <= 0:
+            meta["error_code"] = "VIDEO_ZERO_FRAMES"
+            if require_mdat:
+                return None, None, meta
+
+        # Optional deep decode check via cv2 or av if available
+        try:
+            import cv2
+            if hasattr(cv2, "setLogLevel"):
+                cv2.setLogLevel(0)
+            import tempfile
+            with tempfile.NamedTemporaryFile(suffix=".mp4") as tmp:
+                tmp.write(data)
+                tmp.flush()
+                cap = cv2.VideoCapture(tmp.name)
+                if cap.isOpened():
+                    fc = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                    meta["frame_count"] = fc
+                    ret, frame = cap.read()
+                    cap.release()
+                    if not ret or frame is None or fc <= 0:
+                        meta["decode_error"] = "Failed to decode frame via cv2"
+        except (ImportError, Exception):
+            pass
+
     except Exception:
-        pass
+        meta["error_code"] = "VIDEO_CONTAINER_CORRUPT"
+        return None, None, meta
 
     return duration, dimensions, meta
 
@@ -340,30 +452,33 @@ def validate_embedding_vector(
 ) -> Tuple[bool, Optional[str], Dict[str, Any]]:
     """Validates embedding float array, dimensions, and L2 norm."""
     if not isinstance(vector, (list, tuple)):
-        return False, "Embedding vector must be a list or tuple of floats", {}
+        return False, "Embedding vector must be a list or tuple of floats", {"error_code": "EMBEDDING_INVALID_TYPE"}
 
     dim = len(vector)
     if dim == 0:
-        return False, "Embedding vector is empty (0 dimensions)", {}
-
-    if expected_dim is not None and dim != expected_dim:
-        return False, f"Embedding dimension mismatch: expected {expected_dim}, got {dim}", {"dim": dim}
+        return False, "Embedding vector is empty (0 dimensions)", {"dim": dim, "error_code": "EMBEDDING_ZERO_NORM"}
 
     if not all(isinstance(x, (int, float)) and not isinstance(x, bool) for x in vector):
-        return False, "Embedding elements must be numerical floats", {"dim": dim}
+        return False, "Embedding elements must be numerical floats", {"dim": dim, "error_code": "EMBEDDING_NON_NUMERIC"}
+
+    if any(math.isnan(float(x)) or math.isinf(float(x)) for x in vector):
+        return False, "Embedding contains NaN or Inf values", {"dim": dim, "error_code": "EMBEDDING_NAN_OR_INF"}
+
+    if expected_dim is not None and dim != expected_dim:
+        return False, f"Embedding dimension mismatch: expected {expected_dim}, got {dim}", {"dim": dim, "error_code": "EMBEDDING_DIMENSION_MISMATCH"}
 
     # Compute norm
     try:
         l2_sum = sum(float(x) ** 2 for x in vector)
         l2_norm = math.sqrt(l2_sum)
     except (ValueError, TypeError, OverflowError) as e:
-        return False, f"Embedding computation failed: {e}", {"dim": dim}
+        return False, f"Embedding computation failed: {e}", {"dim": dim, "error_code": "EMBEDDING_NAN_OR_INF"}
 
     if math.isnan(l2_norm) or math.isinf(l2_norm):
-        return False, "Embedding contains NaN or Inf values", {"dim": dim}
+        return False, "Embedding contains NaN or Inf values", {"dim": dim, "error_code": "EMBEDDING_NAN_OR_INF"}
 
     if l2_norm == 0.0:
-        return False, "Embedding vector is all zeros (zero L2 norm)", {"dim": dim}
+        return False, "Embedding vector is all zeros (zero L2 norm)", {"dim": dim, "error_code": "EMBEDDING_ZERO_NORM"}
 
     return True, None, {"dim": dim, "l2_norm": round(l2_norm, 5)}
 
@@ -409,12 +524,20 @@ def validate_artifact(
         if not path_obj.exists() or not path_obj.is_file():
             return ValidationResult(
                 valid=False,
+                error_code="FILE_NOT_FOUND",
                 error=f"Artifact file not found: {content}",
             )
         raw_bytes = path_obj.read_bytes()
 
     elif isinstance(content, (bytes, bytearray)):
         raw_bytes = bytes(content)
+        # Attempt to parse as structured JSON if possible
+        stripped = raw_bytes.strip()
+        if (stripped.startswith(b"{") and stripped.endswith(b"}")) or (stripped.startswith(b"[") and stripped.endswith(b"]")):
+            try:
+                structured_data = json.loads(stripped.decode("utf-8"))
+            except Exception:
+                pass
 
     elif isinstance(content, str):
         # Try JSON parsing
@@ -431,10 +554,10 @@ def validate_artifact(
         raw_bytes = json.dumps(content).encode("utf-8")
 
     elif content is None:
-        return ValidationResult(valid=False, error="Artifact content is None")
+        return ValidationResult(valid=False, error_code="ARTIFACT_NULL", error="Artifact content is None")
 
     else:
-        return ValidationResult(valid=False, error=f"Unsupported artifact content type: {type(content).__name__}")
+        return ValidationResult(valid=False, error_code="UNSUPPORTED_CONTENT_TYPE", error=f"Unsupported artifact content type: {type(content).__name__}")
 
     size_bytes = len(raw_bytes) if raw_bytes else 0
     sha256 = compute_sha256(raw_bytes) if raw_bytes else None
@@ -443,6 +566,7 @@ def validate_artifact(
     if size_bytes < min_bytes:
         return ValidationResult(
             valid=False,
+            error_code="ARTIFACT_EMPTY",
             size_bytes=size_bytes,
             sha256=sha256,
             error=f"Artifact size {size_bytes} bytes is below minimum threshold of {min_bytes} bytes",
@@ -459,9 +583,11 @@ def validate_artifact(
     elif detected_mime in ("image/jpeg", "image/webp"):
         dimensions, metadata = extract_image_metadata(raw_bytes)
     elif detected_mime == "audio/wav":
-        duration, metadata = extract_wav_metadata(raw_bytes)
+        check_sil = bool(rules.get("reject_silence") or rules.get("check_silence"))
+        duration, metadata = extract_wav_metadata(raw_bytes, check_silence=check_sil)
     elif detected_mime == "video/mp4":
-        duration, dimensions, metadata = extract_mp4_metadata(raw_bytes)
+        req_mdat = bool(rules.get("require_media_payload") or rules.get("require_mdat") or rules.get("check_frames"))
+        duration, dimensions, metadata = extract_mp4_metadata(raw_bytes, require_mdat=req_mdat)
 
     # 3. Text / JSON handling
     if detected_mime is None:
@@ -474,9 +600,20 @@ def validate_artifact(
                 text_content = raw_bytes.decode("utf-8")
                 detected_mime = "text/plain"
                 detected_fmt = "text"
+                if not text_content.strip() and expected_mime == "text/plain":
+                    return ValidationResult(
+                        valid=False,
+                        error_code="TEXT_EMPTY",
+                        mime_type=detected_mime,
+                        format=detected_fmt,
+                        size_bytes=size_bytes,
+                        sha256=sha256,
+                        error="Text artifact is empty or contains only whitespace",
+                    )
             except UnicodeDecodeError:
                 return ValidationResult(
                     valid=False,
+                    error_code="UNRECOGNIZED_FORMAT",
                     size_bytes=size_bytes,
                     sha256=sha256,
                     error="Binary artifact does not match any recognized media container magic header and is not valid UTF-8",
@@ -495,6 +632,7 @@ def validate_artifact(
             if not compatible:
                 return ValidationResult(
                     valid=False,
+                    error_code="MIME_TYPE_MISMATCH",
                     mime_type=detected_mime,
                     format=detected_fmt,
                     size_bytes=size_bytes,
@@ -507,6 +645,7 @@ def validate_artifact(
         if detected_fmt != expected_format.lower():
             return ValidationResult(
                 valid=False,
+                error_code="FORMAT_MISMATCH",
                 mime_type=detected_mime,
                 format=detected_fmt,
                 size_bytes=size_bytes,
@@ -520,6 +659,7 @@ def validate_artifact(
     if expected_sha and (sha256 is None or sha256.lower() != str(expected_sha).strip().lower()):
         return ValidationResult(
             valid=False,
+            error_code="CHECKSUM_MISMATCH",
             mime_type=detected_mime,
             format=detected_fmt,
             size_bytes=size_bytes,
@@ -530,11 +670,28 @@ def validate_artifact(
             error=f"SHA-256 mismatch: expected '{expected_sha}', got '{sha256}'",
         )
 
+    # Exact size rule
+    expected_size = rules.get("expected_size_bytes") or rules.get("exact_size")
+    if expected_size is not None and size_bytes != int(expected_size):
+        return ValidationResult(
+            valid=False,
+            error_code="SIZE_MISMATCH",
+            mime_type=detected_mime,
+            format=detected_fmt,
+            size_bytes=size_bytes,
+            sha256=sha256,
+            dimensions=dimensions,
+            duration_seconds=duration,
+            metadata=metadata,
+            error=f"Size mismatch: expected {expected_size} bytes, got {size_bytes} bytes",
+        )
+
     # Dimension rules gating
     has_dim_rules = any(k in rules for k in ("exact_width", "exact_height", "min_width", "min_height"))
     if has_dim_rules and dimensions is None:
         return ValidationResult(
             valid=False,
+            error_code="IMAGE_DIMENSION_EXTRACTION_FAILED",
             mime_type=detected_mime,
             format=detected_fmt,
             size_bytes=size_bytes,
@@ -546,8 +703,10 @@ def validate_artifact(
     # Duration rules gating
     has_dur_rules = any(k in rules for k in ("min_duration", "max_duration"))
     if has_dur_rules and duration is None:
+        err_cd = "AUDIO_DURATION_EXTRACTION_FAILED" if detected_mime == "audio/wav" else "VIDEO_DURATION_EXTRACTION_FAILED"
         return ValidationResult(
             valid=False,
+            error_code=err_cd,
             mime_type=detected_mime,
             format=detected_fmt,
             size_bytes=size_bytes,
@@ -558,8 +717,10 @@ def validate_artifact(
 
     # Container integrity verification for recognized media containers
     if detected_mime in ("image/png", "image/jpeg", "image/webp") and dimensions is None:
+        err_cd = metadata.get("error_code") or "IMAGE_CORRUPTED"
         return ValidationResult(
             valid=False,
+            error_code=err_cd,
             mime_type=detected_mime,
             format=detected_fmt,
             size_bytes=size_bytes,
@@ -569,8 +730,10 @@ def validate_artifact(
         )
 
     if detected_mime == "audio/wav" and duration is None:
+        err_cd = metadata.get("error_code") or "AUDIO_CONTAINER_CORRUPT"
         return ValidationResult(
             valid=False,
+            error_code=err_cd,
             mime_type=detected_mime,
             format=detected_fmt,
             size_bytes=size_bytes,
@@ -580,8 +743,10 @@ def validate_artifact(
         )
 
     if detected_mime == "video/mp4" and duration is None and dimensions is None:
+        err_cd = metadata.get("error_code") or "VIDEO_CONTAINER_CORRUPT"
         return ValidationResult(
             valid=False,
+            error_code=err_cd,
             mime_type=detected_mime,
             format=detected_fmt,
             size_bytes=size_bytes,
@@ -590,12 +755,43 @@ def validate_artifact(
             error="Corrupted or truncated media container",
         )
 
+    # Specific audio silence rejection
+    if detected_mime == "audio/wav" and (rules.get("reject_silence") or rules.get("check_silence")):
+        if metadata.get("error_code") == "AUDIO_SILENT":
+            return ValidationResult(
+                valid=False,
+                error_code="AUDIO_SILENT",
+                mime_type=detected_mime,
+                format=detected_fmt,
+                size_bytes=size_bytes,
+                sha256=sha256,
+                duration_seconds=duration,
+                metadata=metadata,
+                error="Audio is digitally silent (RMS amplitude < 1e-4 and peak == 0.0)",
+            )
+
+    # Specific hollow video rejection
+    if detected_mime == "video/mp4" and (rules.get("require_media_payload") or rules.get("require_mdat") or rules.get("check_frames")):
+        if metadata.get("error_code") == "VIDEO_ZERO_FRAMES":
+            return ValidationResult(
+                valid=False,
+                error_code="VIDEO_ZERO_FRAMES",
+                mime_type=detected_mime,
+                format=detected_fmt,
+                size_bytes=size_bytes,
+                sha256=sha256,
+                duration_seconds=duration,
+                metadata=metadata,
+                error="MP4 video container missing non-empty mdat media payload box",
+            )
+
     # Dimension rules
     if dimensions:
         w, h = dimensions
         if "exact_width" in rules and w != rules["exact_width"]:
             return ValidationResult(
                 valid=False,
+                error_code="IMAGE_DIMENSION_MISMATCH",
                 mime_type=detected_mime,
                 format=detected_fmt,
                 size_bytes=size_bytes,
@@ -606,6 +802,7 @@ def validate_artifact(
         if "exact_height" in rules and h != rules["exact_height"]:
             return ValidationResult(
                 valid=False,
+                error_code="IMAGE_DIMENSION_MISMATCH",
                 mime_type=detected_mime,
                 format=detected_fmt,
                 size_bytes=size_bytes,
@@ -616,6 +813,7 @@ def validate_artifact(
         if "min_width" in rules and w < rules["min_width"]:
             return ValidationResult(
                 valid=False,
+                error_code="IMAGE_DIMENSION_OUT_OF_BOUNDS",
                 mime_type=detected_mime,
                 format=detected_fmt,
                 size_bytes=size_bytes,
@@ -626,6 +824,7 @@ def validate_artifact(
         if "min_height" in rules and h < rules["min_height"]:
             return ValidationResult(
                 valid=False,
+                error_code="IMAGE_DIMENSION_OUT_OF_BOUNDS",
                 mime_type=detected_mime,
                 format=detected_fmt,
                 size_bytes=size_bytes,
@@ -636,9 +835,11 @@ def validate_artifact(
 
     # Duration rules
     if duration is not None:
+        err_dur_code = "AUDIO_DURATION_OUT_OF_BOUNDS" if detected_mime == "audio/wav" else "VIDEO_DURATION_OUT_OF_BOUNDS"
         if "min_duration" in rules and duration < rules["min_duration"]:
             return ValidationResult(
                 valid=False,
+                error_code=err_dur_code,
                 mime_type=detected_mime,
                 format=detected_fmt,
                 size_bytes=size_bytes,
@@ -649,6 +850,7 @@ def validate_artifact(
         if "max_duration" in rules and duration > rules["max_duration"]:
             return ValidationResult(
                 valid=False,
+                error_code=err_dur_code,
                 mime_type=detected_mime,
                 format=detected_fmt,
                 size_bytes=size_bytes,
@@ -662,6 +864,7 @@ def validate_artifact(
         if not isinstance(structured_data, dict):
             return ValidationResult(
                 valid=False,
+                error_code="DECISION_SCHEMA_INVALID",
                 mime_type=detected_mime,
                 format=detected_fmt,
                 size_bytes=size_bytes,
@@ -670,8 +873,10 @@ def validate_artifact(
             )
         ok, err = validate_decision_schema(structured_data)
         if not ok:
+            err_cd = "CONFIDENCE_OUT_OF_RANGE" if ("out of valid" in str(err) or "Confidence must be" in str(err) or "Probability must be" in str(err)) else "DECISION_SCHEMA_INVALID"
             return ValidationResult(
                 valid=False,
+                error_code=err_cd,
                 mime_type=detected_mime,
                 format=detected_fmt,
                 size_bytes=size_bytes,
@@ -680,15 +885,26 @@ def validate_artifact(
             )
 
     if rules.get("is_embedding"):
-        vec = structured_data if isinstance(structured_data, list) else None
-        if vec is None and isinstance(structured_data, dict) and "embedding" in structured_data:
-            vec = structured_data["embedding"]
+        vec = None
+        if isinstance(structured_data, list):
+            vec = structured_data
+        elif isinstance(structured_data, dict):
+            # Check OpenAI standard response: {"data": [{"embedding": [...]}]}
+            if "data" in structured_data and isinstance(structured_data["data"], list) and structured_data["data"]:
+                first_item = structured_data["data"][0]
+                if isinstance(first_item, dict) and "embedding" in first_item:
+                    vec = first_item["embedding"]
+            elif "embedding" in structured_data:
+                vec = structured_data["embedding"]
+
         exp_dim = rules.get("expected_dim")
         ok, err, emb_meta = validate_embedding_vector(vec, expected_dim=exp_dim)
         metadata.update(emb_meta)
         if not ok:
+            err_cd = emb_meta.get("error_code") or "EMBEDDING_INVALID_TYPE"
             return ValidationResult(
                 valid=False,
+                error_code=err_cd,
                 mime_type=detected_mime,
                 format=detected_fmt,
                 size_bytes=size_bytes,
@@ -703,11 +919,88 @@ def validate_artifact(
         if not ok:
             return ValidationResult(
                 valid=False,
+                error_code="ABC_SCORE_INVALID",
                 mime_type=detected_mime,
                 format=detected_fmt,
                 size_bytes=size_bytes,
                 sha256=sha256,
                 error=f"ABC score validation failed: {err}",
+            )
+
+    # JSON schema / required fields enforcement
+    if rules.get("schema") or rules.get("required_fields"):
+        if not isinstance(structured_data, dict):
+            return ValidationResult(
+                valid=False,
+                error_code="INVALID_JSON",
+                mime_type=detected_mime,
+                format=detected_fmt,
+                size_bytes=size_bytes,
+                sha256=sha256,
+                error="Schema validation failed: Structured payload is not a valid JSON dictionary",
+            )
+        req_fields: List[str] = list(rules.get("required_fields") or [])
+        if isinstance(rules.get("schema"), dict) and "required" in rules["schema"]:
+            req_fields.extend(rules["schema"]["required"])
+        for req_k in set(req_fields):
+            if req_k not in structured_data:
+                return ValidationResult(
+                    valid=False,
+                    error_code="REQUIRED_FIELD_MISSING",
+                    mime_type=detected_mime,
+                    format=detected_fmt,
+                    size_bytes=size_bytes,
+                    sha256=sha256,
+                    error=f"Required field '{req_k}' missing from JSON payload",
+                )
+            val = structured_data[req_k]
+            if val is None or val == "" or val == [] or val == {}:
+                return ValidationResult(
+                    valid=False,
+                    error_code="EMPTY_REQUIRED_FIELD",
+                    mime_type=detected_mime,
+                    format=detected_fmt,
+                    size_bytes=size_bytes,
+                    sha256=sha256,
+                    error=f"Required field '{req_k}' is empty or null in JSON payload",
+                )
+
+    # Chat completion response non-empty enforcement
+    if rules.get("is_chat"):
+        if not isinstance(structured_data, dict):
+            return ValidationResult(
+                valid=False,
+                error_code="INVALID_JSON",
+                mime_type=detected_mime,
+                format=detected_fmt,
+                size_bytes=size_bytes,
+                sha256=sha256,
+                error="Chat completion payload is not a valid JSON dictionary",
+            )
+        choices = structured_data.get("choices")
+        if not choices or not isinstance(choices, list):
+            return ValidationResult(
+                valid=False,
+                error_code="CHAT_RESPONSE_EMPTY",
+                mime_type=detected_mime,
+                format=detected_fmt,
+                size_bytes=size_bytes,
+                sha256=sha256,
+                error="Chat response missing valid choices array",
+            )
+        first_choice = choices[0]
+        msg = first_choice.get("message") if isinstance(first_choice, dict) else None
+        text_val = first_choice.get("text") if isinstance(first_choice, dict) else None
+        content_val = msg.get("content") if isinstance(msg, dict) else text_val
+        if not content_val or not str(content_val).strip():
+            return ValidationResult(
+                valid=False,
+                error_code="CHAT_RESPONSE_EMPTY",
+                mime_type=detected_mime,
+                format=detected_fmt,
+                size_bytes=size_bytes,
+                sha256=sha256,
+                error="Chat response choice has empty message content",
             )
 
     return ValidationResult(

@@ -3,9 +3,9 @@ deployments.kaggle.prepare_datasets
 Manifest-driven Kaggle Dataset preparation & deployment orchestrator for Factory v4 Lite.
 
 Key capabilities:
-1. Aligns with all 10 Model Manifests in manifests/models/*.yaml.
+1. Aligns with all 11 Model Manifests in manifests/models/*.yaml.
 2. Direct integration with Kaggle API via Bearer token (KGAT_*) authentication.
-3. Queries existing dataset readiness (e.g. cuongnguyen1802/qwen38-27b-gguf, minimax-h3-gguf).
+3. Queries existing dataset readiness (e.g. cuongnguyen1802/qwen25-7b-instruct-awq, minimax-h3-gguf).
 4. Generates standalone remote downloader kernels deployed directly to Kaggle Cloud
    (utilizing Kaggle's high-speed network and 73GB /tmp storage without consuming local disk).
 5. Monitors download, packaging, and dataset publication progress in real-time.
@@ -29,7 +29,7 @@ from deployments.kaggle.runner import KaggleAPIClient, resolve_kaggle_username
 logger = logging.getLogger("prepare_datasets")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-# Authoritative dataset specifications for Factory v4 Lite 10 models
+# Authoritative dataset specifications for Factory v4 Lite 11 models
 MODEL_DATASETS: List[Dict[str, Any]] = [
     {
         "id": "wan-2.2",
@@ -86,29 +86,25 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
     },
     {
         "id": "qwen-text",
-        "slug": "qwen38-27b-gguf",
-        "title": "Qwen 3.8 27B GGUF Official",
-        "repo": "unsloth/Qwen3.8-27B-GGUF",
+        "slug": "qwen25-7b-instruct-awq",
+        "title": "Qwen 2.5 7B Instruct AWQ Official",
+        "repo": "Qwen/Qwen2.5-7B-Instruct-AWQ",
         "service_id": "text-service",
         "target_gpu": 0,
-        "estimated_gb": 17.7,
-        "files": [
-            {"src": "Qwen3.8-27B-UD-Q4_K_M.gguf", "dest": "Qwen3.8-27B-UD-Q4_K_M.gguf"},
-            {"src": "mmproj-F16.gguf", "dest": "mmproj-F16.gguf"},
-        ],
+        "estimated_gb": 4.5,
+        "snapshot": True,
+        "files": [],
     },
     {
         "id": "qwen-vlm",
-        "slug": "qwen3vl-8b-instruct-gguf",
-        "title": "Qwen3-VL 8B Instruct GGUF",
-        "repo": "Qwen/Qwen3-VL-8B-Instruct-GGUF",
+        "slug": "qwen2-vl-7b-instruct-awq",
+        "title": "Qwen2-VL 7B Instruct AWQ Official",
+        "repo": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
         "service_id": "vision-service",
         "target_gpu": 0,
-        "estimated_gb": 6.3,
-        "files": [
-            {"src": "Qwen3VL-8B-Instruct-Q4_K_M.gguf", "dest": "Qwen3VL-8B-Instruct-Q4_K_M.gguf"},
-            {"src": "mmproj-Qwen3VL-8B-Instruct-Q8_0.gguf", "dest": "mmproj-Qwen3VL-8B-Instruct-Q8_0.gguf"},
-        ],
+        "estimated_gb": 5.5,
+        "snapshot": True,
+        "files": [],
     },
     {
         "id": "qwen-speech",
@@ -173,6 +169,17 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "snapshot": True,
         "files": [],
     },
+    {
+        "id": "yue2",
+        "slug": "yue-s1-7b",
+        "title": "YuE s1 7B Annealed En CoT",
+        "repo": "m-a-p/YuE-s1-7B-anneal-en-cot",
+        "service_id": "music-service",
+        "target_gpu": 1,
+        "estimated_gb": 13.5,
+        "snapshot": True,
+        "files": [],
+    },
 ]
 
 
@@ -194,7 +201,7 @@ class DatasetPreparationManager:
             return {"exists": False, "status": "not_found", "error": str(e), "code": code}
 
     def inspect_all_datasets(self) -> List[Dict[str, Any]]:
-        """Inspects status of all 10 Factory v4 model datasets on Kaggle."""
+        """Inspects status of all 11 Factory v4 model datasets on Kaggle."""
         results = []
         for item in MODEL_DATASETS:
             st = self.check_dataset_status(item["slug"])

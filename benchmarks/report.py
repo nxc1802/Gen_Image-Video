@@ -31,7 +31,7 @@ class CaseExecutionRecord:
     task: str
     variant: str
     mode: str
-    status: str  # PASS, FAIL, ERROR, HARDWARE_BLOCKED, BACKEND_UNAVAILABLE, NOT_IMPLEMENTED, NOT_RUN
+    status: str  # PASS, FAIL, ERROR, HARDWARE_BLOCKED, BACKEND_UNAVAILABLE, NOT_IMPLEMENTED, NOT_RUN, CONTRACT_PASS, INFERENCE_PASS
     target_gpu: int = 0
     min_vram_gb: float = 0.0
     backend: Optional[str] = None
@@ -53,24 +53,32 @@ class CaseExecutionRecord:
     error_code: Optional[str] = None
     error_message: Optional[str] = None
     is_negative: bool = False
+    contract_pass: Optional[bool] = None
+    inference_pass: Optional[bool] = None
+    checkpoint_repo: Optional[str] = None
+    checkpoint_revision: Optional[str] = None
+    checkpoint_hash: Optional[str] = None
+    perf_metadata: Optional[Dict[str, Any]] = None
 
     def to_canonical_dict(self) -> Dict[str, Any]:
         """Conforms directly to Plan §6.6 canonical case evidence schema."""
-        return {
+        res = {
             "case_id": self.case_id,
             "run_id": self.run_id,
             "git_commit": self.git_commit,
             "model_id": self.model_id,
             "checkpoint": {
-                "repo": None,
-                "revision": None,
-                "hash": None,
+                "repo": self.checkpoint_repo,
+                "revision": self.checkpoint_revision,
+                "hash": self.checkpoint_hash,
             },
             "variant": self.variant,
             "task": self.task,
             "backend": self.backend or "native",
             "mode": self.mode,
             "status": self.status,
+            "contract_pass": self.contract_pass,
+            "inference_pass": self.inference_pass,
             "target_gpu": self.target_gpu,
             "input_reference": self.input_reference,
             "load_time_ms": self.load_time_ms,
@@ -98,6 +106,9 @@ class CaseExecutionRecord:
                 "message": self.error_message,
             } if self.error_code or self.error_message else None,
         }
+        if self.perf_metadata:
+            res["perf"] = self.perf_metadata
+        return res
 
 
 class BenchmarkReportGenerator:
@@ -121,25 +132,48 @@ class BenchmarkReportGenerator:
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
     def compute_summary_stats(self) -> Dict[str, Any]:
-        """Calculates status counts and model breakdown statistics."""
+        """Calculates status counts and model breakdown statistics with strict metric separation."""
+        negative_cases = [r for r in self.records if getattr(r, "is_negative", False)]
+        positive_cases = [r for r in self.records if not getattr(r, "is_negative", False)]
+
+        contract_total = len(negative_cases)
+        contract_pass = sum(
+            1 for r in negative_cases
+            if r.status in ("PASS", "CONTRACT_PASS") or getattr(r, "contract_pass", False) is True
+        )
+        contract_fail = contract_total - contract_pass
+        contract_pass_rate = round((contract_pass / contract_total) * 100.0, 1) if contract_total > 0 else 0.0
+
+        inference_total = len(positive_cases)
+        inference_pass = sum(
+            1 for r in positive_cases
+            if (r.status in ("PASS", "INFERENCE_PASS") or getattr(r, "inference_pass", False) is True)
+        )
+        inference_pass_rate = round((inference_pass / inference_total) * 100.0, 1) if inference_total > 0 else 0.0
+
         status_counts: Dict[str, int] = {
-            "PASS": 0,
-            "FAIL": 0,
-            "ERROR": 0,
-            "HARDWARE_BLOCKED": 0,
-            "BACKEND_UNAVAILABLE": 0,
-            "NOT_IMPLEMENTED": 0,
-            "NOT_RUN": 0,
+            "PASS": inference_pass,
+            "INFERENCE_PASS": inference_pass,
+            "CONTRACT_PASS": contract_pass,
+            "FAIL": sum(1 for r in positive_cases if r.status in ("FAIL", "ERROR")),
+            "CONTRACT_FAIL": contract_fail,
+            "ERROR": sum(1 for r in self.records if r.status == "ERROR"),
+            "HARDWARE_BLOCKED": sum(1 for r in self.records if r.status == "HARDWARE_BLOCKED"),
+            "BACKEND_UNAVAILABLE": sum(1 for r in self.records if r.status == "BACKEND_UNAVAILABLE"),
+            "NOT_IMPLEMENTED": sum(1 for r in self.records if r.status == "NOT_IMPLEMENTED"),
+            "NOT_RUN": sum(1 for r in self.records if r.status == "NOT_RUN"),
         }
+
         model_stats: Dict[str, Dict[str, Any]] = {}
 
         for rec in self.records:
-            st = rec.status
-            status_counts[st] = status_counts.get(st, 0) + 1
-
             if rec.model_id not in model_stats:
                 model_stats[rec.model_id] = {
                     "total": 0,
+                    "inference_total": 0,
+                    "inference_pass": 0,
+                    "contract_total": 0,
+                    "contract_pass": 0,
                     "pass": 0,
                     "fail": 0,
                     "blocked": 0,
@@ -152,30 +186,59 @@ class BenchmarkReportGenerator:
 
             ms = model_stats[rec.model_id]
             ms["total"] += 1
-            if st == "PASS":
-                ms["pass"] += 1
-            elif st == "FAIL":
-                ms["fail"] += 1
-            elif st == "HARDWARE_BLOCKED":
-                ms["blocked"] += 1
-            elif st == "BACKEND_UNAVAILABLE":
-                ms["backend_unavailable"] += 1
-            elif st == "ERROR":
-                ms["error"] += 1
 
-            if rec.e2e_latency_ms is not None:
-                ms["latencies_ms"].append(rec.e2e_latency_ms)
-            if rec.peak_vram_mb_gpu0:
-                ms["peak_vram_gpu0"] = max(ms["peak_vram_gpu0"], rec.peak_vram_mb_gpu0)
-            if rec.peak_vram_mb_gpu1:
-                ms["peak_vram_gpu1"] = max(ms["peak_vram_gpu1"], rec.peak_vram_mb_gpu1)
+            if rec.is_negative:
+                ms["contract_total"] += 1
+                if rec.status in ("PASS", "CONTRACT_PASS") or getattr(rec, "contract_pass", False) is True:
+                    ms["contract_pass"] += 1
+            else:
+                ms["inference_total"] += 1
+                st = rec.status
+                is_pass = st in ("PASS", "INFERENCE_PASS") or getattr(rec, "inference_pass", False) is True
+
+                if is_pass:
+                    ms["pass"] += 1
+                    ms["inference_pass"] += 1
+                    # Latencies collected ONLY for valid positive inference passes (exclude negative tests)
+                    if rec.e2e_latency_ms is not None:
+                        ms["latencies_ms"].append(rec.e2e_latency_ms)
+                elif st == "FAIL":
+                    ms["fail"] += 1
+                elif st == "HARDWARE_BLOCKED":
+                    ms["blocked"] += 1
+                elif st == "BACKEND_UNAVAILABLE":
+                    ms["backend_unavailable"] += 1
+                elif st == "ERROR":
+                    ms["error"] += 1
+
+                if rec.peak_vram_mb_gpu0:
+                    ms["peak_vram_gpu0"] = max(ms["peak_vram_gpu0"], rec.peak_vram_mb_gpu0)
+                if rec.peak_vram_mb_gpu1:
+                    ms["peak_vram_gpu1"] = max(ms["peak_vram_gpu1"], rec.peak_vram_mb_gpu1)
 
         total_cases = len(self.records)
-        pass_rate = round((status_counts["PASS"] / total_cases) * 100.0, 1) if total_cases > 0 else 0.0
+
+        inference_metrics = {
+            "total": inference_total,
+            "pass": inference_pass,
+            "pass_rate_percent": inference_pass_rate,
+            "backend_unavailable": sum(1 for r in positive_cases if r.status == "BACKEND_UNAVAILABLE"),
+            "hardware_blocked": sum(1 for r in positive_cases if r.status == "HARDWARE_BLOCKED"),
+            "failed": sum(1 for r in positive_cases if r.status in ("FAIL", "ERROR")),
+        }
+
+        contract_metrics = {
+            "total": contract_total,
+            "pass": contract_pass,
+            "failed": contract_fail,
+            "pass_rate_percent": contract_pass_rate,
+        }
 
         return {
             "total_cases": total_cases,
-            "pass_rate_percent": pass_rate,
+            "pass_rate_percent": inference_pass_rate,
+            "inference_metrics": inference_metrics,
+            "contract_metrics": contract_metrics,
             "status_counts": status_counts,
             "model_stats": model_stats,
         }
@@ -190,6 +253,9 @@ class BenchmarkReportGenerator:
             "mode": self.mode,
             "hardware": self.hardware_info,
             "summary": stats,
+            "inference_metrics": stats.get("inference_metrics"),
+            "contract_metrics": stats.get("contract_metrics"),
+            "model_stats": stats.get("model_stats"),
             "cases": [rec.to_canonical_dict() for rec in self.records],
         }
 
@@ -209,6 +275,9 @@ class BenchmarkReportGenerator:
             "variant",
             "mode",
             "status",
+            "is_negative",
+            "contract_pass",
+            "inference_pass",
             "target_gpu",
             "min_vram_gb",
             "e2e_latency_ms",
@@ -222,6 +291,8 @@ class BenchmarkReportGenerator:
             "artifact_dimensions",
             "artifact_duration_seconds",
             "artifact_validated",
+            "checkpoint_repo",
+            "checkpoint_revision",
             "error_code",
             "error_message",
         ]
@@ -238,6 +309,9 @@ class BenchmarkReportGenerator:
                     rec.variant,
                     rec.mode,
                     rec.status,
+                    rec.is_negative,
+                    rec.contract_pass if rec.contract_pass is not None else "",
+                    rec.inference_pass if rec.inference_pass is not None else "",
                     rec.target_gpu,
                     rec.min_vram_gb,
                     rec.e2e_latency_ms if rec.e2e_latency_ms is not None else "",
@@ -251,6 +325,8 @@ class BenchmarkReportGenerator:
                     dims_str,
                     rec.artifact_duration_seconds if rec.artifact_duration_seconds is not None else "",
                     rec.artifact_validated,
+                    rec.checkpoint_repo or "",
+                    rec.checkpoint_revision or "",
                     rec.error_code or "",
                     rec.error_message or "",
                 ])
@@ -267,6 +343,9 @@ class BenchmarkReportGenerator:
         gpu_names_str = ", ".join(self.hardware_info.get("gpu_names", [])) or "None (CPU Mode)"
         gpu_count = self.hardware_info.get("gpu_count", 0)
 
+        inf_m = stats["inference_metrics"]
+        con_m = stats["contract_metrics"]
+
         lines: List[str] = [
             f"# Factory v4 Lite — Unified Benchmark Summary Report",
             f"",
@@ -281,7 +360,10 @@ class BenchmarkReportGenerator:
             f"## 1. Executive Summary",
             f"",
             f"- **Total Evaluated Cases**: {stats['total_cases']}",
-            f"- **Passing Cases**: {stats['status_counts'].get('PASS', 0)} ({stats['pass_rate_percent']}%)",
+            f"- **Model Inference Cases**: {inf_m['total']}",
+            f"- **Model Inference Passing Cases**: {inf_m['pass']} ({inf_m['pass_rate_percent']}%)",
+            f"- **Negative API Contract Cases**: {con_m['total']}",
+            f"- **Negative API Contract Passing Cases**: {con_m['pass']} ({con_m['pass_rate_percent']}%)",
             f"- **Hardware Blocked**: {stats['status_counts'].get('HARDWARE_BLOCKED', 0)}",
             f"- **Backend Unavailable**: {stats['status_counts'].get('BACKEND_UNAVAILABLE', 0)}",
             f"- **Failed / Error**: {stats['status_counts'].get('FAIL', 0) + stats['status_counts'].get('ERROR', 0)}",
@@ -294,7 +376,9 @@ class BenchmarkReportGenerator:
 
         total = stats["total_cases"]
         descriptions = {
-            "PASS": "Authentic inference succeeded, artifact validated with real SHA-256 and MIME header.",
+            "INFERENCE_PASS": "Authentic model inference succeeded, output artifact validated with real SHA-256 and MIME header.",
+            "CONTRACT_PASS": "Negative / fail-closed API contract test cleanly rejected with expected HTTP status and error code.",
+            "PASS": "Model inference pass count (strictly positive cases).",
             "FAIL": "Execution finished but artifact or contract validation failed.",
             "ERROR": "Unexpected runtime exception or system fault.",
             "HARDWARE_BLOCKED": "Exceeds discrete Dual-T4 14.2 GB VRAM per-card ceiling or non-GPU host.",
@@ -314,8 +398,8 @@ class BenchmarkReportGenerator:
             f"",
             f"## 2. Model Manifest Capability Matrix (11 Foundation Models)",
             f"",
-            f"| Model | Total Cases | PASS | BLOCKED | BACKEND UNAVAIL | FAIL / ERR | Median Latency (ms) | Peak VRAM GPU 0 (MB) | Peak VRAM GPU 1 (MB) |",
-            f"|---|---|---|---|---|---|---|---|---|",
+            f"| Model | Total Cases | Inf Total | Inf PASS | Contract PASS | BLOCKED | BACKEND UNAVAIL | FAIL / ERR | Median Latency (ms) | Peak VRAM GPU 0 (MB) | Peak VRAM GPU 1 (MB) |",
+            f"|---|---|---|---|---|---|---|---|---|---|---|",
         ])
 
         for model_id, mstats in sorted(stats["model_stats"].items()):
@@ -324,7 +408,8 @@ class BenchmarkReportGenerator:
             v0 = round(mstats["peak_vram_gpu0"], 1) if mstats["peak_vram_gpu0"] > 0 else "-"
             v1 = round(mstats["peak_vram_gpu1"], 1) if mstats["peak_vram_gpu1"] > 0 else "-"
             lines.append(
-                f"| `{model_id}` | {mstats['total']} | {mstats['pass']} | "
+                f"| `{model_id}` | {mstats['total']} | {mstats['inference_total']} | "
+                f"{mstats['pass']} | {mstats['contract_pass']} | "
                 f"{mstats['blocked']} | {mstats['backend_unavailable']} | "
                 f"{mstats['fail'] + mstats['error']} | {med_lat} | {v0} | {v1} |"
             )

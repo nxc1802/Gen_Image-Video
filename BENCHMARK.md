@@ -184,7 +184,40 @@ Each benchmark execution creates a timestamped run directory in `benchmarks/resu
 
 ---
 
-## 9. Studio Web Operations Console Integration
+## 9. Current Verification Status & Benchmark Execution Attestation
+
+### Latest Benchmark Run: `run_20261109_173256`
+- **Execution Mode**: `smoke` (evaluating all 91 test cases: 82 positive inference cases + 9 negative contract rejection cases)
+- **Git Commit**: `6fbfd6bfc8d60d42357876884ecc15d2d4ec4fea`
+- **Host Hardware Environment**: Darwin arm64 (`Apple Silicon Mac mini`, 0 NVIDIA Tesla T4 GPUs attached, torch/CUDA backend offline)
+- **Run Directory**: `benchmarks/results/run_20261109_173256/`
+  - `results.json`: Canonical machine-readable execution traces with strictly separated `contract_metrics` and `inference_metrics`
+  - `metrics.csv`: 92 rows (1 header + 91 individual test case telemetry records)
+  - `summary.md`: Executive summary report with complete model capability matrix
+
+### Strict Metric Separation & Audit Truth
+In strict compliance with the Integrity Mandate:
+1. **Contract Metrics (Negative Fail-Closed API Tests)**:
+   - **Evaluated Cases**: 9
+   - **Passing Cases**: 9
+   - **Contract Pass Rate**: **100.0%**
+   - **Behavior**: All negative rejection test cases (`BM-NEG-01` through `BM-NEG-09`) were cleanly rejected with expected HTTP statuses (`400`, `401`, `404`, `422`) and explicit structured error codes (`INVALID_VARIANT`, `UNSUPPORTED_CAPABILITY`, `MODEL_NOT_FOUND`, `EXCEEDS_MAX_DIMENSIONS`, `INVALID_DURATION`, `EXCEEDS_MAX_FRAMES`, `AUTHENTICATION_REQUIRED`, `EMPTY_PAYLOAD`, `UNPROCESSABLE_ENTITY`).
+2. **Inference Metrics (Positive Model Capability Tests)**:
+   - **Evaluated Cases**: 82
+   - **Passing Cases**: 0
+   - **Inference Pass Rate**: **0.0%**
+   - **Backend Unavailable**: 82
+   - **Hardware Blocked**: 0
+   - **Failed / Error**: 0
+   - **Offline GPU Hardware Status**: Executed on local development host lacking physical NVIDIA Tesla T4 GPUs and active CUDA inference workers. Jobs timed out gracefully in queue (`QUEUE_TIMEOUT`) with explicit diagnostic messages indicating that native backend inference daemons are not resident on GPU 0 or GPU 1 (`BACKEND_UNAVAILABLE`). Enhancement Suite cases (`BM-ENH-01..04`) failed closed per manifest declaration of unbacked native engine.
+3. **Zero False Certifications & Metric Purity**:
+   - Negative API contract successes are strictly isolated in `contract_metrics` and **NEVER** merged into model inference pass rates.
+   - `model_stats` latency arrays strictly exclude negative test timings (`latencies_ms: []` across all models for which live GPU inference was not executed).
+   - Zero mock artifacts, zero synthetic PNG/MP4 files, and zero fabricated telemetry time series.
+
+---
+
+## 10. Studio Web Operations Console Integration
 
 The Studio Web console (`factory/apps/studio-web`) integrates directly with the Control Plane API:
 
@@ -199,3 +232,4 @@ The Control Plane exposes the canonical application instance via `factory_contro
 ```bash
 uv run uvicorn factory_control_api:app --host 0.0.0.0 --port 8000
 ```
+

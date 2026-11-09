@@ -15,10 +15,12 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import copy
 from dataclasses import dataclass, field
 import hashlib
 import json
 import logging
+import math
 import os
 from pathlib import Path
 import platform
@@ -51,6 +53,11 @@ from factory.apps.control_api.src.queue.manager import JobLifecycleManager
 from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
 from factory.apps.control_api.src.queue.repository import get_job_repository
 from factory.apps.control_api.src.queue.scheduler import InMemoryScheduler
+from factory.apps.control_api.src.queue.watchdog import (
+    MODEL_EXECUTION_TIMEOUTS,
+    SERVICE_EXECUTION_TIMEOUTS,
+    TASK_EXECUTION_TIMEOUTS,
+)
 from factory_contracts.errors import (
     ErrorCode,
     FactoryError,
@@ -299,6 +306,88 @@ class UnifiedBenchmarkRunner:
             "max_allocatable_vram_mb": MAX_ALLOCATABLE_VRAM_PER_GPU_MB,
         }
 
+    def resolve_timeouts(self, case: Dict[str, Any], subsystem: str) -> Dict[str, float]:
+        """
+        Resolves 3-tier state-aware timeouts: queue_timeout, load_timeout, inference_timeout.
+        Honors task, model, and service hierarchy from watchdog.py without rigid 180s imposition.
+        """
+        is_test = getattr(self, "_is_test_client", False)
+        model_id = case.get("model", "")
+        task = case.get("task", "")
+
+        # 1. Queue timeout: allowed time in CREATED / QUEUED before worker lease
+        default_queue = 0.1 if is_test else 60.0
+        queue_timeout = float(os.environ.get("BENCHMARK_QUEUE_TIMEOUT", default_queue))
+
+        # 2. Load timeout: allowed time in ADMITTED or loading stage
+        default_load = 0.5 if is_test else 120.0
+        load_timeout = float(os.environ.get("BENCHMARK_LOAD_TIMEOUT", default_load))
+
+        # 3. Inference timeout: priority resolution
+        explicit_case_timeout = case.get("timeout_seconds") or case.get("inference_timeout")
+        if explicit_case_timeout:
+            inf_timeout = float(explicit_case_timeout)
+        elif os.environ.get("BENCHMARK_INFERENCE_TIMEOUT"):
+            inf_timeout = float(os.environ["BENCHMARK_INFERENCE_TIMEOUT"])
+        elif task in TASK_EXECUTION_TIMEOUTS:
+            inf_timeout = float(TASK_EXECUTION_TIMEOUTS[task])
+        elif model_id in MODEL_EXECUTION_TIMEOUTS:
+            inf_timeout = float(MODEL_EXECUTION_TIMEOUTS[model_id])
+        elif subsystem in SERVICE_EXECUTION_TIMEOUTS:
+            inf_timeout = float(SERVICE_EXECUTION_TIMEOUTS[subsystem])
+        else:
+            inf_timeout = 300.0
+
+        return {
+            "queue_timeout": queue_timeout,
+            "load_timeout": load_timeout,
+            "inference_timeout": inf_timeout,
+        }
+
+    def _extract_checkpoint_provenance(
+        self, model_id: str, job_data: Dict[str, Any]
+    ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+        """Extracts checkpoint repository, revision, and commit hash from worker telemetry or manifest."""
+        chk_repo = None
+        chk_rev = None
+        chk_hash = None
+
+        # 1. Check worker or job telemetry first
+        if isinstance(job_data, dict):
+            worker = job_data.get("worker", {})
+            if isinstance(worker, dict):
+                chk = worker.get("checkpoint", {})
+                if isinstance(chk, dict):
+                    chk_repo = chk.get("repo")
+                    chk_rev = chk.get("revision")
+                    chk_hash = chk.get("hash")
+            if not chk_repo:
+                telem = job_data.get("telemetry", {})
+                if isinstance(telem, dict):
+                    chk = telem.get("checkpoint", {})
+                    if isinstance(chk, dict):
+                        chk_repo = chk.get("repo")
+                        chk_rev = chk.get("revision")
+                        chk_hash = chk.get("hash")
+
+        # 2. Fallback to model manifest declaration
+        if not chk_repo:
+            manifest = self.models_manifest.get(model_id)
+            if manifest:
+                if hasattr(manifest, "weights") and hasattr(manifest.weights, "primary_checkpoint"):
+                    chk_repo = manifest.weights.primary_checkpoint
+                if hasattr(manifest, "revision") and manifest.revision:
+                    chk_rev = str(manifest.revision)
+                if hasattr(manifest, "model") and hasattr(manifest.model, "checkpoints"):
+                    chks = manifest.model.checkpoints
+                    if chks and len(chks) > 0:
+                        c0 = chks[0]
+                        chk_repo = getattr(c0, "repo", None) or (c0.get("repo") if isinstance(c0, dict) else None) or chk_repo
+                        chk_rev = getattr(c0, "revision", None) or (c0.get("revision") if isinstance(c0, dict) else None) or chk_rev
+                        chk_hash = getattr(c0, "hash", None) or (c0.get("hash") if isinstance(c0, dict) else None)
+
+        return chk_repo, chk_rev, chk_hash
+
     def evaluate_case(self, case: Dict[str, Any], mode: str) -> CaseExecutionRecord:
         """
         Executes and evaluates a single benchmark case according to strict status semantics:
@@ -343,6 +432,8 @@ class UnifiedBenchmarkRunner:
                 error_code="INSUFFICIENT_VRAM",
                 error_message=mem_reason,
                 is_negative=is_negative,
+                contract_pass=False if is_negative else None,
+                inference_pass=False,
             )
 
         # 2. Gate 2: Manifest Capability & Backend Availability Check
@@ -366,6 +457,8 @@ class UnifiedBenchmarkRunner:
                         error_code="BACKEND_UNAVAILABLE",
                         error_message=f"Model engine or weights not ready/installed for '{model_id}' per manifest declaration.",
                         is_negative=is_negative,
+                        contract_pass=None,
+                        inference_pass=False,
                     )
 
                 # Check capabilities truth
@@ -386,6 +479,8 @@ class UnifiedBenchmarkRunner:
                         error_code="CAPABILITY_NOT_SUPPORTED",
                         error_message=f"Task '{task}' is declared unbacked/unimplemented in model manifest.",
                         is_negative=is_negative,
+                        contract_pass=None,
+                        inference_pass=False,
                     )
 
         # 3. Gate 3: Negative / Fail-Closed Rejection Test Execution
@@ -419,7 +514,6 @@ class UnifiedBenchmarkRunner:
                 "task": task,
                 "inputs": inputs_payload,
             }
-
 
             resp = self.client.post("/v1/jobs", json=payload, headers=self.auth_headers)
             elapsed_ms = (time.perf_counter() - t0) * 1000.0
@@ -464,6 +558,8 @@ class UnifiedBenchmarkRunner:
                             variant=variant,
                             mode=mode,
                             status="FAIL",
+                            contract_pass=False,
+                            inference_pass=False,
                             target_gpu=target_gpu,
                             min_vram_gb=min_vram_gb,
                             e2e_latency_ms=round(elapsed_ms, 2),
@@ -482,6 +578,8 @@ class UnifiedBenchmarkRunner:
                     variant=variant,
                     mode=mode,
                     status="PASS",
+                    contract_pass=True,
+                    inference_pass=False,
                     target_gpu=target_gpu,
                     min_vram_gb=min_vram_gb,
                     e2e_latency_ms=round(elapsed_ms, 2),
@@ -499,6 +597,8 @@ class UnifiedBenchmarkRunner:
                     variant=variant,
                     mode=mode,
                     status="FAIL",
+                    contract_pass=False,
+                    inference_pass=False,
                     target_gpu=target_gpu,
                     min_vram_gb=min_vram_gb,
                     e2e_latency_ms=round(elapsed_ms, 2),
@@ -570,12 +670,15 @@ class UnifiedBenchmarkRunner:
                     variant=variant,
                     mode=mode,
                     status=status,
+                    contract_pass=None,
+                    inference_pass=False,
                     target_gpu=target_gpu,
                     min_vram_gb=min_vram_gb,
                     e2e_latency_ms=round(elapsed_ms, 2),
                     error_code=err_code,
                     error_message=err_msg,
                     nvml_trace_count=len(samples),
+                    is_negative=False,
                 )
 
             # Job submitted successfully
@@ -593,32 +696,38 @@ class UnifiedBenchmarkRunner:
                     variant=variant,
                     mode=mode,
                     status="FAIL",
+                    contract_pass=None,
+                    inference_pass=False,
                     target_gpu=target_gpu,
                     min_vram_gb=min_vram_gb,
                     e2e_latency_ms=round(elapsed_ms, 2),
                     error_code="INVALID_RESPONSE",
                     error_message="Submission succeeded but no job_id returned in response.",
                     nvml_trace_count=len(samples),
+                    is_negative=False,
                 )
 
-            # Polling to terminal state
-            terminal_states = {"SUCCEEDED", "FAILED", "CANCELLED", "ERROR"}
+            # Polling to terminal state using 3-tier timeout hierarchy
+            timeouts = self.resolve_timeouts(case, subsystem)
+            queue_timeout = timeouts["queue_timeout"]
+            load_timeout = timeouts["load_timeout"]
+            inference_timeout = timeouts["inference_timeout"]
+
+            terminal_states = {"SUCCEEDED", "FAILED", "CANCELLED"}
             current_state = str(job_data.get("state") or job_data.get("status") or "").upper()
 
-            poll_timeout = float(case.get("timeout_seconds") or os.environ.get("BENCHMARK_POLL_TIMEOUT", 180.0))
             is_test_client = getattr(self, "_is_test_client", False)
-            default_grace = 0.05 if is_test_client else 5.0
-            queue_grace = float(os.environ.get("BENCHMARK_QUEUE_GRACE_PERIOD", default_grace))
             poll_interval = 0.01 if is_test_client else 0.5
             poll_start = time.perf_counter()
+            state_enter_time = poll_start
 
             while current_state not in terminal_states:
                 now = time.perf_counter()
-                elapsed_poll = now - poll_start
+                time_in_state = now - state_enter_time
+                total_poll_time = now - poll_start
 
-                # If job sits in CREATED/QUEUED without any state transition beyond grace period,
-                # the worker daemon is not running.
-                if current_state in ("CREATED", "QUEUED") and elapsed_poll >= queue_grace:
+                # 1. Queue Timeout: Time allowed in CREATED or QUEUED waiting for worker lease
+                if current_state in ("CREATED", "QUEUED") and time_in_state >= queue_timeout:
                     samples = self.sampler.stop()
                     elapsed_ms = (now - t_start) * 1000.0
                     return CaseExecutionRecord(
@@ -630,15 +739,19 @@ class UnifiedBenchmarkRunner:
                         variant=variant,
                         mode=mode,
                         status="BACKEND_UNAVAILABLE",
+                        contract_pass=None,
+                        inference_pass=False,
                         target_gpu=target_gpu,
                         min_vram_gb=min_vram_gb,
                         e2e_latency_ms=round(elapsed_ms, 2),
-                        error_code="BACKEND_UNAVAILABLE",
-                        error_message=f"Job '{job_id}' not leased by worker after {queue_grace:.1f}s. Backend inference daemon for '{model_id}' is not resident on GPU {target_gpu}.",
+                        error_code="QUEUE_TIMEOUT",
+                        error_message=f"Job '{job_id}' not leased by worker after {queue_timeout:.1f}s in state '{current_state}'. Backend inference daemon for '{model_id}' is not resident on GPU {target_gpu}.",
                         nvml_trace_count=len(samples),
+                        is_negative=False,
                     )
 
-                if elapsed_poll >= poll_timeout:
+                # 2. Load Timeout: Time allowed in ADMITTED loading weights
+                if current_state == "ADMITTED" and time_in_state >= load_timeout:
                     samples = self.sampler.stop()
                     elapsed_ms = (now - t_start) * 1000.0
                     return CaseExecutionRecord(
@@ -650,21 +763,122 @@ class UnifiedBenchmarkRunner:
                         variant=variant,
                         mode=mode,
                         status="FAIL",
+                        contract_pass=None,
+                        inference_pass=False,
+                        target_gpu=target_gpu,
+                        min_vram_gb=min_vram_gb,
+                        e2e_latency_ms=round(elapsed_ms, 2),
+                        error_code="LOAD_TIMEOUT",
+                        error_message=f"Job '{job_id}' exceeded load timeout ({load_timeout:.1f}s) in state '{current_state}'.",
+                        nvml_trace_count=len(samples),
+                        is_negative=False,
+                    )
+
+                # 3. Retrying Timeout: Time allowed in RETRYING state
+                if current_state == "RETRYING" and time_in_state >= queue_timeout:
+                    samples = self.sampler.stop()
+                    elapsed_ms = (now - t_start) * 1000.0
+                    return CaseExecutionRecord(
+                        case_id=cid,
+                        run_id=self.run_id,
+                        git_commit=self.git_commit,
+                        model_id=model_id,
+                        task=task,
+                        variant=variant,
+                        mode=mode,
+                        status="FAIL",
+                        contract_pass=None,
+                        inference_pass=False,
+                        target_gpu=target_gpu,
+                        min_vram_gb=min_vram_gb,
+                        e2e_latency_ms=round(elapsed_ms, 2),
+                        error_code="RETRY_EXHAUSTED",
+                        error_message=f"Job '{job_id}' remained in RETRYING state for {queue_timeout:.1f}s.",
+                        nvml_trace_count=len(samples),
+                        is_negative=False,
+                    )
+
+                # 4. Inference Timeout: Time allowed in RUNNING or STREAMING, or overall poll
+                if current_state in ("RUNNING", "STREAMING") and (time_in_state >= inference_timeout or total_poll_time >= inference_timeout):
+                    samples = self.sampler.stop()
+                    elapsed_ms = (now - t_start) * 1000.0
+                    return CaseExecutionRecord(
+                        case_id=cid,
+                        run_id=self.run_id,
+                        git_commit=self.git_commit,
+                        model_id=model_id,
+                        task=task,
+                        variant=variant,
+                        mode=mode,
+                        status="FAIL",
+                        contract_pass=None,
+                        inference_pass=False,
                         target_gpu=target_gpu,
                         min_vram_gb=min_vram_gb,
                         e2e_latency_ms=round(elapsed_ms, 2),
                         error_code="INFERENCE_TIMEOUT",
-                        error_message=f"Job '{job_id}' timed out after {poll_timeout:.1f}s (last state: '{current_state}').",
+                        error_message=f"Job '{job_id}' timed out after {inference_timeout:.1f}s (last state: '{current_state}').",
                         nvml_trace_count=len(samples),
+                        is_negative=False,
                     )
 
                 time.sleep(poll_interval)
-                poll_resp = self.client.get(f"/v1/jobs/{job_id}", headers=self.auth_headers)
+                try:
+                    poll_resp = self.client.get(f"/v1/jobs/{job_id}", headers=self.auth_headers)
+                except Exception as poll_exc:
+                    logger.warning(f"[{cid}] Exception during job poll: {poll_exc}")
+                    continue
+
                 if poll_resp.status_code == 200:
                     job_data = poll_resp.json()
-                    current_state = str(job_data.get("state") or job_data.get("status") or "").upper()
-                elif poll_resp.status_code in (404, 500):
-                    break
+                    new_state = str(job_data.get("state") or job_data.get("status") or "").upper()
+                    if new_state != current_state:
+                        current_state = new_state
+                        state_enter_time = time.perf_counter()
+                elif poll_resp.status_code == 404:
+                    samples = self.sampler.stop()
+                    elapsed_ms = (time.perf_counter() - t_start) * 1000.0
+                    return CaseExecutionRecord(
+                        case_id=cid,
+                        run_id=self.run_id,
+                        git_commit=self.git_commit,
+                        model_id=model_id,
+                        task=task,
+                        variant=variant,
+                        mode=mode,
+                        status="FAIL",
+                        contract_pass=None,
+                        inference_pass=False,
+                        target_gpu=target_gpu,
+                        min_vram_gb=min_vram_gb,
+                        e2e_latency_ms=round(elapsed_ms, 2),
+                        error_code="JOB_NOT_FOUND",
+                        error_message=f"Job '{job_id}' was not found during polling (HTTP 404).",
+                        nvml_trace_count=len(samples),
+                        is_negative=False,
+                    )
+                elif poll_resp.status_code >= 500:
+                    samples = self.sampler.stop()
+                    elapsed_ms = (time.perf_counter() - t_start) * 1000.0
+                    return CaseExecutionRecord(
+                        case_id=cid,
+                        run_id=self.run_id,
+                        git_commit=self.git_commit,
+                        model_id=model_id,
+                        task=task,
+                        variant=variant,
+                        mode=mode,
+                        status="ERROR",
+                        contract_pass=None,
+                        inference_pass=False,
+                        target_gpu=target_gpu,
+                        min_vram_gb=min_vram_gb,
+                        e2e_latency_ms=round(elapsed_ms, 2),
+                        error_code=f"HTTP_{poll_resp.status_code}",
+                        error_message=f"Control API server error HTTP {poll_resp.status_code} while polling job '{job_id}': {poll_resp.text[:200]}",
+                        nvml_trace_count=len(samples),
+                        is_negative=False,
+                    )
 
             # Polling concluded - terminal state reached
             elapsed_ms = (time.perf_counter() - t_start) * 1000.0
@@ -673,6 +887,8 @@ class UnifiedBenchmarkRunner:
 
             v0_peak = self.sampler.get_peak_vram_mb(0)
             v1_peak = self.sampler.get_peak_vram_mb(1)
+
+            chk_repo, chk_rev, chk_hash = self._extract_checkpoint_provenance(model_id, job_data)
 
             # Handle non-successful terminal states
             if current_state == "FAILED":
@@ -688,16 +904,22 @@ class UnifiedBenchmarkRunner:
                     variant=variant,
                     mode=mode,
                     status="FAIL",
+                    contract_pass=None,
+                    inference_pass=False,
                     target_gpu=target_gpu,
                     min_vram_gb=min_vram_gb,
                     e2e_latency_ms=e2e_latency_ms,
                     peak_vram_mb_gpu0=v0_peak,
                     peak_vram_mb_gpu1=v1_peak,
+                    checkpoint_repo=chk_repo,
+                    checkpoint_revision=chk_rev,
+                    checkpoint_hash=chk_hash,
                     error_code=str(err_code),
                     error_message=str(err_msg),
                     nvml_trace_count=len(samples),
+                    is_negative=False,
                 )
-            elif current_state in ("CANCELLED", "ERROR"):
+            elif current_state == "CANCELLED":
                 return CaseExecutionRecord(
                     case_id=cid,
                     run_id=self.run_id,
@@ -707,14 +929,20 @@ class UnifiedBenchmarkRunner:
                     variant=variant,
                     mode=mode,
                     status="FAIL",
+                    contract_pass=None,
+                    inference_pass=False,
                     target_gpu=target_gpu,
                     min_vram_gb=min_vram_gb,
                     e2e_latency_ms=e2e_latency_ms,
                     peak_vram_mb_gpu0=v0_peak,
                     peak_vram_mb_gpu1=v1_peak,
-                    error_code=f"JOB_{current_state}",
-                    error_message=f"Job entered terminal state '{current_state}'.",
+                    checkpoint_repo=chk_repo,
+                    checkpoint_revision=chk_rev,
+                    checkpoint_hash=chk_hash,
+                    error_code="JOB_CANCELLED",
+                    error_message=f"Job entered terminal state 'CANCELLED'.",
                     nvml_trace_count=len(samples),
+                    is_negative=False,
                 )
             elif current_state != "SUCCEEDED":
                 return CaseExecutionRecord(
@@ -726,41 +954,73 @@ class UnifiedBenchmarkRunner:
                     variant=variant,
                     mode=mode,
                     status="BACKEND_UNAVAILABLE",
+                    contract_pass=None,
+                    inference_pass=False,
                     target_gpu=target_gpu,
                     min_vram_gb=min_vram_gb,
                     e2e_latency_ms=e2e_latency_ms,
                     error_code="BACKEND_UNAVAILABLE",
                     error_message=f"Job remained in non-terminal state '{current_state}'. Backend worker not active.",
                     nvml_trace_count=len(samples),
+                    is_negative=False,
                 )
 
-            # State is SUCCEEDED: Retrieve artifact
+            # State is SUCCEEDED: Retrieve artifact deterministically
             output_content: Any = None
             artifact_path: Optional[str] = None
+            primary_artifact: Optional[Dict[str, Any]] = None
 
-            # 1. Check local scratch artifacts directory
-            scratch_job_dir = Path("/tmp/factory_lite/artifacts") / job_id if job_id else None
-            if scratch_job_dir and scratch_job_dir.exists():
-                files = [f for f in scratch_job_dir.glob("*") if f.is_file() and not f.name.startswith(".")]
-                if files:
-                    artifact_path = str(files[0])
-                    output_content = Path(artifact_path)
+            artifacts = job_data.get("artifacts", [])
+            expected_mime = expected_output.get("mime")
+            expected_format = expected_output.get("format")
 
-            # 2. Check job_data result/output payloads
+            # 1. Match from job_data artifacts list by expected MIME or ID
+            if isinstance(artifacts, list) and artifacts:
+                if expected_mime:
+                    for art in artifacts:
+                        if isinstance(art, dict) and art.get("mime_type") == expected_mime:
+                            primary_artifact = art
+                            break
+                if primary_artifact is None and isinstance(artifacts[0], dict):
+                    primary_artifact = artifacts[0]
+
+            if primary_artifact:
+                sp = primary_artifact.get("storage_path")
+                if sp and os.path.exists(sp):
+                    artifact_path = sp
+                    output_content = Path(sp)
+                elif job_id:
+                    art_id = primary_artifact.get("artifact_id")
+                    scratch_job_dir = Path("/tmp/factory_lite/artifacts") / job_id
+                    if scratch_job_dir.exists() and art_id:
+                        matched_files = list(scratch_job_dir.glob(f"{art_id}*"))
+                        if matched_files:
+                            artifact_path = str(matched_files[0])
+                            output_content = Path(artifact_path)
+
+            # 2. Check local scratch artifacts directory by format (not arbitrary files[0])
+            if output_content is None and job_id:
+                scratch_job_dir = Path("/tmp/factory_lite/artifacts") / job_id
+                if scratch_job_dir.exists():
+                    glob_pat = f"*.{expected_format}" if expected_format else "*"
+                    candidates = [
+                        f for f in scratch_job_dir.glob(glob_pat)
+                        if f.is_file() and not f.name.startswith(".") and not f.name.endswith(".log")
+                    ]
+                    if candidates:
+                        candidates.sort(key=lambda p: p.stat().st_size, reverse=True)
+                        artifact_path = str(candidates[0])
+                        output_content = Path(artifact_path)
+
+            # 3. Check job_data result/output payloads
             if output_content is None:
-                if "output" in job_data:
+                if "output" in job_data and job_data["output"] is not None:
                     output_content = job_data["output"]
-                elif "result" in job_data:
+                elif "result" in job_data and job_data["result"] is not None:
                     output_content = job_data["result"]
-                elif "artifacts" in job_data and job_data["artifacts"]:
-                    art_ref = job_data["artifacts"][0]
-                    sp = art_ref.get("storage_path")
-                    if sp and os.path.exists(sp):
-                        artifact_path = sp
-                        output_content = Path(sp)
 
-            # 3. If still None, retrieve binary or structured artifact via /v1/jobs/{job_id}/result
-            if output_content is None:
+            # 4. If still None, retrieve binary or structured artifact via /v1/jobs/{job_id}/result
+            if output_content is None and job_id:
                 result_resp = self.client.get(f"/v1/jobs/{job_id}/result", headers=self.auth_headers)
                 if result_resp.status_code == 200:
                     ct = result_resp.headers.get("content-type", "")
@@ -779,15 +1039,31 @@ class UnifiedBenchmarkRunner:
                     variant=variant,
                     mode=mode,
                     status="FAIL",
+                    contract_pass=None,
+                    inference_pass=False,
                     target_gpu=target_gpu,
                     min_vram_gb=min_vram_gb,
                     e2e_latency_ms=e2e_latency_ms,
                     peak_vram_mb_gpu0=v0_peak,
                     peak_vram_mb_gpu1=v1_peak,
+                    checkpoint_repo=chk_repo,
+                    checkpoint_revision=chk_rev,
+                    checkpoint_hash=chk_hash,
                     error_code="ARTIFACT_MISSING",
                     error_message=f"Job '{job_id}' succeeded but no artifact or result payload was delivered.",
                     nvml_trace_count=len(samples),
+                    is_negative=False,
                 )
+
+            # Bind expected SHA-256 and byte sizes from primary_artifact
+            rules = dict(expected_output.get("rules") or {})
+            if primary_artifact:
+                meta_sha = primary_artifact.get("sha256")
+                meta_size = primary_artifact.get("size_bytes")
+                if meta_sha and "expected_sha256" not in rules:
+                    rules["expected_sha256"] = meta_sha
+                if meta_size and "expected_size_bytes" not in rules:
+                    rules["expected_size_bytes"] = meta_size
 
             # Validate output artifact
             val_res: ValidationResult = validate_artifact(
@@ -795,7 +1071,7 @@ class UnifiedBenchmarkRunner:
                 expected_mime=expected_output.get("mime"),
                 expected_format=expected_output.get("format"),
                 min_bytes=expected_output.get("min_bytes", 1),
-                rules=expected_output.get("rules"),
+                rules=rules,
             )
 
             # Measured inference time - NEVER synthetic multipliers
@@ -807,7 +1083,55 @@ class UnifiedBenchmarkRunner:
             if measured_inf_ms is None and isinstance(job_data.get("timings"), dict):
                 measured_inf_ms = job_data["timings"].get("inference_ms")
 
-            final_inference_time_ms = round(measured_inf_ms, 2) if measured_inf_ms is not None else e2e_latency_ms
+            # Telemetry Integrity: When measured_inf_ms is None, keep final_inference_time_ms = None. NEVER substitute e2e_latency_ms.
+            final_inference_time_ms = round(measured_inf_ms, 2) if measured_inf_ms is not None else None
+
+            measured_load_ms = None
+            if isinstance(job_data.get("telemetry"), dict):
+                measured_load_ms = job_data["telemetry"].get("load_duration_ms")
+            if measured_load_ms is None and isinstance(job_data.get("timings"), dict):
+                measured_load_ms = job_data["timings"].get("load_ms")
+            final_load_time_ms = round(measured_load_ms, 2) if measured_load_ms is not None else None
+
+            # Reject INFERENCE_PASS if worker lease, execution evidence, or non-empty output is missing
+            has_worker = bool(job_data.get("worker"))
+            has_output = bool(val_res.valid and val_res.size_bytes > 0)
+            has_duration = bool(measured_inf_ms is not None or (e2e_latency_ms is not None and e2e_latency_ms > 0))
+
+            if not (has_worker and has_output and has_duration):
+                missing_evidence = []
+                if not has_worker:
+                    missing_evidence.append("worker lease")
+                if not has_output:
+                    missing_evidence.append("non-empty validated output")
+                if not has_duration:
+                    missing_evidence.append("execution duration evidence")
+                return CaseExecutionRecord(
+                    case_id=cid,
+                    run_id=self.run_id,
+                    git_commit=self.git_commit,
+                    model_id=model_id,
+                    task=task,
+                    variant=variant,
+                    mode=mode,
+                    status="FAIL",
+                    contract_pass=None,
+                    inference_pass=False,
+                    target_gpu=target_gpu,
+                    min_vram_gb=min_vram_gb,
+                    e2e_latency_ms=e2e_latency_ms,
+                    inference_time_ms=final_inference_time_ms,
+                    load_time_ms=final_load_time_ms,
+                    peak_vram_mb_gpu0=v0_peak,
+                    peak_vram_mb_gpu1=v1_peak,
+                    checkpoint_repo=chk_repo,
+                    checkpoint_revision=chk_rev,
+                    checkpoint_hash=chk_hash,
+                    error_code="EXECUTION_EVIDENCE_MISSING",
+                    error_message=f"Job marked SUCCEEDED but missing evidence: {', '.join(missing_evidence)}.",
+                    nvml_trace_count=len(samples),
+                    is_negative=False,
+                )
 
             if val_res.valid:
                 return CaseExecutionRecord(
@@ -819,12 +1143,18 @@ class UnifiedBenchmarkRunner:
                     variant=variant,
                     mode=mode,
                     status="PASS",
+                    contract_pass=None,
+                    inference_pass=True,
                     target_gpu=target_gpu,
                     min_vram_gb=min_vram_gb,
                     e2e_latency_ms=e2e_latency_ms,
                     inference_time_ms=final_inference_time_ms,
+                    load_time_ms=final_load_time_ms,
                     peak_vram_mb_gpu0=v0_peak,
                     peak_vram_mb_gpu1=v1_peak,
+                    checkpoint_repo=chk_repo,
+                    checkpoint_revision=chk_rev,
+                    checkpoint_hash=chk_hash,
                     output_path=str(artifact_path) if artifact_path else None,
                     output_bytes=val_res.size_bytes,
                     artifact_mime=val_res.mime_type,
@@ -833,8 +1163,10 @@ class UnifiedBenchmarkRunner:
                     artifact_duration_seconds=val_res.duration_seconds,
                     artifact_validated=True,
                     nvml_trace_count=len(samples),
+                    is_negative=False,
                 )
             else:
+                val_err_code = getattr(val_res, "error_code", None) or "VALIDATION_FAILED"
                 return CaseExecutionRecord(
                     case_id=cid,
                     run_id=self.run_id,
@@ -844,18 +1176,26 @@ class UnifiedBenchmarkRunner:
                     variant=variant,
                     mode=mode,
                     status="FAIL",
+                    contract_pass=None,
+                    inference_pass=False,
                     target_gpu=target_gpu,
                     min_vram_gb=min_vram_gb,
                     e2e_latency_ms=e2e_latency_ms,
+                    inference_time_ms=final_inference_time_ms,
+                    load_time_ms=final_load_time_ms,
                     peak_vram_mb_gpu0=v0_peak,
                     peak_vram_mb_gpu1=v1_peak,
+                    checkpoint_repo=chk_repo,
+                    checkpoint_revision=chk_rev,
+                    checkpoint_hash=chk_hash,
                     output_bytes=val_res.size_bytes,
                     artifact_mime=val_res.mime_type,
                     artifact_sha256=val_res.sha256,
                     artifact_validated=False,
-                    error_code="VALIDATION_FAILED",
+                    error_code=val_err_code,
                     error_message=val_res.error,
                     nvml_trace_count=len(samples),
+                    is_negative=False,
                 )
 
         except Exception as exc:
@@ -908,17 +1248,66 @@ class UnifiedBenchmarkRunner:
             logger.info(f"[{idx}/{len(selected_cases)}] Evaluating {cid} ({case['model']} - {case['task']})...")
 
             if mode == "perf" and not case.get("is_negative", False):
-                # Run multiple iterations and take median
-                iter_records = []
+                iter_records: List[CaseExecutionRecord] = []
                 for it in range(perf_iterations):
                     r = self.evaluate_case(case, mode=mode)
                     iter_records.append(r)
-                # Compute median latency
-                lats = [r.e2e_latency_ms for r in iter_records if r.e2e_latency_ms is not None]
-                best_rec = iter_records[0]
-                if lats:
-                    best_rec.e2e_latency_ms = round(sorted(lats)[len(lats)//2], 2)
-                results.append(best_rec)
+
+                # Filter strictly to passing iterations for performance metrics
+                passing_runs = [
+                    r for r in iter_records
+                    if r.status in ("PASS", "INFERENCE_PASS") or getattr(r, "inference_pass", False) is True
+                ]
+                passing_e2e_lats = sorted([r.e2e_latency_ms for r in passing_runs if r.e2e_latency_ms is not None])
+                passing_inf_lats = sorted([r.inference_time_ms for r in passing_runs if r.inference_time_ms is not None])
+
+                def calc_percentile(data: List[float], p: float) -> Optional[float]:
+                    if not data:
+                        return None
+                    k = (len(data) - 1) * (p / 100.0)
+                    f = math.floor(k)
+                    c = math.ceil(k)
+                    if f == c:
+                        return round(data[int(k)], 2)
+                    return round(data[f] * (c - k) + data[c] * (k - f), 2)
+
+                median_e2e = calc_percentile(passing_e2e_lats, 50.0)
+                p95_e2e = calc_percentile(passing_e2e_lats, 95.0)
+                median_inf = calc_percentile(passing_inf_lats, 50.0)
+                p95_inf = calc_percentile(passing_inf_lats, 95.0)
+
+                # Aggregate peak VRAM as maximum across all iterations
+                v0_peaks = [r.peak_vram_mb_gpu0 for r in iter_records if r.peak_vram_mb_gpu0 is not None]
+                v1_peaks = [r.peak_vram_mb_gpu1 for r in iter_records if r.peak_vram_mb_gpu1 is not None]
+                max_v0 = max(v0_peaks) if v0_peaks else None
+                max_v1 = max(v1_peaks) if v1_peaks else None
+
+                success_rate = round((len(passing_runs) / perf_iterations) * 100.0, 1) if perf_iterations > 0 else 0.0
+
+                base_rec = passing_runs[0] if passing_runs else iter_records[0]
+                perf_rec = copy.deepcopy(base_rec)
+                perf_rec.e2e_latency_ms = median_e2e
+                perf_rec.inference_time_ms = median_inf
+                perf_rec.peak_vram_mb_gpu0 = max_v0
+                perf_rec.peak_vram_mb_gpu1 = max_v1
+                if not passing_runs:
+                    perf_rec.status = base_rec.status
+                    perf_rec.inference_pass = False
+                else:
+                    perf_rec.status = "PASS"
+                    perf_rec.inference_pass = True
+
+                perf_rec.perf_metadata = {
+                    "iterations_total": perf_iterations,
+                    "iterations_passed": len(passing_runs),
+                    "iteration_success_rate": success_rate,
+                    "e2e_latency_median_ms": median_e2e,
+                    "e2e_latency_p95_ms": p95_e2e,
+                    "inference_time_median_ms": median_inf,
+                    "inference_time_p95_ms": p95_inf,
+                    "all_iterations": [r.to_canonical_dict() for r in iter_records],
+                }
+                results.append(perf_rec)
             else:
                 rec = self.evaluate_case(case, mode=mode)
                 results.append(rec)

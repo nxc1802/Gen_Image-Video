@@ -236,7 +236,7 @@ Factory v4 Lite is designed to execute directly on Kaggle Dual Tesla T4 hardware
 
 ### 3.9 Model 9: `ace-step-1.5`
 - **Manifest:** `manifests/models/ace-step-1.5.yaml`
-- **Model ID:** `ace-step-1.5` | **Service ID:** `music-service` | **Service Port:** `8008`
+- **Model ID:** `ace-step-1.5` | **Service ID:** `music-service` | **Service Port:** `8008` (Primary ACE-Step daemon on port 8008, distinct from YuE2 daemon on port 8009)
 - **Primary Checkpoint:** `ACE-Studio/ACE-Step-1.5`
 - **Weights Format:** `safetensors` | **Quantization:** `none` | **Precision:** `bf16`
 - **Native Backend:** Native ACE-Step HTTP API (`run_acestep_api.sh`, PyTorch, torchaudio)
@@ -262,10 +262,10 @@ Factory v4 Lite is designed to execute directly on Kaggle Dual Tesla T4 hardware
 
 ### 3.10 Model 10: `yue2`
 - **Manifest:** `manifests/models/yue2.yaml`
-- **Model ID:** `yue2` | **Service ID:** `music-service` | **Service Port:** `8009`
+- **Model ID:** `yue2` | **Service ID:** `music-service` | **Service Port:** `8009` (Dedicated YuE2 runtime daemon on port 8009, co-located under `music-service` on GPU 1 alongside ACE-Step 1.5 on port 8008)
 - **Primary Checkpoint:** `m-a-p/YuE-s1-7B-anneal-en-cot`
 - **Weights Format:** `safetensors` | **Quantization:** `none` | **Precision:** `bf16`
-- **Native Backend:** Native YuE2 HTTP Client / PyTorch (`xformers`, `transformers`)
+- **Native Backend:** Native YuE2 HTTP Client / PyTorch (`xformers`, `transformers`) on port 8009 (`/health`)
 - **Target GPU:** GPU 1 | **Min VRAM:** 12.0 GB (declared for T4) / 24.0 GB (native) | **Alloc Policy:** `single_gpu`
 - **Registered Variants:** `standard`
 - **Task Matrix:**
