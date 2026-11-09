@@ -18,6 +18,7 @@ import hashlib
 import io
 import json
 import math
+import os
 from pathlib import Path
 import re
 import struct
@@ -115,6 +116,8 @@ def extract_png_metadata(data: bytes) -> Tuple[Optional[Tuple[int, int]], Dict[s
         ihdr_type = data[12:16]
         if ihdr_type == b"IHDR":
             width, height = struct.unpack(">II", data[16:24])
+            if width <= 0 or height <= 0:
+                return None, {}
             bit_depth, color_type, compression, filter_method, interlace = struct.unpack(
                 ">BBBBB", data[24:29]
             )
@@ -137,7 +140,9 @@ def extract_wav_metadata(data: bytes) -> Tuple[Optional[float], Dict[str, Any]]:
             sample_width = wf.getsampwidth()
             framerate = wf.getframerate()
             n_frames = wf.getnframes()
-            duration = n_frames / float(framerate) if framerate > 0 else 0.0
+            if framerate <= 0 or channels <= 0 or sample_width <= 0:
+                return None, {}
+            duration = n_frames / float(framerate)
             return round(duration, 3), {
                 "channels": channels,
                 "sample_width_bytes": sample_width,
@@ -250,13 +255,19 @@ def validate_decision_schema(payload: Dict[str, Any]) -> Tuple[bool, Optional[st
     if not (has_decision or has_confidence):
         return False, "Decision payload missing decision/choice/score fields"
 
-    if "confidence" in payload and isinstance(payload["confidence"], (int, float)):
-        conf = float(payload["confidence"])
+    if "confidence" in payload:
+        conf_val = payload["confidence"]
+        if not isinstance(conf_val, (int, float)) or isinstance(conf_val, bool):
+            return False, "Confidence must be a numerical float in [0.0, 1.0]"
+        conf = float(conf_val)
         if not (0.0 <= conf <= 1.0):
             return False, f"Confidence {conf} out of valid [0.0, 1.0] range"
 
-    if "probability" in payload and isinstance(payload["probability"], (int, float)):
-        prob = float(payload["probability"])
+    if "probability" in payload:
+        prob_val = payload["probability"]
+        if not isinstance(prob_val, (int, float)) or isinstance(prob_val, bool):
+            return False, "Probability must be a numerical float in [0.0, 1.0]"
+        prob = float(prob_val)
         if not (0.0 <= prob <= 1.0):
             return False, f"Probability {prob} out of valid [0.0, 1.0] range"
 
@@ -278,12 +289,15 @@ def validate_embedding_vector(
     if expected_dim is not None and dim != expected_dim:
         return False, f"Embedding dimension mismatch: expected {expected_dim}, got {dim}", {"dim": dim}
 
-    if not all(isinstance(x, (int, float)) for x in vector[:20]):
+    if not all(isinstance(x, (int, float)) and not isinstance(x, bool) for x in vector):
         return False, "Embedding elements must be numerical floats", {"dim": dim}
 
     # Compute norm
-    l2_sum = sum(float(x) ** 2 for x in vector)
-    l2_norm = math.sqrt(l2_sum)
+    try:
+        l2_sum = sum(float(x) ** 2 for x in vector)
+        l2_norm = math.sqrt(l2_sum)
+    except (ValueError, TypeError, OverflowError) as e:
+        return False, f"Embedding computation failed: {e}", {"dim": dim}
 
     if math.isnan(l2_norm) or math.isinf(l2_norm):
         return False, "Embedding contains NaN or Inf values", {"dim": dim}
@@ -439,6 +453,81 @@ def validate_artifact(
             )
 
     # 6. Apply domain rules
+    # SHA-256 integrity rule
+    expected_sha = rules.get("sha256") or rules.get("expected_sha256")
+    if expected_sha and (sha256 is None or sha256.lower() != str(expected_sha).strip().lower()):
+        return ValidationResult(
+            valid=False,
+            mime_type=detected_mime,
+            format=detected_fmt,
+            size_bytes=size_bytes,
+            sha256=sha256,
+            dimensions=dimensions,
+            duration_seconds=duration,
+            metadata=metadata,
+            error=f"SHA-256 mismatch: expected '{expected_sha}', got '{sha256}'",
+        )
+
+    # Dimension rules gating
+    has_dim_rules = any(k in rules for k in ("exact_width", "exact_height", "min_width", "min_height"))
+    if has_dim_rules and dimensions is None:
+        return ValidationResult(
+            valid=False,
+            mime_type=detected_mime,
+            format=detected_fmt,
+            size_bytes=size_bytes,
+            sha256=sha256,
+            metadata=metadata,
+            error="Unable to extract image dimensions from corrupted or unsupported container",
+        )
+
+    # Duration rules gating
+    has_dur_rules = any(k in rules for k in ("min_duration", "max_duration"))
+    if has_dur_rules and duration is None:
+        return ValidationResult(
+            valid=False,
+            mime_type=detected_mime,
+            format=detected_fmt,
+            size_bytes=size_bytes,
+            sha256=sha256,
+            metadata=metadata,
+            error="Unable to extract media duration from corrupted or unsupported container",
+        )
+
+    # Container integrity verification for recognized media containers
+    if detected_mime == "image/png" and dimensions is None:
+        return ValidationResult(
+            valid=False,
+            mime_type=detected_mime,
+            format=detected_fmt,
+            size_bytes=size_bytes,
+            sha256=sha256,
+            metadata=metadata,
+            error="Corrupted or truncated media container",
+        )
+
+    if detected_mime == "audio/wav" and duration is None:
+        return ValidationResult(
+            valid=False,
+            mime_type=detected_mime,
+            format=detected_fmt,
+            size_bytes=size_bytes,
+            sha256=sha256,
+            metadata=metadata,
+            error="Corrupted or truncated media container",
+        )
+
+    if detected_mime == "video/mp4" and duration is None and dimensions is None:
+        return ValidationResult(
+            valid=False,
+            mime_type=detected_mime,
+            format=detected_fmt,
+            size_bytes=size_bytes,
+            sha256=sha256,
+            metadata=metadata,
+            error="Corrupted or truncated media container",
+        )
+
     # Dimension rules
     if dimensions:
         w, h = dimensions

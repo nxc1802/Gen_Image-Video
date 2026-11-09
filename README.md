@@ -1,64 +1,156 @@
-# Factory v4 Lite — Personal AI API Provider
+# Factory v4 Lite — Personal AI Production Platform
 
-Factory v4 Lite is an inference-first Personal AI API Provider refactored from Kaggle AI Studio v3.5. The Control Plane provides single API key authentication, in-memory job queuing, discrete Dual T4 GPU scheduling, streaming events, and ephemeral scratch disk artifact delivery. External enterprise infrastructure dependencies (PostgreSQL, Redis, S3/MinIO, Alembic, complex JWT RBAC) have been completely eliminated.
+Factory v4 Lite is a lightweight, inference-first Personal AI Production Platform delivering authentic model inference through a verified API and Studio Web Operations Console, backed by a unified benchmark suite on Kaggle Dual T4 hardware.
 
-> **Validation status:** Architecture, security, and contract test suites are automated and 100% green without external dependencies. Models retain `validation_status: pending_live` until verified on live GPU hardware via `deployments.kaggle.smoke_runner`. Model manifests are authoritative: unverified or unavailable capabilities fail closed with 503 instead of returning mock or synthetic outputs.
+The Control Plane provides single API key Bearer authentication, in-memory job queuing, discrete Dual T4 GPU scheduling, streaming events, and ephemeral scratch disk artifact delivery. External enterprise infrastructure dependencies (PostgreSQL, Redis, S3/MinIO, Alembic, complex JWT RBAC) have been completely eliminated.
+
+> **Validation Status:** Architecture, security, and contract test suites are automated and 100% green without external dependencies. Models adhere strictly to capability truth: unverified or unavailable capabilities fail closed with explicit non-success statuses (`BACKEND_UNAVAILABLE`, `HARDWARE_BLOCKED`, or 503 HTTP status) instead of returning mock or synthetic outputs.
+
+---
 
 ## Runtime Architecture
 
-- `factory/apps/control-api/` — Lightweight FastAPI Control Plane; in-memory queue, ephemeral scratch storage, Dual T4 scheduler.
-- `factory/apps/studio-web/` — Next.js 15 / React 19 API Explorer, Job Dashboard and streaming inspector.
-- `services/text/` — Native vLLM OpenAI-compatible text serving.
-- `services/vlm/` — Native vLLM multimodal serving with SSRF containment.
-- `services/decision/` — Native vLLM Structured Decisions API.
-- `services/embedding/` — Native vLLM embedding and rerank workers.
-- `services/speech/` — Qwen3-ASR on vLLM + Qwen3-TTS on vLLM-Omni; zero fabricated inference.
-- `services/image/` and `services/video/` — Native ComfyUI workers with chunked streaming artifact delivery.
-- `services/music/` — Native ACE-Step 1.5 worker.
-- `services/enhancement/` — Real enhancement workers; unavailable backends fail with 503.
-- `manifests/` — Service/model/capability/hardware source of truth.
-- `deployments/kaggle/` — Kaggle Dual-T4 deployment and 4-stage real inference smoke runner (`deployments.kaggle.smoke_runner`).
+- **Control Plane (`factory_control_api:app`)** — Lightweight FastAPI Control Plane in `factory/apps/control-api/`; in-memory queue, ephemeral scratch storage, discrete Dual T4 scheduler.
+- **Studio Web (`factory/apps/studio-web/`)** — Next.js 15 / React 19 Operations Console, API Explorer, Job Dashboard, Model Registry, and Streaming Inspector.
+- **Services (`services/*`)**:
+  - `services/text/` — Native vLLM OpenAI-compatible text serving (Qwen 2.5 Text).
+  - `services/vlm/` — Native vLLM multimodal serving with SSRF containment (Qwen 2.5 VLM).
+  - `services/decision/` — Native vLLM Structured Decisions API (Qwen 2.5 Decision).
+  - `services/embedding/` — Native vLLM embedding and rerank workers (Qwen 2.5 Embedding).
+  - `services/speech/` — Qwen3-ASR on vLLM + Qwen3-TTS on vLLM-Omni; zero fabricated inference.
+  - `services/image/` and `services/video/` — Native ComfyUI / Diffusers workers with chunked streaming artifact delivery (Qwen-Image 2.1, Wan 2.2, MiniMax H3).
+  - `services/music/` — Native ACE-Step 1.5 and YuE2 workers with ABC notation verification.
+  - `services/enhancement/` — Enhancement suite; unbacked or offline backends fail closed with 503.
+- **Manifests (`manifests/`)** — Authoritative model, service, capability, and hardware source of truth across all 11 foundation models.
+- **Unified Kaggle Deployment (`deployments/kaggle/`)** — Single reproducible bootstrap engine (`deployments.kaggle.bootstrap`).
+- **Unified Benchmark Suite (`benchmarks/`)** — Multi-modal runner, test cases, and binary container validators (`benchmarks.runner`, `benchmarks.validators`).
+
+---
 
 ## Safety and Correctness Invariants
 
 Factory v4 Lite strictly adheres to:
 
 ```text
-REAL BACKEND AVAILABLE   -> execute genuine inference
-REAL BACKEND UNAVAILABLE -> 503 MODEL_UNAVAILABLE / SERVICE_UNAVAILABLE
+REAL BACKEND AVAILABLE   -> execute genuine inference with authentic weights
+REAL BACKEND UNAVAILABLE -> 503 BACKEND_UNAVAILABLE / SERVICE_UNAVAILABLE
 NEVER                    -> mock PNG containers, mock MP4 headers, pseudo embeddings,
                             canned transcripts, sine-wave TTS, or fabricated telemetry
 ```
 
-- **Zero External Infrastructure**: No PostgreSQL, SQLite server, Redis broker, S3/MinIO bucket, or Alembic migrations required.
-- **Single API Key Security**: Constant-time verification using `FACTORY_API_KEY` via `Authorization: Bearer <key>`.
-- **Ephemeral Artifacts**: All generated media resides exclusively in `/tmp/factory_lite/artifacts/{job_id}/` and is retained on disk until TTL expiration (`ARTIFACT_TTL_SECONDS=3600` by default), or automatically unlinked upon completed download when `ARTIFACT_CLEANUP_ON_DOWNLOAD=true`.
-- **Dual T4 GPU Scheduling**: Strict 1-job-per-GPU concurrency lock per discrete GPU device (GPU 0: Text/VLM/Image/Speech, GPU 1: Video/Music/Embedding).
+1. **Zero External Infrastructure**: No PostgreSQL, SQLite server, Redis broker, S3/MinIO bucket, or Alembic migrations required.
+2. **Single API Key Security**: Constant-time verification using `FACTORY_API_KEY` via `Authorization: Bearer <key>`.
+3. **Ephemeral Artifacts**: All generated media resides exclusively in `/tmp/factory_lite/artifacts/{job_id}/` and is retained on disk until TTL expiration (`ARTIFACT_TTL_SECONDS=3600` by default), or automatically unlinked upon completed download when `ARTIFACT_CLEANUP_ON_DOWNLOAD=true`.
+4. **Discrete Dual-T4 GPU Memory Partitioning**:
+   - 2x 16 GB Tesla T4 GPUs with **14.2 GB (14,540 MB)** max allocatable VRAM each (leaving >= 820 MB CUDA headroom).
+   - Zero assumed 32 GB shared memory pool; workloads must fit single-GPU partitions:
+     - **GPU 0**: Text, VLM, Decision, Image, Speech.
+     - **GPU 1**: Video, Music, Embedding, Enhancement.
+   - Strict 1-job-per-GPU concurrency mutual exclusion lock.
+
+---
+
+## Status Semantics
+
+The platform and benchmark suite enforce authentic, fail-closed status semantics:
+
+| Status | Meaning |
+|---|---|
+| `PASS` | Authentic model inference verified against genuine checkpoint weights, valid artifact container (MIME, dimensions, duration, sha256 checksum), and sampled GPU VRAM telemetry. |
+| `BACKEND_UNAVAILABLE` | Declared capability whose native backend engine or live worker is not actively running/reachable. No synthetic fallbacks, no mock passes. |
+| `HARDWARE_BLOCKED` | Workload or model variant exceeds the 14.2 GB per-GPU allocatable ceiling on Dual-T4. |
+| `FAIL` | Model execution completed but returned invalid artifact headers, empty bytes, or out-of-bounds parameters. |
+| `ERROR` | Unexpected unhandled exception or system fault during execution. |
+| Rejection Cases | Missing auth (401), invalid variant (400), unsupported capability (400), unregistered model (404), or schema violations (422) fail closed as expected. |
+
+---
 
 ## Single Working Deploy Path
 
-Factory v4 Lite requires zero external infrastructure (no PostgreSQL, Redis, or S3).
-Launch the Control Plane with:
+### 1. Launch Control Plane API
 
 ```bash
-# 1. Install dependencies
-uv sync --all-packages
-
-# 2. Set API Key and launch server
+# Set environment variables
 export FACTORY_API_KEY="sk-factory-prod-secret-token"
+
+# Start FastAPI server via the canonical entrypoint
 uv run uvicorn factory_control_api.server:app --host 0.0.0.0 --port 8000
-# (or: uv run uvicorn factory_control_api:app --host 0.0.0.0 --port 8000)
+# (or package entrypoint alias: uv run uvicorn factory_control_api:app --host 0.0.0.0 --port 8000)
 ```
 
-## Quick Verification
+### 2. Launch Studio Web Operations Console
+
+Studio Web provides an interactive operations console, model registry browser, job dashboard, and real-time streaming inspector.
 
 ```bash
-uv sync --all-packages
-uv run python -m compileall -q factory packages services tests
-uv run factory-manifest validate --path manifests
-uv run pytest tests/test_preflight.py tests/unit tests/security tests/contract tests/e2e -q
-
 cd factory/apps/studio-web
+
+# Development mode
+npm run dev
+
+# Production build and start
 npm run build
+npm run start
 ```
 
+Studio Web is accessible at `http://localhost:3000` and communicates with the Control Plane at `http://localhost:8000` using the configured Bearer token.
+
+---
+
+## Unified Kaggle Dual-T4 Deployment & Benchmark
+
+### Pre-Flight Bootstrap Verification
+
+Run the unified bootstrap script to verify GPU topology, Python dependencies, dataset mounts, and scratch disk configuration without modifying files:
+
+```bash
+# Check-only dry run
+python -m deployments.kaggle.bootstrap --check-only
+
+# Or install missing dependencies automatically
+python -m deployments.kaggle.bootstrap --install-missing
+```
+
+### Unified Multi-Modal Benchmark Suite
+
+Execute the benchmark suite across all 11 model manifests directly via the unified runner:
+
+```bash
+# Smoke mode: quick feasibility and negative rejection evaluation
+python -m benchmarks.runner --mode smoke
+
+# Full mode: exhaustive evaluation across all 91 declared cases
+python -m benchmarks.runner --mode full
+
+# Perf mode: multi-iteration latency and VRAM profiling
+python -m benchmarks.runner --mode perf
+
+# Targeted evaluation by model
+python -m benchmarks.runner --mode smoke --model qwen-text
+```
+
+Benchmark deliverables are generated in `benchmarks/results/run_<timestamp>/`:
+- `results.json`: Canonical execution records and hardware profiles.
+- `metrics.csv`: Tabular metric traces (latency, VRAM peak, artifact SHA-256).
+- `summary.md`: Markdown summary report with status breakdown and capability matrix.
+
+---
+
+## Verification & Testing
+
+```bash
+# 1. Manifest Validation (all 11 models, 0 errors)
+python -m model_registry.cli validate --path manifests
+
+# 2. Benchmark Runner Unit Tests
+pytest tests/unit/benchmarks/test_unified_benchmark_runner.py -v
+
+# 3. Minimal Preflight Suite
+pytest tests/test_preflight.py -v
+
+# 4. Full Regression Test Suite
+pytest tests/test_preflight.py tests/unit -q
+
+# 5. Studio Web Build
+cd factory/apps/studio-web && npm run build
+```

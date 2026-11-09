@@ -11,6 +11,7 @@ Unit test suite for Phase 3 Unified Kaggle Dual-T4 Benchmark:
 
 from __future__ import annotations
 
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -25,6 +26,7 @@ import yaml
 from benchmarks.report import BenchmarkReportGenerator, CaseExecutionRecord
 from benchmarks.runner import DualT4MemoryGuard, NVMLSampler, UnifiedBenchmarkRunner
 from benchmarks.validators import (
+    PNG_MAGIC,
     extract_mp4_metadata,
     extract_png_metadata,
     extract_wav_metadata,
@@ -229,6 +231,185 @@ def test_validators_yue2_abc_score():
     ok_b, err_b = validate_abc_score(bad_score)
     assert ok_b is False
     assert "Missing required ABC score headers" in err_b
+
+
+# =============================================================================
+# 2b. Adversarial Corruption & Schema Bypass Regression Tests (Challenger P3)
+# =============================================================================
+
+def test_adversarial_png_corruption_rejection():
+    """Scenario 1: Truncated PNG with corrupt IHDR chunk must be rejected with valid=False."""
+    corrupted_png = PNG_MAGIC + b"\x00\x00\x00\rIHDRcorrupt"
+
+    # With dimension rules
+    res_with_rules = validate_artifact(
+        content=corrupted_png,
+        expected_mime="image/png",
+        expected_format="png",
+        rules={"exact_width": 800, "exact_height": 600},
+    )
+    assert res_with_rules.valid is False
+    assert "Unable to extract image dimensions" in res_with_rules.error
+
+    # Without dimension rules (corrupted container check)
+    res_no_rules = validate_artifact(
+        content=corrupted_png,
+        expected_mime="image/png",
+        expected_format="png",
+    )
+    assert res_no_rules.valid is False
+    assert "Corrupted or truncated media container" in res_no_rules.error
+
+
+def test_adversarial_wav_corruption_rejection():
+    """Scenario 2: Corrupted WAV audio with malformed fmt chunk must be rejected with valid=False."""
+    corrupted_wav = b"RIFF\x24\x00\x00\x00WAVEfmt corrupt_bytes_not_wav"
+
+    # With duration rules
+    res_with_rules = validate_artifact(
+        content=corrupted_wav,
+        expected_mime="audio/wav",
+        expected_format="wav",
+        rules={"min_duration": 1.0},
+    )
+    assert res_with_rules.valid is False
+    assert "Unable to extract media duration" in res_with_rules.error
+
+    # Without duration rules
+    res_no_rules = validate_artifact(
+        content=corrupted_wav,
+        expected_mime="audio/wav",
+        expected_format="wav",
+    )
+    assert res_no_rules.valid is False
+    assert "Corrupted or truncated media container" in res_no_rules.error
+
+
+def test_adversarial_mp4_corruption_rejection():
+    """Scenario 3: Corrupted MP4 video with truncated moov chunk must be rejected with valid=False."""
+    ftyp_payload = b"isom\x00\x00\x02\x00isomiso2mp41"
+    ftyp_box = struct.pack(">I4s", len(ftyp_payload) + 8, b"ftyp") + ftyp_payload
+    corrupted_mp4 = ftyp_box + b"corrupt_moov_bytes_here"
+
+    # With duration and dimension rules
+    res_with_rules = validate_artifact(
+        content=corrupted_mp4,
+        expected_mime="video/mp4",
+        expected_format="mp4",
+        rules={"min_duration": 2.0, "exact_width": 1280},
+    )
+    assert res_with_rules.valid is False
+    assert "Unable to extract image dimensions" in res_with_rules.error
+
+    # With only duration rules
+    res_dur_only = validate_artifact(
+        content=corrupted_mp4,
+        expected_mime="video/mp4",
+        expected_format="mp4",
+        rules={"min_duration": 2.0},
+    )
+    assert res_dur_only.valid is False
+    assert "Unable to extract media duration" in res_dur_only.error
+
+    # Without rules
+    res_no_rules = validate_artifact(
+        content=corrupted_mp4,
+        expected_mime="video/mp4",
+        expected_format="mp4",
+    )
+    assert res_no_rules.valid is False
+    assert "Corrupted or truncated media container" in res_no_rules.error
+
+
+def test_adversarial_sha256_rule_enforcement():
+    """Scenario 4: Mismatched SHA-256 strings in rules must be rejected; valid matching hashes pass."""
+    payload = b"authentic payload bytes"
+    expected_mismatch = "0" * 64
+
+    # Using 'sha256' key
+    res_mismatch_1 = validate_artifact(payload, rules={"sha256": expected_mismatch})
+    assert res_mismatch_1.valid is False
+    assert f"SHA-256 mismatch: expected '{expected_mismatch}'" in res_mismatch_1.error
+
+    # Using 'expected_sha256' key
+    res_mismatch_2 = validate_artifact(payload, rules={"expected_sha256": expected_mismatch})
+    assert res_mismatch_2.valid is False
+    assert f"SHA-256 mismatch: expected '{expected_mismatch}'" in res_mismatch_2.error
+
+    # Correct matching SHA-256
+    correct_hash = hashlib.sha256(payload).hexdigest()
+    res_match = validate_artifact(payload, rules={"sha256": correct_hash})
+    assert res_match.valid is True
+    assert res_match.sha256 == correct_hash
+
+
+def test_adversarial_decision_schema_hardening():
+    """Scenario 5: Decision schema must reject non-numeric confidence and probability types."""
+    # Non-numeric string confidence
+    ok_str_c, err_str_c = validate_decision_schema({"confidence": "not-a-number"})
+    assert ok_str_c is False
+    assert "Confidence must be a numerical float in [0.0, 1.0]" in err_str_c
+
+    # Boolean confidence (bool is int subclass in Python)
+    ok_bool_c, err_bool_c = validate_decision_schema({"confidence": True})
+    assert ok_bool_c is False
+    assert "Confidence must be a numerical float in [0.0, 1.0]" in err_bool_c
+
+    # Non-numeric string probability
+    ok_str_p, err_str_p = validate_decision_schema({"probability": "high"})
+    assert ok_str_p is False
+    assert "Probability must be a numerical float in [0.0, 1.0]" in err_str_p
+
+    # Boolean probability
+    ok_bool_p, err_bool_p = validate_decision_schema({"probability": False})
+    assert ok_bool_p is False
+    assert "Probability must be a numerical float in [0.0, 1.0]" in err_bool_p
+
+    # List probability
+    ok_list_p, err_list_p = validate_decision_schema({"probability": [0.5]})
+    assert ok_list_p is False
+    assert "Probability must be a numerical float in [0.0, 1.0]" in err_list_p
+
+    # Valid numerical values pass
+    ok_valid, err_valid = validate_decision_schema({"choice": "route_a", "confidence": 0.85, "probability": 0.85})
+    assert ok_valid is True
+    assert err_valid is None
+
+
+def test_adversarial_embedding_vector_robustness():
+    """Scenario 6: validate_embedding_vector checks all elements and wraps summation safely."""
+    # Non-numeric string beyond index 20
+    vec_with_str = [1.0] * 20 + ["bad_string"]
+    ok_s, err_s, meta_s = validate_embedding_vector(vec_with_str)
+    assert ok_s is False
+    assert "Embedding elements must be numerical floats" in err_s
+    assert meta_s.get("dim") == 21
+
+    # validate_artifact with is_embedding rule should reject cleanly without raising exception
+    res_art = validate_artifact({"embedding": vec_with_str}, rules={"is_embedding": True})
+    assert res_art.valid is False
+    assert "Embedding elements must be numerical floats" in res_art.error
+
+    # Boolean element in vector
+    vec_with_bool = [1.0] * 50 + [True]
+    ok_b, err_b, meta_b = validate_embedding_vector(vec_with_bool)
+    assert ok_b is False
+    assert "Embedding elements must be numerical floats" in err_b
+
+    # Extremely large float causing OverflowError during sum of squares
+    vec_with_overflow = [1e200, 1e200]
+    ok_o, err_o, meta_o = validate_embedding_vector(vec_with_overflow)
+    assert ok_o is False
+    assert "Embedding computation failed" in err_o
+    assert meta_o.get("dim") == 2
+
+    # Valid vector with 1024 floats passes cleanly
+    valid_vec = [0.01 * (i % 10) for i in range(1024)]
+    ok_v, err_v, meta_v = validate_embedding_vector(valid_vec, expected_dim=1024)
+    assert ok_v is True
+    assert err_v is None
+    assert meta_v["dim"] == 1024
+    assert meta_v["l2_norm"] > 0.0
 
 
 # =============================================================================
