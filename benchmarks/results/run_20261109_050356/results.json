@@ -1,8 +1,8 @@
 {
-  "run_id": "run_20261109_050356",
-  "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
-  "timestamp": "2026-11-08T22:03:59Z",
-  "mode": "full",
+  "run_id": "run_20261109_140504",
+  "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
+  "timestamp": "2026-11-09T07:05:12Z",
+  "mode": "smoke",
   "hardware": {
     "cuda_available": false,
     "gpu_count": 0,
@@ -31,12 +31,12 @@
         "backend_unavailable": 5,
         "error": 0,
         "latencies_ms": [
-          51.0,
-          55.98,
-          34.43,
-          32.73,
-          33.14,
-          33.86
+          88.06,
+          92.08,
+          92.03,
+          88.07,
+          94.95,
+          30.86
         ],
         "peak_vram_gpu0": 0.0,
         "peak_vram_gpu1": 0.0
@@ -49,11 +49,11 @@
         "backend_unavailable": 5,
         "error": 0,
         "latencies_ms": [
-          33.24,
-          32.12,
-          32.57,
-          33.02,
-          33.18
+          92.51,
+          97.96,
+          82.65,
+          93.93,
+          98.55
         ],
         "peak_vram_gpu0": 0.0,
         "peak_vram_gpu1": 0.0
@@ -66,9 +66,9 @@
         "backend_unavailable": 3,
         "error": 0,
         "latencies_ms": [
-          33.21,
-          32.64,
-          33.96
+          83.95,
+          91.7,
+          80.83
         ],
         "peak_vram_gpu0": 0.0,
         "peak_vram_gpu1": 0.0
@@ -81,9 +81,9 @@
         "backend_unavailable": 2,
         "error": 0,
         "latencies_ms": [
-          33.84,
-          50.49,
-          32.89
+          93.12,
+          98.71,
+          29.25
         ],
         "peak_vram_gpu0": 0.0,
         "peak_vram_gpu1": 0.0
@@ -96,10 +96,10 @@
         "backend_unavailable": 3,
         "error": 0,
         "latencies_ms": [
-          32.62,
-          32.45,
-          32.52,
-          32.07
+          94.57,
+          85.62,
+          81.28,
+          28.58
         ],
         "peak_vram_gpu0": 0.0,
         "peak_vram_gpu1": 0.0
@@ -112,19 +112,19 @@
         "backend_unavailable": 12,
         "error": 0,
         "latencies_ms": [
-          32.35,
-          32.88,
-          32.61,
-          33.06,
-          33.5,
-          33.5,
-          33.18,
-          32.96,
-          32.83,
-          32.3,
-          32.74,
-          32.89,
-          32.67
+          90.72,
+          81.8,
+          96.26,
+          82.74,
+          82.42,
+          80.5,
+          80.16,
+          93.82,
+          94.19,
+          83.14,
+          92.0,
+          97.48,
+          28.9
         ],
         "peak_vram_gpu0": 0.0,
         "peak_vram_gpu1": 0.0
@@ -137,11 +137,11 @@
         "backend_unavailable": 4,
         "error": 0,
         "latencies_ms": [
-          33.22,
-          33.55,
-          33.14,
-          33.42,
-          32.78
+          83.5,
+          97.11,
+          82.55,
+          81.9,
+          28.8
         ],
         "peak_vram_gpu0": 0.0,
         "peak_vram_gpu1": 0.0
@@ -154,12 +154,12 @@
         "backend_unavailable": 5,
         "error": 0,
         "latencies_ms": [
-          38.79,
-          40.04,
-          41.34,
-          39.06,
-          37.34,
-          32.92
+          81.6,
+          81.64,
+          81.56,
+          90.75,
+          95.12,
+          28.7
         ],
         "peak_vram_gpu0": 0.0,
         "peak_vram_gpu1": 0.0
@@ -172,41 +172,41 @@
         "backend_unavailable": 33,
         "error": 0,
         "latencies_ms": [
-          38.05,
-          42.88,
-          36.31,
-          32.72,
-          33.59,
-          33.8,
-          33.64,
-          33.11,
-          32.83,
-          32.72,
-          32.59,
-          33.03,
-          32.73,
-          32.73,
-          32.95,
-          48.98,
-          33.4,
-          33.34,
-          33.35,
-          32.61,
-          33.04,
-          32.89,
-          33.22,
-          33.63,
-          32.68,
-          32.95,
-          33.52,
-          33.81,
-          34.21,
-          33.0,
-          39.56,
-          41.84,
-          42.29,
-          32.69,
-          32.79
+          94.11,
+          97.83,
+          82.85,
+          82.22,
+          81.54,
+          95.65,
+          82.23,
+          93.78,
+          97.98,
+          83.23,
+          80.76,
+          81.74,
+          80.42,
+          79.86,
+          93.53,
+          81.83,
+          94.32,
+          81.99,
+          90.78,
+          79.94,
+          96.81,
+          82.56,
+          82.38,
+          92.55,
+          81.54,
+          98.31,
+          97.08,
+          95.59,
+          83.75,
+          93.24,
+          83.46,
+          82.61,
+          82.84,
+          28.99,
+          28.91
         ],
         "peak_vram_gpu0": 0.0,
         "peak_vram_gpu1": 0.0
@@ -219,13 +219,13 @@
         "backend_unavailable": 6,
         "error": 0,
         "latencies_ms": [
-          39.02,
-          44.14,
-          37.58,
-          32.79,
-          33.6,
-          34.12,
-          33.21
+          82.17,
+          81.41,
+          81.44,
+          81.41,
+          90.98,
+          82.59,
+          28.98
         ],
         "peak_vram_gpu0": 0.0,
         "peak_vram_gpu1": 0.0
@@ -246,8 +246,8 @@
   "cases": [
     {
       "case_id": "BM-TXT-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-text",
       "checkpoint": {
         "repo": null,
@@ -257,13 +257,13 @@
       "variant": "standard",
       "task": "chat_completion",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 51.0,
+      "e2e_latency_ms": 88.06,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -283,13 +283,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-text' is not actively resident on GPU 0."
+        "message": "Job 'job-ed881641-c173-4453-aad7-685cfc7b24e3' not leased by worker after 0.1s. Backend inference daemon for 'qwen-text' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-TXT-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-text",
       "checkpoint": {
         "repo": null,
@@ -299,13 +299,13 @@
       "variant": "standard",
       "task": "responses_api",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 55.98,
+      "e2e_latency_ms": 92.08,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -325,13 +325,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-text' is not actively resident on GPU 0."
+        "message": "Job 'job-37b302a9-a1f5-468f-b0e4-0de779685360' not leased by worker after 0.1s. Backend inference daemon for 'qwen-text' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-TXT-03",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-text",
       "checkpoint": {
         "repo": null,
@@ -341,13 +341,13 @@
       "variant": "standard",
       "task": "structured_output",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 34.43,
+      "e2e_latency_ms": 92.03,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -367,13 +367,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-text' is not actively resident on GPU 0."
+        "message": "Job 'job-ed021af6-cfab-4571-a7ae-7ecad2b5f1fc' not leased by worker after 0.1s. Backend inference daemon for 'qwen-text' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-TXT-04",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-text",
       "checkpoint": {
         "repo": null,
@@ -383,13 +383,13 @@
       "variant": "standard",
       "task": "tool_calling",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.73,
+      "e2e_latency_ms": 88.07,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -409,13 +409,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-text' is not actively resident on GPU 0."
+        "message": "Job 'job-b2387419-3879-480c-9f83-1c9cac7c7ead' not leased by worker after 0.1s. Backend inference daemon for 'qwen-text' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-TXT-05",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-text",
       "checkpoint": {
         "repo": null,
@@ -425,13 +425,13 @@
       "variant": "standard",
       "task": "streaming",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.14,
+      "e2e_latency_ms": 94.95,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -451,13 +451,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-text' is not actively resident on GPU 0."
+        "message": "Job 'job-b1f96d74-51b4-405d-ba19-372db4d81473' not leased by worker after 0.1s. Backend inference daemon for 'qwen-text' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-VLM-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-vlm",
       "checkpoint": {
         "repo": null,
@@ -467,13 +467,13 @@
       "variant": "standard",
       "task": "image_chat",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.24,
+      "e2e_latency_ms": 92.51,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -493,13 +493,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-vlm' is not actively resident on GPU 0."
+        "message": "Job 'job-82196f07-b81a-41ff-b971-81134b3a32c8' not leased by worker after 0.1s. Backend inference daemon for 'qwen-vlm' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-VLM-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-vlm",
       "checkpoint": {
         "repo": null,
@@ -509,13 +509,13 @@
       "variant": "standard",
       "task": "responses_api",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.12,
+      "e2e_latency_ms": 97.96,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -535,13 +535,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-vlm' is not actively resident on GPU 0."
+        "message": "Job 'job-9593fac7-12b4-4eed-8b39-3226ad309cec' not leased by worker after 0.1s. Backend inference daemon for 'qwen-vlm' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-VLM-03",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-vlm",
       "checkpoint": {
         "repo": null,
@@ -551,13 +551,13 @@
       "variant": "standard",
       "task": "video_chat",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.57,
+      "e2e_latency_ms": 82.65,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -577,13 +577,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-vlm' is not actively resident on GPU 0."
+        "message": "Job 'job-95fabde2-b9af-4b3a-ad62-65f77c902d80' not leased by worker after 0.1s. Backend inference daemon for 'qwen-vlm' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-VLM-04",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-vlm",
       "checkpoint": {
         "repo": null,
@@ -593,13 +593,13 @@
       "variant": "standard",
       "task": "visual_grounding",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.02,
+      "e2e_latency_ms": 93.93,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -619,13 +619,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-vlm' is not actively resident on GPU 0."
+        "message": "Job 'job-65a6feeb-811e-4e68-a48e-300203b43f91' not leased by worker after 0.1s. Backend inference daemon for 'qwen-vlm' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-VLM-05",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-vlm",
       "checkpoint": {
         "repo": null,
@@ -635,13 +635,13 @@
       "variant": "standard",
       "task": "document_qa",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.18,
+      "e2e_latency_ms": 98.55,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -661,13 +661,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-vlm' is not actively resident on GPU 0."
+        "message": "Job 'job-c9f3f56a-a4a6-4d1c-9fd0-9eb93bd258e5' not leased by worker after 0.1s. Backend inference daemon for 'qwen-vlm' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-DEC-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-decision",
       "checkpoint": {
         "repo": null,
@@ -677,13 +677,13 @@
       "variant": "standard",
       "task": "predicate_evaluation",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.21,
+      "e2e_latency_ms": 83.95,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -703,13 +703,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-decision' is not actively resident on GPU 0."
+        "message": "Job 'job-3d9d6ced-8d55-4515-83df-91aa2a2ad5d1' not leased by worker after 0.1s. Backend inference daemon for 'qwen-decision' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-DEC-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-decision",
       "checkpoint": {
         "repo": null,
@@ -719,13 +719,13 @@
       "variant": "standard",
       "task": "choice_routing",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.64,
+      "e2e_latency_ms": 91.7,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -745,13 +745,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-decision' is not actively resident on GPU 0."
+        "message": "Job 'job-317c17f3-dab4-4cd1-a81f-90a8aa4e0b75' not leased by worker after 0.1s. Backend inference daemon for 'qwen-decision' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-DEC-03",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-decision",
       "checkpoint": {
         "repo": null,
@@ -761,13 +761,13 @@
       "variant": "standard",
       "task": "score_ranking",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.96,
+      "e2e_latency_ms": 80.83,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -787,13 +787,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-decision' is not actively resident on GPU 0."
+        "message": "Job 'job-9b33df46-f121-4e7d-b948-aa87eb342b80' not leased by worker after 0.1s. Backend inference daemon for 'qwen-decision' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-EMB-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-embedding",
       "checkpoint": {
         "repo": null,
@@ -803,13 +803,13 @@
       "variant": "standard",
       "task": "text_embedding",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.84,
+      "e2e_latency_ms": 93.12,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -829,13 +829,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-embedding' is not actively resident on GPU 1."
+        "message": "Job 'job-fbb7eaf0-f0e3-470f-aa48-57d472d04f90' not leased by worker after 0.1s. Backend inference daemon for 'qwen-embedding' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-EMB-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-embedding",
       "checkpoint": {
         "repo": null,
@@ -845,13 +845,13 @@
       "variant": "standard",
       "task": "reranking",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 50.49,
+      "e2e_latency_ms": 98.71,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -871,13 +871,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-embedding' is not actively resident on GPU 1."
+        "message": "Job 'job-c0cace78-7820-4fc5-87d7-b89f7ea773ab' not leased by worker after 0.1s. Backend inference daemon for 'qwen-embedding' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-SPH-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-speech",
       "checkpoint": {
         "repo": null,
@@ -887,13 +887,13 @@
       "variant": "standard",
       "task": "speech_to_text",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.62,
+      "e2e_latency_ms": 94.57,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -913,13 +913,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-speech' is not actively resident on GPU 0."
+        "message": "Job 'job-14c9b98c-8abc-40be-b11f-330974011de4' not leased by worker after 0.1s. Backend inference daemon for 'qwen-speech' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-SPH-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-speech",
       "checkpoint": {
         "repo": null,
@@ -929,13 +929,13 @@
       "variant": "standard",
       "task": "text_to_speech",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.45,
+      "e2e_latency_ms": 85.62,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -955,13 +955,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-speech' is not actively resident on GPU 0."
+        "message": "Job 'job-0c7afa4a-ae35-4912-aa0b-027d31e2d6d7' not leased by worker after 0.1s. Backend inference daemon for 'qwen-speech' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-SPH-03",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-speech",
       "checkpoint": {
         "repo": null,
@@ -971,13 +971,13 @@
       "variant": "standard",
       "task": "voice_cloning",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.52,
+      "e2e_latency_ms": 81.28,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -997,13 +997,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-speech' is not actively resident on GPU 0."
+        "message": "Job 'job-a40a4b5f-6c2e-4638-8dad-211b7e704523' not leased by worker after 0.1s. Backend inference daemon for 'qwen-speech' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1013,13 +1013,13 @@
       "variant": "standard",
       "task": "text_to_image",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.35,
+      "e2e_latency_ms": 90.72,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1039,13 +1039,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-7935ba26-a29c-4349-8294-fdb9da848de3' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1055,13 +1055,13 @@
       "variant": "turbo",
       "task": "text_to_image",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.88,
+      "e2e_latency_ms": 81.8,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1081,13 +1081,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-f22f5a1d-a4f9-4efa-bf82-84cbfdedbbdd' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-03",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1097,13 +1097,13 @@
       "variant": "standard",
       "task": "image_to_image",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.61,
+      "e2e_latency_ms": 96.26,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1123,13 +1123,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-316b2833-89f7-4c44-8f41-8050e555be42' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-04",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1139,13 +1139,13 @@
       "variant": "turbo",
       "task": "image_to_image",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.06,
+      "e2e_latency_ms": 82.74,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1165,13 +1165,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-beeae678-f7b8-44de-a699-391719a280c8' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-05",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1181,13 +1181,13 @@
       "variant": "standard",
       "task": "inpaint",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.5,
+      "e2e_latency_ms": 82.42,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1207,13 +1207,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-e92143b1-6a00-437a-8d5a-84f3c0ea3914' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-06",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1223,13 +1223,13 @@
       "variant": "standard",
       "task": "outpaint",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.5,
+      "e2e_latency_ms": 80.5,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1249,13 +1249,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-99473d6e-e9f5-4f5a-b148-9ec9acf3e26e' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-07",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1265,13 +1265,13 @@
       "variant": "standard",
       "task": "instruction_edit",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.18,
+      "e2e_latency_ms": 80.16,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1291,13 +1291,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-132f8b9c-cea6-4084-90cd-77673cddb180' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-08",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1307,13 +1307,13 @@
       "variant": "standard",
       "task": "reference_image",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.96,
+      "e2e_latency_ms": 93.82,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1333,13 +1333,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-0af64795-f9df-4c8a-9cb6-4092af81ff16' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-09",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1349,13 +1349,13 @@
       "variant": "standard",
       "task": "multi_reference",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.83,
+      "e2e_latency_ms": 94.19,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1375,13 +1375,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-2a383dc6-2324-432a-a88c-0582d331dff3' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-10",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1391,13 +1391,13 @@
       "variant": "standard",
       "task": "controlnet",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.3,
+      "e2e_latency_ms": 83.14,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1417,13 +1417,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-26f1737c-c76e-4ff8-bc5d-26e11f5cabfa' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-11",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1433,13 +1433,13 @@
       "variant": "standard",
       "task": "control_pose",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.74,
+      "e2e_latency_ms": 92.0,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1459,13 +1459,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-75d2b9d1-d49c-4497-b66e-843c1d886a8c' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-IMG-12",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -1475,13 +1475,13 @@
       "variant": "standard",
       "task": "control_depth",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.89,
+      "e2e_latency_ms": 97.48,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1501,13 +1501,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'qwen-image-2.1' is not actively resident on GPU 0."
+        "message": "Job 'job-fd010ecc-3414-46c6-99c6-feaf2706d78a' not leased by worker after 0.1s. Backend inference daemon for 'qwen-image-2.1' is not resident on GPU 0."
       }
     },
     {
       "case_id": "BM-WAN-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "wan-2.2",
       "checkpoint": {
         "repo": null,
@@ -1517,13 +1517,13 @@
       "variant": "standard",
       "task": "text_to_video",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.22,
+      "e2e_latency_ms": 83.5,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1543,13 +1543,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'wan-2.2' is not actively resident on GPU 1."
+        "message": "Job 'job-d3939e20-ba91-4540-941d-8055273a7d3c' not leased by worker after 0.1s. Backend inference daemon for 'wan-2.2' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-WAN-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "wan-2.2",
       "checkpoint": {
         "repo": null,
@@ -1559,13 +1559,13 @@
       "variant": "standard",
       "task": "image_to_video",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.55,
+      "e2e_latency_ms": 97.11,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1585,13 +1585,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'wan-2.2' is not actively resident on GPU 1."
+        "message": "Job 'job-c939543d-ec7b-4074-9abc-093d339e8384' not leased by worker after 0.1s. Backend inference daemon for 'wan-2.2' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-WAN-03",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "wan-2.2",
       "checkpoint": {
         "repo": null,
@@ -1601,13 +1601,13 @@
       "variant": "standard",
       "task": "first_last_frame_to_video",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.14,
+      "e2e_latency_ms": 82.55,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1627,13 +1627,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'wan-2.2' is not actively resident on GPU 1."
+        "message": "Job 'job-2bddc8d7-16f6-4e14-a915-84fb93ebd5f2' not leased by worker after 0.1s. Backend inference daemon for 'wan-2.2' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-WAN-04",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "wan-2.2",
       "checkpoint": {
         "repo": null,
@@ -1643,13 +1643,13 @@
       "variant": "standard",
       "task": "video_extension",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.42,
+      "e2e_latency_ms": 81.9,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1669,13 +1669,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'wan-2.2' is not actively resident on GPU 1."
+        "message": "Job 'job-6f998150-bdc7-45be-a5e6-0a649dea77f5' not leased by worker after 0.1s. Backend inference daemon for 'wan-2.2' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-MMX-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "minimax-h3",
       "checkpoint": {
         "repo": null,
@@ -1685,13 +1685,13 @@
       "variant": "standard",
       "task": "text_to_video",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 38.79,
+      "e2e_latency_ms": 81.6,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1711,13 +1711,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'minimax-h3' is not actively resident on GPU 1."
+        "message": "Job 'job-8b512f8b-02e9-41d3-858a-ec421e8b81a9' not leased by worker after 0.1s. Backend inference daemon for 'minimax-h3' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-MMX-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "minimax-h3",
       "checkpoint": {
         "repo": null,
@@ -1727,13 +1727,13 @@
       "variant": "standard",
       "task": "image_to_video",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 40.04,
+      "e2e_latency_ms": 81.64,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1753,13 +1753,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'minimax-h3' is not actively resident on GPU 1."
+        "message": "Job 'job-d3fed51d-b996-4829-b015-4f55944f063b' not leased by worker after 0.1s. Backend inference daemon for 'minimax-h3' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-MMX-03",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "minimax-h3",
       "checkpoint": {
         "repo": null,
@@ -1769,13 +1769,13 @@
       "variant": "standard",
       "task": "first_last_frame_to_video",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 41.34,
+      "e2e_latency_ms": 81.56,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1795,13 +1795,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'minimax-h3' is not actively resident on GPU 1."
+        "message": "Job 'job-13ea8935-7a3f-4c17-87bc-bc330c092389' not leased by worker after 0.1s. Backend inference daemon for 'minimax-h3' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-MMX-04",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "minimax-h3",
       "checkpoint": {
         "repo": null,
@@ -1811,13 +1811,13 @@
       "variant": "standard",
       "task": "video_with_audio",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 39.06,
+      "e2e_latency_ms": 90.75,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1837,13 +1837,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'minimax-h3' is not actively resident on GPU 1."
+        "message": "Job 'job-046e3fb0-83f1-4bd2-b625-e8183ff2e275' not leased by worker after 0.1s. Backend inference daemon for 'minimax-h3' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-MMX-05",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "minimax-h3",
       "checkpoint": {
         "repo": null,
@@ -1853,13 +1853,13 @@
       "variant": "standard",
       "task": "reference_conditioning",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 37.34,
+      "e2e_latency_ms": 95.12,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1879,13 +1879,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'minimax-h3' is not actively resident on GPU 1."
+        "message": "Job 'job-5b673b1a-5671-4375-bded-90e6334f92a5' not leased by worker after 0.1s. Backend inference daemon for 'minimax-h3' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -1895,13 +1895,13 @@
       "variant": "standard",
       "task": "text_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 38.05,
+      "e2e_latency_ms": 94.11,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1921,13 +1921,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-5abc911b-c9ad-4db3-8798-b1fb449d9dd3' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -1937,13 +1937,13 @@
       "variant": "base",
       "task": "text_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 42.88,
+      "e2e_latency_ms": 97.83,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -1963,13 +1963,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-d092d9f8-bf9f-49db-9ff1-ada778b62364' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-03",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -1979,13 +1979,13 @@
       "variant": "turbo",
       "task": "text_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 36.31,
+      "e2e_latency_ms": 82.85,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2005,13 +2005,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-6bf189eb-576c-41f5-b6c4-62d0d9747060' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-04",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2021,13 +2021,13 @@
       "variant": "sft",
       "task": "text_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.72,
+      "e2e_latency_ms": 82.22,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2047,13 +2047,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-85a6563a-d064-48f5-9314-5f914914b242' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-05",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2063,13 +2063,13 @@
       "variant": "xl_base",
       "task": "text_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.59,
+      "e2e_latency_ms": 81.54,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2089,13 +2089,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-b5afe189-d056-4b25-be31-bf44d61fa257' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-06",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2105,13 +2105,13 @@
       "variant": "standard",
       "task": "lyrics_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.8,
+      "e2e_latency_ms": 95.65,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2131,13 +2131,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-6b5e9c93-0f3e-47f7-a0ec-bd0a92708aff' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-07",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2147,13 +2147,13 @@
       "variant": "base",
       "task": "lyrics_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.64,
+      "e2e_latency_ms": 82.23,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2173,13 +2173,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-3627274c-7411-4491-89b6-7d4c0367feef' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-08",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2189,13 +2189,13 @@
       "variant": "turbo",
       "task": "lyrics_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.11,
+      "e2e_latency_ms": 93.78,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2215,13 +2215,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-9ba3ac0e-9a84-4f59-a3ff-7e86245f02c8' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-09",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2231,13 +2231,13 @@
       "variant": "sft",
       "task": "lyrics_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.83,
+      "e2e_latency_ms": 97.98,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2257,13 +2257,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-8744f07d-4c4e-4c3c-96f7-8a24dbe9d6fe' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-10",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2273,13 +2273,13 @@
       "variant": "xl_base",
       "task": "lyrics_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.72,
+      "e2e_latency_ms": 83.23,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2299,13 +2299,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-3e07e6bb-53fc-466c-abd3-18056bff9cc6' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-11",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2315,13 +2315,13 @@
       "variant": "standard",
       "task": "reference_audio",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.59,
+      "e2e_latency_ms": 80.76,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2341,13 +2341,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-b6c0630e-2ced-4ac0-aa4a-d18188e4aec9' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-12",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2357,13 +2357,13 @@
       "variant": "base",
       "task": "reference_audio",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.03,
+      "e2e_latency_ms": 81.74,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2383,13 +2383,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-66a40814-a49e-4d91-9349-25a56a4398a1' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-13",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2399,13 +2399,13 @@
       "variant": "turbo",
       "task": "reference_audio",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.73,
+      "e2e_latency_ms": 80.42,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2425,13 +2425,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-d4f0d2a8-6ed0-4ecd-9d77-670603f67769' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-14",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2441,13 +2441,13 @@
       "variant": "sft",
       "task": "reference_audio",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.73,
+      "e2e_latency_ms": 79.86,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2467,13 +2467,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-75c40f70-6c10-4bd6-8572-3966c9910870' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-15",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2483,13 +2483,13 @@
       "variant": "xl_base",
       "task": "reference_audio",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.95,
+      "e2e_latency_ms": 93.53,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2509,13 +2509,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-a76768d4-b161-4652-a541-f7bac772f115' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-16",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2525,13 +2525,13 @@
       "variant": "standard",
       "task": "cover",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 48.98,
+      "e2e_latency_ms": 81.83,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2551,13 +2551,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-51a68942-f8ce-4dea-b96e-f8e5ee420fcc' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-17",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2567,13 +2567,13 @@
       "variant": "base",
       "task": "cover",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.4,
+      "e2e_latency_ms": 94.32,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2593,13 +2593,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-0b75fe69-d321-4523-b4ff-50bbb27e6fd6' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-18",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2609,13 +2609,13 @@
       "variant": "turbo",
       "task": "cover",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.34,
+      "e2e_latency_ms": 81.99,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2635,13 +2635,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-e0c90a22-0c5c-44ca-b285-1b25486eab24' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-19",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2651,13 +2651,13 @@
       "variant": "sft",
       "task": "cover",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.35,
+      "e2e_latency_ms": 90.78,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2677,13 +2677,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-dc9a6590-66cb-47fa-9c76-48a5f78d90ba' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-20",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2693,13 +2693,13 @@
       "variant": "xl_base",
       "task": "cover",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.61,
+      "e2e_latency_ms": 79.94,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2719,13 +2719,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-30ba8896-9c53-439d-a715-919ae86df902' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-21",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2735,13 +2735,13 @@
       "variant": "standard",
       "task": "repaint",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.04,
+      "e2e_latency_ms": 96.81,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2761,13 +2761,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-8d764ef4-872e-439e-9719-7d87497b0d06' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-22",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2777,13 +2777,13 @@
       "variant": "base",
       "task": "repaint",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.89,
+      "e2e_latency_ms": 82.56,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2803,13 +2803,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-22ae4c8b-bb53-464c-865d-f22bd9ea12a8' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-23",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2819,13 +2819,13 @@
       "variant": "turbo",
       "task": "repaint",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.22,
+      "e2e_latency_ms": 82.38,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2845,13 +2845,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-1224579c-83f8-4f41-b926-a46747429343' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-24",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2861,13 +2861,13 @@
       "variant": "sft",
       "task": "repaint",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.63,
+      "e2e_latency_ms": 92.55,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2887,13 +2887,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-b050993f-1f52-4f3c-bc66-b088e52bac78' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-25",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2903,13 +2903,13 @@
       "variant": "xl_base",
       "task": "repaint",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.68,
+      "e2e_latency_ms": 81.54,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2929,13 +2929,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-6da93c9c-a0fe-41a7-ae75-1c19599e5212' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-26",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2945,13 +2945,13 @@
       "variant": "base",
       "task": "extract",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.95,
+      "e2e_latency_ms": 98.31,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -2971,13 +2971,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-d80b83e1-25f7-4455-84b3-e19f76e04836' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-27",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -2987,13 +2987,13 @@
       "variant": "xl_base",
       "task": "extract",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.52,
+      "e2e_latency_ms": 97.08,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3013,13 +3013,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-706eaca1-11d9-4466-8ac2-3508f33834b7' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-28",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -3029,13 +3029,13 @@
       "variant": "base",
       "task": "lego",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.81,
+      "e2e_latency_ms": 95.59,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3055,13 +3055,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-db461495-3304-4379-8875-eb5ee667c1fb' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-29",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -3071,13 +3071,13 @@
       "variant": "xl_base",
       "task": "lego",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 34.21,
+      "e2e_latency_ms": 83.75,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3097,13 +3097,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-433f553d-fed8-4775-96af-84397bb8eb97' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-30",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -3113,13 +3113,13 @@
       "variant": "base",
       "task": "complete",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.0,
+      "e2e_latency_ms": 93.24,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3139,13 +3139,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-fa6228fc-bcbf-420d-a3a4-a6424031ef46' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-31",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -3155,13 +3155,13 @@
       "variant": "xl_base",
       "task": "complete",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 39.56,
+      "e2e_latency_ms": 83.46,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3181,13 +3181,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-3a36f089-ab5a-4e3a-9340-e15f8ab08fe6' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-32",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -3197,13 +3197,13 @@
       "variant": "base",
       "task": "music_extend",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 41.84,
+      "e2e_latency_ms": 82.61,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3223,13 +3223,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-bacca536-76aa-44ac-bfd5-f218993a61c8' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ACE-33",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -3239,13 +3239,13 @@
       "variant": "xl_base",
       "task": "music_extend",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 42.29,
+      "e2e_latency_ms": 82.84,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3265,13 +3265,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'ace-step-1.5' is not actively resident on GPU 1."
+        "message": "Job 'job-14181df6-0510-44ea-a28f-7b5b8b8dd5f3' not leased by worker after 0.1s. Backend inference daemon for 'ace-step-1.5' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-YUE-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "yue2",
       "checkpoint": {
         "repo": null,
@@ -3281,13 +3281,13 @@
       "variant": "standard",
       "task": "text_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 39.02,
+      "e2e_latency_ms": 82.17,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3307,13 +3307,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+        "message": "Job 'job-35f62ec7-b787-411d-b334-7b4970b30f86' not leased by worker after 0.1s. Backend inference daemon for 'yue2' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-YUE-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "yue2",
       "checkpoint": {
         "repo": null,
@@ -3323,13 +3323,13 @@
       "variant": "standard",
       "task": "lyrics_to_music",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 44.14,
+      "e2e_latency_ms": 81.41,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3349,13 +3349,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+        "message": "Job 'job-aaf8ee1d-474f-459a-8078-2433273ff165' not leased by worker after 0.1s. Backend inference daemon for 'yue2' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-YUE-03",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "yue2",
       "checkpoint": {
         "repo": null,
@@ -3365,13 +3365,13 @@
       "variant": "standard",
       "task": "symbolic_score",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 37.58,
+      "e2e_latency_ms": 81.44,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3391,13 +3391,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+        "message": "Job 'job-2f706973-e630-47b2-b54d-1d4e01e1f35a' not leased by worker after 0.1s. Backend inference daemon for 'yue2' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-YUE-04",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "yue2",
       "checkpoint": {
         "repo": null,
@@ -3407,13 +3407,13 @@
       "variant": "standard",
       "task": "custom_score",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.79,
+      "e2e_latency_ms": 81.41,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3433,13 +3433,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+        "message": "Job 'job-1f81af41-8909-406a-93b2-9f18b44f2585' not leased by worker after 0.1s. Backend inference daemon for 'yue2' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-YUE-05",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "yue2",
       "checkpoint": {
         "repo": null,
@@ -3449,13 +3449,13 @@
       "variant": "standard",
       "task": "score_edit",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.6,
+      "e2e_latency_ms": 90.98,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3475,13 +3475,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+        "message": "Job 'job-49549773-06dd-44ae-8f9d-c66e7aaa6725' not leased by worker after 0.1s. Backend inference daemon for 'yue2' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-YUE-06",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "yue2",
       "checkpoint": {
         "repo": null,
@@ -3491,13 +3491,13 @@
       "variant": "standard",
       "task": "song_variation",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 34.12,
+      "e2e_latency_ms": 82.59,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3517,13 +3517,13 @@
       },
       "error": {
         "code": "BACKEND_UNAVAILABLE",
-        "message": "Live inference engine for 'yue2' is not actively resident on GPU 1."
+        "message": "Job 'job-2f20f76c-5db6-4eac-98c0-cb7f4ad3eea9' not leased by worker after 0.1s. Backend inference daemon for 'yue2' is not resident on GPU 1."
       }
     },
     {
       "case_id": "BM-ENH-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "enhancement-suite-v1",
       "checkpoint": {
         "repo": null,
@@ -3533,7 +3533,7 @@
       "variant": "standard",
       "task": "image_super_resolution",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
@@ -3564,8 +3564,8 @@
     },
     {
       "case_id": "BM-ENH-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "enhancement-suite-v1",
       "checkpoint": {
         "repo": null,
@@ -3575,7 +3575,7 @@
       "variant": "standard",
       "task": "video_super_resolution",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
@@ -3606,8 +3606,8 @@
     },
     {
       "case_id": "BM-ENH-03",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "enhancement-suite-v1",
       "checkpoint": {
         "repo": null,
@@ -3617,7 +3617,7 @@
       "variant": "standard",
       "task": "frame_interpolation",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
@@ -3648,8 +3648,8 @@
     },
     {
       "case_id": "BM-ENH-04",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "enhancement-suite-v1",
       "checkpoint": {
         "repo": null,
@@ -3659,7 +3659,7 @@
       "variant": "standard",
       "task": "audio_enhancement",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "BACKEND_UNAVAILABLE",
       "target_gpu": 1,
       "input_reference": null,
@@ -3690,8 +3690,8 @@
     },
     {
       "case_id": "BM-NEG-01",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-text",
       "checkpoint": {
         "repo": null,
@@ -3701,13 +3701,13 @@
       "variant": "standard",
       "task": "text_to_video",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "PASS",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.86,
+      "e2e_latency_ms": 30.86,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3722,15 +3722,15 @@
         "validated": false
       },
       "evidence": {
-        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'text_to_video' (canonical: 'text_to_video') is not supported by model 'qwen-text'.\",\"request_id\":\"req-fd600ed8-13d4-477a-9893-76c71c28452c\",\"details\":{\"model\":\"qwen-text\",\"task\":\"text_to_video\",\"canonical_task\":\"text_to_video\",\"capability\":\"text_to_video\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'text_to_video' (canonical: 'text_to_video') is not supported by model 'qwen-text'.\",\"request_id\":\"req-95dc52b2-c003-41e5-a200-67404dda8793\"",
         "nvml_trace_samples": 0
       },
       "error": null
     },
     {
       "case_id": "BM-NEG-02",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-embedding",
       "checkpoint": {
         "repo": null,
@@ -3740,13 +3740,13 @@
       "variant": "standard",
       "task": "multimodal_embedding",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "PASS",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.89,
+      "e2e_latency_ms": 29.25,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3761,15 +3761,15 @@
         "validated": false
       },
       "evidence": {
-        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'multimodal_embedding' (canonical: 'multimodal_embedding') is not supported by model 'qwen-embedding'.\",\"request_id\":\"req-9052e299-9dff-43f6-a56b-fbe04ec47f18\",\"details\":{\"model\":\"qwen-embedding\",\"task\":\"multimodal_embedding\",\"canonical_task\":\"multimodal_embedding\",\"capability\":\"multimodal_embedding\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'multimodal_embedding' (canonical: 'multimodal_embedding') is not supported by model 'qwen-embedding'.\",\"request_id\":\"req-cfaecf16-9e29-421c",
         "nvml_trace_samples": 0
       },
       "error": null
     },
     {
       "case_id": "BM-NEG-03",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-speech",
       "checkpoint": {
         "repo": null,
@@ -3779,13 +3779,13 @@
       "variant": "standard",
       "task": "word_timestamps",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "PASS",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.07,
+      "e2e_latency_ms": 28.58,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3800,15 +3800,15 @@
         "validated": false
       },
       "evidence": {
-        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'word_timestamps' (canonical: 'word_timestamps') is not supported by model 'qwen-speech'.\",\"request_id\":\"req-1a18cdb1-1cfb-4a68-8f48-0cd88eef9ba8\",\"details\":{\"model\":\"qwen-speech\",\"task\":\"word_timestamps\",\"canonical_task\":\"word_timestamps\",\"capability\":\"word_timestamps\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'word_timestamps' (canonical: 'word_timestamps') is not supported by model 'qwen-speech'.\",\"request_id\":\"req-608bc7f1-12ab-4747-b8ea-77170dc",
         "nvml_trace_samples": 0
       },
       "error": null
     },
     {
       "case_id": "BM-NEG-04",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "qwen-image-2.1",
       "checkpoint": {
         "repo": null,
@@ -3818,13 +3818,13 @@
       "variant": "standard",
       "task": "text_to_image",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "PASS",
       "target_gpu": 0,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.67,
+      "e2e_latency_ms": 28.9,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3839,15 +3839,15 @@
         "validated": false
       },
       "evidence": {
-        "logs": "HTTP 400: {\"error\":{\"code\":\"INVALID_REQUEST\",\"message\":\"Requested width 4096 exceeds maximum allowed width 2048 for model 'qwen-image-2.1'.\",\"request_id\":\"req-51a6321e-da95-49cf-9515-a49c69b8aafd\",\"details\":{\"width\":4096,\"max_width\":2048,\"model\":\"qwen-image-2.1\",\"error_code\":\"INVALID_INPUT\"}}}",
+        "logs": "HTTP 400 [INVALID_REQUEST]: {\"error\":{\"code\":\"INVALID_REQUEST\",\"message\":\"Requested width 4096 exceeds maximum allowed width 2048 for model 'qwen-image-2.1'.\",\"request_id\":\"req-aef5bb7e-d708-4cb8-a8b6-c172e6cd543a\",\"details\":{\"w",
         "nvml_trace_samples": 0
       },
       "error": null
     },
     {
       "case_id": "BM-NEG-05",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "wan-2.2",
       "checkpoint": {
         "repo": null,
@@ -3857,13 +3857,13 @@
       "variant": "standard",
       "task": "video_with_audio",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "PASS",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.78,
+      "e2e_latency_ms": 28.8,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3878,15 +3878,15 @@
         "validated": false
       },
       "evidence": {
-        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'video_with_audio' (canonical: 'video_with_audio') is not supported by model 'wan-2.2'.\",\"request_id\":\"req-0a6bcfb3-d87e-4531-bf46-e69a5ad9e2bf\",\"details\":{\"model\":\"wan-2.2\",\"task\":\"video_with_audio\",\"canonical_task\":\"video_with_audio\",\"capability\":\"video_with_audio\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'video_with_audio' (canonical: 'video_with_audio') is not supported by model 'wan-2.2'.\",\"request_id\":\"req-23e57951-6a18-46fa-a345-5870df3fc",
         "nvml_trace_samples": 0
       },
       "error": null
     },
     {
       "case_id": "BM-NEG-06",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "minimax-h3",
       "checkpoint": {
         "repo": null,
@@ -3896,13 +3896,13 @@
       "variant": "standard",
       "task": "video_extension",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "PASS",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.92,
+      "e2e_latency_ms": 28.7,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3917,15 +3917,15 @@
         "validated": false
       },
       "evidence": {
-        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'video_extension' (canonical: 'video_extension') is not supported by model 'minimax-h3'.\",\"request_id\":\"req-ab31c93e-25bc-454a-9f6b-0cb6a94c1c68\",\"details\":{\"model\":\"minimax-h3\",\"task\":\"video_extension\",\"canonical_task\":\"video_extension\",\"capability\":\"video_extension\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'video_extension' (canonical: 'video_extension') is not supported by model 'minimax-h3'.\",\"request_id\":\"req-82bae333-019e-4751-beda-638893aa",
         "nvml_trace_samples": 0
       },
       "error": null
     },
     {
       "case_id": "BM-NEG-07",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -3935,13 +3935,13 @@
       "variant": "turbo",
       "task": "extract",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "PASS",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.69,
+      "e2e_latency_ms": 28.99,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3956,15 +3956,15 @@
         "validated": false
       },
       "evidence": {
-        "logs": "HTTP 400: {\"error\":{\"code\":\"UNSUPPORTED_CAPABILITY\",\"message\":\"Variant 'turbo' is not supported for task 'extract' by model 'ace-step-1.5'.\",\"request_id\":\"req-5df66532-d179-4eb3-b866-3deb27a3f7a8\",\"details\":{\"model\":\"ace-step-1.5\",\"variant\":\"turbo\",\"task\":\"extract\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "logs": "HTTP 400 [UNSUPPORTED_CAPABILITY]: {\"error\":{\"code\":\"UNSUPPORTED_CAPABILITY\",\"message\":\"Variant 'turbo' is not supported for task 'extract' by model 'ace-step-1.5'.\",\"request_id\":\"req-00a14d6d-0b13-4bf8-afc7-4582f597ad10\",\"details\":{\"m",
         "nvml_trace_samples": 0
       },
       "error": null
     },
     {
       "case_id": "BM-NEG-08",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "ace-step-1.5",
       "checkpoint": {
         "repo": null,
@@ -3974,13 +3974,13 @@
       "variant": "sft",
       "task": "music_extend",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "PASS",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 32.79,
+      "e2e_latency_ms": 28.91,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -3995,15 +3995,15 @@
         "validated": false
       },
       "evidence": {
-        "logs": "HTTP 400: {\"error\":{\"code\":\"UNSUPPORTED_CAPABILITY\",\"message\":\"Variant 'sft' is not supported for task 'music_extend' by model 'ace-step-1.5'.\",\"request_id\":\"req-dde1f726-ce09-4ed0-b019-5caddc7c5d4d\",\"details\":{\"model\":\"ace-step-1.5\",\"variant\":\"sft\",\"task\":\"music_extend\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "logs": "HTTP 400 [UNSUPPORTED_CAPABILITY]: {\"error\":{\"code\":\"UNSUPPORTED_CAPABILITY\",\"message\":\"Variant 'sft' is not supported for task 'music_extend' by model 'ace-step-1.5'.\",\"request_id\":\"req-ae9c5f48-6597-4002-996e-4f57dc5e5ef0\",\"details\":",
         "nvml_trace_samples": 0
       },
       "error": null
     },
     {
       "case_id": "BM-NEG-09",
-      "run_id": "run_20261109_050356",
-      "git_commit": "82d5c23b47376af402666e1349c559bc9387bbbe",
+      "run_id": "run_20261109_140504",
+      "git_commit": "0c9b2ba841323c02a2e8593d279c0aa6bc58f673",
       "model_id": "yue2",
       "checkpoint": {
         "repo": null,
@@ -4013,13 +4013,13 @@
       "variant": "standard",
       "task": "cover_edit",
       "backend": "native",
-      "mode": "full",
+      "mode": "smoke",
       "status": "PASS",
       "target_gpu": 1,
       "input_reference": null,
       "load_time_ms": null,
       "inference_time_ms": null,
-      "e2e_latency_ms": 33.21,
+      "e2e_latency_ms": 28.98,
       "peak_vram_mb": {
         "gpu_0": null,
         "gpu_1": null
@@ -4034,7 +4034,7 @@
         "validated": false
       },
       "evidence": {
-        "logs": "HTTP 400: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'cover_edit' (canonical: 'cover_edit') is not supported by model 'yue2'.\",\"request_id\":\"req-cca4c585-60e7-4aad-b6ba-6ea016eb6c3d\",\"details\":{\"model\":\"yue2\",\"task\":\"cover_edit\",\"canonical_task\":\"cover_edit\",\"capability\":\"cover_edit\",\"validation_status\":\"pending_live\",\"error_code\":\"UNSUPPORTED_CAPABILITY\"}}}",
+        "logs": "HTTP 400 [CAPABILITY_NOT_SUPPORTED]: {\"error\":{\"code\":\"CAPABILITY_NOT_SUPPORTED\",\"message\":\"Task 'cover_edit' (canonical: 'cover_edit') is not supported by model 'yue2'.\",\"request_id\":\"req-bc2e0000-4929-4b9b-b98a-0f310500be23\",\"details\":",
         "nvml_trace_samples": 0
       },
       "error": null

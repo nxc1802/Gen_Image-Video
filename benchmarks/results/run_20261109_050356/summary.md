@@ -1,9 +1,9 @@
 # Factory v4 Lite — Unified Benchmark Summary Report
 
-**Run ID**: `run_20261109_050356`  
-**Git Commit**: `82d5c23b47376af402666e1349c559bc9387bbbe`  
-**Execution Mode**: `full`  
-**Timestamp**: `2026-11-08 22:03:59 UTC`  
+**Run ID**: `run_20261109_140504`  
+**Git Commit**: `0c9b2ba841323c02a2e8593d279c0aa6bc58f673`  
+**Execution Mode**: `smoke`  
+**Timestamp**: `2026-11-09 07:05:12 UTC`  
 **Hardware Environment**: 0 GPU(s) — `None (CPU Mode)`  
 
 ---
@@ -34,17 +34,17 @@
 
 | Model | Total Cases | PASS | BLOCKED | BACKEND UNAVAIL | FAIL / ERR | Median Latency (ms) | Peak VRAM GPU 0 (MB) | Peak VRAM GPU 1 (MB) |
 |---|---|---|---|---|---|---|---|---|
-| `ace-step-1.5` | 35 | 2 | 0 | 33 | 0 | 33.2 | - | - |
+| `ace-step-1.5` | 35 | 2 | 0 | 33 | 0 | 82.8 | - | - |
 | `enhancement-suite-v1` | 4 | 0 | 0 | 4 | 0 | - | - | - |
-| `minimax-h3` | 6 | 1 | 0 | 5 | 0 | 39.1 | - | - |
-| `qwen-decision` | 3 | 0 | 0 | 3 | 0 | 33.2 | - | - |
-| `qwen-embedding` | 3 | 1 | 0 | 2 | 0 | 33.8 | - | - |
-| `qwen-image-2.1` | 13 | 1 | 0 | 12 | 0 | 32.9 | - | - |
-| `qwen-speech` | 4 | 1 | 0 | 3 | 0 | 32.5 | - | - |
-| `qwen-text` | 6 | 1 | 0 | 5 | 0 | 34.4 | - | - |
-| `qwen-vlm` | 5 | 0 | 0 | 5 | 0 | 33.0 | - | - |
-| `wan-2.2` | 5 | 1 | 0 | 4 | 0 | 33.2 | - | - |
-| `yue2` | 7 | 1 | 0 | 6 | 0 | 34.1 | - | - |
+| `minimax-h3` | 6 | 1 | 0 | 5 | 0 | 81.6 | - | - |
+| `qwen-decision` | 3 | 0 | 0 | 3 | 0 | 84.0 | - | - |
+| `qwen-embedding` | 3 | 1 | 0 | 2 | 0 | 93.1 | - | - |
+| `qwen-image-2.1` | 13 | 1 | 0 | 12 | 0 | 83.1 | - | - |
+| `qwen-speech` | 4 | 1 | 0 | 3 | 0 | 85.6 | - | - |
+| `qwen-text` | 6 | 1 | 0 | 5 | 0 | 92.0 | - | - |
+| `qwen-vlm` | 5 | 0 | 0 | 5 | 0 | 93.9 | - | - |
+| `wan-2.2` | 5 | 1 | 0 | 4 | 0 | 82.5 | - | - |
+| `yue2` | 7 | 1 | 0 | 6 | 0 | 81.4 | - | - |
 
 ---
 

@@ -90,10 +90,11 @@ def test_cases_cover_all_11_model_manifests():
 # =============================================================================
 
 def test_validators_png_magic_and_dimensions():
-    """Validates PNG binary container magic bytes, IHDR chunk dimensions, and size checks."""
-    # Synthetic valid PNG header with width=800, height=600
-    ihdr_data = struct.pack(">IIBBBBB", 800, 600, 8, 6, 0, 0, 0)
-    png_bytes = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR" + ihdr_data + b"\x00\x00\x00\x00"
+    """Validates PNG binary container magic bytes, Pillow decoding, dimensions, and size checks."""
+    from PIL import Image
+    buf = io.BytesIO()
+    Image.new("RGB", (800, 600), color=(50, 100, 150)).save(buf, format="PNG")
+    png_bytes = buf.getvalue()
 
     res = validate_artifact(
         content=png_bytes,
@@ -109,14 +110,20 @@ def test_validators_png_magic_and_dimensions():
     assert res.sha256 is not None
     assert res.size_bytes == len(png_bytes)
 
-    # Corrupt header should fail
+    # Corrupt magic header should fail
     corrupt_bytes = b"\x00PNG\r\n\x1a\n" + png_bytes[8:]
     res_corrupt = validate_artifact(corrupt_bytes, expected_mime="image/png")
     assert res_corrupt.valid is False
     assert "MIME type mismatch" in res_corrupt.error or "magic header" in res_corrupt.error
 
+    # Truncated or undecodable image stream with valid magic bytes must fail verification
+    truncated_header = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR" + struct.pack(">IIBBBBB", 800, 600, 8, 6, 0, 0, 0) + b"\x00\x00\x00\x00"
+    res_truncated = validate_artifact(truncated_header, expected_mime="image/png")
+    assert res_truncated.valid is False
+    assert "Corrupted or truncated" in res_truncated.error
+
     # Below minimum size should fail
-    res_size = validate_artifact(png_bytes, min_bytes=1000)
+    res_size = validate_artifact(png_bytes, min_bytes=1000000)
     assert res_size.valid is False
     assert "below minimum threshold" in res_size.error
 
@@ -630,3 +637,75 @@ def test_kaggle_bootstrap_diagnostics():
         res = bootstrapper.run_bootstrap(check_only=True)
         assert isinstance(res.to_dict(), dict)
         assert res.timestamp is not None
+        assert res.storage.get("dry_run") is True
+
+
+def test_bootstrap_check_only_dry_run_isolation():
+    """Verifies check_only mode is a pure dry-run without filesystem mutation."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        scratch_dir = Path(tmp_dir) / "nonexistent_artifacts"
+        input_dir = Path(tmp_dir) / "nonexistent_input"
+        bootstrapper = KaggleBootstrap(
+            kaggle_input_dir=input_dir,
+            scratch_artifacts_dir=scratch_dir,
+        )
+        res = bootstrapper.run_bootstrap(check_only=True)
+        assert res.storage.get("dry_run") is True
+        # Dry run must NOT create the scratch directory on disk
+        assert not scratch_dir.exists(), "check_only must not create scratch directory on disk"
+
+
+def test_runner_negative_case_error_code_enforcement():
+    """Verifies negative tests strictly enforce matching expected_error_code."""
+    runner = UnifiedBenchmarkRunner()
+    try:
+        # 1. Matching error code -> PASS
+        case_match = {
+            "id": "BM-TEST-NEG-MATCH",
+            "model": "qwen-text",
+            "task": "text_to_video",
+            "variant": "standard",
+            "target_gpu": 0,
+            "min_vram_gb": 12.0,
+            "is_negative": True,
+            "expected_error_code": "CAPABILITY_NOT_SUPPORTED",
+            "inputs": {"prompt": "Generate video"},
+            "modes": ["smoke"],
+        }
+        rec_match = runner.evaluate_case(case_match, mode="smoke")
+        assert rec_match.status == "PASS"
+
+        # 2. Mismatched error code -> FAIL with ERROR_CODE_MISMATCH
+        case_mismatch = {
+            "id": "BM-TEST-NEG-MISMATCH",
+            "model": "qwen-text",
+            "task": "text_to_video",
+            "variant": "standard",
+            "target_gpu": 0,
+            "min_vram_gb": 12.0,
+            "is_negative": True,
+            "expected_error_code": "WRONG_ERROR_CODE",
+            "inputs": {"prompt": "Generate video"},
+            "modes": ["smoke"],
+        }
+        rec_mismatch = runner.evaluate_case(case_mismatch, mode="smoke")
+        assert rec_mismatch.status == "FAIL"
+        assert rec_mismatch.error_code == "ERROR_CODE_MISMATCH"
+        assert "Expected error code 'WRONG_ERROR_CODE'" in rec_mismatch.error_message
+    finally:
+        runner.close()
+
+
+def test_validators_corrupted_image_container_rejection():
+    """Verifies Pillow decoding verification rejects truncated or corrupted image containers."""
+    # Corrupt PNG: Valid magic header followed by random garbage bytes
+    corrupt_png = b"\x89PNG\r\n\x1a\n\x00\x00\x00\x0dIHDR" + b"\xff" * 40
+    res_png = validate_artifact(corrupt_png, expected_mime="image/png")
+    assert res_png.valid is False
+    assert "Corrupted or truncated" in res_png.error
+
+    # Corrupt JPEG: Valid JPEG magic header followed by corrupt frame bytes
+    corrupt_jpeg = b"\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x01\x00`\x00`\x00\x00" + b"\x00" * 30
+    res_jpeg = validate_artifact(corrupt_jpeg, expected_mime="image/jpeg")
+    assert res_jpeg.valid is False
+    assert "Corrupted or truncated" in res_jpeg.error

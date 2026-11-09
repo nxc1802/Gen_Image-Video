@@ -54,11 +54,11 @@ SUBSYSTEM_GPU_MAP: Dict[str, int] = {
 DATASET_SPECS: List[Dict[str, Any]] = [
     {
         "id": "qwen-text",
-        "slug": "qwen38-27b-gguf",
-        "huggingface": "unsloth/Qwen3.8-27B-GGUF",
+        "slug": "qwen25-7b-instruct-awq",
+        "huggingface": "Qwen/Qwen2.5-7B-Instruct-AWQ",
         "service": "text",
         "target_gpu": 0,
-        "files": ["Qwen3.8-27B-UD-Q4_K_M.gguf", "mmproj-F16.gguf"],
+        "files": ["model.safetensors.index.json"],
     },
     {
         "id": "qwen-image-2.1",
@@ -78,19 +78,19 @@ DATASET_SPECS: List[Dict[str, Any]] = [
     },
     {
         "id": "wan-2.2",
-        "slug": "wan22-ti2v-5b-gguf",
-        "huggingface": "QuantStack/Wan2.2-TI2V-5B-GGUF",
+        "slug": "wan22-ti2v-5b-diffusers",
+        "huggingface": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
         "service": "video",
         "target_gpu": 1,
-        "files": ["Wan2.2-TI2V-5B-Q4_K_M.gguf", "Wan2.2_VAE.safetensors"],
+        "files": ["model_index.json"],
     },
     {
         "id": "minimax-h3",
-        "slug": "minimax-h3-gguf",
-        "huggingface": "unsloth/MiniMax-H3-GGUF",
+        "slug": "hailuo-h3-diffusers",
+        "huggingface": "MiniMax/Hailuo-H3-Diffusers",
         "service": "video",
         "target_gpu": 1,
-        "files": ["MiniMax-H3-FL2VA-Q4_K_M.gguf", "minimax_h3_video_vae_fp16.safetensors"],
+        "files": ["model_index.json"],
     },
     {
         "id": "ace-step-1.5",
@@ -107,6 +107,46 @@ DATASET_SPECS: List[Dict[str, Any]] = [
         "service": "music",
         "target_gpu": 1,
         "files": ["pytorch_model.bin"],
+    },
+    {
+        "id": "qwen-speech",
+        "slug": "qwen3-asr-1-7b",
+        "huggingface": "Qwen/Qwen3-ASR-1.7B",
+        "service": "speech",
+        "target_gpu": 0,
+        "files": ["model.safetensors"],
+    },
+    {
+        "id": "qwen-decision",
+        "slug": "qwen25-3b-instruct",
+        "huggingface": "Qwen/Qwen2.5-3B-Instruct",
+        "service": "decision",
+        "target_gpu": 0,
+        "files": ["model.safetensors"],
+    },
+    {
+        "id": "qwen-vlm",
+        "slug": "qwen2-vl-7b-instruct-awq",
+        "huggingface": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+        "service": "vision",
+        "target_gpu": 0,
+        "files": ["model.safetensors.index.json"],
+    },
+    {
+        "id": "qwen-embedding",
+        "slug": "qwen3-embedding-0-6b",
+        "huggingface": "Qwen/Qwen3-Embedding-0.6B",
+        "service": "embedding",
+        "target_gpu": 1,
+        "files": ["model.safetensors"],
+    },
+    {
+        "id": "enhancement-suite-v1",
+        "slug": "real-esrgan",
+        "huggingface": "xinntao/Real-ESRGAN",
+        "service": "enhancement",
+        "target_gpu": 1,
+        "files": ["RealESRGAN_x4plus.pth"],
     },
 ]
 
@@ -304,7 +344,8 @@ class KaggleBootstrap:
                 "missing": [spec["slug"] for spec in DATASET_SPECS],
             }
 
-        self.models_dir.mkdir(parents=True, exist_ok=True)
+        if create_symlinks:
+            self.models_dir.mkdir(parents=True, exist_ok=True)
 
         for spec in DATASET_SPECS:
             model_id = spec["id"]
@@ -345,8 +386,23 @@ class KaggleBootstrap:
     def initialize_environment(
         self,
         api_key: Optional[str] = None,
+        dry_run: bool = False,
     ) -> Dict[str, Any]:
-        """Initializes ephemeral scratch storage and configures required environment variables."""
+        """
+        Initializes ephemeral scratch storage and configures required environment variables.
+        When dry_run=True, verifies configuration without creating directories or mutating os.environ.
+        """
+        if dry_run:
+            current_key = api_key or os.environ.get("FACTORY_API_KEY")
+            return {
+                "scratch_artifacts_dir": str(self.scratch_artifacts_dir),
+                "storage_backend": "ephemeral_disk",
+                "factory_db_backend": "memory",
+                "api_key_configured": bool(current_key),
+                "environment": "dry_run",
+                "dry_run": True,
+            }
+
         # Setup scratch artifacts directory
         self.scratch_artifacts_dir.mkdir(parents=True, exist_ok=True)
 
@@ -374,6 +430,7 @@ class KaggleBootstrap:
             "factory_db_backend": os.environ["FACTORY_DB_BACKEND"],
             "api_key_configured": bool(final_key),
             "environment": os.environ["ENVIRONMENT"],
+            "dry_run": False,
         }
 
     def install_dependencies(self, packages: Optional[List[str]] = None) -> bool:
@@ -407,13 +464,16 @@ class KaggleBootstrap:
             self.install_dependencies(deps["missing_required"])
             deps = self.validate_dependencies()
 
-        datasets_info = (
-            self.discover_and_mount_datasets(create_symlinks=True)
-            if mount_datasets
-            else {"mounted": False, "discovered": {}, "missing": []}
-        )
-
-        storage_info = self.initialize_environment()
+        if check_only:
+            datasets_info = self.discover_and_mount_datasets(create_symlinks=False)
+            storage_info = self.initialize_environment(dry_run=True)
+        else:
+            datasets_info = (
+                self.discover_and_mount_datasets(create_symlinks=True)
+                if mount_datasets
+                else {"mounted": False, "discovered": {}, "missing": []}
+            )
+            storage_info = self.initialize_environment(dry_run=False)
 
         is_kaggle_env = Path("/kaggle").exists()
         errors: List[str] = []

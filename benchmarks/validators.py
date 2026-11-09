@@ -107,29 +107,89 @@ def detect_binary_container(data: bytes) -> Tuple[Optional[str], Optional[str]]:
     return None, None
 
 
-def extract_png_metadata(data: bytes) -> Tuple[Optional[Tuple[int, int]], Dict[str, Any]]:
-    """Parses PNG IHDR chunk to extract width, height, and color type."""
-    if len(data) < 29 or not data.startswith(PNG_MAGIC):
-        return None, {}
-
+def extract_image_metadata(data: bytes, format_hint: Optional[str] = None) -> Tuple[Optional[Tuple[int, int]], Dict[str, Any]]:
+    """
+    Decodes image and extracts dimensions and metadata using Pillow.
+    Fully verifies chunk structure and container decode integrity.
+    Rejects truncated headers, invalid chunks, or corrupted image streams.
+    """
     try:
-        ihdr_type = data[12:16]
-        if ihdr_type == b"IHDR":
-            width, height = struct.unpack(">II", data[16:24])
-            if width <= 0 or height <= 0:
+        from PIL import Image
+        bio = io.BytesIO(data)
+        with Image.open(bio) as img:
+            img.verify()
+        with Image.open(io.BytesIO(data)) as img:
+            fmt = img.format
+            if format_hint and fmt and fmt.upper() != format_hint.upper():
                 return None, {}
-            bit_depth, color_type, compression, filter_method, interlace = struct.unpack(
-                ">BBBBB", data[24:29]
-            )
-            return (width, height), {
-                "bit_depth": bit_depth,
-                "color_type": color_type,
-                "compression": compression,
-                "interlace": interlace,
+            w, h = img.size
+            if w <= 0 or h <= 0:
+                return None, {}
+            return (w, h), {
+                "format": fmt,
+                "mode": img.mode,
+                "width": w,
+                "height": h,
             }
     except Exception:
         pass
     return None, {}
+
+
+def extract_png_metadata(data: bytes) -> Tuple[Optional[Tuple[int, int]], Dict[str, Any]]:
+    """
+    Parses and verifies PNG image container using Pillow decoding verification.
+    Extracts dimensions, bit depth, and color type.
+    """
+    if len(data) < 29 or not data.startswith(PNG_MAGIC):
+        return None, {}
+
+    # Strict decodability verification via Pillow
+    dims, meta = extract_image_metadata(data, format_hint="PNG")
+    if dims is None:
+        # Fallback only if Pillow is not available
+        try:
+            import PIL  # noqa: F401
+            # If PIL is installed and failed verification, the image is corrupt
+            return None, {}
+        except ImportError:
+            pass
+
+        try:
+            ihdr_type = data[12:16]
+            if ihdr_type == b"IHDR":
+                width, height = struct.unpack(">II", data[16:24])
+                if width <= 0 or height <= 0:
+                    return None, {}
+                bit_depth, color_type, compression, filter_method, interlace = struct.unpack(
+                    ">BBBBB", data[24:29]
+                )
+                return (width, height), {
+                    "bit_depth": bit_depth,
+                    "color_type": color_type,
+                    "compression": compression,
+                    "interlace": interlace,
+                }
+        except Exception:
+            return None, {}
+
+    # Augment with PNG-specific chunk attributes if available
+    try:
+        ihdr_type = data[12:16]
+        if ihdr_type == b"IHDR" and len(data) >= 29:
+            bit_depth, color_type, compression, filter_method, interlace = struct.unpack(
+                ">BBBBB", data[24:29]
+            )
+            meta.update({
+                "bit_depth": bit_depth,
+                "color_type": color_type,
+                "compression": compression,
+                "interlace": interlace,
+            })
+    except Exception:
+        pass
+
+    return dims, meta
 
 
 def extract_wav_metadata(data: bytes) -> Tuple[Optional[float], Dict[str, Any]]:
@@ -396,6 +456,8 @@ def validate_artifact(
 
     if detected_mime == "image/png":
         dimensions, metadata = extract_png_metadata(raw_bytes)
+    elif detected_mime in ("image/jpeg", "image/webp"):
+        dimensions, metadata = extract_image_metadata(raw_bytes)
     elif detected_mime == "audio/wav":
         duration, metadata = extract_wav_metadata(raw_bytes)
     elif detected_mime == "video/mp4":
@@ -495,7 +557,7 @@ def validate_artifact(
         )
 
     # Container integrity verification for recognized media containers
-    if detected_mime == "image/png" and dimensions is None:
+    if detected_mime in ("image/png", "image/jpeg", "image/webp") and dimensions is None:
         return ValidationResult(
             valid=False,
             mime_type=detected_mime,
