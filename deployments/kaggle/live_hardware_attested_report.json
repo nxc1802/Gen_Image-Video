@@ -1,5 +1,8 @@
 {
-  "timestamp": "2026-11-03T12:08:05.010825+00:00",
+  "timestamp": "2026-11-10T11:21:00.762330+00:00",
+  "execution_mode": "synthetic_tensor_benchmark",
+  "live_pass": false,
+  "certification_classification": "SYNTHETIC_PASS",
   "hardware": {
     "platform": "Kaggle Dual Tesla T4",
     "driver_version": "580.178.04",
@@ -25,9 +28,6 @@
     ],
     "telemetry_attested": true
   },
-  "execution_mode": "synthetic_tensor_benchmark",
-  "live_pass": false,
-  "certification_classification": "SYNTHETIC_PASS",
   "all_modalities_tested": 9,
   "all_passed": true,
   "results": {
@@ -36,7 +36,7 @@
       "service_id": "text-service",
       "target_gpu": 0,
       "status": "passed",
-      "duration_ms": 2447.62,
+      "duration_ms": 1125.24,
       "vram_used_mb": 603.2,
       "mounted_weights": "/kaggle/input/datasets/cuongnguyen1802/qwen38-27b-gguf/Qwen3.8-27B-Q4_K_M.gguf",
       "weights_size_gb": 17.67,
@@ -49,16 +49,16 @@
       "service_id": "decision-service",
       "target_gpu": 0,
       "status": "passed",
-      "duration_ms": 178.13,
+      "duration_ms": 173.27,
       "vram_used_mb": 605.2,
       "decision_output": {
         "predicate": true,
-        "choice": "route_secondary",
-        "confidence_score": 0.5581,
+        "choice": "route_primary",
+        "confidence_score": 0.3731,
         "all_scores": [
-          0.2496,
-          0.5581,
-          0.1923
+          0.3731,
+          0.2618,
+          0.3651
         ]
       }
     },
@@ -67,16 +67,16 @@
       "service_id": "embed-service",
       "target_gpu": 1,
       "status": "passed",
-      "duration_ms": 353.08,
+      "duration_ms": 348.16,
       "vram_used_mb": 601.2,
       "vector_dim": 1024,
       "l2_norm": 1.0,
       "vector_sample": [
-        -0.0002,
-        0.0068,
-        -0.016,
-        -0.0123,
-        -0.0297
+        -0.0035,
+        0.0816,
+        0.0072,
+        -0.0209,
+        0.0156
       ]
     },
     "vlm": {
@@ -84,7 +84,7 @@
       "service_id": "vision-service",
       "target_gpu": 0,
       "status": "passed",
-      "duration_ms": 8591.19,
+      "duration_ms": 8643.5,
       "vram_used_mb": 607.2,
       "vision_tokens_shape": [
         1,
@@ -97,11 +97,11 @@
       "service_id": "image-service",
       "target_gpu": 0,
       "status": "passed",
-      "duration_ms": 413.27,
+      "duration_ms": 396.87,
       "vram_used_mb": 607.2,
       "output_file": "/kaggle/working/outputs/certified_image_output.png",
       "file_size_bytes": 12420,
-      "valid_png_header": true,
+      "valid_png_header": false,
       "resolution": "64x64"
     },
     "video": {
@@ -109,12 +109,12 @@
       "service_id": "video-service",
       "target_gpu": 1,
       "status": "passed",
-      "duration_ms": 484.21,
+      "duration_ms": 138.23,
       "vram_used_mb": 603.2,
-      "mounted_weights": "/kaggle/input/datasets/cuongnguyen1802/minimax-h3-gguf/MiniMax-H3-FL2VA-Q4_K_M.gguf",
-      "weights_size_gb": 10.64,
+      "mounted_weights": null,
+      "weights_size_gb": 0.0,
       "output_file": "/kaggle/working/outputs/certified_video_output.mp4",
-      "file_size_bytes": 4172,
+      "file_size_bytes": 4268,
       "valid_mp4_container": true,
       "frames_rendered": 8
     },
@@ -123,7 +123,7 @@
       "service_id": "speech-service",
       "target_gpu": 0,
       "status": "passed",
-      "duration_ms": 34.6,
+      "duration_ms": 33.19,
       "vram_used_mb": 607.2,
       "output_file": "/kaggle/working/outputs/certified_speech_output.wav",
       "file_size_bytes": 32044,
@@ -136,7 +136,7 @@
       "service_id": "music-service",
       "target_gpu": 1,
       "status": "passed",
-      "duration_ms": 18.4,
+      "duration_ms": 19.41,
       "vram_used_mb": 605.2,
       "stereo_channels": 2,
       "samples_rendered": 24000
@@ -146,7 +146,7 @@
       "service_id": "enhancement-service",
       "target_gpu": 1,
       "status": "passed",
-      "duration_ms": 173.42,
+      "duration_ms": 151.29,
       "vram_used_mb": 605.2,
       "input_resolution": "64x64",
       "upscaled_resolution": "256x256 (4x)"

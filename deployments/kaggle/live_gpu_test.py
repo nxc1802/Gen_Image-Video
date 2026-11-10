@@ -17,6 +17,7 @@ from pathlib import Path
 import sys
 import time
 from typing import Any, Dict, List, Optional
+import urllib.request
 
 repo_root = Path(__file__).resolve().parent.parent.parent
 if str(repo_root) not in sys.path:
@@ -453,35 +454,37 @@ print(f"\\n📄 Saved certification artifact to {report_path}")
 def run_live_gpu_certification(
     username: Optional[str] = None,
     api_key: Optional[str] = None,
-    kernel_slug: str = "factory-dual-t4-live-certification",
-    timeout_sec: float = 1800.0,
+    kernel_slug: str = "factory-v4-lite-real-dual-t4-certification",
+    timeout_sec: float = 7200.0,
+    push: bool = True,
 ) -> Dict[str, Any]:
     """Pushes and monitors the genuine Dual-T4 GPU certification kernel on Kaggle."""
     client = KaggleAPIClient(username=username, api_key=api_key)
-    code = generate_kaggle_gpu_kernel_code()
-
-    logger.info(f"Deploying live GPU certification kernel '{kernel_slug}' to Kaggle Dual-T4...")
-    push_resp = client.push_kernel(
-        slug=kernel_slug,
-        title="Factory v4 Lite Real Dual-T4 Certification",
-        code_content=code,
-        is_private=True,
-        enable_gpu=True,
-        enable_internet=True,
-        kernel_type="script",
-        language="python",
-        dataset_sources=[
-            f"{client.username}/qwen38-27b-gguf",
-            f"{client.username}/minimax-h3-gguf",
-        ],
-    )
     actual_slug = kernel_slug
-    if push_resp.get("ref"):
-        actual_slug = push_resp["ref"].strip("/").split("/")[-1]
-    elif push_resp.get("url"):
-        actual_slug = push_resp["url"].strip("/").split("/")[-1]
 
-    logger.info(f"Kernel pushed successfully: {push_resp.get('url')} (slug: {actual_slug})")
+    if push:
+        code = generate_kaggle_gpu_kernel_code()
+        logger.info(f"Deploying live GPU certification kernel '{kernel_slug}' to Kaggle Dual-T4...")
+        push_resp = client.push_kernel(
+            slug=kernel_slug,
+            title="Factory v4 Lite Real Dual-T4 Certification",
+            code_content=code,
+            is_private=True,
+            enable_gpu=True,
+            enable_internet=True,
+            kernel_type="script",
+            language="python",
+            dataset_sources=[
+                f"{client.username}/qwen38-27b-gguf",
+            ],
+        )
+        if push_resp.get("ref"):
+            actual_slug = push_resp["ref"].strip("/").split("/")[-1]
+        elif push_resp.get("url"):
+            actual_slug = push_resp["url"].strip("/").split("/")[-1]
+        logger.info(f"Kernel pushed successfully: {push_resp.get('url')} (slug: {actual_slug})")
+    else:
+        logger.info(f"Monitoring existing Kaggle kernel '{actual_slug}' without re-pushing...")
 
     def _streamer(line: str):
         print(f"[Kaggle Dual-T4] {line}")
@@ -492,18 +495,43 @@ def run_live_gpu_certification(
         timeout_sec=timeout_sec,
         output_callback=_streamer,
     )
+
+    # Download genuine physical artifacts from Kaggle
+    for f in output.get("files", []):
+        file_name = f.get("fileName")
+        url = f.get("url")
+        if not file_name or not url:
+            continue
+        base_name = Path(file_name).name
+        dest_local = repo_root / "deployments" / "kaggle" / base_name
+        if "live_gpu_certification_results" in base_name:
+            dest_local = repo_root / "deployments" / "kaggle" / "live_hardware_attested_report.json"
+        try:
+            urllib.request.urlretrieve(url, dest_local)
+            logger.info(f"Saved Kaggle output: {dest_local} ({dest_local.stat().st_size} bytes)")
+        except Exception as dl_err:
+            logger.warning(f"Error downloading {base_name}: {dl_err}")
+
     return output
 
 
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="Run Live GPU Certification on Kaggle Dual-T4")
-    parser.add_argument("--slug", default="factory-dual-t4-live-certification")
+    parser.add_argument("--slug", default="factory-v4-lite-real-dual-t4-certification")
     parser.add_argument("--user", default=None)
     parser.add_argument("--token", default=None)
+    parser.add_argument("--timeout", type=float, default=7200.0, help="Polling timeout in seconds")
+    parser.add_argument("--no-push", action="store_true", help="Monitor existing kernel without pushing code")
     args = parser.parse_args()
 
-    res = run_live_gpu_certification(username=args.user, api_key=args.token, kernel_slug=args.slug)
+    res = run_live_gpu_certification(
+        username=args.user,
+        api_key=args.token,
+        kernel_slug=args.slug,
+        timeout_sec=args.timeout,
+        push=not args.no_push,
+    )
     print("\nExecution finished with status:", res.get("status", "complete"))
 
 
