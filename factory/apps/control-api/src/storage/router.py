@@ -114,8 +114,11 @@ async def local_storage_download(
     if not path.exists():
         raise HTTPException(status_code=404, detail="File not found.")
 
-    headers = {}
-    if filename:
+    headers = {"Accept-Ranges": "bytes"}
+    ext = path.suffix.lower()
+    if ext in (".mp4", ".webm", ".mkv"):
+        headers["Content-Disposition"] = f'inline; filename="{filename or path.name}"'
+    elif filename:
         headers["Content-Disposition"] = f'attachment; filename="{filename}"'
 
     return FileResponse(path=str(path), headers=headers)
@@ -129,17 +132,34 @@ async def local_storage_upload(
     expires: int = Query(...),
     sig: str = Query(...),
     mime_type: str = Query(default="application/octet-stream"),
+    max_size: Optional[int] = Query(default=None),
+    max_size_bytes: Optional[int] = Query(default=None),
     storage: StorageProvider = Depends(get_storage_provider),
     scratch_disk: ScratchDiskManager = Depends(get_scratch_disk),
 ):
     if not isinstance(storage, LocalStorageProvider):
         raise HTTPException(status_code=400, detail="Local upload endpoint only active for local storage backend.")
 
-    if not storage.verify_signature(bucket, key, expires, sig):
+    limit_bytes = max_size if max_size is not None else (max_size_bytes if max_size_bytes is not None else 50 * 1024 * 1024)
+
+    if not storage.verify_signature(bucket, key, expires, sig, max_size=limit_bytes):
         raise HTTPException(status_code=403, detail="Invalid or expired upload signature.")
 
     path = storage._get_path(bucket, key)
     path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Validate Content-Length header against limit if provided
+    content_length = request.headers.get("content-length")
+    if content_length:
+        try:
+            cl = int(content_length.strip())
+            if cl > limit_bytes:
+                raise HTTPException(
+                    status_code=413,
+                    detail=f"Payload size {cl} bytes exceeds maximum permitted limit ({limit_bytes} bytes).",
+                )
+        except ValueError:
+            pass
 
     # Stream upload chunks atomically via temporary file to prevent partial-read races
     total_size = 0
@@ -149,8 +169,15 @@ async def local_storage_upload(
             tmp_path = Path(tmp_file.name)
             async for chunk in request.stream():
                 if chunk:
-                    tmp_file.write(chunk)
                     total_size += len(chunk)
+                    if total_size > limit_bytes:
+                        if tmp_path and tmp_path.exists():
+                            tmp_path.unlink(missing_ok=True)
+                        raise HTTPException(
+                            status_code=413,
+                            detail=f"Upload stream exceeded hard limit of {limit_bytes} bytes.",
+                        )
+                    tmp_file.write(chunk)
             tmp_file.flush()
             os.fsync(tmp_file.fileno())
         os.replace(tmp_path, path)

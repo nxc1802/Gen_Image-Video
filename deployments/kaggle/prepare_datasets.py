@@ -36,6 +36,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "wan22-ti2v-5b-gguf",
         "title": "Wan 2.2 TI2V 5B GGUF",
         "repo": "QuantStack/Wan2.2-TI2V-5B-GGUF",
+        "revision": "f2c81a5e18641957de9a31a7f05eb1b702758bf8",
+        "license": "Apache-2.0",
+        "license_name": "apache-2.0",
+        "commercial_use": True,
         "service_id": "video-service",
         "target_gpu": 1,
         "estimated_gb": 4.5,
@@ -49,6 +53,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "minimax-h3-gguf",
         "title": "MiniMax Hailuo H3 GGUF Video & Audio",
         "repo": "unsloth/MiniMax-H3-GGUF",
+        "revision": "e4b52c49c7198762d0577a8a8163f9ebfa9b7754",
+        "license": "MiniMax Non-Commercial License",
+        "license_name": "other",
+        "commercial_use": False,
         "service_id": "video-service",
         "target_gpu": 1,
         "estimated_gb": 33.1,
@@ -64,6 +72,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "qwen-image-2-1-gguf",
         "title": "Qwen Image 2.1 GGUF",
         "repo": "abenzerps/Qwen-Image-2.1-GGUF",
+        "revision": "d1245e8964af54497e25e83ec9bb892bf32e5190",
+        "license": "Tongyi Qianwen License",
+        "license_name": "other",
+        "commercial_use": True,
         "service_id": "image-service",
         "target_gpu": 0,
         "estimated_gb": 4.2,
@@ -77,6 +89,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "qwen-image-2-1-turbo-gguf",
         "title": "Qwen Image 2.1 Turbo GGUF",
         "repo": "unsloth/Qwen-Image-2.1-Turbo-GGUF",
+        "revision": "d1245e8964af54497e25e83ec9bb892bf32e5190",
+        "license": "Tongyi Qianwen License",
+        "license_name": "other",
+        "commercial_use": True,
         "service_id": "image-service",
         "target_gpu": 0,
         "estimated_gb": 3.91,
@@ -89,6 +105,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "qwen25-7b-instruct-awq",
         "title": "Qwen 2.5 7B Instruct AWQ Official",
         "repo": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+        "revision": "c4e519289299478f79fba50d757d54b4f5358043",
+        "license": "Tongyi Qianwen License",
+        "license_name": "other",
+        "commercial_use": True,
         "service_id": "text-service",
         "target_gpu": 0,
         "estimated_gb": 4.5,
@@ -100,6 +120,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "qwen2-vl-7b-instruct-awq",
         "title": "Qwen2-VL 7B Instruct AWQ Official",
         "repo": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+        "revision": "7b5394541cbde26227c262198ecfb2e63ef29583",
+        "license": "Apache-2.0",
+        "license_name": "apache-2.0",
+        "commercial_use": True,
         "service_id": "vision-service",
         "target_gpu": 0,
         "estimated_gb": 5.5,
@@ -111,6 +135,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "qwen3-asr-tts",
         "title": "Qwen3 ASR & TTS Multilingual Suite",
         "repo": "Qwen/Qwen3-ASR-1.7B",
+        "revision": "8a7b931c8d76e43f07a61d1988e0b23acdf55610",
+        "license": "Apache-2.0",
+        "license_name": "apache-2.0",
+        "commercial_use": True,
         "service_id": "speech-service",
         "target_gpu": 0,
         "estimated_gb": 7.4,
@@ -125,6 +153,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "kaggle-embedding-models",
         "title": "Qwen3 Embedding & Reranker GGUF",
         "repo": "mradermacher/Qwen3-Embedding-0.6B-GGUF",
+        "revision": "b63a921d7b32c69d80cf2821ae039833f272a806",
+        "license": "Apache-2.0",
+        "license_name": "apache-2.0",
+        "commercial_use": True,
         "service_id": "embed-service",
         "target_gpu": 1,
         "estimated_gb": 5.2,
@@ -141,6 +173,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "qwen-decision-router",
         "title": "Qwen 2.5 Decision Router",
         "repo": "Qwen/Qwen2.5-3B-Instruct",
+        "revision": "47f5250ff5779796016e3c0d832e5399587bf2b1",
+        "license": "Tongyi Qianwen License",
+        "license_name": "other",
+        "commercial_use": True,
         "service_id": "decision-service",
         "target_gpu": 0,
         "estimated_gb": 3.2,
@@ -152,6 +188,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "acestep-music-1-5",
         "title": "ACE-Step 1.5 Music Generation",
         "repo": "ACE-Studio/ACE-Step-1.5",
+        "revision": "9d82e1c312781b0a70cf6bf79e2730ca7f918042",
+        "license": "CC-BY-NC-4.0",
+        "license_name": "cc-by-nc-4.0",
+        "commercial_use": False,
         "service_id": "music-service",
         "target_gpu": 1,
         "estimated_gb": 3.5,
@@ -163,6 +203,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "enhancement-suite",
         "title": "Media Post-Processing & Enhancement Suite",
         "repo": "xinntao/Real-ESRGAN",
+        "revision": "4a8f9b2d861d848773950ef31355ca0d39e24807",
+        "license": "Composite Non-Commercial (RIFE / BSD-3 / Apache-2.0)",
+        "license_name": "other",
+        "commercial_use": False,
         "service_id": "enhancement-service",
         "target_gpu": 1,
         "estimated_gb": 2.5,
@@ -174,6 +218,10 @@ MODEL_DATASETS: List[Dict[str, Any]] = [
         "slug": "yue-s1-7b",
         "title": "YuE s1 7B Annealed En CoT",
         "repo": "m-a-p/YuE-s1-7B-anneal-en-cot",
+        "revision": "672e8bb24802521c7a40b97cfc47c4cb033230a1",
+        "license": "Apache-2.0",
+        "license_name": "apache-2.0",
+        "commercial_use": True,
         "service_id": "music-service",
         "target_gpu": 1,
         "estimated_gb": 13.5,
@@ -327,11 +375,15 @@ for job in JOBS:
     files = job.get("files", [])
     snapshot = job.get("snapshot", False)
     extra_downloads = job.get("extra_downloads", [])
+    revision = job.get("revision")
+    license_name = job.get("license_name", "apache-2.0")
+    license_title = job.get("license", "Apache-2.0")
     dataset_ref = f"{{kaggle_user}}/{{slug}}"
 
     print("=" * 80)
     print(f"📦 Processing: {{title}} ({{dataset_ref}})")
-    print(f"   HuggingFace Repo: {{repo}} (Estimated: {{job.get('estimated_gb', 0)}} GB)")
+    print(f"   HuggingFace Repo: {{repo}} (Revision: {{revision}}, Estimated: {{job.get('estimated_gb', 0)}} GB)")
+    print(f"   License: {{license_title}} (Kaggle identifier: {{license_name}})")
     print("=" * 80)
 
     # Check if already exists
@@ -351,16 +403,16 @@ for job in JOBS:
     t0 = time.time()
     try:
         if snapshot:
-            print(f"📥 Synchronizing repository snapshot from {{repo}}...")
-            snapshot_download(repo_id=repo, local_dir=str(model_dir), ignore_patterns=["*.git*", "*.md"])
+            print(f"📥 Synchronizing repository snapshot from {{repo}} (revision: {{revision}})...")
+            snapshot_download(repo_id=repo, revision=revision, local_dir=str(model_dir), ignore_patterns=["*.git*", "*.md"])
         else:
             for f_info in files:
                 src = f_info["src"]
                 dest = f_info["dest"]
                 dest_path = model_dir / dest
                 dest_path.parent.mkdir(parents=True, exist_ok=True)
-                print(f"📥 Downloading {{src}} -> {{dest}}...")
-                dl_path = hf_hub_download(repo_id=repo, filename=src, local_dir=str(model_dir))
+                print(f"📥 Downloading {{src}} -> {{dest}} (revision: {{revision}})...")
+                dl_path = hf_hub_download(repo_id=repo, filename=src, revision=revision, local_dir=str(model_dir))
                 if Path(dl_path).resolve() != dest_path.resolve():
                     shutil.move(str(dl_path), str(dest_path))
 
@@ -368,10 +420,11 @@ for job in JOBS:
             e_repo = extra["repo"]
             e_src = extra["src"]
             e_dest = extra["dest"]
+            e_rev = extra.get("revision", revision)
             e_dest_path = model_dir / e_dest
             e_dest_path.parent.mkdir(parents=True, exist_ok=True)
             print(f"📥 Extra download: {{e_repo}}/{{e_src}} -> {{e_dest}}...")
-            dl_path = hf_hub_download(repo_id=e_repo, filename=e_src, local_dir=str(model_dir))
+            dl_path = hf_hub_download(repo_id=e_repo, filename=e_src, revision=e_rev, local_dir=str(model_dir))
             if Path(dl_path).resolve() != e_dest_path.resolve():
                 shutil.move(str(dl_path), str(e_dest_path))
 
@@ -382,8 +435,8 @@ for job in JOBS:
         meta = {{
             "title": title,
             "id": dataset_ref,
-            "licenses": [{{"name": "apache-2.0"}}],
-            "description": f"Model weights for Factory v4 Lite: {{title}}.",
+            "licenses": [{{"name": license_name}}],
+            "description": f"Model weights for Factory v4 Lite: {{title}} (License: {{license_title}}).",
         }}
         with open(model_dir / "dataset-metadata.json", "w") as mf:
             json.dump(meta, mf, indent=2)

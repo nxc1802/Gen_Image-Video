@@ -6,9 +6,15 @@ metadata:
   display_name: "Qwen3 ASR & TTS Suite"
   service_id: speech-service
   version: "3.0.0"
+  license: "Apache-2.0"
+  license_url: "https://huggingface.co/Qwen/Qwen3-ASR-1.7B/blob/main/LICENSE"
+  commercial_use: true
 
 weights:
   primary_checkpoint: "Qwen/Qwen3-ASR-1.7B"
+  repository: "Qwen/Qwen3-ASR-1.7B"
+  checkpoint_revision: "8a7b931c8d76e43f07a61d1988e0b23acdf55610"
+  weights_file: "model.safetensors"
   components:
     tts_base: "Qwen/Qwen3-TTS-12Hz-1.7B-Base"
   format: safetensors

@@ -84,6 +84,10 @@ class ModelWeightsSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     primary_checkpoint: str = Field(..., description="Hugging Face repo or local checkpoint path")
+    repository: Optional[str] = Field(default=None, description="Exact Hugging Face or ModelScope repository")
+    checkpoint_revision: Optional[str] = Field(default=None, description="Exact Git commit SHA or revision tag")
+    weights_file: Optional[str] = Field(default=None, description="Exact weights file name")
+    sha256: Optional[str] = Field(default=None, pattern=r"^[a-f0-9]{64}$", description="SHA256 checksum of primary weights")
     components: Dict[str, str] = Field(
         default_factory=dict,
         description="Specialized component paths (e.g. clip, vae, inpaint, controlnet)"
@@ -128,6 +132,9 @@ class ModelMetadata(BaseModel):
     display_name: str = Field(..., description="Human-readable title")
     service_id: str = Field(..., description="Owning service reference matching ServiceManifest.metadata.id")
     version: str = Field(..., description="Model version")
+    license: Optional[str] = Field(default=None, description="Legal license declaration (e.g. 'Tongyi Qianwen License', 'MiniMax Non-Commercial License', 'Apache-2.0', 'CC-BY-NC-4.0')")
+    license_url: Optional[str] = Field(default=None, description="URL or reference to upstream legal terms")
+    commercial_use: Optional[bool] = Field(default=None, description="Whether commercial use is legally permitted")
 
 
 class CapabilityTruthLevel(BaseModel):

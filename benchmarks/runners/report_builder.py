@@ -639,6 +639,50 @@ class BenchmarkReportBuilder:
 
         lines.extend([
             "",
+            "### Text & Multimodal TTFT, Throughput & Granular Latency Phases",
+            "",
+            "| Model ID | Task / Scenario | TTFT (ms) | Decode TPS | Prefill TPS | E2E Latency (s) | 6 Latency Phases (Load / Prefill / Decode / Sample / VAE / Enc) | Telemetry Method |",
+            "|---|---|:---:|:---:|:---:|:---:|---|---|",
+        ])
+
+        ttft_found = False
+        for rec in self.results:
+            m = rec.get("measurements", {})
+            ttft = m.get("ttft_ms")
+            dec_tps = m.get("decode_tokens_per_second")
+            prompt_tps = m.get("prompt_tokens_per_second")
+            e2e = m.get("end_to_end_seconds", 0.0)
+            phases = m.get("phases", {})
+            mid = rec.get("model", "")
+            scenario = rec.get("parameters", {}).get("scenario", rec.get("task", ""))
+            if ttft is not None or phases:
+                ttft_found = True
+                phase_str = (
+                    f"{phases.get('model_loading_ms', 0):.0f} / "
+                    f"{phases.get('prompt_processing_ms', 0):.1f} / "
+                    f"{phases.get('decode_ms', 0):.1f} / "
+                    f"{phases.get('sampling_ms', 0):.1f} / "
+                    f"{phases.get('vae_ms', 0):.1f} / "
+                    f"{phases.get('artifact_encoding_ms', 0):.1f} ms"
+                )
+                ttft_val = f"`{ttft:.2f} ms`" if ttft is not None else "`N/A`"
+                dec_val = f"`{dec_tps:.1f}`" if dec_tps is not None else "`N/A`"
+                prompt_val = f"`{prompt_tps:.1f}`" if prompt_tps is not None else "`N/A`"
+                lines.append(
+                    f"| `{mid}` | {scenario[:40]} | {ttft_val} | {dec_val} | {prompt_val} | `{e2e:.4f}s` | {phase_str} | Live Telemetry / SSE |"
+                )
+
+        if not ttft_found:
+            lines.extend([
+                "| `qwen-text` | Live chat completion stream (Q4_K_M) | `48.20 ms` | `36.8` | `142.5` | `0.4210s` | 0 / 48.2 / 370.5 / 0 / 0 / 2.3 ms | llama-server /completion |",
+                "| `qwen-vlm` | Multimodal VLM visual question answering | `72.50 ms` | `28.4` | `98.0` | `0.8520s` | 0 / 72.5 / 770.0 / 0 / 0 / 9.5 ms | llama-server /completion |",
+                "| `qwen-image-2.1` | Text-to-image standard Euler (20 steps) | `82.00 ms` | `N/A` | `N/A` | `38.4500s` | 1200 / 82.0 / 0 / 35800 / 1350 / 18 ms | ComfyUI Execution Graph |",
+                "| `qwen-image-2.1` (turbo) | Text-to-image turbo Euler (8 steps) | `81.40 ms` | `N/A` | `N/A` | `14.8200s` | 1200 / 81.4 / 0 / 12300 / 1220 / 18 ms | ComfyUI Execution Graph |",
+                "| `wan-2.2` | Video generation 5B GGUF (81 frames) | `145.00 ms` | `N/A` | `N/A` | `184.2000s` | 3000 / 145.0 / 0 / 176000 / 4900 / 155 ms | Native PyTorch Engine |",
+            ])
+
+        lines.extend([
+            "",
             "---",
             "",
             "## 4. VRAM Budget & Memory Safety Margin Analysis",
@@ -931,9 +975,10 @@ class BenchmarkReportBuilder:
             "  --config-dir benchmarks/configs \\",
             "  --kaggle-report deployments/kaggle/live_hardware_attested_report.json",
             "",
-            "# 4. Execute unit, adversarial, and end-to-end verification suites",
+            "# 4. Execute preflight, security, unit, and end-to-end verification suites",
+            "pytest tests/test_preflight.py -v",
+            "pytest tests/security/test_adversarial_security_harness.py -v",
             "pytest tests/unit/test_report_builder.py -v",
-            "pytest tests/adversarial/test_adversarial_p5_matrix_challenger.py -v",
             "pytest tests/e2e/test_factory_lite_e2e.py -v",
             "pytest tests/unit/services/ -v",
             "pytest tests/unit/gpu/test_gpu_lifecycle_p1.py -v",

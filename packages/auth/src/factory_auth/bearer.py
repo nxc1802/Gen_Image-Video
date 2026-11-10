@@ -30,21 +30,24 @@ async def verify_bearer_token(
     Supports both static FACTORY_API_KEY and cryptographic JWT verification with role differentiation.
     Rejects missing, empty, or invalid tokens with HTTP 401 UnauthorizedError.
     """
-    if not authorization:
+    token = None
+    if authorization:
+        parts = authorization.split(maxsplit=1)
+        if len(parts) == 0 or parts[0].lower() != "bearer":
+            raise UnauthorizedError(
+                message="Invalid Authorization header format. Expected 'Bearer <token>'."
+            )
+        if len(parts) < 2 or not parts[1].strip():
+            raise UnauthorizedError(message="Bearer token is empty.")
+        token = parts[1].strip()
+    elif request is not None and "query_string" in getattr(request, "scope", {}) and request.query_params.get("token"):
+        token = request.query_params.get("token", "").strip()
+        if not token:
+            raise UnauthorizedError(message="Bearer token is empty.")
+    else:
         raise UnauthorizedError(
             message="Missing Authorization header. Expected 'Authorization: Bearer <token>'."
         )
-
-    parts = authorization.split(maxsplit=1)
-    if len(parts) == 0 or parts[0].lower() != "bearer":
-        raise UnauthorizedError(
-            message="Invalid Authorization header format. Expected 'Bearer <token>'."
-        )
-
-    if len(parts) < 2 or not parts[1].strip():
-        raise UnauthorizedError(message="Bearer token is empty.")
-
-    token = parts[1].strip()
     active_config = config or load_auth_config()
 
     # 1. Constant-time API Key verification (Admin Role)

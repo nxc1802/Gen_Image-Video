@@ -37,9 +37,9 @@ class VLMEngine:
             raise InvalidRequestError("Field 'messages' must be a non-empty array.")
         if request.reasoning_effort:
             norm = request.reasoning_effort.lower()
-            if norm not in {"low", "medium", "high"}:
+            if norm not in {"none", "low", "medium", "high"}:
                 raise InvalidRequestError(
-                    message="Field 'reasoning_effort' must be one of: 'low', 'medium', 'high'.",
+                    message="Field 'reasoning_effort' must be one of: 'none', 'low', 'medium', 'high'.",
                     details={"reasoning_effort": request.reasoning_effort},
                 )
             request.reasoning_effort = norm

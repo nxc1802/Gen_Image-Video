@@ -331,7 +331,8 @@ class TestGPUConcurrency:
 
     async def test_worker_http_reporting_without_lease_token(self):
         """
-        Verify worker reports progress and completion via HTTP without providing lease_token.
+        Verify worker reports without lease_token are rejected with HTTP 403 under P0.6,
+        while admin callers are permitted.
         """
         repo, scheduler, stream_mgr, manager, coordinator = await self._setup()
         try:
@@ -356,8 +357,38 @@ class TestGPUConcurrency:
             )
             assert lease.job is not None
 
-            # 1. Progress without lease_token
-            progress_res = await manager.update_progress(
+            # 1. Non-admin progress without lease_token must be rejected with HTTP 403
+            with pytest.raises(UnauthorizedError) as exc_info:
+                await manager.update_progress(
+                    job.job_id,
+                    ProgressUpdateRequest(
+                        stage="sampling",
+                        step=10,
+                        total=20,
+                        percent=50.0,
+                        worker_id="worker-notoken-01",
+                        lease_token=None,  # Explicitly omitted
+                    ),
+                    caller_role="worker",
+                )
+            assert exc_info.value.status_code == 403
+
+            # 2. Non-admin complete without lease_token must be rejected with HTTP 403
+            with pytest.raises(UnauthorizedError) as exc_info:
+                await manager.complete_job(
+                    job.job_id,
+                    JobCompletionRequest(
+                        worker_id="worker-notoken-01",
+                        lease_token=None,  # Explicitly omitted
+                        inference_duration_ms=2100.0,
+                        result={"image": "success"},
+                    ),
+                    caller_role="worker",
+                )
+            assert exc_info.value.status_code == 403
+
+            # 3. Admin override is permitted
+            admin_progress = await manager.update_progress(
                 job.job_id,
                 ProgressUpdateRequest(
                     stage="sampling",
@@ -365,22 +396,23 @@ class TestGPUConcurrency:
                     total=20,
                     percent=50.0,
                     worker_id="worker-notoken-01",
-                    lease_token=None,  # Explicitly omitted
+                    lease_token=None,
                 ),
+                caller_role="admin",
             )
-            assert progress_res.progress.percent == 50.0
+            assert admin_progress.progress.percent == 50.0
 
-            # 2. Complete without lease_token
-            complete_res = await manager.complete_job(
+            admin_complete = await manager.complete_job(
                 job.job_id,
                 JobCompletionRequest(
                     worker_id="worker-notoken-01",
-                    lease_token=None,  # Explicitly omitted
+                    lease_token=None,
                     inference_duration_ms=2100.0,
                     result={"image": "success"},
                 ),
+                caller_role="admin",
             )
-            assert complete_res.state == JobState.SUCCEEDED
+            assert admin_complete.state == JobState.SUCCEEDED
             assert scheduler.is_gpu_busy(0) is False
         finally:
             await repo.close()

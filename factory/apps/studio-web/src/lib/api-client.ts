@@ -48,6 +48,19 @@ export class StudioApiClient {
     return h;
   }
 
+  getMediaUrl(pathOrUrl?: string): string {
+    if (!pathOrUrl) return "";
+    let fullUrl = pathOrUrl;
+    if (!fullUrl.startsWith("http://") && !fullUrl.startsWith("https://")) {
+      fullUrl = this.endpoint(fullUrl);
+    }
+    if (this.apiKey) {
+      const sep = fullUrl.includes("?") ? "&" : "?";
+      return `${fullUrl}${sep}token=${encodeURIComponent(this.apiKey)}`;
+    }
+    return fullUrl;
+  }
+
   // ==========================================
   // Health & System Indicators
   // ==========================================

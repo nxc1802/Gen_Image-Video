@@ -553,7 +553,7 @@ async def get_job_result(
                 media_type="video/mp4",
                 headers={
                     "Accept-Ranges": "bytes",
-                    "Content-Disposition": f'attachment; filename="{job.job_id}{ext if ext else ".mp4"}"',
+                    "Content-Disposition": f'inline; filename="{job.job_id}{ext if ext else ".mp4"}"',
                 },
                 background=background_tasks if scratch_disk.config.cleanup_on_download else None,
             )
@@ -600,24 +600,40 @@ async def get_job_result(
             )
 
         text_content = ""
+        reasoning_content = None
         usage_info = {}
         if hasattr(job, "result") and job.result is not None:
             if isinstance(job.result, dict):
                 text_content = job.result.get("text") or job.result.get("content") or ""
+                reasoning_content = job.result.get("reasoning_content")
                 usage_info = job.result.get("usage", {})
+                if not reasoning_content and ("<think>" in text_content or "</think>" in text_content):
+                    from services.text.src.engine import decouple_think_tokens
+                    r_c, clean_c = decouple_think_tokens(text_content)
+                    if r_c:
+                        reasoning_content = r_c
+                        text_content = clean_c
             elif isinstance(job.result, str):
                 text_content = job.result
+                if "<think>" in text_content or "</think>" in text_content:
+                    from services.text.src.engine import decouple_think_tokens
+                    r_c, clean_c = decouple_think_tokens(text_content)
+                    if r_c:
+                        reasoning_content = r_c
+                        text_content = clean_c
 
         if "text/plain" in accept_header and "application/json" not in accept_header:
             return Response(content=text_content, media_type="text/plain")
 
-        return JSONResponse(
-            content={
-                "job_id": job.job_id,
-                "text": text_content,
-                "usage": usage_info,
-            }
-        )
+        resp_content = {
+            "job_id": job.job_id,
+            "text": text_content,
+            "usage": usage_info,
+        }
+        if reasoning_content is not None:
+            resp_content["reasoning_content"] = reasoning_content
+
+        return JSONResponse(content=resp_content)
 
     # Case C: Media files missing on scratch disk for SUCCEEDED job
     raise ArtifactNotFoundError("Artifact file not found on scratch disk.")

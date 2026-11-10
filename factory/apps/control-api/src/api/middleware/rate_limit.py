@@ -31,8 +31,17 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         enabled: Optional[bool] = None,
         max_keys: int = 10000,
         prune_interval: Optional[float] = None,
+        trusted_proxies: Optional[Set[str]] = None,
     ):
         super().__init__(app)
+        env_proxies = os.environ.get("TRUSTED_PROXIES")
+        if env_proxies is not None:
+            self.trusted_proxies = {p.strip() for p in env_proxies.split(",") if p.strip()}
+        elif trusted_proxies is not None:
+            self.trusted_proxies = set(trusted_proxies)
+        else:
+            self.trusted_proxies = {"127.0.0.1", "::1", "testclient", "localhost"}
+
         env_limit = os.environ.get("RATE_LIMIT_DEFAULT")
         self.default_limit = int(env_limit) if env_limit and env_limit.isdigit() else default_limit
 
@@ -112,16 +121,19 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 token_hash = hashlib.sha256(token.encode("utf-8")).hexdigest()[:16]
                 return f"auth:{token_hash}"
 
-        # 2. X-Forwarded-For (Edge / Load Balancer)
-        xff = request.headers.get("x-forwarded-for")
-        if xff:
-            client_ip = xff.split(",")[0].strip()
-            if client_ip:
-                return f"ip:{client_ip}"
+        direct_host = request.client.host if request.client and request.client.host else None
 
-        # 3. Direct Client Host
-        if request.client and request.client.host:
-            return f"ip:{request.client.host}"
+        # 2. X-Forwarded-For: ONLY inspect if direct socket peer is a verified trusted proxy
+        if direct_host and direct_host in self.trusted_proxies:
+            xff = request.headers.get("x-forwarded-for")
+            if xff:
+                client_ip = xff.split(",")[0].strip()
+                if client_ip:
+                    return f"ip:{client_ip}"
+
+        # 3. Direct Client Host (fallback when unproxied, untrusted proxy, or direct)
+        if direct_host:
+            return f"ip:{direct_host}"
 
         return "ip:anonymous"
 

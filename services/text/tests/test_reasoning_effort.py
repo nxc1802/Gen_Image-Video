@@ -29,8 +29,8 @@ def text_client():
 
 
 def test_reasoning_effort_valid_values():
-    """Verify reasoning_effort accepts 'low', 'medium', 'high' case-insensitively."""
-    for val in ["low", "medium", "high", "LOW", "Medium", "HIGH"]:
+    """Verify reasoning_effort accepts 'none', 'low', 'medium', 'high' case-insensitively."""
+    for val in ["none", "low", "medium", "high", "NONE", "LOW", "Medium", "HIGH"]:
         req = ChatCompletionRequest(
             model="qwen-2.5-72b-instruct",
             messages=[ChatMessage(role="user", content="Hello")],

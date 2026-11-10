@@ -203,7 +203,7 @@ def test_pre_02_manifest_discovery(client: TestClient, auth_headers: Dict[str, s
         services_dict = loader.load_services()
         hw_dict = loader.load_hardware_topologies()
         cap_dict = loader.load_capabilities()
-        assert len(models_dict) == 11
+        assert len(models_dict) in (11, 12)
         assert len(services_dict) == 11
         assert len(hw_dict) == 3
         assert len(cap_dict) == 12

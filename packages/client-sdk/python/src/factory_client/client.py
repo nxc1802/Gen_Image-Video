@@ -2,6 +2,7 @@
 factory_client/client.py
 Official Python Client SDK for Factory v4 Control API.
 """
+import os
 from typing import Any, Dict, List, Optional, Union
 import httpx
 
@@ -12,20 +13,20 @@ class FactoryClient:
     def __init__(
         self,
         base_url: str = "http://localhost:8000",
-        api_key: str = "sk-factory-studio",
+        api_key: Optional[str] = None,
         timeout: float = 120.0,
     ):
         self.base_url = base_url.rstrip("/")
-        self.api_key = api_key.strip()
+        resolved_key = (api_key if api_key is not None else os.environ.get("FACTORY_API_KEY", "")).strip()
+        self.api_key = resolved_key
         self.timeout = timeout
         self._client: Optional[httpx.Client] = None
 
     def _get_client(self) -> httpx.Client:
         if self._client is None or self._client.is_closed:
-            headers = {
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json",
-            }
+            headers = {"Content-Type": "application/json"}
+            if self.api_key:
+                headers["Authorization"] = f"Bearer {self.api_key}"
             self._client = httpx.Client(
                 base_url=self.base_url,
                 headers=headers,

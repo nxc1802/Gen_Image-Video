@@ -43,8 +43,8 @@ os.environ["FACTORY_API_KEY"] = BENCHMARK_API_KEY
 os.environ["ENVIRONMENT"] = "test"
 os.environ["FACTORY_ENV"] = "test"
 os.environ["STORAGE_BACKEND"] = "ephemeral_disk"
-os.environ["FACTORY_DB_BACKEND"] = "memory"
-os.environ["SCRATCH_DIR"] = "/tmp/factory_lite/artifacts"
+os.environ.setdefault("SCRATCH_DIR", "/tmp/factory_lite/artifacts")
+SCRATCH_DIR = Path(os.environ["SCRATCH_DIR"])
 os.environ["RATE_LIMIT_ENABLED"] = "false"
 
 from factory.apps.control_api.src.main import app
@@ -374,9 +374,11 @@ class UnifiedBenchmarkRunner:
         if not chk_repo:
             manifest = self.models_manifest.get(model_id)
             if manifest:
-                if hasattr(manifest, "weights") and hasattr(manifest.weights, "primary_checkpoint"):
-                    chk_repo = manifest.weights.primary_checkpoint
-                if hasattr(manifest, "revision") and manifest.revision:
+                if hasattr(manifest, "weights"):
+                    chk_repo = getattr(manifest.weights, "repository", None) or getattr(manifest.weights, "primary_checkpoint", None)
+                    chk_rev = getattr(manifest.weights, "checkpoint_revision", None) or getattr(manifest, "revision", None)
+                    chk_hash = getattr(manifest.weights, "sha256", None)
+                if not chk_rev and hasattr(manifest, "revision") and manifest.revision:
                     chk_rev = str(manifest.revision)
                 if hasattr(manifest, "model") and hasattr(manifest.model, "checkpoints"):
                     chks = manifest.model.checkpoints
@@ -384,7 +386,7 @@ class UnifiedBenchmarkRunner:
                         c0 = chks[0]
                         chk_repo = getattr(c0, "repo", None) or (c0.get("repo") if isinstance(c0, dict) else None) or chk_repo
                         chk_rev = getattr(c0, "revision", None) or (c0.get("revision") if isinstance(c0, dict) else None) or chk_rev
-                        chk_hash = getattr(c0, "hash", None) or (c0.get("hash") if isinstance(c0, dict) else None)
+                        chk_hash = getattr(c0, "hash", None) or (c0.get("hash") if isinstance(c0, dict) else None) or chk_hash
 
         return chk_repo, chk_rev, chk_hash
 
@@ -991,7 +993,7 @@ class UnifiedBenchmarkRunner:
                     output_content = Path(sp)
                 elif job_id:
                     art_id = primary_artifact.get("artifact_id")
-                    scratch_job_dir = Path("/tmp/factory_lite/artifacts") / job_id
+                    scratch_job_dir = SCRATCH_DIR / job_id
                     if scratch_job_dir.exists() and art_id:
                         matched_files = list(scratch_job_dir.glob(f"{art_id}*"))
                         if matched_files:
@@ -1000,7 +1002,7 @@ class UnifiedBenchmarkRunner:
 
             # 2. Check local scratch artifacts directory by format (not arbitrary files[0])
             if output_content is None and job_id:
-                scratch_job_dir = Path("/tmp/factory_lite/artifacts") / job_id
+                scratch_job_dir = SCRATCH_DIR / job_id
                 if scratch_job_dir.exists():
                     glob_pat = f"*.{expected_format}" if expected_format else "*"
                     candidates = [

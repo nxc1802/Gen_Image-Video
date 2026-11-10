@@ -282,9 +282,10 @@ python benchmarks/runners/report_builder.py \
   --config-dir benchmarks/configs \
   --kaggle-report deployments/kaggle/live_hardware_attested_report.json
 
-# 4. Execute unit, adversarial, and end-to-end verification suites
+# 4. Execute preflight, security, unit, and end-to-end verification suites
+pytest tests/test_preflight.py -v
+pytest tests/security/test_adversarial_security_harness.py -v
 pytest tests/unit/test_report_builder.py -v
-pytest tests/adversarial/test_adversarial_p5_matrix_challenger.py -v
 pytest tests/e2e/test_factory_lite_e2e.py -v
 pytest tests/unit/services/ -v
 pytest tests/unit/gpu/test_gpu_lifecycle_p1.py -v

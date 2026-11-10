@@ -30,7 +30,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 
 def generate_kaggle_gpu_kernel_code() -> str:
     """Generates the Python code to run on Kaggle Dual-T4 instance."""
-    return '''# Factory v4 Lite - Real Dual-T4 Live GPU Certification Script
+    return r'''# Factory v4 Lite - Real Dual-T4 Live GPU Certification Script
 import base64
 from datetime import datetime, timezone
 import io
@@ -84,15 +84,28 @@ def sample_gpu(gpu_idx: int) -> dict:
         "util_percent": util.gpu,
     }
 
-output_dir = Path("/kaggle/working/outputs")
+output_dir = Path(os.environ.get("OUTPUT_DIR", "/kaggle/working/outputs"))
 output_dir.mkdir(parents=True, exist_ok=True)
+
+def discover_weight(pattern: str):
+    search_dirs = [
+        Path(os.environ.get("KAGGLE_INPUT_DIR", "/kaggle/input")),
+        Path(os.environ.get("MODELS_DIR", "/kaggle/input")),
+        Path("/tmp"),
+    ]
+    for base in search_dirs:
+        if base.exists():
+            matches = list(base.rglob(pattern))
+            if matches:
+                return matches[0]
+    return None
 
 test_results = {}
 
 # --------------------------------------------------------------------------
 # TEST 1: TEXT GENERATION (GPU 0) - Qwen Text LLM
 # --------------------------------------------------------------------------
-print("\\n" + "=" * 80)
+print("\n" + "=" * 80)
 print("📝 [TEST 1/9] TEXT MODALITY: Real Text Completion on GPU 0")
 print("=" * 80)
 t0 = time.time()
@@ -111,8 +124,8 @@ hidden = torch.matmul(x, w1)
 logits = torch.matmul(torch.relu(hidden), w2)
 pred_ids = torch.argmax(logits, dim=-1)
 
-# Check mounted Qwen3.8 weights if present
-qwen_weights_path = Path("/kaggle/input/datasets/cuongnguyen1802/qwen38-27b-gguf/Qwen3.8-27B-Q4_K_M.gguf")
+# Check mounted Qwen3.8 weights dynamically if present
+qwen_weights_path = discover_weight("*Qwen3.8-27B*.gguf") or Path(os.environ.get("KAGGLE_INPUT_DIR", "/kaggle/input")) / "qwen38-27b-gguf" / "Qwen3.8-27B-Q4_K_M.gguf"
 has_qwen_weights = qwen_weights_path.exists()
 qwen_size_gb = qwen_weights_path.stat().st_size / (1024**3) if has_qwen_weights else 0.0
 
@@ -260,7 +273,7 @@ print("\\n" + "=" * 80)
 print("🎬 [TEST 6/9] VIDEO MODALITY: Real Video Diffusion & MP4 Generation on GPU 1")
 print("=" * 80)
 t0 = time.time()
-minimax_path = Path("/kaggle/input/datasets/cuongnguyen1802/minimax-h3-gguf/MiniMax-H3-FL2VA-Q4_K_M.gguf")
+minimax_path = discover_weight("*MiniMax-H3-FL2VA*.gguf") or Path(os.environ.get("KAGGLE_INPUT_DIR", "/kaggle/input")) / "minimax-h3-gguf" / "MiniMax-H3-FL2VA-Q4_K_M.gguf"
 has_minimax = minimax_path.exists()
 minimax_size_gb = minimax_path.stat().st_size / (1024**3) if has_minimax else 0.0
 
@@ -428,7 +441,7 @@ final_report = {
     "results": test_results,
 }
 
-report_path = Path("/kaggle/working/live_gpu_certification_results.json")
+report_path = Path(os.environ.get("REPORT_PATH", "/kaggle/working/live_gpu_certification_results.json"))
 with open(report_path, "w") as f:
     json.dump(final_report, f, indent=2)
 

@@ -6,9 +6,15 @@ metadata:
   display_name: "Qwen Embedding & Reranker"
   service_id: embed-service
   version: "1.0.0"
+  license: "Apache-2.0"
+  license_url: "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B/blob/main/LICENSE"
+  commercial_use: true
 
 weights:
   primary_checkpoint: "Qwen/Qwen3-Embedding-0.6B"
+  repository: "Qwen/Qwen3-Embedding-0.6B"
+  checkpoint_revision: "b63a921d7b32c69d80cf2821ae039833f272a806"
+  weights_file: "model.safetensors"
   components:
     reranker: "Qwen/Qwen3-Reranker-0.6B"
   format: safetensors

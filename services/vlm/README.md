@@ -9,6 +9,6 @@ The VLM Subsystem provides decoupled vision-language understanding powered by Qw
 - Document QA: High-resolution OCR and layout-aware document comprehension.
 
 ## Hardware & Deployment
-- Target GPU: GPU 1 (cuda:1) on Dual Tesla T4
+- Target GPU: GPU 0 (cuda:0) co-located with text-service, decision-service, image-service on Dual Tesla T4
 - VRAM Target: ~9.5 GB (Qwen2-VL-7B AWQ)
 - Launch command: `python -m services.vlm.launcher.run_vlm_service --port 8081`

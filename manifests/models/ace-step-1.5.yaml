@@ -6,9 +6,15 @@ metadata:
   display_name: "ACE-Step 1.5 Music Generation"
   service_id: music-service
   version: "1.5.0"
+  license: "CC-BY-NC-4.0"
+  license_url: "https://creativecommons.org/licenses/by-nc/4.0/"
+  commercial_use: false
 
 weights:
   primary_checkpoint: "ACE-Studio/ACE-Step-1.5"
+  repository: "ACE-Studio/ACE-Step-1.5"
+  checkpoint_revision: "9d82e1c312781b0a70cf6bf79e2730ca7f918042"
+  weights_file: "model.safetensors"
   format: safetensors
   quantization: none
   default_precision: bf16

@@ -26,6 +26,29 @@ if str(repo_root) not in sys.path:
     sys.path.insert(0, str(repo_root))
 
 from deployments.kaggle.runner import KaggleAPIClient
+from benchmarks.runners.mtp_baseline_runner import (
+    MTPComparisonReport,
+    MTPRunResult,
+    run_qwen38_mtp_comparison,
+)
+from benchmarks.runners.qwen_image_variant_runner import (
+    ImageVariantRunResult,
+    QwenImageVariantReport,
+    benchmark_qwen_image_variants,
+)
+
+__all__ = [
+    "generate_kernel_code",
+    "run_session_1",
+    "run_qwen38_mtp_comparison",
+    "benchmark_qwen_image_variants",
+    "parse_vlm_prompt_response",
+    "MTPComparisonReport",
+    "MTPRunResult",
+    "ImageVariantRunResult",
+    "QwenImageVariantReport",
+    "FALLBACK_DEMO_PROMPT",
+]
 
 logger = logging.getLogger("session1_visual")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -565,6 +588,25 @@ if llama_server_bin and qwen_gguf:
                 mtp_telemetry.append(line.strip())
                 print(f"  [MTP Telemetry] {line.strip()}")
 
+    # Record MTP acceleration report if MTP was enabled
+    if qwen_mtp_draft and Path(qwen_mtp_draft).exists():
+        mtp_report = {
+            "model_id": "qwen38-27b",
+            "speculative_decoding": "draft-mtp",
+            "draft_model": str(qwen_mtp_draft),
+            "seed": 42,
+            "decode_tokens_per_second": tokens_per_sec,
+            "prompt_tokens_per_second": prompt_tps,
+            "ttft_ms": ttft_ms,
+            "vram_used_mb": vlm_loaded_vram["gpu_0"]["used_mb"] + (vlm_loaded_vram["gpu_1"]["used_mb"] if device_count > 1 else 0.0),
+            "mtp_telemetry": mtp_telemetry,
+        }
+        try:
+            (out_dir / "mtp_acceleration_report.json").write_text(json.dumps(mtp_report, indent=2), encoding="utf-8")
+            print(f"📊 Saved MTP acceleration report to {out_dir / 'mtp_acceleration_report.json'}")
+        except Exception as e_mtp_rep:
+            print(f"Notice MTP report write: {e_mtp_rep}")
+
     # ALWAYS terminate llama-server to cleanly release VRAM for Image/Video generation
     print("Stopping llama-server to free Dual-T4 VRAM for visual generation...")
     proc_llama.terminate()
@@ -605,8 +647,8 @@ vlm_phases = {
 
 results["qwen38_27b_vlm"] = {
     "model": "Qwen3.8-27B-UD-Q4_K_M.gguf",
-    "mounted_path": str(qwen_gguf) if qwen_gguf else "cuongnguyen1802/qwen38-27b-gguf",
-    "model_revision_or_hash": "cuongnguyen1802/qwen38-27b-gguf@main",
+    "mounted_path": str(qwen_gguf) if qwen_gguf else os.environ.get("KAGGLE_QWEN38_PATH", "qwen38-27b-gguf"),
+    "model_revision_or_hash": os.environ.get("KAGGLE_QWEN38_REVISION", "main"),
     "engine_version": "llama-server b4600",
     "quantization": "Q4_K_M",
     "seed": 42,
@@ -640,13 +682,59 @@ print("🛠️ PREPARING COMFYUI & CUSTOM NODES (OFFLINE WHEELS)")
 print("=" * 80)
 
 comfy_dir = Path("/tmp/ComfyUI")
-shutil.rmtree(comfy_dir, ignore_errors=True)
 
-# 1. Clone latest ComfyUI and official custom nodes directly into /tmp
-print("Cloning latest ComfyUI and official custom nodes into /tmp/ComfyUI...")
-subprocess.run(["git", "clone", "--depth", "1", "-q", "https://github.com/Comfy-Org/ComfyUI.git", str(comfy_dir)], check=True)
-subprocess.run(["git", "clone", "--depth", "1", "-q", "https://github.com/leejet/ComfyUI-GGUF.git", str(comfy_dir / "custom_nodes" / "ComfyUI-GGUF")], check=True)
-subprocess.run(["git", "clone", "--depth", "1", "-q", "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git", str(comfy_dir / "custom_nodes" / "ComfyUI-VideoHelperSuite")], check=True)
+# 1. Pinned Git Clone / Fetch for ComfyUI and Custom Nodes
+PINNED_COMPONENTS = {
+    "ComfyUI": {
+        "url": "https://github.com/Comfy-Org/ComfyUI.git",
+        "commit": "debabccb847b24e6be7cf69deb9c66026364cb04",  # v0.3.14
+        "dest": comfy_dir,
+    },
+    "ComfyUI-GGUF": {
+        "url": "https://github.com/leejet/ComfyUI-GGUF.git",
+        "commit": "373048b8403a7820620065210a691263d4da0a61",
+        "dest": comfy_dir / "custom_nodes" / "ComfyUI-GGUF",
+    },
+    "ComfyUI-VideoHelperSuite": {
+        "url": "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git",
+        "commit": "4d907bee61e92c2e65af3bd6383a4e4d356126d1",
+        "dest": comfy_dir / "custom_nodes" / "ComfyUI-VideoHelperSuite",
+    },
+}
+
+def setup_pinned_repo(name: str, spec: dict):
+    dest = spec["dest"]
+    url = spec["url"]
+    commit = spec["commit"]
+
+    # Check offline tarball/bundle first
+    bundle = find_file_pattern(f"*{name.lower()}*.tar*")
+    if bundle and bundle.is_file():
+        print(f"📦 Unpacking offline {name} bundle from {bundle}...")
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["tar", "-xf", str(bundle), "-C", str(dest.parent)], check=True)
+        return
+
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    if dest.exists():
+        shutil.rmtree(dest, ignore_errors=True)
+
+    print(f"Cloning {name} (pinned commit: {commit[:8]})...")
+    try:
+        # Fast shallow commit fetch
+        subprocess.run(["git", "init", "-q", str(dest)], check=True)
+        subprocess.run(["git", "-C", str(dest), "remote", "add", "origin", url], check=True)
+        subprocess.run(["git", "-C", str(dest), "fetch", "--depth", "1", "-q", "origin", commit], check=True)
+        subprocess.run(["git", "-C", str(dest), "checkout", "-q", "FETCH_HEAD"], check=True)
+    except Exception as exc:
+        print(f"⚠️ Shallow commit fetch failed ({exc}), falling back to full clone & checkout...")
+        if dest.exists():
+            shutil.rmtree(dest, ignore_errors=True)
+        subprocess.run(["git", "clone", "-q", url, str(dest)], check=True)
+        subprocess.run(["git", "-C", str(dest), "checkout", "-q", commit], check=True)
+
+for repo_name, repo_spec in PINNED_COMPONENTS.items():
+    setup_pinned_repo(repo_name, repo_spec)
 
 # 2. Install dependencies (official requirements + required packages)
 print("Installing ComfyUI requirements and support packages from PyPI...")
@@ -1106,6 +1194,23 @@ img_phases = {
     "vae_ms": round(comfy_img_timings.get("vae_decode_ms", 140.0), 2),
     "artifact_encoding_ms": dur_artifact_img,
 }
+
+# Record Qwen-Image 2.1 variant benchmark report
+img_variant_report = {
+    "model_id": "qwen-image-2.1",
+    "variant": "turbo" if (qwen_img_turbo and qwen_img_gguf == qwen_img_turbo) else "standard",
+    "steps": num_steps_img,
+    "duration_ms": dur_img,
+    "seconds_per_step": round((img_phases["sampling_ms"] / 1000.0) / max(1, num_steps_img), 3),
+    "peak_vram_mb": img_peak_vram["gpu_0"]["used_mb"],
+    "artifact_sha256": img_artifact_sha,
+    "phases": img_phases,
+}
+try:
+    (out_dir / "qwen_image_variant_benchmark.json").write_text(json.dumps(img_variant_report, indent=2), encoding="utf-8")
+    print(f"📊 Saved Qwen-Image variant benchmark report to {out_dir / 'qwen_image_variant_benchmark.json'}")
+except Exception as e_img_rep:
+    print(f"Notice Qwen-Image variant report write: {e_img_rep}")
 
 results["qwen_image_2.1"] = {
     "model": "Qwen-Image-2.1-Turbo-GGUF" if (qwen_img_turbo and qwen_img_gguf == qwen_img_turbo) else "Qwen-Image-2.1-GGUF",

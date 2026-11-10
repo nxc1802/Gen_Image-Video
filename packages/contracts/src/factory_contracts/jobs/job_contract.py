@@ -5,8 +5,9 @@ Factory Job Lifecycle, Leases, and Progress Contract
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from factory_contracts.errors.error_contract import ErrorDetail
+from factory_contracts.tasks import normalize_model, normalize_task
 
 
 class JobState(str, Enum):
@@ -86,6 +87,20 @@ class JobSubmissionRequest(BaseModel):
     inputs: Dict[str, Any] = Field(..., description="Pre-validated task input dictionary")
     priority: int = Field(default=10, ge=1, le=100, description="1=low, 10=standard, 100=critical")
     idempotency_key: Optional[str] = Field(default=None, max_length=128)
+
+    @field_validator("task", mode="before")
+    @classmethod
+    def _validate_task(cls, v: Any) -> str:
+        if v is None:
+            return ""
+        return normalize_task(str(v).strip())
+
+    @field_validator("model", mode="before")
+    @classmethod
+    def _validate_model(cls, v: Any) -> str:
+        if v is None:
+            return ""
+        return normalize_model(str(v).strip())
 
 
 class FactoryJob(BaseModel):

@@ -6,9 +6,15 @@ metadata:
   display_name: "Wan 2.2 Video Family"
   service_id: video-service
   version: "2.2.0"
+  license: "Apache-2.0"
+  license_url: "https://huggingface.co/Wan-AI/Wan2.1-T2V-14B/blob/main/LICENSE.txt"
+  commercial_use: true
 
 weights:
   primary_checkpoint: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+  repository: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+  checkpoint_revision: "f2c81a5e18641957de9a31a7f05eb1b702758bf8"
+  weights_file: "diffusion_pytorch_model.safetensors"
   format: diffusers
   quantization: "4bit"
   default_precision: fp16

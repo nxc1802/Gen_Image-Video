@@ -97,8 +97,9 @@ async def upload_asset(
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         )
 
+    target_file = None
     if file is not None:
-        raw_bytes = await file.read()
+        target_file = file
         filename = file.filename or "upload.bin"
         claimed_mime = file.content_type
     else:
@@ -106,7 +107,7 @@ async def upload_asset(
             form = await request.form()
             uploaded = form.get("file")
             if uploaded is not None and hasattr(uploaded, "read"):
-                raw_bytes = await uploaded.read()
+                target_file = uploaded
                 filename = getattr(uploaded, "filename", "upload.bin")
                 claimed_mime = getattr(uploaded, "content_type", None)
             else:
@@ -116,14 +117,24 @@ async def upload_asset(
                 raise e
             raise InvalidRequestError("Multipart form must include 'file' upload field.")
 
+    chunks = []
+    total_read = 0
+    chunk_size = 64 * 1024  # 64 KB bounded chunking
+    while True:
+        chunk = await target_file.read(chunk_size)
+        if not chunk:
+            break
+        total_read += len(chunk)
+        if total_read > MAX_PAYLOAD_SIZE:
+            raise PayloadTooLargeError(
+                message=f"Payload size exceeds maximum permitted limit ({MAX_PAYLOAD_SIZE} bytes)."
+            )
+        chunks.append(chunk)
+
+    raw_bytes = b"".join(chunks)
+
     if not raw_bytes:
         raise InvalidMediaError("Uploaded media file cannot be empty.")
-
-    # 3. Check byte limit
-    if len(raw_bytes) > MAX_PAYLOAD_SIZE:
-        raise PayloadTooLargeError(
-            message=f"Payload size {len(raw_bytes)} bytes exceeds maximum permitted limit ({MAX_PAYLOAD_SIZE} bytes)."
-        )
 
     # 4. Validate media via AssetService
     record = asset_service.ingest_bytes(raw_bytes, claimed_mime=claimed_mime)
@@ -195,6 +206,7 @@ async def upload_asset(
 @router.get("/{asset_id}/download", dependencies=[Depends(verify_bearer_token)])
 async def download_asset(
     asset_id: str,
+    request: Request,
     storage: StorageProvider = Depends(get_storage_provider),
     repository: BaseJobRepository = Depends(get_repository),
 ):
@@ -202,6 +214,7 @@ async def download_asset(
     Downloads stored asset bytes by asset_id with proper Content-Type headers.
     Queries database for asset metadata; streams strictly from storage provider.
     Fails fast if storage fails; never falls back to in-memory bytes.
+    Supports HTTP Range requests for video/audio seeking (206 Partial Content).
     """
     asset = await repository.get_asset(asset_id)
     if not asset:
@@ -224,10 +237,53 @@ async def download_asset(
     if data is None:
         raise NotFoundError(f"Asset '{asset_id}' not found.")
 
+    total_bytes = len(data)
+    headers = {
+        "Accept-Ranges": "bytes",
+        "Content-Disposition": f'inline; filename="{filename}"',
+    }
+
+    range_header = request.headers.get("range")
+    if range_header and range_header.strip().startswith("bytes="):
+        try:
+            range_val = range_header.strip()[6:]
+            parts = range_val.split("-")
+            start_str = parts[0].strip()
+            end_str = parts[1].strip() if len(parts) > 1 else ""
+
+            if start_str and end_str:
+                start = int(start_str)
+                end = int(end_str)
+            elif start_str:
+                start = int(start_str)
+                end = total_bytes - 1
+            elif end_str:
+                suffix_len = int(end_str)
+                start = max(0, total_bytes - suffix_len)
+                end = total_bytes - 1
+            else:
+                start = 0
+                end = total_bytes - 1
+
+            if 0 <= start <= end < total_bytes:
+                chunk_data = data[start:end + 1]
+                headers["Content-Range"] = f"bytes {start}-{end}/{total_bytes}"
+                headers["Content-Length"] = str(len(chunk_data))
+                return Response(
+                    content=chunk_data,
+                    status_code=206,
+                    media_type=mime_type,
+                    headers=headers,
+                )
+        except Exception:
+            pass  # Fall back to 200 full content if Range header malformed
+
+    headers["Content-Length"] = str(total_bytes)
     return Response(
         content=data,
+        status_code=200,
         media_type=mime_type,
-        headers={"Content-Disposition": f'inline; filename="{filename}"'},
+        headers=headers,
     )
 
 

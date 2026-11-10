@@ -52,15 +52,29 @@ class LocalStorageProvider(StorageProvider):
 
         return target
 
-    def _sign(self, bucket: str, key: str, expires_at: int) -> str:
-        msg = f"{bucket}:{key}:{expires_at}".encode("utf-8")
+    def _sign(self, bucket: str, key: str, expires_at: int, max_size: Optional[int] = None) -> str:
+        if max_size is not None:
+            msg = f"{bucket}:{key}:{expires_at}:{max_size}".encode("utf-8")
+        else:
+            msg = f"{bucket}:{key}:{expires_at}".encode("utf-8")
         return hmac.new(self.secret_key, msg, hashlib.sha256).hexdigest()
 
-    def verify_signature(self, bucket: str, key: str, expires_at: int, signature: str) -> bool:
+    def verify_signature(
+        self,
+        bucket: str,
+        key: str,
+        expires_at: int,
+        signature: str,
+        max_size: Optional[int] = None,
+    ) -> bool:
         if time.time() > expires_at:
             return False
-        expected = self._sign(bucket, key, expires_at)
-        return hmac.compare_digest(expected, signature)
+        if max_size is not None:
+            expected_with_size = self._sign(bucket, key, expires_at, max_size)
+            if hmac.compare_digest(expected_with_size, signature):
+                return True
+        expected_base = self._sign(bucket, key, expires_at)
+        return hmac.compare_digest(expected_base, signature)
 
     def generate_presigned_upload_url(
         self,
@@ -72,13 +86,14 @@ class LocalStorageProvider(StorageProvider):
     ) -> PresignedUpload:
         target_bucket = bucket or self.config.s3_bucket_name
         expires_at = int(time.time()) + expires_in_seconds
-        sig = self._sign(target_bucket, key, expires_at)
+        sig = self._sign(target_bucket, key, expires_at, max_size=max_size_bytes)
         query = urlencode({
             "bucket": target_bucket,
             "key": key,
             "expires": expires_at,
             "sig": sig,
             "mime_type": mime_type,
+            "max_size": max_size_bytes,
         })
         upload_url = f"{self.base_url}/v1/storage/upload?{query}"
         return PresignedUpload(

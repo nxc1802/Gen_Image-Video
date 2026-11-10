@@ -574,8 +574,8 @@ def run_session_2(
     code = generate_kernel_code()
 
     dataset_sources = [
-        "nguynxuncngde180528/qwen3-tts-1-7b",
-        "nguynxuncngde180528/xtts-v2-vietnamese",
+        f"{client.username}/qwen3-tts-1-7b",
+        f"{client.username}/xtts-v2-vietnamese",
         f"{client.username}/vieneu-tts-v3-turbo",
         f"{client.username}/kaggle-speech-wheels",
     ]

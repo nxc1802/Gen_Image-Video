@@ -19,6 +19,7 @@ from factory.apps.control_api.src.api.errors import register_exception_handlers
 from factory.apps.control_api.src.api.routers.health import router as health_router
 from factory.apps.control_api.src.api.routers.models import router as models_router
 from factory.apps.control_api.src.api.routers.jobs import router as jobs_router
+from factory.apps.control_api.src.api.routers.chat import router as chat_router
 from factory.apps.control_api.src.api.routers.workers import router as workers_router
 from factory.apps.control_api.src.api.routers.inspector import router as inspector_router, memory_router
 from factory.apps.control_api.src.api.routers.assets import router as assets_router
@@ -63,6 +64,15 @@ async def lifespan(app: FastAPI):
     app.state.storage_provider = storage_provider
 
     # 2. Initialize In-Memory Queue & Lifecycle Engine
+    auto_migrate = os.environ.get("FACTORY_AUTO_MIGRATE", "true").lower() in ("true", "1", "yes")
+    db_backend = os.environ.get("FACTORY_DB_BACKEND", "memory").lower()
+    if auto_migrate and db_backend in ("sqlite", "postgres"):
+        from factory.apps.control_api.src.queue.repository.migration_runner import run_migrations
+        db_url = os.environ.get("DATABASE_URL") or os.environ.get("SQLITE_DB_PATH")
+        if db_url and db_url != ":memory:":
+            resolved_url = db_url if db_url.startswith(("sqlite:", "postgres")) else f"sqlite:///{db_url}"
+            await asyncio.to_thread(run_migrations, db_url=resolved_url)
+
     repository = get_job_repository()
     await repository.initialize()
     app.state.repository = repository
@@ -71,6 +81,11 @@ async def lifespan(app: FastAPI):
     await broker.initialize()
     app.state.broker = broker
     app.state.scheduler = broker
+
+    from factory.apps.control_api.src.queue.model_runtime import ModelRuntimeManager
+    model_runtime_manager = ModelRuntimeManager(scheduler=broker, num_gpus=2)
+    app.state.model_runtime_manager = model_runtime_manager
+    app.state.runtime_manager = model_runtime_manager
 
     stream_manager = StreamManager(
         repository=repository,
@@ -84,7 +99,7 @@ async def lifespan(app: FastAPI):
     )
     app.state.job_manager = job_manager
 
-    lease_coordinator = LeaseCoordinator(repository=repository, broker=broker)
+    lease_coordinator = LeaseCoordinator(repository=repository, broker=broker, manifest_loader=app.state.manifest_loader)
     app.state.lease_coordinator = lease_coordinator
 
     app.state.asset_service = AssetService(max_size_bytes=MAX_PAYLOAD_SIZE)
@@ -137,6 +152,7 @@ register_exception_handlers(app)
 app.include_router(health_router)
 app.include_router(models_router)
 app.include_router(jobs_router)
+app.include_router(chat_router)
 app.include_router(workers_router)
 app.include_router(storage_router)
 app.include_router(inspector_router)

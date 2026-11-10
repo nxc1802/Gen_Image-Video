@@ -6,9 +6,15 @@ metadata:
   display_name: "Qwen2-VL Multimodal Model"
   service_id: vision-service
   version: "2.0.0"
+  license: "Apache-2.0"
+  license_url: "https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct-AWQ/raw/main/LICENSE"
+  commercial_use: true
 
 weights:
   primary_checkpoint: "Qwen/Qwen2-VL-7B-Instruct-AWQ"
+  repository: "Qwen/Qwen2-VL-7B-Instruct-AWQ"
+  checkpoint_revision: "7b5394541cbde26227c262198ecfb2e63ef29583"
+  weights_file: "model-00001-of-00003.safetensors"
   format: safetensors
   quantization: awq
   default_precision: fp16

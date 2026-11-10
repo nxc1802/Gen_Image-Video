@@ -29,7 +29,12 @@ from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_sub
 # Authoritative Declarative Manifest Capabilities per Subsystem
 SUBSYSTEM_MANIFEST_CAPABILITIES: Dict[str, Dict[str, List[str]]] = {
     "image": {
-        "models": ["qwen-image-2.1", "qwen-image"],
+        "models": [
+            "qwen-image-2.1",
+            "qwen-image",
+            "qwen-image-2.1-turbo",
+            "qwen_image_2.1_turbo",
+        ],
         "tasks": [
             "text_to_image", "image.t2i", "t2i",
             "image_to_image", "image.i2i", "i2i",
@@ -110,10 +115,12 @@ class LeaseCoordinator:
         repository: BaseJobRepository,
         broker: Optional[BaseQueueBroker] = None,
         candidate_limit: int = 50,
+        manifest_loader: Optional[object] = None,
     ):
         self.repository = repository
         self.broker = broker
         self.candidate_limit = candidate_limit
+        self.manifest_loader = manifest_loader
 
     def _verify_manifest_capabilities(
         self,
@@ -240,13 +247,51 @@ class LeaseCoordinator:
         expires_at = now + timedelta(seconds=duration)
 
         for job in candidates:
-            job_gpu = target_gpu if target_gpu is not None else SUBSYSTEM_GPU_MAP.get(job.service, 0)
-            if self.broker and hasattr(self.broker, "is_gpu_busy") and self.broker.is_gpu_busy(job_gpu):
-                continue
+            # Determine if candidate job requires dual_gpu_split
+            is_dual = False
+            try:
+                loader = getattr(self, "manifest_loader", None)
+                if loader is None:
+                    from model_registry import ManifestLoader
+                    loader = ManifestLoader()
+                models = loader.load_models()
+                m = models.get(normalize_model(job.model)) or models.get(job.model)
+                if m:
+                    alloc = getattr(m.hardware, "allocation_policy", None)
+                    if hasattr(alloc, "value"):
+                        alloc = alloc.value
+                    if str(alloc).lower() in ("dual_gpu_split", "allocationpolicy.dual_gpu_split"):
+                        is_dual = True
+            except Exception:
+                pass
 
-            if self.broker and hasattr(self.broker, "acquire_gpu"):
-                if not self.broker.acquire_gpu(job_gpu, job.job_id):
+            if not is_dual and (
+                job.model in ("qwen-speech", "qwen-text")
+                or getattr(job, "allocation_policy", None) == "dual_gpu_split"
+            ):
+                is_dual = True
+
+            if is_dual:
+                target_devices = [0, 1]
+                if self.broker and hasattr(self.broker, "is_gpu_busy"):
+                    if any(self.broker.is_gpu_busy(d) for d in target_devices):
+                        continue
+                if self.broker and hasattr(self.broker, "acquire_gpus"):
+                    if not self.broker.acquire_gpus(target_devices, job.job_id):
+                        continue
+                elif self.broker and hasattr(self.broker, "acquire_gpu"):
+                    if not self.broker.acquire_gpu(0, job.job_id):
+                        continue
+                gpu_device_for_lease = 0
+            else:
+                target_dev = target_gpu if target_gpu is not None else SUBSYSTEM_GPU_MAP.get(job.service, 0)
+                target_devices = [target_dev]
+                if self.broker and hasattr(self.broker, "is_gpu_busy") and self.broker.is_gpu_busy(target_dev):
                     continue
+                if self.broker and hasattr(self.broker, "acquire_gpu"):
+                    if not self.broker.acquire_gpu(target_dev, job.job_id):
+                        continue
+                gpu_device_for_lease = target_dev
 
             lease_token = getattr(req, "lease_token", None) or f"lease-{uuid.uuid4()}"
             try:
@@ -255,7 +300,7 @@ class LeaseCoordinator:
                     worker_id=req.worker_id,
                     lease_token=lease_token,
                     expires_at=expires_at,
-                    gpu_device=job_gpu,
+                    gpu_device=gpu_device_for_lease,
                 )
                 if acquired:
                     if self.broker:
@@ -267,7 +312,7 @@ class LeaseCoordinator:
                         subsystem=registered_worker.get("subsystem", req.subsystem),
                         supported_models=effective_models,
                         supported_tasks=effective_tasks,
-                        gpu_device=job_gpu,
+                        gpu_device=gpu_device_for_lease,
                         active_job_id=job.job_id,
                     )
                     return WorkerLeaseResponse(
@@ -276,11 +321,17 @@ class LeaseCoordinator:
                         lease_expires_at=expires_at,
                     )
                 else:
-                    if self.broker and hasattr(self.broker, "release_gpu"):
-                        self.broker.release_gpu(job_gpu, job.job_id)
+                    if self.broker:
+                        if hasattr(self.broker, "release_gpus"):
+                            self.broker.release_gpus(target_devices, job.job_id)
+                        elif hasattr(self.broker, "release_gpu"):
+                            self.broker.release_gpu(gpu_device_for_lease, job.job_id)
             except Exception:
-                if self.broker and hasattr(self.broker, "release_gpu"):
-                    self.broker.release_gpu(job_gpu, job.job_id)
+                if self.broker:
+                    if hasattr(self.broker, "release_gpus"):
+                        self.broker.release_gpus(target_devices, job.job_id)
+                    elif hasattr(self.broker, "release_gpu"):
+                        self.broker.release_gpu(gpu_device_for_lease, job.job_id)
                 raise
 
         return WorkerLeaseResponse(job=None, lease_token=None, lease_expires_at=None)

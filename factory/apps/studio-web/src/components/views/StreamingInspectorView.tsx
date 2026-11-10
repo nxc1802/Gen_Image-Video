@@ -25,6 +25,7 @@ interface StreamEventItem {
 export function StreamingInspectorView() {
   const { telemetry, apiClient } = useStudio();
   const [activeTab, setActiveTab] = useState<"telemetry" | "token" | "audio" | "comfy">("telemetry");
+  const [streamMode, setStreamMode] = useState<"live" | "synthetic">("live");
   const [streamEvents, setStreamEvents] = useState<StreamEventItem[]>([]);
   const [isPaused, setIsPaused] = useState<boolean>(false);
 
@@ -32,6 +33,8 @@ export function StreamingInspectorView() {
   const [tokenStreamText, setTokenStreamText] = useState<string>("");
   const [tokenRate, setTokenRate] = useState<number>(45.2);
   const [isTokenStreaming, setIsTokenStreaming] = useState<boolean>(false);
+  const [liveTokenStreamText, setLiveTokenStreamText] = useState<string>("");
+  const [liveTokenRate, setLiveTokenRate] = useState<number>(0);
 
   // Audio stream monitor state
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -133,7 +136,33 @@ export function StreamingInspectorView() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Top-level Mode Selector */}
+          <div className="flex items-center rounded-[6px] border border-hairline bg-canvas p-0.5 text-xs font-mono">
+            <button
+              type="button"
+              onClick={() => setStreamMode("live")}
+              className={`px-3 py-1 rounded-[4px] transition-colors ${
+                streamMode === "live"
+                  ? "bg-emerald-600 text-white font-semibold shadow-xs"
+                  : "text-ink-muted hover:text-ink"
+              }`}
+            >
+              ● Live Stream
+            </button>
+            <button
+              type="button"
+              onClick={() => setStreamMode("synthetic")}
+              className={`px-3 py-1 rounded-[4px] transition-colors ${
+                streamMode === "synthetic"
+                  ? "bg-amber-600 text-white font-semibold shadow-xs"
+                  : "text-ink-muted hover:text-ink"
+              }`}
+            >
+              ⚠ Synthetic Demo
+            </button>
+          </div>
+
           <button
             type="button"
             onClick={() => setIsPaused(!isPaused)}
@@ -283,57 +312,96 @@ export function StreamingInspectorView() {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-mono font-bold text-ink">
-                    vLLM Token Stream Visualizer
+                    {streamMode === "live" ? "Live LLM / vLLM Token Stream Monitor" : "vLLM Token Stream Visualizer"}
                   </h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300">
-                    DEMO SIMULATION
-                  </span>
+                  {streamMode === "live" ? (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                      LIVE STREAM
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                      DEMO SIMULATION
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-ink-muted mt-0.5">
-                  Demonstration visualizer for streaming tokens, reasoning tags, and client-side rendering.
+                  {streamMode === "live"
+                    ? "Direct monitoring of Server-Sent Events (SSE) token chunks from active Factory text jobs."
+                    : "Demonstration visualizer for streaming tokens, reasoning tags, and client-side rendering."}
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={handleStartSimulatedTokenStream}
-                disabled={isTokenStreaming}
-                className="px-3 py-1.5 rounded-[6px] bg-ink text-surface text-xs font-mono font-medium flex items-center gap-1.5 disabled:opacity-50"
-              >
-                <Play weight="bold" className="w-3.5 h-3.5" />
-                <span>{isTokenStreaming ? "Simulating..." : "Run Demo Simulation"}</span>
-              </button>
+              {streamMode === "synthetic" ? (
+                <button
+                  type="button"
+                  onClick={handleStartSimulatedTokenStream}
+                  disabled={isTokenStreaming}
+                  className="px-3 py-1.5 rounded-[6px] bg-ink text-surface text-xs font-mono font-medium flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  <Play weight="bold" className="w-3.5 h-3.5" />
+                  <span>{isTokenStreaming ? "Simulating..." : "Run Demo Simulation"}</span>
+                </button>
+              ) : (
+                <div className="flex items-center gap-1.5 text-xs font-mono text-emerald-600 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Connected to Live Control API</span>
+                </div>
+              )}
             </div>
 
-            <div className="p-2.5 rounded-[6px] bg-amber-50 border border-amber-200 text-amber-800 text-xs font-mono">
-              ⚠️ <strong>DEMO / SIMULATION MODE:</strong> This view demonstrates client-side streaming token rendering using a synthetic word loop. It does not represent live model execution or real engine telemetry.
-            </div>
-
+            {streamMode === "live" ? (
+              <div className="p-2.5 rounded-[6px] bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono">
+                ● <strong>LIVE STREAM MODE:</strong> Monitoring real-time server-sent events, queue depth, and hardware telemetry directly from the Factory Control API. Synthetic generation is disabled.
+              </div>
+            ) : (
+              <div className="p-2.5 rounded-[6px] bg-amber-50 border border-amber-200 text-amber-800 text-xs font-mono">
+                ⚠️ <strong>DEMO / SIMULATION MODE:</strong> This view demonstrates client-side streaming token rendering using a synthetic word loop. It does not represent live model execution or real engine telemetry.
+              </div>
+            )}
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
-                <span className="text-[10px] font-mono text-ink-muted">Simulated Rate</span>
+                <span className="text-[10px] font-mono text-ink-muted">{streamMode === "live" ? "Live Rate" : "Simulated Rate"}</span>
                 <div className="text-lg font-mono font-bold text-ink">
-                  {isTokenStreaming ? `${tokenRate} tok/s` : "--"}
+                  {streamMode === "live"
+                    ? (liveTokenRate > 0 ? `${liveTokenRate.toFixed(1)} tok/s` : "--")
+                    : (isTokenStreaming ? `${tokenRate} tok/s` : "--")}
                 </div>
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
                 <span className="text-[10px] font-mono text-ink-muted">Characters</span>
-                <div className="text-lg font-mono font-bold text-ink">{tokenStreamText.length}</div>
+                <div className="text-lg font-mono font-bold text-ink">
+                  {streamMode === "live" ? liveTokenStreamText.length : tokenStreamText.length}
+                </div>
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
                 <span className="text-[10px] font-mono text-ink-muted">Source</span>
-                <div className="text-lg font-mono font-bold text-ink">Synthetic Client</div>
+                <div className="text-lg font-mono font-bold text-ink">
+                  {streamMode === "live" ? "Native vLLM Engine" : "Synthetic Client"}
+                </div>
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
                 <span className="text-[10px] font-mono text-ink-muted">Stream Status</span>
                 <div className="text-lg font-mono font-bold text-spot-greenText">
-                  {isTokenStreaming ? "SIMULATING" : "IDLE"}
+                  {streamMode === "live"
+                    ? (liveTokenStreamText ? "STREAMING" : "IDLE")
+                    : (isTokenStreaming ? "SIMULATING" : "IDLE")}
                 </div>
               </div>
             </div>
 
             <div className="p-4 rounded-[8px] bg-canvas border border-hairline font-mono text-xs leading-relaxed text-ink min-h-[140px]">
-              {tokenStreamText ? (
+              {streamMode === "live" ? (
+                liveTokenStreamText ? (
+                  <span>
+                    {liveTokenStreamText}
+                    <span className="inline-block w-2 h-4 bg-ink ml-1 animate-pulse" />
+                  </span>
+                ) : (
+                  <span className="text-ink-muted">
+                    Waiting for incoming live inference job stream... (Submit a text generation job with stream: true to inspect live tokens)
+                  </span>
+                )
+              ) : tokenStreamText ? (
                 <span>
                   {tokenStreamText}
                   {isTokenStreaming && <span className="inline-block w-2 h-4 bg-ink ml-1 animate-pulse" />}
@@ -356,11 +424,17 @@ export function StreamingInspectorView() {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-mono font-bold text-ink">
-                    WebSocket Audio Stream Monitor
+                    {streamMode === "live" ? "Live WebSocket Audio Stream Monitor" : "WebSocket Audio Stream Monitor (Synthetic Demo)"}
                   </h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300">
-                    SYNTHETIC WAVEFORM
-                  </span>
+                  {streamMode === "live" ? (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                      LIVE AUDIO MONITOR
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                      SYNTHETIC WAVEFORM
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-ink-muted mt-0.5">
                   Inspects chunked PCM audio streaming contract and waveform canvas visualization.
@@ -371,9 +445,15 @@ export function StreamingInspectorView() {
               </div>
             </div>
 
-            <div className="p-2.5 rounded-[6px] bg-amber-50 border border-amber-200 text-amber-800 text-xs font-mono">
-              ⚠️ <strong>DEMO / SIMULATION MODE:</strong> Mathematical sine-wave canvas animation for audio waveform inspector layout preview. No live WebSocket audio packets are connected.
-            </div>
+            {streamMode === "live" ? (
+              <div className="p-2.5 rounded-[6px] bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono">
+                ● <strong>LIVE STREAM MODE:</strong> Listening for binary PCM audio frames over WebSocket subprotocol factory-bearer.&lt;token&gt;. Waveform renders live packet data upon connection.
+              </div>
+            ) : (
+              <div className="p-2.5 rounded-[6px] bg-amber-50 border border-amber-200 text-amber-800 text-xs font-mono">
+                ⚠️ <strong>DEMO / SIMULATION MODE:</strong> Mathematical sine-wave canvas animation for audio waveform inspector layout preview. No live WebSocket audio packets are connected.
+              </div>
+            )}
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
@@ -386,7 +466,9 @@ export function StreamingInspectorView() {
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
                 <span className="text-[10px] font-mono text-ink-muted">Telemetry Mode</span>
-                <div className="text-lg font-mono font-bold text-amber-600">Synthetic Demo</div>
+                <div className={`text-lg font-mono font-bold ${streamMode === "live" ? "text-emerald-600" : "text-amber-600"}`}>
+                  {streamMode === "live" ? "Live WebSocket" : "Synthetic Demo"}
+                </div>
               </div>
               <div className="p-3 rounded-[6px] bg-canvas border border-hairline">
                 <span className="text-[10px] font-mono text-ink-muted">WebSocket Link</span>

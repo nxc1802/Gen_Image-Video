@@ -6,9 +6,15 @@ metadata:
   display_name: "Media Post-Processing & Enhancement Suite"
   service_id: enhancement-service
   version: "1.0.0"
+  license: "Composite Non-Commercial (RIFE / BSD-3 / Apache-2.0)"
+  license_url: "https://github.com/hzwer/ECCV2022-RIFE"
+  commercial_use: false
 
 weights:
   primary_checkpoint: "xinntao/Real-ESRGAN"
+  repository: "xinntao/Real-ESRGAN"
+  checkpoint_revision: "4a8f9b2d861d848773950ef31355ca0d39e24807"
+  weights_file: "RealESRGAN_x4plus.pth"
   components:
     rife: "hzwer/RIFE"
     bsrgan: "cszn/BSRGAN"

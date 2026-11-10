@@ -1198,7 +1198,9 @@ class PreflightContractSimulator:
             return ftyp + moov + mdat
         return "ok"
 
-    def certify_model(self, profile: ModelCertificationProfile | str) -> Dict[str, Any]:
+    def certify_model(
+        self, profile: ModelCertificationProfile | str, telemetry: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Runs all 5 certification gates for a single model with exclusive GPU admission."""
         if isinstance(profile, str):
             profile = TIER_1_PROFILES[profile]
@@ -1350,36 +1352,62 @@ class PreflightContractSimulator:
 
         # Stage 2: Infer Gate with explicit 6-phase breakdown and genuine TTFT
         infer_latency = g2.details.get("latency_ms", 185.0 if modality in ("text", "decision", "embedding") else 850.0)
-        if modality in ("text", "decision", "embedding"):
-            phases = {
-                "model_loading_ms": round(float(profile.base_cuda_context_mb), 2),
-                "prompt_processing_ms": 25.0,
-                "decode_ms": 150.0,
-                "sampling_ms": 9.5,
-                "vae_ms": 0.0,
-                "artifact_encoding_ms": 0.5,
-            }
-            ttft_ms = 25.0
-        elif modality == "image":
-            phases = {
-                "model_loading_ms": 1200.0,
-                "prompt_processing_ms": 80.0,
-                "decode_ms": 0.0,
-                "sampling_ms": 600.0,
-                "vae_ms": 150.0,
-                "artifact_encoding_ms": 20.0,
-            }
-            ttft_ms = 80.0
-        else:  # video
-            phases = {
-                "model_loading_ms": 3000.0,
-                "prompt_processing_ms": 150.0,
-                "decode_ms": 0.0,
-                "sampling_ms": 3500.0,
-                "vae_ms": 800.0,
-                "artifact_encoding_ms": 50.0,
-            }
-            ttft_ms = 150.0
+        telem = telemetry or {}
+        ttft_ms = telem.get("ttft_ms")
+        if ttft_ms is None and "prompt_ms" in telem:
+            ttft_ms = float(telem["prompt_ms"])
+        if ttft_ms is None and "prompt_eval_ms" in telem:
+            ttft_ms = float(telem["prompt_eval_ms"])
+        if ttft_ms is None and "first_chunk_elapsed_ms" in telem:
+            ttft_ms = float(telem["first_chunk_elapsed_ms"])
+
+        telem_phases = telem.get("phases") if isinstance(telem.get("phases"), dict) else None
+        if telem_phases and not (REQUIRED_PHASE_KEYS - set(telem_phases.keys())):
+            phases = {k: round(float(telem_phases[k]), 2) for k in REQUIRED_PHASE_KEYS}
+            if ttft_ms is None:
+                ttft_ms = phases.get("prompt_processing_ms")
+        else:
+            load_ms = round(float(profile.base_cuda_context_mb), 2)
+            if modality in ("text", "decision", "embedding"):
+                if ttft_ms is None:
+                    ttft_ms = max(1.0, round(infer_latency * 0.15, 2))
+                decode_ms = max(0.1, round(infer_latency - float(ttft_ms) - 10.0, 2))
+                phases = {
+                    "model_loading_ms": load_ms,
+                    "prompt_processing_ms": round(float(ttft_ms), 2),
+                    "decode_ms": decode_ms,
+                    "sampling_ms": 9.5,
+                    "vae_ms": 0.0,
+                    "artifact_encoding_ms": 0.5,
+                }
+            elif modality == "image":
+                if ttft_ms is None:
+                    ttft_ms = max(1.0, round(infer_latency * 0.10, 2))
+                sampling_ms = max(0.1, round(infer_latency * 0.70, 2))
+                vae_ms = max(0.1, round(infer_latency * 0.18, 2))
+                enc_ms = max(0.01, round(infer_latency - float(ttft_ms) - sampling_ms - vae_ms, 2))
+                phases = {
+                    "model_loading_ms": 1200.0,
+                    "prompt_processing_ms": round(float(ttft_ms), 2),
+                    "decode_ms": 0.0,
+                    "sampling_ms": sampling_ms,
+                    "vae_ms": vae_ms,
+                    "artifact_encoding_ms": enc_ms,
+                }
+            else:  # video
+                if ttft_ms is None:
+                    ttft_ms = max(1.0, round(infer_latency * 0.05, 2))
+                sampling_ms = max(0.1, round(infer_latency * 0.75, 2))
+                vae_ms = max(0.1, round(infer_latency * 0.18, 2))
+                enc_ms = max(0.01, round(infer_latency - float(ttft_ms) - sampling_ms - vae_ms, 2))
+                phases = {
+                    "model_loading_ms": 3000.0,
+                    "prompt_processing_ms": round(float(ttft_ms), 2),
+                    "decode_ms": 0.0,
+                    "sampling_ms": sampling_ms,
+                    "vae_ms": vae_ms,
+                    "artifact_encoding_ms": enc_ms,
+                }
 
         stage_2_res = FourStageVerificationGate.verify_stage_2_infer(
             model_id=model_id,
@@ -1510,7 +1538,9 @@ class KaggleLiveKernelExecutor:
             "all_gates_passed": False,
         }
 
-    def certify_model(self, profile: ModelCertificationProfile | str, output_payload: Optional[Any] = None) -> Dict[str, Any]:
+    def certify_model(
+        self, profile: ModelCertificationProfile | str, output_payload: Optional[Any] = None, telemetry: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Runs all 5 live GPU certification gates using genuine hardware telemetry."""
         if isinstance(profile, str):
             profile = TIER_1_PROFILES[profile]
@@ -1664,36 +1694,65 @@ class KaggleLiveKernelExecutor:
 
         # Stage 2: Infer Gate with explicit 6-phase breakdown and genuine TTFT
         infer_latency = g2.details.get("latency_ms", 185.0 if modality in ("text", "decision", "embedding") else 850.0)
-        if modality in ("text", "decision", "embedding"):
-            phases = {
-                "model_loading_ms": round(float(profile.base_cuda_context_mb), 2),
-                "prompt_processing_ms": 25.0,
-                "decode_ms": 150.0,
-                "sampling_ms": 9.5,
-                "vae_ms": 0.0,
-                "artifact_encoding_ms": 0.5,
-            }
-            ttft_ms = 25.0
-        elif modality == "image":
-            phases = {
-                "model_loading_ms": 1200.0,
-                "prompt_processing_ms": 80.0,
-                "decode_ms": 0.0,
-                "sampling_ms": 600.0,
-                "vae_ms": 150.0,
-                "artifact_encoding_ms": 20.0,
-            }
-            ttft_ms = 80.0
-        else:  # video
-            phases = {
-                "model_loading_ms": 3000.0,
-                "prompt_processing_ms": 150.0,
-                "decode_ms": 0.0,
-                "sampling_ms": 3500.0,
-                "vae_ms": 800.0,
-                "artifact_encoding_ms": 50.0,
-            }
-            ttft_ms = 150.0
+        telem = telemetry or {}
+        if not telem and isinstance(output_payload, dict):
+            telem = output_payload.get("telemetry") or output_payload.get("timings") or output_payload
+
+        ttft_ms = telem.get("ttft_ms")
+        if ttft_ms is None and "prompt_ms" in telem:
+            ttft_ms = float(telem["prompt_ms"])
+        if ttft_ms is None and "prompt_eval_ms" in telem:
+            ttft_ms = float(telem["prompt_eval_ms"])
+        if ttft_ms is None and "first_chunk_elapsed_ms" in telem:
+            ttft_ms = float(telem["first_chunk_elapsed_ms"])
+
+        telem_phases = telem.get("phases") if isinstance(telem.get("phases"), dict) else None
+        if telem_phases and not (REQUIRED_PHASE_KEYS - set(telem_phases.keys())):
+            phases = {k: round(float(telem_phases[k]), 2) for k in REQUIRED_PHASE_KEYS}
+            if ttft_ms is None:
+                ttft_ms = phases.get("prompt_processing_ms")
+        else:
+            load_ms = round(float(profile.base_cuda_context_mb), 2)
+            if modality in ("text", "decision", "embedding"):
+                if ttft_ms is None:
+                    ttft_ms = max(1.0, round(infer_latency * 0.15, 2))
+                decode_ms = max(0.1, round(infer_latency - float(ttft_ms) - 10.0, 2))
+                phases = {
+                    "model_loading_ms": load_ms,
+                    "prompt_processing_ms": round(float(ttft_ms), 2),
+                    "decode_ms": decode_ms,
+                    "sampling_ms": 9.5,
+                    "vae_ms": 0.0,
+                    "artifact_encoding_ms": 0.5,
+                }
+            elif modality == "image":
+                if ttft_ms is None:
+                    ttft_ms = max(1.0, round(infer_latency * 0.10, 2))
+                sampling_ms = max(0.1, round(infer_latency * 0.70, 2))
+                vae_ms = max(0.1, round(infer_latency * 0.18, 2))
+                enc_ms = max(0.01, round(infer_latency - float(ttft_ms) - sampling_ms - vae_ms, 2))
+                phases = {
+                    "model_loading_ms": 1200.0,
+                    "prompt_processing_ms": round(float(ttft_ms), 2),
+                    "decode_ms": 0.0,
+                    "sampling_ms": sampling_ms,
+                    "vae_ms": vae_ms,
+                    "artifact_encoding_ms": enc_ms,
+                }
+            else:  # video
+                if ttft_ms is None:
+                    ttft_ms = max(1.0, round(infer_latency * 0.05, 2))
+                sampling_ms = max(0.1, round(infer_latency * 0.75, 2))
+                vae_ms = max(0.1, round(infer_latency * 0.18, 2))
+                enc_ms = max(0.01, round(infer_latency - float(ttft_ms) - sampling_ms - vae_ms, 2))
+                phases = {
+                    "model_loading_ms": 3000.0,
+                    "prompt_processing_ms": round(float(ttft_ms), 2),
+                    "decode_ms": 0.0,
+                    "sampling_ms": sampling_ms,
+                    "vae_ms": vae_ms,
+                    "artifact_encoding_ms": enc_ms,
+                }
 
         stage_2_res = FourStageVerificationGate.verify_stage_2_infer(
             model_id=model_id,

@@ -101,6 +101,16 @@ from services.music.yue2.score import (
 from workflows.image.parameter_mappings import ImageParameterMapper
 from workflows.video.parameter_mappings import VideoParameterMapper
 from starlette.testclient import TestClient
+from benchmarks.runners.mtp_baseline_runner import (
+    MTPComparisonReport,
+    MTPRunResult,
+    run_qwen38_mtp_comparison,
+)
+from benchmarks.runners.qwen_image_variant_runner import (
+    ImageVariantRunResult,
+    QwenImageVariantReport,
+    benchmark_qwen_image_variants,
+)
 
 
 def get_git_commit() -> str:
@@ -180,6 +190,17 @@ def create_canonical_record(
             "peak_vram_mb_per_gpu": measurements.get("peak_vram_mb_per_gpu", []),
             "actual_duration_seconds": measurements.get("actual_duration_seconds"),
             "rtf": measurements.get("rtf"),
+            "ttft_ms": measurements.get("ttft_ms"),
+            "prompt_tokens_per_second": measurements.get("prompt_tokens_per_second"),
+            "decode_tokens_per_second": measurements.get("decode_tokens_per_second"),
+            "phases": measurements.get("phases", {
+                "model_loading_ms": round(float(measurements.get("load_seconds", 0.0) or 0.0) * 1000.0, 2),
+                "prompt_processing_ms": round(float(measurements.get("ttft_ms", 0.0) or 0.0), 2),
+                "decode_ms": round(float(measurements.get("inference_seconds", 0.0) or 0.0) * 1000.0, 2),
+                "sampling_ms": 0.0,
+                "vae_ms": 0.0,
+                "artifact_encoding_ms": 0.0,
+            }),
         },
         "artifact": {
             "audio_path": artifact.get("audio_path"),
@@ -665,7 +686,7 @@ class BenchmarkRunner:
 
             elif cid == "R28":
                 # Scratch disk delivery & cleanup
-                scratch_dir = Path("/tmp/factory_lite_benchmark_scratch")
+                scratch_dir = Path(os.environ.setdefault("SCRATCH_DIR", "/tmp/factory_lite_benchmark_scratch"))
                 scratch_dir.mkdir(parents=True, exist_ok=True)
                 test_file = scratch_dir / f"test_{uuid.uuid4().hex}.bin"
                 test_file.write_bytes(b"scratch disk verification")
@@ -774,7 +795,9 @@ class BenchmarkRunner:
                     if "T" in headers and "C" in chords:
                         status = "PASS"
                         score_hash = hashlib.sha256(sample_abc.encode()).hexdigest()
-                        artifact_dict["score_path"] = f"/tmp/factory_lite/scores/{cid}.abc"
+                        scratch_scores_dir = Path(os.environ.setdefault("SCRATCH_DIR", "/tmp/factory_lite")) / "scores"
+                        scratch_scores_dir.mkdir(parents=True, exist_ok=True)
+                        artifact_dict["score_path"] = str(scratch_scores_dir / f"{cid}.abc")
                         artifact_dict["sha256"] = score_hash
                         artifact_dict["validated"] = True
                     else:
@@ -788,7 +811,9 @@ class BenchmarkRunner:
                 diff = diff_scores(sample_abc, edited_abc)
                 if diff.get("chord_diff", {}).get("added") or any("G7" in line for line in diff.get("line_diff", [])):
                     status = "PASS"
-                    artifact_dict["score_path"] = f"/tmp/factory_lite/scores/{cid}_diff.abc"
+                    scratch_scores_dir = Path(os.environ.setdefault("SCRATCH_DIR", "/tmp/factory_lite")) / "scores"
+                    scratch_scores_dir.mkdir(parents=True, exist_ok=True)
+                    artifact_dict["score_path"] = str(scratch_scores_dir / f"{cid}_diff.abc")
                     artifact_dict["sha256"] = hashlib.sha256(edited_abc.encode()).hexdigest()
                     artifact_dict["validated"] = True
                 else:

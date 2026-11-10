@@ -79,6 +79,25 @@ class ManifestValidator:
                         f"Model '{m_id}' capability '{cap}' truth.implemented ({truth.implemented}) does not match capabilities[{cap}] ({cap_supported})"
                     )
 
+            # Check license and provenance completeness
+            if not getattr(m.metadata, "license", None):
+                errors.append(f"Model '{m_id}' metadata.license must be declared")
+            if getattr(m.metadata, "commercial_use", None) is None:
+                errors.append(f"Model '{m_id}' metadata.commercial_use must be explicitly declared as boolean")
+
+            # Non-commercial consistency check
+            lic = (m.metadata.license or "").lower()
+            if ("non-commercial" in lic or "nc" in lic) and m.metadata.commercial_use is True:
+                errors.append(f"Model '{m_id}' declares non-commercial license '{m.metadata.license}' but commercial_use is True")
+
+            # Checkpoint provenance
+            repo = getattr(m.weights, "repository", None) or m.weights.primary_checkpoint
+            if not repo:
+                errors.append(f"Model '{m_id}' weights repository must be declared")
+            rev = getattr(m.weights, "checkpoint_revision", None)
+            if not rev or len(rev) < 7:
+                errors.append(f"Model '{m_id}' weights.checkpoint_revision must be a valid commit SHA or tag")
+
         # Check hardware service references
         for hw_id, hw in hardware.items():
             for gpu in hw.gpus:

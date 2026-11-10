@@ -7,7 +7,7 @@ Transitions jobs directly to FAILED with retryable=False and releases GPU alloca
 import asyncio
 import logging
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Any, Optional
 
 from factory_contracts.errors import ErrorDetail
 from factory_contracts.jobs.job_contract import JobState
@@ -68,6 +68,7 @@ async def check_active_jobs_watchdog(
     heartbeat_timeout_seconds: float = 60.0,
     default_job_timeout_seconds: float = 300.0,
     service_timeouts: Optional[dict] = None,
+    runtime_manager: Optional[Any] = None,
 ) -> int:
     """
     Scans active jobs (RUNNING or STREAMING).
@@ -200,9 +201,23 @@ async def check_active_jobs_watchdog(
             logger.warning(
                 f"Watchdog terminating job '{job.job_id}' on GPU {gpu_device}: {fail_code} - {fail_msg}"
             )
-            # Release GPU partition immediately
+            # Release GPU partition immediately (releasing single GPU and multi-GPU [0, 1] allocations)
+            if scheduler and hasattr(scheduler, "release_gpus"):
+                scheduler.release_gpus(job_id=job.job_id)
             if scheduler and hasattr(scheduler, "release_gpu"):
                 scheduler.release_gpu(gpu_device, job.job_id)
+
+            if runtime_manager and hasattr(runtime_manager, "cancel"):
+                try:
+                    await runtime_manager.cancel(job.job_id)
+                except Exception:
+                    pass
+
+            if worker_id and repository and hasattr(repository, "clear_worker_job"):
+                try:
+                    await repository.clear_worker_job(worker_id, job.job_id)
+                except Exception:
+                    pass
 
             # Transition job directly to FAILED with retryable=False
             try:
@@ -240,6 +255,7 @@ async def watchdog_loop(
             repository = getattr(app.state, "repository", None)
             scheduler = getattr(app.state, "scheduler", getattr(app.state, "broker", None))
             job_manager = getattr(app.state, "job_manager", None)
+            runtime_manager = getattr(app.state, "model_runtime_manager", getattr(app.state, "runtime_manager", None))
             if repository and scheduler and job_manager:
                 await check_active_jobs_watchdog(
                     repository=repository,
@@ -247,6 +263,7 @@ async def watchdog_loop(
                     job_manager=job_manager,
                     heartbeat_timeout_seconds=heartbeat_timeout_seconds,
                     service_timeouts=timeouts,
+                    runtime_manager=runtime_manager,
                 )
         except asyncio.CancelledError:
             break

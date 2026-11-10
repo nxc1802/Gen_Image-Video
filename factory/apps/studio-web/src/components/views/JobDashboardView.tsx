@@ -418,23 +418,46 @@ export function JobDashboardView() {
                       <div className="text-[10px] text-ink-muted truncate">
                         Artifact: {art.name}
                       </div>
-                      {art.download_url && art.type.startsWith("image/") && (
-                        <img
-                          src={art.download_url}
-                          alt={art.name}
-                          className="mt-2 max-h-48 rounded border border-hairline object-contain"
-                        />
-                      )}
-                      {art.download_url && art.type.startsWith("video/") && (
-                        <video
-                          controls
-                          src={art.download_url}
-                          className="mt-2 max-h-48 rounded border border-hairline"
-                        />
-                      )}
-                      {art.download_url && art.type.startsWith("audio/") && (
-                        <audio controls src={art.download_url} className="mt-2 w-full h-8" />
-                      )}
+                      {(() => {
+                        const mediaUrl = apiClient.getMediaUrl(art.download_url);
+                        const isImage = Boolean(
+                          (art.mime_type && art.mime_type.startsWith("image/")) ||
+                          art.type === "image" ||
+                          (art.type && art.type.startsWith("image/"))
+                        );
+                        const isVideo = Boolean(
+                          (art.mime_type && art.mime_type.startsWith("video/")) ||
+                          art.type === "video" ||
+                          (art.type && art.type.startsWith("video/"))
+                        );
+                        const isAudio = Boolean(
+                          (art.mime_type && art.mime_type.startsWith("audio/")) ||
+                          art.type === "audio" ||
+                          (art.type && art.type.startsWith("audio/"))
+                        );
+                        return (
+                          <>
+                            {mediaUrl && isImage && (
+                              <img
+                                src={mediaUrl}
+                                alt={art.name}
+                                className="mt-2 max-h-48 rounded border border-hairline object-contain"
+                              />
+                            )}
+                            {mediaUrl && isVideo && (
+                              <video
+                                controls
+                                playsInline
+                                src={mediaUrl}
+                                className="mt-2 max-h-48 rounded border border-hairline"
+                              />
+                            )}
+                            {mediaUrl && isAudio && (
+                              <audio controls src={mediaUrl} className="mt-2 w-full h-8" />
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                   ))}
                 </div>

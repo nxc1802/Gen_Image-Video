@@ -156,6 +156,11 @@ class BaseJobRepository(ABC):
         ...
 
     @abstractmethod
+    async def clear_worker_job(self, worker_id: str, job_id: Optional[str] = None) -> bool:
+        """Clears worker active job id to restore idle state."""
+        ...
+
+    @abstractmethod
     async def count_active_and_queued(self) -> Tuple[int, int]:
         """Returns (active_jobs_count, queued_jobs_count)."""
         ...

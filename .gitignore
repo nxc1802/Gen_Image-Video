@@ -1,4 +1,11 @@
-# Python
+# ==============================================================================
+# FACTORY v4 — ROOT GITIGNORE CONFIGURATION
+# Comprehensive Git Hygiene: Zero Media Binaries & Large Weights Tracking
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Python, Virtual Environments & Bytecode
+# ------------------------------------------------------------------------------
 __pycache__/
 *.py[cod]
 *$py.class
@@ -8,46 +15,178 @@ env/
 venv/
 .venv/
 ENV/
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
 
-# Jupyter Notebooks
+# ------------------------------------------------------------------------------
+# 2. Testing, Coverage & Linters
+# ------------------------------------------------------------------------------
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage/
+*.cover
+*.pyre/
+
+# ------------------------------------------------------------------------------
+# 3. Jupyter Notebooks & Marimo
+# ------------------------------------------------------------------------------
 .ipynb_checkpoints/
+*-checkpoint.ipynb
+.marimo/
 
-# System & OS
+# ------------------------------------------------------------------------------
+# 4. Operating System & Editor Artifacts
+# ------------------------------------------------------------------------------
 .DS_Store
+.DS_Store?
+._*
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
 
-# Secrets & Environment
+# ------------------------------------------------------------------------------
+# 5. Secrets & Environment Files
+# ------------------------------------------------------------------------------
 .env
 *.env
 *.env.local
+*.env.*.local
 *.env.archived
 !.env.example
 
-# Runtime & Generated Outputs
-.agents/
-.factory_storage/
-test_outputs/
-benchmark_outputs/
-public_url.txt
-current_url.txt
-*.active_colab_account*.txt
+# ------------------------------------------------------------------------------
+# 6. Local Database Files & Runtime State Engines
+# ------------------------------------------------------------------------------
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+*.rdb
+
+# ------------------------------------------------------------------------------
+# 7. Model Weights, Checkpoints & Serialization Formats (Zero Weight Tracking)
+# ------------------------------------------------------------------------------
+*.safetensors
+*.gguf
+*.pt
+*.pth
+*.bin
+*.onnx
+*.ckpt
+*.h5
+*.tflite
+*.engine
+*.weights
+*.mlmodel
+/models/
+checkpoints/
+weights/
+
+# ------------------------------------------------------------------------------
+# 8. Generated Media & Binary Outputs (Zero Media Tracking)
+# ------------------------------------------------------------------------------
+# Video formats
 *.mp4
+*.webm
+*.mkv
+*.mov
+*.avi
+*.flv
+*.wmv
+*.m4v
+
+# Audio formats
 *.wav
+*.mp3
+*.ogg
+*.flac
+*.aac
+*.m4a
+*.opus
+
+# Image & Graphic formats (excluding .svg source code)
 *.png
 *.jpg
 *.jpeg
 *.webp
-*.log
-/tmp/
+*.gif
+*.bmp
+*.tiff
+*.ico
+*.avif
 
-# Node / Next.js
+# ------------------------------------------------------------------------------
+# 9. Whitelist: Regression Test Fixtures & Static Documentation Assets
+# ------------------------------------------------------------------------------
+# Whitelist test fixtures across all test suites
+!tests/**/fixtures/**
+!tests/fixtures/**
+!**/test_fixtures/**
+
+# Whitelist static assets for web applications and documentation
+!factory/apps/studio-web/public/**
+!docs/assets/**
+!docs/images/**
+
+# Whitelist declarative manifests and project specifications
+!manifests/**
+
+# ------------------------------------------------------------------------------
+# 10. Ephemeral Storage, Temporary Files & Runtime Directories
+# ------------------------------------------------------------------------------
+.agents/
+.factory_storage/
+storage/
+artifacts/
+data/
+test_outputs/
+benchmark_outputs/
+benchmarks/outputs/
+/tmp/
+tmp/
+.tmp_*
+*.tmp
+*.log
+public_url.txt
+current_url.txt
+*.active_colab_account*.txt
+
+# ------------------------------------------------------------------------------
+# 11. Deployments & Kaggle Ephemeral Directories
+# ------------------------------------------------------------------------------
+deployments/kaggle/outputs/
+deployments/kaggle/*_outputs/
+deployments/kaggle/comfyui/
+deployments/kaggle/datasets/
+deployments/kaggle/downloaded_artifacts/
+deployments/kaggle/models/
+deployments/kaggle/cache/
+
+# ------------------------------------------------------------------------------
+# 12. Node.js & Studio Web Workspace Artifacts
+# ------------------------------------------------------------------------------
 node_modules/
 .next/
+out/
 *.tsbuildinfo
-
-# Build artifacts
-dist/
-build/
-*.egg-info/
-deployments/kaggle/audio_outputs/*.safetensors
-deployments/kaggle/audio_outputs/*.onnx
+.turbo/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache

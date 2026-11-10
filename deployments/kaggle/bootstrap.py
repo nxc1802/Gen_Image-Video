@@ -230,6 +230,13 @@ OPTIONAL_PACKAGES: Dict[str, str] = {
     "pynvml": ">=11.5.0",
 }
 
+PACKAGE_DIST_MAP: Dict[str, str] = {
+    "yaml": "PyYAML",
+    "pynvml": "nvidia-ml-py",
+    "cv2": "opencv-python",
+    "PIL": "Pillow",
+}
+
 
 @dataclass
 class HardwareReport:
@@ -854,13 +861,32 @@ class KaggleBootstrap:
         }
 
     def install_dependencies(self, packages: Optional[List[str]] = None) -> bool:
-        """Installs missing dependencies via pip."""
-        target_pkgs = packages or list(REQUIRED_PACKAGES.keys())
+        """Installs missing dependencies via pip with offline wheel directory fallback."""
+        raw_pkgs = packages or list(REQUIRED_PACKAGES.keys())
+        target_pkgs = [PACKAGE_DIST_MAP.get(pkg, pkg) for pkg in raw_pkgs]
         logger.info(f"Installing dependencies: {target_pkgs}")
-        cmd = [sys.executable, "-m", "pip", "install", "--no-cache-dir"] + target_pkgs
+
+        # 1. Check for offline wheels in kaggle_input_dir
+        offline_wheels = list(self.kaggle_input_dir.rglob("*.whl")) if self.kaggle_input_dir.exists() else []
+        if offline_wheels:
+            wheel_dir = offline_wheels[0].parent
+            logger.info(f"Found offline wheel archive at {wheel_dir}. Attempting offline installation...")
+            cmd_offline = [
+                sys.executable, "-m", "pip", "install",
+                "--no-index", "--find-links", str(wheel_dir),
+                "--no-cache-dir",
+            ] + target_pkgs
+            res = subprocess.run(cmd_offline, capture_output=True, text=True)
+            if res.returncode == 0:
+                logger.info("Dependencies installed successfully from offline wheels.")
+                return True
+            logger.warning(f"Offline installation incomplete ({res.stderr.strip()}), falling back to online index...")
+
+        # 2. Standard online install
+        cmd_online = [sys.executable, "-m", "pip", "install", "--no-cache-dir"] + target_pkgs
         try:
-            res = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            logger.info("Dependencies installed successfully.")
+            subprocess.run(cmd_online, capture_output=True, text=True, check=True)
+            logger.info("Dependencies installed successfully via PyPI.")
             return True
         except subprocess.CalledProcessError as exc:
             logger.error(f"Dependency installation failed: {exc.stderr}")

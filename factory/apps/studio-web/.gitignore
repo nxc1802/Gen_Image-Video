@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing & Coverage
+/coverage
+
+# Next.js Build & Static Outputs
+/.next/
+/out/
+/build
+/dist
+*.tsbuildinfo
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.eslintcache
+
+# Local environment variables
+.env*.local
+.env
+
+# Vercel & Turbo
+.vercel
+.turbo/
+
+# System
+.DS_Store

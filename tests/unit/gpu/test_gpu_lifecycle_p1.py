@@ -139,7 +139,7 @@ async def test_gpu_02_model_switching_a_to_b(runtime_manager, manifest_loader):
     """
     models = manifest_loader.load_models()
     model_a = models["qwen-image-2.1"]
-    model_b = models["qwen-text"]
+    model_b = models["qwen-decision"]
 
     # 1. Load Model A on GPU 0
     rt_a = await runtime_manager.ensure_loaded(model_a, gpu_ids=[0])
@@ -152,12 +152,12 @@ async def test_gpu_02_model_switching_a_to_b(runtime_manager, manifest_loader):
     # 3. Model A must be unloaded, Model B must be READY
     assert rt_a.state == RuntimeState.UNLOADED
     assert rt_b.state == RuntimeState.READY
-    assert runtime_manager.gpus[0].active_model_id == "qwen-text"
+    assert runtime_manager.gpus[0].active_model_id == "qwen-decision"
     assert rt_b.checkpoint_id == model_b.weights.primary_checkpoint
 
     # 4. Reserve and execute on B
-    lease_b = await runtime_manager.reserve("qwen-text", "job-gpu-02", gpu_ids=[0])
-    assert lease_b.model_id == "qwen-text"
+    lease_b = await runtime_manager.reserve("qwen-decision", "job-gpu-02", gpu_ids=[0])
+    assert lease_b.model_id == "qwen-decision"
     assert rt_b.state == RuntimeState.BUSY
     await runtime_manager.release("job-gpu-02")
     assert rt_b.state == RuntimeState.READY
@@ -221,7 +221,7 @@ async def test_gpu_04_two_heavy_jobs_on_same_gpu(runtime_manager, manifest_loade
     """
     models = manifest_loader.load_models()
     model_a = models["qwen-image-2.1"]
-    model_b = models["qwen-text"]
+    model_b = models["qwen-decision"]
 
     await runtime_manager.ensure_loaded(model_a, gpu_ids=[0])
     await runtime_manager.reserve("qwen-image-2.1", "job-gpu04-1", gpu_ids=[0])
@@ -239,7 +239,7 @@ async def test_gpu_04_two_heavy_jobs_on_same_gpu(runtime_manager, manifest_loade
     # 3. Once Job 1 completes, second job can acquire GPU 0
     await runtime_manager.release("job-gpu04-1")
     rt_b = await runtime_manager.ensure_loaded(model_b, gpu_ids=[0])
-    lease_2 = await runtime_manager.reserve("qwen-text", "job-gpu04-2", gpu_ids=[0])
+    lease_2 = await runtime_manager.reserve("qwen-decision", "job-gpu04-2", gpu_ids=[0])
     assert lease_2.job_id == "job-gpu04-2"
     assert rt_b.state == RuntimeState.BUSY
     await runtime_manager.release("job-gpu04-2")
@@ -314,6 +314,44 @@ async def test_gpu_05_atomic_dual_gpu_reservation(runtime_manager):
     assert not runtime_manager.scheduler.is_gpu_busy(0)
     assert not runtime_manager.scheduler.is_gpu_busy(1)
     assert rt.state == RuntimeState.READY
+
+
+@pytest.mark.asyncio
+async def test_gpu_05b_real_qwen_text_dual_gpu_atomic_reservation(runtime_manager, manifest_loader):
+    """
+    GPU-05b: Real Qwen-Text manifest requires atomic reservation across both GPUs (dual_gpu_split).
+    PASS: Both GPUs 0 and 1 reserved and released atomically; fails when GPU 1 is busy.
+    """
+    models = manifest_loader.load_models()
+    qwen_text = models["qwen-text"]
+    assert qwen_text.hardware.allocation_policy == AllocationPolicy.DUAL_GPU_SPLIT
+
+    # 1. Occupy GPU 1 with a single-GPU job
+    runtime_manager.scheduler.acquire_gpu(1, "job-occupy-gpu1-text")
+    assert runtime_manager.scheduler.is_gpu_busy(1)
+
+    # 2. Loading qwen-text targets both GPUs [0, 1]
+    rt = await runtime_manager.ensure_loaded(qwen_text)
+    assert rt.gpu_ids == [0, 1]
+
+    with pytest.raises(FactoryError) as exc:
+        await runtime_manager.reserve("qwen-text", "job-text-fail", gpu_ids=[0, 1])
+    assert exc.value.code == "RESOURCE_CONFLICT"
+    assert not runtime_manager.scheduler.is_gpu_busy(0)
+
+    # 3. Free GPU 1
+    runtime_manager.scheduler.release_gpu(1, "job-occupy-gpu1-text")
+
+    # 4. Atomic reservation now succeeds across both GPUs
+    lease = await runtime_manager.reserve("qwen-text", "job-text-pass", gpu_ids=[0, 1])
+    assert lease.gpu_ids == [0, 1]
+    assert runtime_manager.scheduler.is_gpu_busy(0)
+    assert runtime_manager.scheduler.is_gpu_busy(1)
+
+    # 5. Atomic release frees both GPUs
+    await runtime_manager.release("job-text-pass")
+    assert not runtime_manager.scheduler.is_gpu_busy(0)
+    assert not runtime_manager.scheduler.is_gpu_busy(1)
 
 
 # ==============================================================================
@@ -522,7 +560,7 @@ async def test_gpu_10_repeated_swaps_memory_leak_check(runtime_manager, manifest
     """
     models = manifest_loader.load_models()
     model_a = models["qwen-image-2.1"]
-    model_b = models["qwen-text"]
+    model_b = models["qwen-decision"]
     gpu0 = runtime_manager.gpus[0]
 
     initial_baseline = gpu0.current_vram_gb  # 0.5 GB
@@ -536,11 +574,11 @@ async def test_gpu_10_repeated_swaps_memory_leak_check(runtime_manager, manifest
 
         # Swap in Model B
         rt_b = await runtime_manager.ensure_loaded(model_b, gpu_ids=[0])
-        lease_b = await runtime_manager.reserve("qwen-text", f"swap-b-{cycle}", gpu_ids=[0])
+        lease_b = await runtime_manager.reserve("qwen-decision", f"swap-b-{cycle}", gpu_ids=[0])
         await runtime_manager.release(f"swap-b-{cycle}", peak_vram_mb=12000.0)
 
     # Unload final model
-    await runtime_manager.unload("qwen-text")
+    await runtime_manager.unload("qwen-decision")
 
     # VERIFY: Memory returned precisely to baseline, delta == 0
     final_vram = gpu0.current_vram_gb

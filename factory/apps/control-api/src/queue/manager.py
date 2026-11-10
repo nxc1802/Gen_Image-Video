@@ -180,9 +180,15 @@ class JobLifecycleManager:
         # Validate state transition
         JobStateMachine.validate_transition(job.state, JobState.CANCELLED, job_id)
 
+        worker_id = job.worker.worker_id if job.worker else None
+        if worker_id:
+            await self.repository.clear_worker_job(worker_id, job_id)
+
         gpu_device = job.worker.gpu_device if job.worker and job.worker.gpu_device is not None else None
         if hasattr(self.broker, "release_gpu"):
             self.broker.release_gpu(gpu_device, job_id)
+        if hasattr(self.broker, "release_gpus"):
+            self.broker.release_gpus(job_id)
 
         job.state = JobState.CANCELLED
         job.completed_at = datetime.now(timezone.utc)
@@ -299,16 +305,15 @@ class JobLifecycleManager:
                 )
             # Strict lease_token verification for non-admin callers
             if caller_role != "admin" and job.worker.lease_token:
-                if caller_worker_id or caller_role == "worker" or lease_token:
-                    if not lease_token or lease_token != job.worker.lease_token:
-                        raise UnauthorizedError(
-                            message=f"Invalid or missing lease token for job '{job.job_id}'.",
-                            status_code=403,
-                            details={
-                                "job_id": job.job_id,
-                                "worker_id": worker_id,
-                            },
-                        )
+                if not lease_token or lease_token != job.worker.lease_token:
+                    raise UnauthorizedError(
+                        message=f"Invalid or missing lease token for job '{job.job_id}'.",
+                        status_code=403,
+                        details={
+                            "job_id": job.job_id,
+                            "worker_id": worker_id,
+                        },
+                    )
             expires_at = getattr(job.worker, "lease_expires_at", None) or getattr(job.worker, "expires_at", None)
             if expires_at:
                 now = datetime.now(timezone.utc)
@@ -340,17 +345,24 @@ class JobLifecycleManager:
     ) -> FactoryJob:
         job = await self.get_job(job_id)
 
-        if job.state in (JobState.SUCCEEDED, JobState.FAILED, JobState.CANCELLED):
-            return job
-
+        # Enforce lease verification first
         self._verify_worker_lease(job, req.worker_id, req.lease_token, caller_worker_id, caller_role)
 
-        if job.worker is None and req.worker_id:
-            now = datetime.now(timezone.utc)
-            job.worker = WorkerLease(
-                worker_id=req.worker_id,
-                leased_at=now,
-                lease_expires_at=now + timedelta(seconds=3600),
+        # Reject unleased progress updates from workers
+        if job.worker is None and (req.worker_id or caller_worker_id or caller_role == "worker"):
+            raise UnauthorizedError(
+                message=f"Cannot update progress on unleased job '{job.job_id}'.",
+                status_code=403,
+                details={"job_id": job.job_id, "worker_id": req.worker_id},
+            )
+
+        # Reject progress updates on terminal jobs
+        if job.state in (JobState.SUCCEEDED, JobState.FAILED, JobState.CANCELLED):
+            raise FactoryError(
+                message=f"Cannot update progress on job '{job_id}' in terminal state '{job.state.value}'.",
+                code="RESOURCE_CONFLICT",
+                status_code=409,
+                details={"job_id": job_id, "state": job.state.value},
             )
 
         job.progress = JobProgress(
@@ -394,18 +406,18 @@ class JobLifecycleManager:
     ) -> FactoryJob:
         job = await self.get_job(job_id)
 
+        self._verify_worker_lease(job, req.worker_id, req.lease_token, caller_worker_id, caller_role)
+
         # Idempotent no-op for already completed jobs (protects artifacts and telemetry from mutation)
         if job.state == JobState.SUCCEEDED:
             return job
 
-        JobStateMachine.validate_transition(job.state, JobState.SUCCEEDED, job_id)
-        self._verify_worker_lease(job, req.worker_id, req.lease_token, caller_worker_id, caller_role)
-
+        # Do NOT prematurely mutate job.state to SUCCEEDED here.
+        # All artifact validations, checksum calculations, and output payload checks
+        # must execute while job is still in progress (RUNNING / STREAMING).
         now = datetime.now(timezone.utc)
-        job.state = JobState.SUCCEEDED
-        job.completed_at = now
-        job.result = req.result
-        job.artifacts = req.artifacts or []
+        if req.artifacts:
+            job.artifacts = req.artifacts
 
         # FIX-01 & FIX-02: Validate artifact existence, size, and real checksum
         if req.artifact_path and not (req.artifacts or job.artifacts):
@@ -615,37 +627,66 @@ class JobLifecycleManager:
                         )
                         job.artifacts = [art_ref]
 
-        # FIX-01: Media jobs cannot succeed without required artifacts or result payload
+        # Validate required outputs
         is_media_service = job.service in {"image", "video", "music"} or (
             job.service == "speech" and job.task in {"speech_synthesis", "text_to_speech", "voice_clone"}
         )
-        if is_media_service and not job.artifacts and not req.result:
-            return await self.fail_job(
-                job_id,
-                JobFailureRequest(
-                    error=ErrorDetail(
-                        code=ErrorCode.ARTIFACT_MISSING,
-                        message=f"Artifact file not found: job for service '{job.service}' completed without required output artifact.",
-                        request_id=job.request_id,
+        if is_media_service:
+            if not job.artifacts and not req.result:
+                return await self.fail_job(
+                    job_id,
+                    JobFailureRequest(
+                        error=ErrorDetail(
+                            code=ErrorCode.ARTIFACT_MISSING,
+                            message=f"Artifact file not found: job for service '{job.service}' completed without required output artifact.",
+                            request_id=job.request_id,
+                        ),
+                        retryable=False,
+                        worker_id=req.worker_id,
+                        lease_token=req.lease_token,
                     ),
-                    retryable=False,
-                    worker_id=req.worker_id,
-                    lease_token=req.lease_token,
-                ),
-                caller_worker_id=caller_worker_id,
-                caller_role=caller_role,
-            )
+                    caller_worker_id=caller_worker_id,
+                    caller_role=caller_role,
+                )
+        else:
+            # Non-media service (text, decision, embedding): req.result must be present and non-empty
+            if req.result is None or (isinstance(req.result, (str, list, dict)) and len(req.result) == 0):
+                return await self.fail_job(
+                    job_id,
+                    JobFailureRequest(
+                        error=ErrorDetail(
+                            code=ErrorCode.INVALID_REQUEST,
+                            message=f"Job for non-media service '{job.service}' completed without result payload or artifacts.",
+                            request_id=job.request_id,
+                        ),
+                        retryable=False,
+                        worker_id=req.worker_id,
+                        lease_token=req.lease_token,
+                    ),
+                    caller_worker_id=caller_worker_id,
+                    caller_role=caller_role,
+                )
 
-        job.progress = JobProgress(stage="completed", step=job.progress.total, total=job.progress.total, percent=100.0)
+        # ONLY after all artifact and output validations succeed, transition to terminal SUCCEEDED state:
+        JobStateMachine.validate_transition(job.state, JobState.SUCCEEDED, job_id)
+        job.state = JobState.SUCCEEDED
+        job.completed_at = now
+        job.result = req.result
         job.telemetry = JobTelemetry(
             inference_duration_ms=req.inference_duration_ms,
             tokens_per_sec=req.tokens_per_sec,
             fps=req.fps,
             peak_vram_mb=req.peak_vram_mb,
         )
+        worker_id = job.worker.worker_id if job.worker else (req.worker_id if hasattr(req, "worker_id") else None)
+        if worker_id:
+            await self.repository.clear_worker_job(worker_id, job_id)
+
         gpu_device = job.worker.gpu_device if job.worker and job.worker.gpu_device is not None else None
         if hasattr(self.broker, "release_gpu"):
             self.broker.release_gpu(gpu_device, job_id)
+        if hasattr(self.broker, "release_gpus"):
+            self.broker.release_gpus(job_id)
 
         job.worker = None
 
@@ -676,10 +717,10 @@ class JobLifecycleManager:
     ) -> FactoryJob:
         job = await self.get_job(job_id)
 
+        self._verify_worker_lease(job, req.worker_id, req.lease_token, caller_worker_id, caller_role)
+
         if job.state in (JobState.SUCCEEDED, JobState.CANCELLED):
             return job
-
-        self._verify_worker_lease(job, req.worker_id, req.lease_token, caller_worker_id, caller_role)
 
         if req.retryable and job.retry_count < job.max_retries:
             return await self.retry_job(job_id)
@@ -690,9 +731,15 @@ class JobLifecycleManager:
         job.state = JobState.FAILED
         job.completed_at = now
         job.error = req.error
+        worker_id = job.worker.worker_id if job.worker else (req.worker_id if hasattr(req, "worker_id") else None)
+        if worker_id:
+            await self.repository.clear_worker_job(worker_id, job_id)
+
         gpu_device = job.worker.gpu_device if job.worker and job.worker.gpu_device is not None else None
         if hasattr(self.broker, "release_gpu"):
             self.broker.release_gpu(gpu_device, job_id)
+        if hasattr(self.broker, "release_gpus"):
+            self.broker.release_gpus(job_id)
 
         job.worker = None
 

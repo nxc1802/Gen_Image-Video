@@ -6,9 +6,15 @@ metadata:
   display_name: "Qwen-Image 2.1 Family"
   service_id: image-service
   version: "2.1.0"
+  license: "Tongyi Qianwen License"
+  license_url: "https://huggingface.co/abenzerps/Qwen-Image-2.1-GGUF"
+  commercial_use: true
 
 weights:
   primary_checkpoint: "abenzerps/Qwen-Image-2.1-GGUF/qwen-image-2.1-Q4_K_M.gguf"
+  repository: "abenzerps/Qwen-Image-2.1-GGUF"
+  checkpoint_revision: "d1245e8964af54497e25e83ec9bb892bf32e5190"
+  weights_file: "qwen-image-2.1-Q4_K_M.gguf"
   components:
     clip: "qwen3vl_8b_fp8_scaled.safetensors"
     vae: "qwen_image_2.1_vae_bf16.safetensors"

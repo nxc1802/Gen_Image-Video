@@ -63,6 +63,7 @@ pythonpath = [
     "packages/auth/src",
     "packages/model-registry/src",
     "packages/client-sdk/python/src",
+    "factory/apps/control-api/src",
 ]
 norecursedirs = [
     "node_modules",

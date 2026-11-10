@@ -15,6 +15,6 @@ The Embedding & Rerank Subsystem provides dense semantic embeddings and cross-en
 - `GET /health`: Health and readiness probe.
 
 ## Hardware & Deployment
-- Target GPU: GPU 1 (cuda:1) co-located with `vision-service` on Dual Tesla T4
+- Target GPU: GPU 1 (cuda:1) co-located with `video-service`, `music-service` on Dual Tesla T4
 - VRAM Footprint: ~1.5 GB
 - Launch command: `python -m services.embedding.launcher.run_embedding_service --port 8083`

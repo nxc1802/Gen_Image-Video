@@ -6,9 +6,15 @@ metadata:
   display_name: "Qwen 2.5 Decision Router"
   service_id: decision-service
   version: "1.0.0"
+  license: "Tongyi Qianwen License"
+  license_url: "https://huggingface.co/Qwen/Qwen2.5-3B-Instruct/blob/main/LICENSE"
+  commercial_use: true
 
 weights:
   primary_checkpoint: "Qwen/Qwen2.5-3B-Instruct"
+  repository: "Qwen/Qwen2.5-3B-Instruct"
+  checkpoint_revision: "47f5250ff5779796016e3c0d832e5399587bf2b1"
+  weights_file: "model.safetensors"
   format: safetensors
   quantization: none
   default_precision: bf16

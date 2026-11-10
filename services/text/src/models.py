@@ -36,7 +36,7 @@ class ChatCompletionRequest(BaseModel):
     response_format: Optional[Dict[str, Any]] = None
     tools: Optional[List[Dict[str, Any]]] = None
     tool_choice: Optional[Union[str, Dict[str, Any]]] = None
-    reasoning_effort: Optional[str] = Field(default=None, description="Reasoning effort: 'low', 'medium', 'high'")
+    reasoning_effort: Optional[str] = Field(default=None, description="Reasoning effort: 'none', 'low', 'medium', 'high'")
     reasoning: Optional[Dict[str, Any]] = Field(default=None, description="Reasoning configuration object, e.g. {'effort': 'medium'}")
 
     @model_validator(mode="after")
@@ -47,15 +47,15 @@ class ChatCompletionRequest(BaseModel):
             if "effort" in self.reasoning:
                 effort = self.reasoning.get("effort")
                 if not isinstance(effort, str) or not effort.strip():
-                    raise ValueError("Field 'reasoning.effort' must be a non-empty string: 'low', 'medium', 'high'.")
+                    raise ValueError("Field 'reasoning.effort' must be a non-empty string: 'none', 'low', 'medium', 'high'.")
                 if not self.reasoning_effort:
                     self.reasoning_effort = effort.lower()
         if self.reasoning_effort is not None:
             if not isinstance(self.reasoning_effort, str) or not self.reasoning_effort.strip():
-                raise ValueError("Field 'reasoning_effort' must be a non-empty string: 'low', 'medium', 'high'.")
+                raise ValueError("Field 'reasoning_effort' must be a non-empty string: 'none', 'low', 'medium', 'high'.")
             norm = self.reasoning_effort.lower().strip()
-            if norm not in {"low", "medium", "high"}:
-                raise ValueError("Field 'reasoning_effort' must be one of: 'low', 'medium', 'high'.")
+            if norm not in {"none", "low", "medium", "high"}:
+                raise ValueError("Field 'reasoning_effort' must be one of: 'none', 'low', 'medium', 'high'.")
             self.reasoning_effort = norm
         return self
 

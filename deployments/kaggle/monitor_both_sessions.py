@@ -53,8 +53,8 @@ def get_session_configs(
             "name": "Session 2 [Audio: Qwen3-TTS + XTTS-v2 + VieNeu-TTS]",
             "code_fn": gen_audio_code,
             "dataset_sources": [
-                "nguynxuncngde180528/qwen3-tts-1-7b",
-                "nguynxuncngde180528/xtts-v2-vietnamese",
+                f"{username}/qwen3-tts-1-7b",
+                f"{username}/xtts-v2-vietnamese",
                 f"{username}/vieneu-tts-v3-turbo",
                 f"{username}/kaggle-speech-wheels",
             ],

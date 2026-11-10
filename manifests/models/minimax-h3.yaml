@@ -6,9 +6,15 @@ metadata:
   display_name: "MiniMax Hailuo H3 Family"
   service_id: video-service
   version: "3.0.0"
+  license: "MiniMax Non-Commercial License"
+  license_url: "https://huggingface.co/MiniMax/Hailuo-H3-Diffusers"
+  commercial_use: false
 
 weights:
   primary_checkpoint: "MiniMax/Hailuo-H3-Diffusers"
+  repository: "MiniMax/Hailuo-H3-Diffusers"
+  checkpoint_revision: "e4b52c49c7198762d0577a8a8163f9ebfa9b7754"
+  weights_file: "diffusion_pytorch_model.safetensors"
   components:
     audio_vae: "minimax_h3_audio_vae_fp32.safetensors"
     video_vae: "minimax_h3_video_vae_fp16.safetensors"

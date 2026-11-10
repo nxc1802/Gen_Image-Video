@@ -407,6 +407,16 @@ class InMemoryJobStore(BaseJobRepository):
                 return None
             return json.loads(json.dumps(worker))
 
+    async def clear_worker_job(self, worker_id: str, job_id: Optional[str] = None) -> bool:
+        async with self._lock:
+            worker = self._workers.get(worker_id)
+            if not worker:
+                return False
+            if job_id is None or worker.get("current_job_id") == job_id:
+                worker["current_job_id"] = None
+                return True
+            return False
+
     async def count_active_and_queued(self) -> Tuple[int, int]:
         async with self._lock:
             active = sum(

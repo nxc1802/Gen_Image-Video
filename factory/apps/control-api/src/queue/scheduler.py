@@ -6,7 +6,7 @@ import asyncio
 import heapq
 import time
 from collections import defaultdict
-from typing import Any, AsyncGenerator, Dict, List, Optional, Set, Tuple
+from typing import Any, AsyncGenerator, Dict, List, Optional, Set, Tuple, Union
 
 from factory.apps.control_api.src.queue.broker.base import BaseQueueBroker
 from factory.apps.control_api.src.queue.broker.memory_broker import MemoryQueueBroker
@@ -81,12 +81,18 @@ class InMemoryScheduler(MemoryQueueBroker):
             self._gpu_busy[dev] = True
         return True
 
-    def release_gpus(self, gpu_devices: Optional[List[int]], job_id: str) -> bool:
+    def release_gpus(self, gpu_devices: Optional[Union[List[int], str]] = None, job_id: Optional[str] = None) -> bool:
         """
         Releases multiple GPU devices held by job_id.
         """
+        if isinstance(gpu_devices, str) and job_id is None:
+            job_id = gpu_devices
+            target_devices = None
+        else:
+            target_devices = gpu_devices if isinstance(gpu_devices, list) else None
+
         released_any = False
-        target_devs = gpu_devices if gpu_devices is not None else list(self._active_gpu_jobs.keys())
+        target_devs = target_devices if target_devices is not None else list(self._active_gpu_jobs.keys())
         for dev in target_devs:
             if dev in self._active_gpu_jobs and self._active_gpu_jobs[dev] == job_id:
                 self._active_gpu_jobs[dev] = None

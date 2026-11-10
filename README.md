@@ -2,9 +2,9 @@
 
 Factory v4 Lite is a lightweight, inference-first Personal AI Production Platform delivering authentic model inference through a verified API and Studio Web Operations Console, backed by a unified benchmark suite on Kaggle Dual T4 hardware.
 
-The Control Plane provides single API key Bearer authentication, in-memory job queuing, discrete Dual T4 GPU scheduling, streaming events, and ephemeral scratch disk artifact delivery. External enterprise infrastructure dependencies (PostgreSQL, Redis, S3/MinIO, Alembic, complex JWT RBAC) have been completely eliminated.
+By default, Factory v4 Lite operates in a zero-external-dependency mode: in-memory job queuing, discrete Dual T4 GPU scheduling, streaming events, ephemeral scratch disk artifact delivery, and single API key Bearer authentication. For production and hybrid cloud environments, hardened extension modes are fully supported: S3/MinIO object storage, PostgreSQL/SQLite durable stores with Alembic schema migrations, and standardized JWT authentication.
 
-> **Validation Status:** Architecture, security, contract, and benchmark test suites are automated and 100% green (713/713 unit and integration tests passing). Models adhere strictly to capability truth: unverified or unavailable capabilities fail closed with explicit non-success statuses (`BACKEND_UNAVAILABLE`, `HARDWARE_BLOCKED`, or 503 HTTP status) instead of returning mock or synthetic outputs. Negative API contract test passes are strictly isolated from model inference pass rates, ensuring zero false certifications.
+> **Validation Status:** Architecture, security, contract, and benchmark test suites are automated and 100% green (925+ unit, contract, and integration tests passing). Models adhere strictly to capability truth: unverified or unavailable capabilities fail closed with explicit non-success statuses (`BACKEND_UNAVAILABLE`, `HARDWARE_BLOCKED`, or 503 HTTP status) instead of returning mock or synthetic outputs. Negative API contract test passes are strictly isolated from model inference pass rates, ensuring zero false certifications.
 
 ---
 
@@ -21,7 +21,7 @@ The Control Plane provides single API key Bearer authentication, in-memory job q
   - `services/image/` and `services/video/` — Native ComfyUI / Diffusers workers with chunked streaming artifact delivery (Qwen-Image 2.1, Wan 2.2, MiniMax H3).
   - `services/music/` — Native ACE-Step 1.5 and YuE2 workers with ABC notation verification.
   - `services/enhancement/` — Enhancement suite; unbacked or offline backends fail closed with 503.
-- **Manifests (`manifests/`)** — Authoritative model, service, capability, and hardware source of truth across all 11 foundation models.
+- **Manifests (`manifests/`)** — Authoritative model, service, capability, and hardware source of truth across all 11 foundation models and explicit fast-inference variants (12 model manifests total).
 - **Unified Kaggle Deployment (`deployments/kaggle/`)** — Single reproducible bootstrap engine (`deployments.kaggle.bootstrap`).
 - **Unified Benchmark Suite (`benchmarks/`)** — Multi-modal runner, test cases, and binary container validators (`benchmarks.runner`, `benchmarks.validators`).
 
@@ -38,9 +38,9 @@ NEVER                    -> mock PNG containers, mock MP4 headers, pseudo embedd
                             canned transcripts, sine-wave TTS, or fabricated telemetry
 ```
 
-1. **Zero External Infrastructure**: No PostgreSQL, SQLite server, Redis broker, S3/MinIO bucket, or Alembic migrations required.
-2. **Single API Key Security**: Constant-time verification using `FACTORY_API_KEY` via `Authorization: Bearer <key>`.
-3. **Ephemeral Artifacts**: All generated media resides exclusively in `/tmp/factory_lite/artifacts/{job_id}/` and is retained on disk until TTL expiration (`ARTIFACT_TTL_SECONDS=3600` by default), or automatically unlinked upon completed download when `ARTIFACT_CLEANUP_ON_DOWNLOAD=true`.
+1. **Zero External Infrastructure by Default**: Operates completely self-contained in Lite mode (in-memory queue/db, ephemeral scratch disk). Production extension modes (PostgreSQL/SQLite durable storage with Alembic migrations, S3 bucket storage, and JWT auth) can be enabled via configuration flags.
+2. **Authentication Security**: Constant-time verification using `FACTORY_API_KEY` via `Authorization: Bearer <key>`, or standardized JWT tokens (HS256/RS256) with audience and issuer verification.
+3. **Artifact Delivery & Scratch Retention**: Generated media resides in the scratch directory (`SCRATCH_ARTIFACTS_DIR`, default `/tmp/factory_lite/artifacts/{job_id}/`) and is retained until TTL expiration (`ARTIFACT_TTL_SECONDS=3600` by default), or persisted to S3 object storage when `STORAGE_BACKEND=s3`. Immediate unlinking on download can be enabled with `ARTIFACT_CLEANUP_ON_DOWNLOAD=true`.
 4. **Discrete Dual-T4 GPU Memory Partitioning**:
    - 2x 16 GB Tesla T4 GPUs with **14.2 GB (14,540 MB)** max allocatable VRAM each (leaving >= 820 MB CUDA headroom).
    - Zero assumed 32 GB shared memory pool; workloads must fit single-GPU partitions:

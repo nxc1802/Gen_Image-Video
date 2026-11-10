@@ -6,9 +6,15 @@ metadata:
   display_name: "YuE2 Music Generation Pipeline"
   service_id: music-service
   version: "2.0.0"
+  license: "Apache-2.0"
+  license_url: "https://huggingface.co/m-a-p/YuE-s1-7B-anneal-en-cot/blob/main/LICENSE"
+  commercial_use: true
 
 weights:
   primary_checkpoint: "m-a-p/YuE-s1-7B-anneal-en-cot"
+  repository: "m-a-p/YuE-s1-7B-anneal-en-cot"
+  checkpoint_revision: "672e8bb24802521c7a40b97cfc47c4cb033230a1"
+  weights_file: "model-00001-of-00004.safetensors"
   format: safetensors
   quantization: none
   default_precision: bf16

@@ -51,7 +51,7 @@ python -m deployments.kaggle.bootstrap --install-missing
 ### Bootstrap Capabilities
 
 - **Hardware Topology Detection**: Identifies host platform, GPU count, device names, and per-device VRAM bounds.
-- **Kaggle Dataset Mounting**: Discovers weight directories under `/kaggle/input` and establishes symlinks into `/Volumes/WorkSpace/Factory/Gen_Image:Video/weights` or local runtime paths.
+- **Kaggle Dataset Mounting**: Discovers weight directories under `/kaggle/input` and establishes symlinks into `$WORKSPACE_ROOT/weights` or local runtime paths.
 - **Dependency Audit**: Validates required packages (`fastapi`, `torch`, `pydantic`, `pyyaml`, `pynvml`, etc.).
 - **Ephemeral Storage Setup**: Creates `/tmp/factory_lite/artifacts/` with verified write permissions.
 - **Authentication Setup**: Configures `FACTORY_API_KEY` for secure local IPC.

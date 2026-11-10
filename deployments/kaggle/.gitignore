@@ -1,0 +1,28 @@
+# Ephemeral session outputs & generated media
+outputs/
+audio_outputs/
+visual_outputs/
+studio_outputs/
+high_quality_outputs/
+downloaded_artifacts/
+
+# Downloaded weights & models
+models/
+weights/
+comfyui/
+datasets/
+cache/
+
+# Binary & weight formats
+*.safetensors
+*.gguf
+*.pt
+*.pth
+*.bin
+*.onnx
+*.ckpt
+
+# Local runtime databases & logs
+*.db
+*.sqlite
+*.log
