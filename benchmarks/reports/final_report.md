@@ -1,8 +1,8 @@
 # Factory v4 Lite — Master Benchmark & Acceptance Report
 
 > [!IMPORTANT]
-> **Live Hardware & Genuine Multi-Modal Certification Update (2026-11-10):**  
-> For the comprehensive live benchmark executed on physical Kaggle Dual NVIDIA Tesla T4 GPUs with genuine model inference outputs (Text, Image, Speech, Video, Embedding), see **[`MASTER_DUAL_T4_BENCHMARK_REPORT.md`](file:///Volumes/WorkSpace/Factory/Gen_Image:Video/benchmarks/reports/MASTER_DUAL_T4_BENCHMARK_REPORT.md)**.
+> **Live Hardware & Feasibility Attestation Update (2026-11-10):**  
+> For the Dual-T4 hardware telemetry and multi-modal feasibility audit report on Kaggle Dual NVIDIA Tesla T4 GPUs, see **[`MASTER_DUAL_T4_BENCHMARK_REPORT.md`](./MASTER_DUAL_T4_BENCHMARK_REPORT.md)**. Note: Full Native Model Certification and Factory E2E flow remain in progress.
 >
 > **Phase 6 Master Delivery Document** | **Plan Reference:** §10.7 (Sections 1 through 11)  
 > **Master Run ID:** `p5_matrix_live_04` | **Execution Date:** `2026-11-08T11:44:04Z` | **Git Commit:** `07db68a68c0d78b7265548b8a31598c725fcb877`  
