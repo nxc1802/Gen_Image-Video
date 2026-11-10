@@ -16,6 +16,7 @@ from pathlib import Path
 import sys
 import time
 from typing import Any, Dict, Optional
+import urllib.request
 
 repo_root = Path(__file__).resolve().parent.parent.parent
 if str(repo_root) not in sys.path:
@@ -89,7 +90,7 @@ text_model = AutoModelForCausalLM.from_pretrained(
     device_map="cuda:0",
 )
 
-prompt_text = "Viết một đoạn giới thiệu ngắn gọn, chuyên nghiệp và đầy cảm hứng về Factory v4 AI Platform: nền tảng AI đa phương thức hiệu năng cao chạy trên Dual GPU Tesla T4."
+prompt_text = "Viết một đoạn giới thiệu ngắn gọn, chuyên nghiệp và đầy cảm hứng về Factory v4 AI Platform: nền tảng AI đa phương thức hiệu năng cao chạy trên Dual GPU Tesla T4, kiểm chứng suy luận thực tế ngày 10/11/2026."
 messages = [
     {"role": "system", "content": "Bạn là trợ lý AI cao cấp của Factory v4 Platform. Hãy trả lời súc tích, văn phong chuyên nghiệp và sâu sắc bằng tiếng Việt."},
     {"role": "user", "content": prompt_text}
@@ -187,7 +188,7 @@ print("=" * 80)
 t0 = time.time()
 from gtts import gTTS
 
-speech_text = "Chào mừng bạn đến với Factory v4: Nền tảng AI đa phương thức cá nhân hoá. Toàn bộ hình ảnh, âm thanh và văn bản này đều được tính toán và sinh ra trực tiếp trên cụm phần cứng Dual Tesla T4."
+speech_text = "Chào mừng bạn đến với Factory v4. Đây là kết quả suy luận thực tế từ mô hình AI thật, chạy trên cụm phần cứng Dual Tesla T4 vào ngày 10 tháng 11 năm 2026."
 tts = gTTS(text=speech_text, lang="vi", slow=False)
 
 mp3_path = out_dir / "factory_intro_speech.mp3"
@@ -318,31 +319,33 @@ def run_deployment(
     username: Optional[str] = None,
     api_key: Optional[str] = None,
     kernel_slug: str = "factory-v4-lite-high-quality-real-inference",
-    timeout_sec: float = 1800.0,
+    timeout_sec: float = 7200.0,
+    push: bool = True,
 ) -> Dict[str, Any]:
     """Pushes and monitors the genuine high-quality inference kernel on Kaggle."""
     client = KaggleAPIClient(username=username, api_key=api_key)
-    code = generate_high_quality_kernel_code()
-
-    logger.info(f"Deploying genuine high-quality inference kernel '{kernel_slug}' to Kaggle Dual-T4...")
-    push_resp = client.push_kernel(
-        slug=kernel_slug,
-        title="Factory v4 Lite High Quality Real Inference",
-        code_content=code,
-        is_private=True,
-        enable_gpu=True,
-        enable_internet=True,
-        kernel_type="script",
-        language="python",
-    )
-
     actual_slug = kernel_slug
-    if push_resp.get("ref"):
-        actual_slug = push_resp["ref"].strip("/").split("/")[-1]
-    elif push_resp.get("url"):
-        actual_slug = push_resp["url"].strip("/").split("/")[-1]
 
-    logger.info(f"Kernel pushed successfully: {push_resp.get('url')} (slug: {actual_slug})")
+    if push:
+        code = generate_high_quality_kernel_code()
+        logger.info(f"Deploying genuine high-quality inference kernel '{kernel_slug}' to Kaggle Dual-T4...")
+        push_resp = client.push_kernel(
+            slug=kernel_slug,
+            title="Factory v4 Lite High Quality Real Inference",
+            code_content=code,
+            is_private=True,
+            enable_gpu=True,
+            enable_internet=True,
+            kernel_type="script",
+            language="python",
+        )
+        if push_resp.get("ref"):
+            actual_slug = push_resp["ref"].strip("/").split("/")[-1]
+        elif push_resp.get("url"):
+            actual_slug = push_resp["url"].strip("/").split("/")[-1]
+        logger.info(f"Kernel pushed successfully: {push_resp.get('url')} (slug: {actual_slug})")
+    else:
+        logger.info(f"Monitoring existing Kaggle kernel '{actual_slug}' without re-pushing...")
 
     def _streamer(line: str):
         print(f"[Kaggle High-Quality] {line}")
@@ -353,6 +356,22 @@ def run_deployment(
         timeout_sec=timeout_sec,
         output_callback=_streamer,
     )
+
+    out_dir = repo_root / "deployments" / "kaggle" / "high_quality_outputs"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for f in output.get("files", []):
+        fname = f.get("fileName")
+        url = f.get("url")
+        if not fname or not url:
+            continue
+        base_name = Path(fname).name
+        dest_path = out_dir / base_name
+        try:
+            urllib.request.urlretrieve(url, dest_path)
+            logger.info(f"Saved Kaggle output: {dest_path} ({dest_path.stat().st_size} bytes)")
+        except Exception as dl_err:
+            logger.warning(f"Error downloading {base_name}: {dl_err}")
+
     return output
 
 
@@ -362,9 +381,18 @@ def main():
     parser.add_argument("--slug", default="factory-v4-lite-high-quality-real-inference")
     parser.add_argument("--user", default=None)
     parser.add_argument("--token", default=None)
+    parser.add_argument("--timeout", type=float, default=7200.0, help="Polling timeout in seconds")
+    parser.add_argument("--no-push", action="store_true", help="Monitor existing kernel without pushing code")
     args = parser.parse_args()
 
-    run_deployment(username=args.user, api_key=args.token, kernel_slug=args.slug)
+    res = run_deployment(
+        username=args.user,
+        api_key=args.token,
+        kernel_slug=args.slug,
+        timeout_sec=args.timeout,
+        push=not args.no_push,
+    )
+    print("\nHigh Quality Inference finished with status:", res.get("status", "complete"))
 
 
 if __name__ == "__main__":
