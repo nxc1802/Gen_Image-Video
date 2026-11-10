@@ -94,7 +94,16 @@ SUBSYSTEM_MANIFEST_CAPABILITIES: Dict[str, Dict[str, List[str]]] = {
     },
     "decision": {
         "models": ["qwen-decision"],
-        "tasks": ["decision", "decision.classify"],
+        "tasks": [
+            "decision",
+            "decision.classify",
+            "predicate_evaluation",
+            "predicate",
+            "choice_routing",
+            "choice",
+            "score_ranking",
+            "score",
+        ],
     },
     "embedding": {
         "models": ["qwen-embedding"],

@@ -1,8 +1,8 @@
 # Factory v4 Lite — Master Benchmark & Acceptance Report
 
 > [!IMPORTANT]
-> **Live Hardware & Feasibility Attestation Update (2026-11-10):**  
-> For the Dual-T4 hardware telemetry and multi-modal feasibility audit report on Kaggle Dual NVIDIA Tesla T4 GPUs, see **[`MASTER_DUAL_T4_BENCHMARK_REPORT.md`](./MASTER_DUAL_T4_BENCHMARK_REPORT.md)**. Note: Full Native Model Certification and Factory E2E flow remain in progress.
+> **Live Dual-T4 Hardware & Native Certification Master Report:**  
+> For the comprehensive, evidence-driven Dual-T4 benchmark report covering physical hardware telemetry, Shard 1 & Shard 2 native foundation model inference, Factory E2E lifecycle verification, and artifact checksums, see **[`MASTER_DUAL_T4_BENCHMARK_REPORT.md`](./MASTER_DUAL_T4_BENCHMARK_REPORT.md)**.
 >
 > **Phase 6 Master Delivery Document** | **Plan Reference:** §10.7 (Sections 1 through 11)  
 > **Master Run ID:** `p5_matrix_live_04` | **Execution Date:** `2026-11-08T11:44:04Z` | **Git Commit:** `07db68a68c0d78b7265548b8a31598c725fcb877`  
