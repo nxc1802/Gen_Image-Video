@@ -1,13 +1,15 @@
 """
 tests/e2e/test_golden_path_real_e2e.py
-Factory v4 Lite: Authoritative Golden Path End-to-End (L5) Lifecycle Test Suite
+Factory v4 Lite: Factory Lifecycle Contract (L4.5) Verification Test Suite
 
 Validates the complete Factory Lite lifecycle across Control API, Queue/Scheduler,
 Worker Leasing, Heartbeat, Progress Streaming, Artifact Generation, Result Delivery,
 and Automatic Disk Cleanup without mock simulation.
 
-Hierarchy Level: L5 (FACTORY_E2E_PASS)
-Closes: P0-01 (Real Factory End-to-End)
+Hierarchy Level: FACTORY_LIFECYCLE_CONTRACT_PASS (Pre-requisite for Live On-GPU L5)
+Coverage: Visual, Decision, Text, and Embedding lifecycles.
+Note: Physical on-GPU execution against live llama-server / ComfyUI is evaluated
+via deployments/kaggle/live_factory_e2e_runner.py (FACTORY_LIVE_E2E_PASS).
 """
 
 import hashlib
@@ -65,10 +67,11 @@ def auth_headers() -> Dict[str, str]:
     }
 
 
-class TestGoldenPathFactoryE2E:
+class TestFactoryLifecycleContract:
     """
-    Validates Level 5 (FACTORY_E2E_PASS):
-    Full multi-step loop: Client Submit -> Queue -> Worker Lease -> Heartbeat/Progress ->
+    Validates FACTORY_LIFECYCLE_CONTRACT_PASS:
+    In-memory complete multi-step lifecycle loop:
+    Client Submit -> Queue -> Worker Lease -> Heartbeat/Progress ->
     Complete -> Event SSE -> Artifact Download -> Auto Cleanup.
     """
 

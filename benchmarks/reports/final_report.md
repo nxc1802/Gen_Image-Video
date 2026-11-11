@@ -37,7 +37,8 @@ The Factory v4 Lite target architecture (§2) successfully coordinates all 15 op
 | **Qwen-Decision** | Classifier & Ranker | Kaggle Dual Tesla T4 (GPU 0) | 2.0 GB | Ready on CUDA host |
 | **Qwen-Embedding** | Dense Vector 1024-dim | Kaggle Dual Tesla T4 (GPU 1) | 2.0 GB | Ready on CUDA host |
 | **Qwen-Speech** | ASR (Whisper) & TTS (CosyVoice) | Kaggle Dual Tesla T4 (GPU 0) | 6.0 GB | Ready on CUDA host |
-| **Qwen-Image 2.1** | Standard (50 steps) & Turbo (8 steps) | Kaggle Dual Tesla T4 (GPU 0) | 12.0 GB | Ready on CUDA host |
+| **Qwen-Image 2.1 (Turbo)** | 8-step Euler (Turbo) | Kaggle Dual Tesla T4 (GPU 0) | 13.1 GB | L4 Certified on T4 |
+| **Qwen-Image 2.1 (Standard)** | Standard 50-step full diffusion | Kaggle Dual Tesla T4 (GPU 0) | 14.0 GB | Ready / Pending Live Run |
 | **Wan 2.2** | 14B / GGUF T2V & I2V | Kaggle Dual Tesla T4 (GPU 1) | 14.2 GB | Ready on CUDA host |
 | **MiniMax H3** | T2VA, I2VA, Ref2VA | Kaggle Dual Tesla T4 (GPU 1) | 14.2 GB | Ready on CUDA host |
 | **ACE-Step 1.5** | Base (Stems/Lego) & Turbo (Fast T2M/L2M) | Kaggle Dual Tesla T4 (GPU 1) | 6.5 GB | Fully operational on T4 |

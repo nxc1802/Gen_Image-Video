@@ -70,14 +70,14 @@ validated_hardware_profiles:
 installed: true
 checkpoint_valid: true
 backend_ready: true
-evidence_run_id: null
+evidence_run_id: "factory-v4-lite-visual-pipeline-20261104"
 
 capabilities_truth:
   image_chat:
     declared: true
     implemented: true
-    live_verified: false
-    evidence_run_id: null
+    live_verified: true
+    evidence_run_id: "factory-v4-lite-visual-pipeline-20261104"
   responses_api:
     declared: true
     implemented: true

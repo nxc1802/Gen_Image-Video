@@ -171,6 +171,7 @@ current_url.txt
 # ------------------------------------------------------------------------------
 deployments/kaggle/outputs/
 deployments/kaggle/*_outputs/
+factory_e2e_outputs/
 deployments/kaggle/comfyui/
 deployments/kaggle/datasets/
 deployments/kaggle/downloaded_artifacts/

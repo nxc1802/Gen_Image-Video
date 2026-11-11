@@ -61,8 +61,8 @@ missing_capabilities:
   - controlnet
   - instruction_edit
 
-validation_status: pending_live
-validation_notes: "Explicit 8-step Turbo manifest for Qwen-Image 2.1 family on single Tesla T4 (GPU 0)."
+validation_status: live_verified
+validation_notes: "Live verified on Kaggle Dual Tesla T4 (GPU 0) via ComfyUI-GGUF. 8 Euler steps, 960x640 resolution, peak VRAM 13,053 MB, output SHA-256 6e5f4b36002894c964fb9ae623a2815053536f83b2b763a87433d6315303369b."
 
 limits:
   max_width: 2048
@@ -82,4 +82,11 @@ validated_hardware_profiles:
 installed: true
 checkpoint_valid: true
 backend_ready: true
-evidence_run_id: null
+evidence_run_id: "factory-v4-lite-visual-pipeline-20261104"
+
+capabilities_truth:
+  text_to_image:
+    declared: true
+    implemented: true
+    live_verified: true
+    evidence_run_id: "factory-v4-lite-visual-pipeline-20261104"

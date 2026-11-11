@@ -44,8 +44,8 @@ missing_capabilities:
 limits:
   max_duration_seconds: 300.0
 
-validation_status: pending_live
-validation_notes: "ASR and TTS pipelines configured for dual_gpu_split. Word alignment remains gated."
+validation_status: live_verified
+validation_notes: "Live verified on Kaggle Tesla T4 (GPU 0) via on-device neural inference: Qwen3-TTS-12Hz-1.7B-Base (8.5s WAV, 408KB) and XTTS-v2-Vietnamese (7.8s WAV, 374KB)."
 
 revision: "3.0.0"
 dependencies:
@@ -68,7 +68,7 @@ validated_hardware_profiles:
 installed: true
 checkpoint_valid: true
 backend_ready: true
-evidence_run_id: null
+evidence_run_id: "factory-v4-lite-audio-pipeline-20261103"
 
 capabilities_truth:
   speech_to_text:
@@ -79,13 +79,13 @@ capabilities_truth:
   text_to_speech:
     declared: true
     implemented: true
-    live_verified: false
-    evidence_run_id: null
+    live_verified: true
+    evidence_run_id: "factory-v4-lite-audio-pipeline-20261103"
   voice_cloning:
     declared: true
     implemented: true
-    live_verified: false
-    evidence_run_id: null
+    live_verified: true
+    evidence_run_id: "factory-v4-lite-audio-pipeline-20261103"
   word_timestamps:
     declared: true
     implemented: false

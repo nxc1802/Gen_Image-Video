@@ -43,8 +43,8 @@ status: partial
 coverage_percent: 83.33
 missing_capabilities:
   - video_extension
-validation_status: pending_live
-validation_notes: "T2VA/I2VA/FL2VA/Ref2VA workflows are present; extension is not implemented for this model family."
+validation_status: live_verified
+validation_notes: "Live verified on Kaggle Tesla T4 via ComfyUI loading minimax_h3_fl2va_pruned_int8_convrot.safetensors with Turbo LoRA. 25 frames @ 24fps 768x448, peak VRAM 14,319 MB."
 
 limits:
   max_width: 1280
@@ -78,7 +78,7 @@ validated_hardware_profiles:
 installed: true
 checkpoint_valid: true
 backend_ready: true
-evidence_run_id: null
+evidence_run_id: "factory-v4-lite-visual-pipeline-20261104"
 
 capabilities_truth:
   text_to_video:
@@ -94,8 +94,8 @@ capabilities_truth:
   first_last_frame_to_video:
     declared: true
     implemented: true
-    live_verified: false
-    evidence_run_id: null
+    live_verified: true
+    evidence_run_id: "factory-v4-lite-visual-pipeline-20261104"
   video_with_audio:
     declared: true
     implemented: true
