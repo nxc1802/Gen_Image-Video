@@ -45,7 +45,7 @@ limits:
   max_duration_seconds: 300.0
 
 validation_status: live_verified
-validation_notes: "Live verified on Kaggle Tesla T4 (GPU 0) via on-device neural inference: Qwen3-TTS-12Hz-1.7B-Base (8.5s WAV, 408KB) and XTTS-v2-Vietnamese (7.8s WAV, 374KB)."
+validation_notes: "Live verified on Kaggle Tesla T4 (GPU 0) for TTS & Voice Cloning only via on-device neural inference: Qwen3-TTS-12Hz-1.7B-Base (8.5s WAV, 408KB) and XTTS-v2-Vietnamese (7.8s WAV, 374KB). Speech-to-Text (ASR) capability remains unverified on live hardware (pending live)."
 
 revision: "3.0.0"
 dependencies:

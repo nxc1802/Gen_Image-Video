@@ -58,6 +58,7 @@ MODEL_EXECUTION_TIMEOUTS = {
     "minimax-h3": 900.0,
     "ace-step-1.5": 600.0,
     "qwen-image-2.1": 300.0,
+    "qwen-image-2.1-turbo": 200.0,
 }
 
 

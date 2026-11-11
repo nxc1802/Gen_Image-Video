@@ -40,7 +40,7 @@ status: full
 coverage_percent: 100.0
 missing_capabilities: []
 validation_status: pending_live
-validation_notes: "Pre-flight contract simulation passed for all 5 gates (multimodal chat and grounding contract verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per BENCHMARK.md."
+validation_notes: "Pre-flight contract simulation passed for all 5 gates (multimodal chat and grounding contract verified). Declared foundation checkpoint Qwen/Qwen2-VL-7B-Instruct-AWQ is pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per BENCHMARK.md. Note: Experimental Shard 1 run evaluated Qwen3.8-27B with mmproj GGUF, not this declared AWQ checkpoint."
 
 limits:
   max_context_tokens: 16384
@@ -70,14 +70,14 @@ validated_hardware_profiles:
 installed: true
 checkpoint_valid: true
 backend_ready: true
-evidence_run_id: "factory-v4-lite-visual-pipeline-20261104"
+evidence_run_id: null
 
 capabilities_truth:
   image_chat:
     declared: true
     implemented: true
-    live_verified: true
-    evidence_run_id: "factory-v4-lite-visual-pipeline-20261104"
+    live_verified: false
+    evidence_run_id: null
   responses_api:
     declared: true
     implemented: true

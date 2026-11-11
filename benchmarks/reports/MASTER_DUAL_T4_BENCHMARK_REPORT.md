@@ -47,12 +47,12 @@ Factory v4 Lite declares **12 distinct models** in `manifests/models/*.yaml`. Be
 |---|---|---|---|:---:|:---:|---|
 | 1 | **`qwen-text`** | `chat_completion` | `Qwen3.8-27B-UD-Q4_K_M.gguf` (17.67 GB) | **Dual GPU (0+1)** | **L4 (Native Model Pass)** | Executed via native `llama-server b4600` on Dual T4 (VRAM: GPU0 11.3 GB, GPU1 12.0 GB). MTP draft acceptance 53.9%, decode 6.64 t/s, TTFT 356.51ms. Lifecycle contract passed in `test_golden_path_real_e2e.py`. |
 | 2 | **`qwen-decision`** | `predicate_evaluation`, `choice_routing` | GGUF / vLLM Decision Adapter | **GPU 0** | **FACTORY_LIFECYCLE_CONTRACT_PASS** | In-memory lifecycle contract verified (submit $\to$ lease $\to$ evaluate $\to$ complete $\to$ retrieve) in 12.4ms. Native on-GPU vLLM decision backend pending live deployment. |
-| 3 | **`qwen-vlm`** | `visual_language` | `Qwen3.8-27B` + `mmproj-Qwen3.8-27B-Q8_0.gguf` | **Dual GPU (0+1)** | **L4 (Native Model Pass)** | Executed via native `llama-server` with multimodal projector loaded across Dual T4 (18.1 GB VRAM aggregate). Generated prompt verified in `visual_outputs/qwen38_generated_prompt.txt`. |
+| 3 | **`qwen-vlm`** | `visual_language` | `Qwen/Qwen2-VL-7B-Instruct-AWQ` | **Dual GPU (0+1)** | **L0 (Declared / Pending Live)** | **MANIFEST CHECKPOINT PENDING LIVE.** The manifest declared checkpoint (`Qwen2-VL-7B-Instruct-AWQ`) has not been executed on T4. Shard 1 experimentally verified the multimodal projector with Qwen3.8-27B GGUF (`visual_outputs/qwen38_generated_prompt.txt`), demonstrating VLM feasibility on the text backbone, but not certifying the declared AWQ manifest checkpoint. |
 | 4 | **`qwen-image-2.1`** (Standard)| `text_to_image` | `qwen-image-2.1-Q4_K_M.gguf` (Standard 50 steps) | **GPU 0** | **L0 (Declared / Uncertified)** | **NOT CERTIFIED.** Standard 50-step full diffusion has NOT been executed on T4. Only the 8-step Turbo variant has been certified. |
 | 5 | **`qwen-image-2.1-turbo`**| `text_to_image_turbo`| `qwen-image-2.1-turbo-Q4_K_M.gguf` (3.91 GB) | **GPU 0** | **L4 (Native Model Pass)** | Executed via native ComfyUI + ComfyUI-GGUF on GPU 0. Generated 960×640 master image (`studio_qwen_image_master.png`, 1,103,746 bytes) in 168.3s (peak VRAM 13,053 MB, 21.05 s/step). |
 | 6 | **`wan-2.2`** | `text_to_video` | `Wan2.2-TI2V-5B-Q4_K_M.gguf` (4.5 GB) | **GPU 1** | **L0 (Declared / Uncertified)** | **NOT CERTIFIED.** Checkpoint mounted on Kaggle; scheduled for Shard 3 video session. |
-| 7 | **`minimax-h3`** | `first_last_frame_to_video` | `minimax_h3_fl2va_pruned_int8_convrot.safetensors` | **GPU 0** | **L4 (Native Model Pass)** | Executed via native ComfyUI + MiniMax Turbo LoRA (8 steps). Generated 25-frame 24fps 768×448 video (`studio_minimax_h3_dragon_video.mp4`, 762,808 bytes) from master image. Peak VRAM 14,319 MB. |
-| 8 | **`qwen-speech`** | `text_to_speech` | `Qwen3-TTS-12Hz-1.7B-Base` & `XTTS-v2-Vietnamese` | **GPU 0** | **L4 (Native Model Pass)** | Executed on-device GPU inference: `Qwen3-TTS-12Hz-1.7B-Base` (8.5s English WAV, 408 KB, peak VRAM 4,369 MB, RTF 0.875) and `XTTS-v2-Vietnamese` (7.8s Vietnamese WAV, 374 KB, peak VRAM 4,089 MB, RTF 0.033). |
+| 7 | **`minimax-h3`** | `first_last_frame_to_video` | `minimax_h3_fl2va_pruned_int8_convrot.safetensors` | **GPU 0** | **L4 (Native Model Pass)** | Executed via native ComfyUI loading `minimax_h3_fl2va_pruned_int8_convrot.safetensors` with Turbo LoRA (8 steps). Generated 25-frame 24fps 768×448 video (`studio_minimax_h3_dragon_video.mp4`, 762,808 bytes) from master image. Peak VRAM 14,319 MB. Other video tasks (text_to_video, video_with_audio) remain pending live. |
+| 8 | **`qwen-speech`** | `text_to_speech`, `voice_cloning` | `Qwen3-TTS-12Hz-1.7B-Base` & `XTTS-v2-Vietnamese` | **GPU 0** | **L4 (Partial - TTS & Cloning Only)** | Executed on-device GPU inference: `Qwen3-TTS-12Hz-1.7B-Base` (8.5s English WAV, 408 KB, peak VRAM 4,369 MB, RTF 0.875) and `XTTS-v2-Vietnamese` (7.8s Vietnamese WAV, 374 KB, peak VRAM 4,089 MB, RTF 0.033). **Speech-to-Text (ASR) is NOT certified (pending live).** |
 | 9 | **`ace-step-1.5`** | `text_to_music` | DiT Audio Latent (3.2 GB) | **GPU 1** | **L2 (Synthetic Tensor Pass)** | **NOT CERTIFIED.** Basic audio latent projections validated; native DiT diffusion pipeline scheduled for Shard 2b music session. |
 | 10 | **`yue2`** | `vocal_full_song` | Quantized GGUF `q8_0` (12.1 GB) | **GPU 1** | **L0 (Declared / Uncertified)** | **NOT CERTIFIED.** Manifest declared, tokenizer validated; scheduled for Shard 2b vocal generation session. |
 | 11 | **`enhancement-suite-v1`** | `super_resolution_4x` | Real-ESRGAN / RIFE (1.8 GB) | **GPU 1** | **L2 (Synthetic Tensor Pass)** | **NOT CERTIFIED.** Upscaling & frame interpolation kernels validated; scheduled for Shard 3 video post-processing. |
@@ -237,22 +237,22 @@ All downloaded artifacts are cryptographically verified:
 
 | Issue ID | Severity | Description | Status | Evidence & Resolution |
 |---|:---:|---|:---:|---|
-| **P0-01** | **Critical** | Real GPU inference & Factory E2E flow | **ADVANCED** | **FACTORY_LIFECYCLE_CONTRACT_PASS** verified via `test_golden_path_real_e2e.py`. `live_factory_e2e_runner.py` deployed for on-GPU E2E execution. |
+| **P0-01** | **Critical** | Real GPU inference & Factory E2E flow | **OPEN** | **FACTORY_LIFECYCLE_CONTRACT_PASS** verified via `test_golden_path_real_e2e.py`. Authoritative `live_factory_e2e_runner.py` deployed with zero fallback and real HTTP/worker dispatch, pending live execution on remote Kaggle GPU to close. |
 | **P0-02** | **Critical** | Kaggle Dual-T4 disk & VRAM budget | **ADVANCED** | Shards 1 & 2 completed within disk budget. Shards 2b & 3 ready for execution. |
-| **P0-03** | **Critical** | Capability truth & variant decoupling | **CLOSED** | Full hierarchy enforced. `qwen-image-2.1-turbo` certified; standard 50-step and unexecuted models remain uncertified. |
-| **P0-04** | **Critical** | Evidence integrity & anti-conflation | **CLOSED** | Physical NVML queries, native engine logs, and cryptographic SHA-256 hashes recorded for all verified models. |
-| **P1** | **High** | Software regression safety | **CLOSED** | **985/985 automated tests pass (100% green)**. |
+| **P0-03** | **Critical** | Capability truth & variant decoupling | **CLOSED** | Full hierarchy enforced. `qwen-image-2.1-turbo` certified; standard 50-step and unexecuted models remain uncertified. Exact checkpoints synchronized in manifests. |
+| **P0-04** | **Critical** | Evidence integrity & anti-conflation | **OPEN** | Zero fallback policy enforced: fake PNG generation and synthetic 451.2 MB telemetry removed. Fail-closed runner deployed; pending final on-GPU execution report. |
+| **P1** | **High** | Software regression safety | **CLOSED** | **992/992 automated tests pass (100% green)**. |
 | **P2** | **Medium** | Security, auth & zero trace leak | **CLOSED** | Strict worker lease tokens, role verification, error envelope sanitization, and 100% relative links. |
-| **P3** | **Low** | Documentation & cleanup hygiene | **CLOSED** | No local `file:///` URLs, scratch disk auto-purging verified. |
+| **P3** | **Low** | Documentation & cleanup hygiene | **CLOSED** | No local `file:///` URLs, scratch disk auto-purging strictly asserted. |
 
 ---
 
 ## 10. Conclusion & Final Declaration
 
 - **Physical Hardware Attestation (L1):** **VERIFIED** — Dual Tesla T4 GPUs (`580.178.04`, CUDA `13.0`, 2 × 15,360 MB VRAM).
-- **Native Foundation Model Inference (L4):** **VERIFIED** for `qwen-text`, `qwen-vlm`, `qwen-image-2.1-turbo`, `minimax-h3`, and `qwen-speech`.
+- **Native Foundation Model Inference (L4):** **VERIFIED** for `qwen-text`, `qwen-image-2.1-turbo`, `minimax-h3` (FL2VA), and `qwen-speech` (TTS/Cloning). `qwen-vlm` declared AWQ checkpoint, `wan-2.2`, `ace-step-1.5`, `yue2`, `enhancement-suite-v1`, and `qwen-image-2.1 (standard)` remain pending live execution.
 - **Factory Lifecycle Contract:** **VERIFIED** across Visual, Decision, Text, and Embedding pipelines (`test_golden_path_real_e2e.py`).
-- **Live Factory E2E Runner:** **DEPLOYED** (`deployments/kaggle/live_factory_e2e_runner.py`).
-- **Unexecuted Models:** `wan-2.2`, `ace-step-1.5`, `yue2`, `enhancement-suite-v1`, and `qwen-image-2.1 (standard)` remain truthfully cataloged as pending live execution.
+- **Live Factory E2E Runner (L5):** **DEPLOYED & HARDENED** (`deployments/kaggle/live_factory_e2e_runner.py`) with zero fallback, real HTTP networking, and fail-closed NVML telemetry.
+- **Unexecuted Models & Shards:** Truthfully cataloged as pending live execution.
 
-**Verdict: NATIVE SHARDS 1 & 2 CERTIFIED — FACTORY LIFECYCLE CONTRACT VERIFIED — REMAINING SHARDS PENDING.**
+**Verdict: NATIVE SHARDS 1 & 2 CERTIFIED — FACTORY LIFECYCLE CONTRACT VERIFIED — LIVE E2E RUNNER DEPLOYED (FAIL-CLOSED) — P0-01/P0-04 REMAIN TRANSPARENTLY OPEN PENDING ON-GPU L5 EXECUTION.**
