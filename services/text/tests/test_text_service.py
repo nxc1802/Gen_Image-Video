@@ -13,6 +13,10 @@ AUTH_HEADERS = {"Authorization": f"Bearer {AUTH_TOKEN}", "Content-Type": "applic
 
 @pytest.fixture
 def text_client():
+    from services.text.src.legacy_engine import LegacyTextEngine
+    from services.text.src.legacy_responses_handler import LegacyResponsesHandler
+    app.state.engine = LegacyTextEngine()
+    app.state.responses_handler = LegacyResponsesHandler()
     app.state.auth_config = AuthConfig(api_key=AUTH_TOKEN, jwt_secret=None, environment="test")
     return TestClient(app)
 
@@ -45,7 +49,7 @@ def test_text_chat_completions_standard(text_client):
 
 def test_text_chat_completions_streaming(text_client):
     from services.text.src.models import ChatCompletionRequest, ChatMessage
-    from services.text.src.engine import TextEngine
+    from services.text.src.legacy_engine import LegacyTextEngine as TextEngine
     engine = TextEngine()
     req = ChatCompletionRequest(
         model="qwen-2.5-72b-instruct",
@@ -100,14 +104,14 @@ def test_text_context_overflow_rejected(text_client):
 
 def test_text_chat_completions_configured_proxy(text_client):
     from unittest.mock import patch, MagicMock
-    from services.text.src.engine import TextEngine
+    from services.text.src.legacy_engine import LegacyTextEngine as TextEngine
     mock_resp = {
         "id": "cmpl-1",
         "object": "chat.completion",
         "choices": [{"index": 0, "message": {"role": "assistant", "content": "Factory v4 is fully decoupled."}, "finish_reason": "stop"}],
         "usage": {"total_tokens": 15},
     }
-    with patch("services.text.src.engine.httpx.Client") as mock_client_cls:
+    with patch("services.text.src.legacy_engine.httpx.Client") as mock_client_cls:
         mock_instance = MagicMock()
         mock_instance.__enter__.return_value = mock_instance
         mock_instance.post.return_value = MagicMock(status_code=200, json=lambda: mock_resp)
@@ -118,3 +122,5 @@ def test_text_chat_completions_configured_proxy(text_client):
         res = text_client.post("/v1/chat/completions", headers=AUTH_HEADERS, json=payload)
         assert res.status_code == 200
         assert res.json()["choices"][0]["message"]["content"] == "Factory v4 is fully decoupled."
+
+pytestmark = pytest.mark.contract_mock

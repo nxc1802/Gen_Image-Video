@@ -73,6 +73,8 @@ class RequestTimeoutMiddleware(BaseHTTPMiddleware):
                 content={
                     "error": {
                         "code": "GATEWAY_TIMEOUT",
+                            "type": "server_error",
+                            "param": None,
                         "message": f"Request execution exceeded timeout limit of {self.timeout_seconds}s.",
                         "request_id": req_id,
                         "details": {"timeout_seconds": self.timeout_seconds},

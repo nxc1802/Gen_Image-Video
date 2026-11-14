@@ -1,0 +1,41 @@
+{
+  "kind": "minimax_native_canvas_diag",
+  "version": 3,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-native-canvas-diag",
+  "run_record_sha256": "528e052fa4dfff577de79bb32196d822f8a955db01022f1aa746763c775e4231",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_native_canvas_diag_v3/installation.log",
+      "sha256": "d9c61a8853260015bcef5456ceef3bf81c80427343d270de823593d370bb632d"
+    },
+    {
+      "file": "validation/native_minimax_native_canvas_diag_v3/backend_fp16.log",
+      "sha256": "eec2208527d15f8f06a71f173040d7a8619f27bd31e250b490a2e1f6ccec0e1e"
+    },
+    {
+      "file": "validation/native_minimax_native_canvas_diag_v3/driver.log",
+      "sha256": "d6eb1fbcc0ba4ffbf6a0f86af049737efbf06fe7cbe753aa7fe50eca5c211a75"
+    },
+    {
+      "file": "validation/native_minimax_native_canvas_diag_v3/wave_d.json",
+      "sha256": "498562b8db8e32c99be9dcc99e39851ab1c5724d5badedce504a51cf405b39aa"
+    },
+    {
+      "file": "validation/native_minimax_native_canvas_diag_v3/runtime_packages.json",
+      "sha256": "6310d41c63fb44e6cc5f84d00219b1f3310fd25dac94973bd352c23e7968eb88"
+    },
+    {
+      "file": "validation/native_minimax_native_canvas_diag_v3/manifest_fp16.yaml",
+      "sha256": "5cce470f04055ee0dc41730fe92dcf3cb1da75c6f9ca65b63ed1530ec9c3dfc2"
+    },
+    {
+      "file": "validation/native_minimax_native_canvas_diag_v3/setup.json",
+      "sha256": "ccc480a76d9debfb55e3c9f998c5e59a56ac76e5fe8bc762a4177bb07a6513fc"
+    }
+  ]
+}

@@ -3,6 +3,7 @@ workflows/video/parameter_mappings.py
 Translates FactoryJob input parameters into ComfyUI node inputs for Wan2.2 and MiniMax H3 workflows.
 """
 import random
+from factory_contracts.capabilities import require_canonical
 from typing import Any, Dict, Optional
 
 
@@ -18,6 +19,7 @@ class VideoParameterMapper:
         inputs: Dict[str, Any],
         staged_files: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
+        require_canonical(task, engine="video")
         staged = staged_files or {}
 
         prompt = inputs.get("prompt", "")
@@ -97,12 +99,12 @@ class VideoParameterMapper:
                 if "14" in workflow and "audio" in workflow["14"]["inputs"]:
                     del workflow["14"]["inputs"]["audio"]
 
-            if task in ("image_to_video", "i2v", "video_with_audio"):
+            if task in ("video.image_to_video", "video.image_to_video", "video.video_with_audio"):
                 img_val = staged.get("image_url") or staged.get("image") or inputs.get("image_filename") or inputs.get("image_url")
                 if img_val and "8" in workflow:
                     workflow["8"]["inputs"]["image"] = img_val
 
-            if task in ("first_last_frame_to_video", "fl2v"):
+            if task in ("video.first_last_frame_to_video",):
                 start_val = staged.get("first_frame_url") or inputs.get("first_frame_filename") or inputs.get("first_frame_url", "start.png")
                 end_val = staged.get("last_frame_url") or inputs.get("last_frame_filename") or inputs.get("last_frame_url", "end.png")
                 if "8_start" in workflow:
@@ -111,7 +113,7 @@ class VideoParameterMapper:
                     workflow["8_end"]["inputs"]["image"] = end_val
 
             # FIX-12: Bind actual reference into MiniMax H3 8_ref node for Ref2VA
-            if task in ("reference_conditioning", "reference", "ref2va", "video.ref2va") or "8_ref" in workflow:
+            if task == "video.reference_conditioning" or "8_ref" in workflow:
                 ref_val = (
                     staged.get("reference_image_url")
                     or staged.get("reference_image")
@@ -127,12 +129,12 @@ class VideoParameterMapper:
 
         else:
             # Wan2.2
-            if task in ("image_to_video", "i2v"):
+            if task in ("video.image_to_video",):
                 img_val = staged.get("image_url") or staged.get("image") or inputs.get("image_filename") or inputs.get("image_url", "start.png")
                 if "9" in workflow and workflow["9"]["class_type"] == "LoadImage":
                     workflow["9"]["inputs"]["image"] = img_val
 
-            elif task in ("first_last_frame_to_video", "fl2v"):
+            elif task in ("video.first_last_frame_to_video",):
                 start_val = staged.get("first_frame_url") or inputs.get("first_frame_filename") or inputs.get("first_frame_url", "start.png")
                 end_val = staged.get("last_frame_url") or inputs.get("last_frame_filename") or inputs.get("last_frame_url", "end.png")
                 if "9_start" in workflow:
@@ -140,7 +142,7 @@ class VideoParameterMapper:
                 if "9_end" in workflow:
                     workflow["9_end"]["inputs"]["image"] = end_val
 
-            elif task in ("video_extension", "extension"):
+            elif task in ("video.video_extension",):
                 anchor_val = staged.get("anchor_image") or staged.get("video_url") or inputs.get("anchor_filename") or "anchor.png"
                 if "anchor_img" in workflow:
                     workflow["anchor_img"]["inputs"]["image"] = anchor_val

@@ -1,99 +1,64 @@
-apiVersion: factory.ai/v1
+apiVersion: factory.ai/v2
 kind: ModelManifest
 metadata:
   id: qwen-text
   family: qwen-text
-  display_name: "Qwen 2.5 Text LLM"
+  display_name: Qwen3.8 27B GGUF Q4_K_M
   service_id: text-service
-  version: "2.5.0"
-  license: "Tongyi Qianwen License"
-  license_url: "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct/blob/main/LICENSE"
+  version: 3.8.0
+  license: apache-2.0
+  license_url: https://huggingface.co/unsloth/Qwen3.8-27B-GGUF/blob/ce331efc48d5722b4b8041f72793e530eae18d9b/README.md
   commercial_use: true
-
+aliases:
+- qwen_text
+engine: responses
 weights:
-  primary_checkpoint: "unsloth/Qwen3.8-27B-GGUF/Qwen3.8-27B-UD-Q4_K_M.gguf"
-  repository: "unsloth/Qwen3.8-27B-GGUF"
-  checkpoint_revision: "c4e519289299478f79fba50d757d54b4f5358043"
-  weights_file: "Qwen3.8-27B-UD-Q4_K_M.gguf"
+  files:
+    primary:
+      provider: huggingface
+      repository: unsloth/Qwen3.8-27B-GGUF
+      revision: ce331efc48d5722b4b8041f72793e530eae18d9b
+      path: Qwen3.8-27B-UD-Q4_K_M.gguf
+      sha256: 1bce504dfecd84153666928a41d8a66706f0158d3a317bc5196b72819d7dc529
+      size_bytes: 16564259744
+      destination: model/Qwen3.8-27B-UD-Q4_K_M.gguf
   format: gguf
   quantization: q4_k_m
-  default_precision: bf16
-
-hardware:
-  min_vram_gb: 11.0
-  context_window: 32768
-  preferred_gpu: t4
-  preferred_gpu_index: 0
-  quantization_format: q4_k_m
-  offload_ram_gb: 0.0
-  allocation_policy: dual_gpu_split
-
-
+  default_precision: fp16
+backend:
+  adapter: qwen_text
+  supported:
+  - llama_cpp
 capabilities:
-  chat_completion: true
-  responses_api: true
-  structured_output: true
-  tool_calling: true
-  streaming: true
-
-status: full
-coverage_percent: 100.0
-missing_capabilities: []
-validation_status: pending_live
-validation_notes: "Pre-flight contract simulation passed for all 5 gates. Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per BENCHMARK.md."
-
-limits:
-  max_context_tokens: 32768
-
-revision: "2.5.0"
-dependencies:
-  - "vllm>=0.6.0"
-  - "torch>=2.4.0"
-
-task_variant_matrix:
-  chat_completion:
-    - standard
-  responses_api:
-    - standard
-  structured_output:
-    - standard
-  tool_calling:
-    - standard
-  streaming:
-    - standard
-
-validated_hardware_profiles:
-  - "kaggle-dual-t4"
-  - "colab-single-t4"
-
-installed: true
-checkpoint_valid: true
-backend_ready: true
-evidence_run_id: "factory-v4-lite-visual-pipeline-20261104"
-
-capabilities_truth:
-  chat_completion:
-    declared: true
-    implemented: true
-    live_verified: true
-    evidence_run_id: "factory-v4-lite-visual-pipeline-20261104"
-  responses_api:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  structured_output:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  tool_calling:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  streaming:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
+  responses.chat_completion: true
+  responses.create: true
+  responses.structured_output: true
+  responses.tool_calling: true
+  responses.streaming: true
+parameters:
+  max_context_tokens:
+    type: integer
+    default: 32768
+  max_output_tokens:
+    type: integer
+    default: 4096
+runtime_profiles:
+  kaggle-dual-t4:
+    gpu_count: 2
+    min_vram_gb: 11.0
+    preferred_backend: llama_cpp
+    exclusive: true
+    cpu_offload: false
+    notes: Declared preflight requirements; not hardware certification. CLI assigns
+      devices explicitly. Runtime load and semantic validation remain required.
+validation:
+  state: EXPERIMENTAL
+  reasons:
+  - Checkpoint identity is pinned; real backend/GPU inference and V3/V4/semantic certification
+    remain unverified.
+  implemented_capabilities:
+  - responses.chat_completion
+  - responses.create
+  - responses.structured_output
+  - responses.tool_calling
+  - responses.streaming

@@ -1,0 +1,2911 @@
+{
+  "classification": "REAL_ONE_CALL_NATIVE_768P_CANVAS_GPU_DIAGNOSIS_NOT_V3",
+  "status": "NOT_MET",
+  "production_ready": false,
+  "v3_certified": false,
+  "full_factory_e2e_executed": false,
+  "fallback": false,
+  "stages": [
+    {
+      "vae_precision": "fp16",
+      "gpu_samples": [
+        {
+          "monotonic_ns": 813856714749,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 31343345664,
+            "memory.current": "30372511744",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 814358972716,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 31268737024,
+            "memory.current": "30468521984",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 814860940992,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 31001120768,
+            "memory.current": "30586986496",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 815363441969,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 30978891776,
+            "memory.current": "30662307840",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 815864729529,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 30992052224,
+            "memory.current": "30939873280",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 816366101084,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 31001395200,
+            "memory.current": "31129993216",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 816867115250,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 30882443264,
+            "memory.current": "31131406336",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 817368380840,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 30755975168,
+            "memory.current": "31148048384",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 817870132204,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 30643924992,
+            "memory.current": "31132004352",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 818371124559,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 30516219904,
+            "memory.current": "31130329088",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 818872109381,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 30386561024,
+            "memory.current": "31150170112",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 819373107952,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 30257299456,
+            "memory.current": "31151349760",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 819874659342,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 30133858304,
+            "memory.current": "31183233024",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 820375976895,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 30016671744,
+            "memory.current": "31172497408",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 820877097653,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 29897273344,
+            "memory.current": "31177924608",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 821378414205,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 102.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 29752639488,
+            "memory.current": "31145521152",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 821879469144,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 906.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28864000000,
+            "memory.current": "31148077056",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 822380868052,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 906.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28873773056,
+            "memory.current": "31152451584",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 822882173228,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 906.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28872454144,
+            "memory.current": "31135772672",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 823383166532,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 906.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28874616832,
+            "memory.current": "31154966528",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 823887495637,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 906.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28882108416,
+            "memory.current": "31118942208",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 824389577410,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 906.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28851892224,
+            "memory.current": "31112654848",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 824890871395,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 906.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28736438272,
+            "memory.current": "31104057344",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 825392097133,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 906.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28571066368,
+            "memory.current": "31121473536",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 825893218623,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 906.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28449402880,
+            "memory.current": "31149957120",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 826394463309,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1238.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28279836672,
+            "memory.current": "31085174784",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 826895850583,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1238.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28167860224,
+            "memory.current": "31097577472",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 827397130434,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1238.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28002983936,
+            "memory.current": "31048892416",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 827898119513,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1238.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 27903172608,
+            "memory.current": "31116021760",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 828399464745,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1302.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 27762458624,
+            "memory.current": "31105822720",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 828900099096,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1302.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 27605991424,
+            "memory.current": "31084281856",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 829401131739,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1302.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 27497058304,
+            "memory.current": "31083511808",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 829902119269,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1302.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 27252199424,
+            "memory.current": "31110316032",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 830403752076,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1974.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 27100803072,
+            "memory.current": "31108194304",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 830904982904,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1974.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 26900455424,
+            "memory.current": "31103021056",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 831410120237,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1974.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 26772226048,
+            "memory.current": "31046676480",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 831911737347,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1974.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 26606866432,
+            "memory.current": "31100895232",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 832413235271,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 1974.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 26477936640,
+            "memory.current": "31109861376",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 832915184337,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 2678.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 26190618624,
+            "memory.current": "31081623552",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 833416767339,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 2678.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 25985642496,
+            "memory.current": "31070916608",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 833918048181,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 2678.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 25772548096,
+            "memory.current": "31072768000",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 834419693296,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 2678.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 25631088640,
+            "memory.current": "31095291904",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 834922384334,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 3574.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 25423327232,
+            "memory.current": "31061442560",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 835424524169,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 3574.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 25223925760,
+            "memory.current": "31078326272",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 835925997377,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 3574.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 25071472640,
+            "memory.current": "31059365888",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 836427419659,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 3574.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 24872009728,
+            "memory.current": "31028428800",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 836930598770,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 4246.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 24735424512,
+            "memory.current": "31029252096",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 837432264681,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 4246.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 24536530944,
+            "memory.current": "31073476608",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 837933863932,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 4246.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 24391196672,
+            "memory.current": "31018389504",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 838435125848,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 4246.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 24233222144,
+            "memory.current": "31066324992",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 838936540264,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 4246.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 24069951488,
+            "memory.current": "31047954432",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 839439141223,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 4886.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 23960281088,
+            "memory.current": "31077871616",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 839940339414,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 4886.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 23835840512,
+            "memory.current": "31038320640",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 840441545749,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 4886.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 23673741312,
+            "memory.current": "31028338688",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 840942762712,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 4886.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 23542153216,
+            "memory.current": "31044427776",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 841443910425,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 5494.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 23361220608,
+            "memory.current": "31025512448",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 841945090334,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 5494.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 23168663552,
+            "memory.current": "30999158784",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 842446110941,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 5494.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 23077588992,
+            "memory.current": "30993809408",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 842947318373,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 5494.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 22892748800,
+            "memory.current": "30992166912",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 843448636338,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6070.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 22794137600,
+            "memory.current": "31009284096",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 843949883972,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6070.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 22612107264,
+            "memory.current": "30994788352",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 844451121643,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6070.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 22525358080,
+            "memory.current": "30958784512",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 844952329972,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6070.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 22334423040,
+            "memory.current": "31000481792",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 845456900739,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6614.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 22209200128,
+            "memory.current": "30971457536",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 845958161477,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6614.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 22072938496,
+            "memory.current": "31007133696",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 846459154520,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6614.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 21931655168,
+            "memory.current": "30990663680",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 846960107758,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6614.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 21789937664,
+            "memory.current": "30994882560",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 847461374814,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6614.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 21635653632,
+            "memory.current": "31005278208",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 847963112995,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 7254.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 21500370944,
+            "memory.current": "30985158656",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 848464108167,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 7254.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 21288443904,
+            "memory.current": "31003742208",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 848965124323,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 7254.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 21169958912,
+            "memory.current": "31012405248",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 849468087005,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 7254.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 21037789184,
+            "memory.current": "31026597888",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 849970129600,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 7766.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 20860104704,
+            "memory.current": "31010979840",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 850471561728,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 7766.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 20736360448,
+            "memory.current": "31013224448",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 850973091772,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 7766.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 20581568512,
+            "memory.current": "30994255872",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 851474599408,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 7766.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 20451094528,
+            "memory.current": "31000190976",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 851976117896,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 8374.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 20309413888,
+            "memory.current": "31004540928",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 852477976031,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 8374.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 20027076608,
+            "memory.current": "31003062272",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 852979515572,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 8374.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 19813634048,
+            "memory.current": "30989230080",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 853480784912,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 8374.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 19602669568,
+            "memory.current": "30975684608",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 853982149700,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 9334.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 19327873024,
+            "memory.current": "30979268608",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 854483308653,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 9334.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 19182952448,
+            "memory.current": "30990876672",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 854984674301,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 9334.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 18331828224,
+            "memory.current": "30952800256",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 855485922220,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 9334.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 18331734016,
+            "memory.current": "30952800256",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 855987395503,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 9334.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 17462767616,
+            "memory.current": "30962556928",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 856488895265,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 17181741056,
+            "memory.current": "30909206528",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 856990494021,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 17008472064,
+            "memory.current": "30947495936",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 857491975285,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 16901410816,
+            "memory.current": "30942257152",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 857993277323,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 16744673280,
+            "memory.current": "30941491200",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 858495077759,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 16615067648,
+            "memory.current": "30978355200",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 858996207743,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 16489562112,
+            "memory.current": "30906245120",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 859497157002,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 16353726464,
+            "memory.current": "30881144832",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 859998694894,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 16221220864,
+            "memory.current": "30979223552",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 860500059067,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 15960469504,
+            "memory.current": "30969245696",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 861004143140,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 15874838528,
+            "memory.current": "31026122752",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 861507819499,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 15733579776,
+            "memory.current": "31011987456",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 862009116225,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 15579537408,
+            "memory.current": "30976692224",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 862510951904,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 15399477248,
+            "memory.current": "30926733312",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 863012913390,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 15285194752,
+            "memory.current": "31006732288",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 863514127552,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 15166980096,
+            "memory.current": "30961680384",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 864015291747,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 15029972992,
+            "memory.current": "31013441536",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 864516105310,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 14901166080,
+            "memory.current": "30990106624",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 865017708476,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 14733778944,
+            "memory.current": "31015223296",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 865519087705,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 14613831680,
+            "memory.current": "30995697664",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 866020128951,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 14467379200,
+            "memory.current": "31007784960",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 866521306314,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 14265434112,
+            "memory.current": "31026012160",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 867022202505,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 14149713920,
+            "memory.current": "30984609792",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 867524038900,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 14072332288,
+            "memory.current": "31014498304",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 868025142353,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 13915082752,
+            "memory.current": "31035240448",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 868526125455,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 13753626624,
+            "memory.current": "31065403392",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 869027294916,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 13621506048,
+            "memory.current": "31059185664",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 869528481601,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 13471199232,
+            "memory.current": "31043674112",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 870029758846,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 13367513088,
+            "memory.current": "31051120640",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 870531090350,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 13257326592,
+            "memory.current": "31039795200",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 871032480596,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10166.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 13043712000,
+            "memory.current": "31026712576",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 871533720275,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 8250.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 12856020992,
+            "memory.current": "31041097728",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 872037121965,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 8250.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 12755582976,
+            "memory.current": "31007617024",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 872538118508,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 8250.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 12755640320,
+            "memory.current": "31016259584",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 873039747602,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 8250.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 12559966208,
+            "memory.current": "31080546304",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 873541101650,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 12287795200,
+            "memory.current": "31048429568",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 874042127208,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 12017119232,
+            "memory.current": "31077883904",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 874543146210,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 11759304704,
+            "memory.current": "31052378112",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 875044125943,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 11504545792,
+            "memory.current": "31061815296",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 875545538238,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 11245256704,
+            "memory.current": "31059177472",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 876046807168,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 10983739392,
+            "memory.current": "31061950464",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 876548041905,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 10723618816,
+            "memory.current": "31075885056",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 877049813565,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 10464112640,
+            "memory.current": "31094878208",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 877554888497,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 10200268800,
+            "memory.current": "31108968448",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 878056815058,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 9939460096,
+            "memory.current": "31094865920",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 878559122048,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 9679360000,
+            "memory.current": "31120199680",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 879060152445,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 9469190144,
+            "memory.current": "31068733440",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 879562077832,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 6842.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 9161502720,
+            "memory.current": "31073038336",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 880063900619,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 3114.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 8514539520,
+            "memory.current": "31062519808",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 880565756597,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 3114.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 7731220480,
+            "memory.current": "31177453568",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 881067509815,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 3114.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 7438733312,
+            "memory.current": "30626373632",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 881569024459,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 3114.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6640074752,
+            "memory.current": "31091773440",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 882070969190,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 2650.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6597902336,
+            "memory.current": "31133167616",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 882572129053,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 2650.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 7068495872,
+            "memory.current": "30775513088",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 883073338254,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 2650.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6870585344,
+            "memory.current": "31102259200",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 883574157335,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 2650.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6833893376,
+            "memory.current": "31053729792",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 884075285246,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6757060608,
+            "memory.current": "31095934976",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 884576480581,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6717067264,
+            "memory.current": "31099232256",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 885077736562,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6722461696,
+            "memory.current": "31099232256",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 885579085790,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6724009984,
+            "memory.current": "31099232256",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 886080473764,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6729576448,
+            "memory.current": "31099232256",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 886581594608,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6729576448,
+            "memory.current": "31099232256",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 887082849543,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6734397440,
+            "memory.current": "31099232256",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 887584045113,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 6734397440,
+            "memory.current": "31099232256",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 888085355414,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 7103524864,
+            "memory.current": "30736912384",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 888586667822,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 11282055168,
+            "memory.current": "26537525248",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 889088065222,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 17764601856,
+            "memory.current": "20059435008",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 889589771855,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 21957746688,
+            "memory.current": "15975272448",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 890091553753,
+          "gpu_processes": [
+            {
+              "pid": 333,
+              "device": 0,
+              "used_memory_mb": 10194.0
+            }
+          ],
+          "memory": {
+            "host_available_bytes": 28212912128,
+            "memory.current": "9831677952",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        }
+      ],
+      "status": "NOT_MET",
+      "full_transformer_inference_executed": false,
+      "production_ready": false,
+      "diagnostic_manifest_sha256": "5cce470f04055ee0dc41730fe92dcf3cb1da75c6f9ca65b63ed1530ec9c3dfc2",
+      "checkpoint_files": [
+        {
+          "key": "primary",
+          "sha256": "e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a",
+          "matched": true
+        },
+        {
+          "key": "clip",
+          "sha256": "35a88d51044231fe332301d7a62aa81e3f2cba62febeb446e2c1e3e0ef76f2c6",
+          "matched": true
+        },
+        {
+          "key": "video_vae",
+          "sha256": "7c1f131492e7eddacaac9069a61b81bdd39de5cc96561e677c5eab1cdce5e522",
+          "matched": true
+        },
+        {
+          "key": "audio_vae",
+          "sha256": "8e505d95dd1561d47abd43d4238fd40d9bb1ae9e147ed0a4cba778d76ae4db48",
+          "matched": true
+        }
+      ],
+      "lifecycle_before": {
+        "healthy_backends": [
+          "minimax-h3"
+        ],
+        "failures": {},
+        "backends": {
+          "minimax-h3": {
+            "model": "minimax-h3",
+            "backend": "comfyui",
+            "adapter": "minimax",
+            "session_id": "e33aca1c-e42f-4830-8a49-72ceabb9ef07",
+            "checkpoint_graph_sha256": "a96a768a8a4fbca315ae4e96ae87edb362b5fee2b5dc5ca4ea7cc4829beca933",
+            "devices": [
+              0
+            ],
+            "state": "HEALTHY",
+            "pid": 333,
+            "pid_started_at": 1794662701.58,
+            "port": 18990,
+            "weights_verified": true,
+            "model_loaded": false,
+            "gpu_processes": [
+              {
+                "pid": 333,
+                "device": 0,
+                "used_memory_mb": 102.0
+              }
+            ],
+            "log_path": "/tmp/factory_phase8_a/runtime_fp16/e33aca1c-e42f-4830-8a49-72ceabb9ef07/minimax-h3/backend.log",
+            "executable": "/usr/bin/python3.13",
+            "source_revision": "c5751c81abe131202eea9e4c66d000589013dd0b",
+            "sdk_runtime": null,
+            "adapter_assets": {
+              "comfy_base/minimax_upstream_supported_models.py": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0",
+              "comfy_base/minimax_upstream_nodes.py": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35",
+              "comfy_base/minimax_upstream_nodes_minimax_h3.py": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498",
+              "comfy_base/custom_nodes/factory_minimax_loader/__init__.py": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530",
+              "comfy_base/custom_nodes/factory_vae_diagnostic/__init__.py": "b8ee4c4811dc1d2ee4bd146f6b5082f7dbedcc3179c5fbf177cb8f917f78eb2d"
+            },
+            "executable_sha256": "a35753ccb97941cce1467786cce892e608141f09d717188a3235d4f51a754446",
+            "backend_package_version": null,
+            "error": null,
+            "production_ready": false,
+            "inference_verified": false
+          }
+        },
+        "production_ready": false,
+        "native_inference_verified": false
+      },
+      "actual_owned_argv": [
+        "/tmp/factory_phase8_a/venv/bin/python",
+        "/tmp/factory_phase8_a/ComfyUI/main.py",
+        "--listen",
+        "127.0.0.1",
+        "--port",
+        "18990",
+        "--base-directory",
+        "/tmp/factory_phase8_a/runtime_fp16/e33aca1c-e42f-4830-8a49-72ceabb9ef07/minimax-h3/comfy_base",
+        "--extra-model-paths-config",
+        "/tmp/factory_phase8_a/runtime_fp16/e33aca1c-e42f-4830-8a49-72ceabb9ef07/minimax-h3/extra_model_paths.yaml",
+        "--disable-auto-launch",
+        "--reserve-vram",
+        "2.800",
+        "--vram-headroom",
+        "2.000",
+        "--fp16-vae"
+      ],
+      "actual_submitted_graph": {
+        "model": {
+          "class_type": "FactoryMiniMaxManifestLoader",
+          "inputs": {
+            "unet_name": "minimax_h3_fl2va_pruned_int8_convrot.safetensors"
+          }
+        },
+        "clip": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+            "type": "minimax",
+            "device": "default"
+          }
+        },
+        "vae": {
+          "class_type": "VAELoader",
+          "inputs": {
+            "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+          }
+        },
+        "condition": {
+          "class_type": "MiniMaxH3ImageToVideo",
+          "inputs": {
+            "clip": [
+              "clip",
+              0
+            ],
+            "vae": [
+              "vae",
+              0
+            ],
+            "prompt": "The astronaut in an orange spacesuit gently turns her head and smiles. Static camera, realistic live action video, natural subtle movement.",
+            "width": 1152,
+            "height": 768,
+            "length": 124,
+            "first_frame": [
+              "image",
+              0
+            ]
+          }
+        },
+        "negative": {
+          "class_type": "ConditioningZeroOut",
+          "inputs": {
+            "conditioning": [
+              "condition",
+              0
+            ]
+          }
+        },
+        "shift": {
+          "class_type": "MiniMaxH3SigmaShift",
+          "inputs": {
+            "model": [
+              "model",
+              0
+            ],
+            "shift_video": 12.0,
+            "shift_audio": 3.0
+          }
+        },
+        "sample": {
+          "class_type": "KSampler",
+          "inputs": {
+            "model": [
+              "shift",
+              0
+            ],
+            "positive": [
+              "condition",
+              0
+            ],
+            "negative": [
+              "negative",
+              0
+            ],
+            "latent_image": [
+              "condition",
+              1
+            ],
+            "seed": 314159,
+            "steps": 30,
+            "cfg": 1.0,
+            "sampler_name": "euler",
+            "scheduler": "simple",
+            "denoise": 1.0
+          }
+        },
+        "decode": {
+          "class_type": "VAEDecode",
+          "inputs": {
+            "samples": [
+              "capture",
+              0
+            ],
+            "vae": [
+              "vae",
+              0
+            ]
+          }
+        },
+        "video": {
+          "class_type": "CreateVideo",
+          "inputs": {
+            "images": [
+              "decode",
+              0
+            ],
+            "fps": 24.0
+          }
+        },
+        "save": {
+          "class_type": "SaveVideo",
+          "inputs": {
+            "video": [
+              "video",
+              0
+            ],
+            "filename_prefix": "factory",
+            "format": "mp4",
+            "codec": "h264"
+          }
+        },
+        "image": {
+          "class_type": "LoadImage",
+          "inputs": {
+            "image": "68a90d0fee2643ff96a537ba190ef222.png"
+          }
+        },
+        "capture": {
+          "class_type": "FactoryDiagnosticCaptureVideoLatent",
+          "inputs": {
+            "samples": [
+              "sample",
+              0
+            ],
+            "path": "/kaggle/working/native_wave_d/actual_sampled_video.safetensors"
+          }
+        }
+      },
+      "failure_observations": [
+        {
+          "monotonic_ns": 887971530880,
+          "backend_exit_code": null,
+          "memory": {
+            "host_available_bytes": 6738345984,
+            "memory.current": "31098961920",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 888472683030,
+          "backend_exit_code": null,
+          "memory": {
+            "host_available_bytes": 11191042048,
+            "memory.current": "26633195520",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 888974174333,
+          "backend_exit_code": null,
+          "memory": {
+            "host_available_bytes": 16261652480,
+            "memory.current": "21569478656",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 889475123162,
+          "backend_exit_code": null,
+          "memory": {
+            "host_available_bytes": 20537208832,
+            "memory.current": "17370980352",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 889976897034,
+          "backend_exit_code": null,
+          "memory": {
+            "host_available_bytes": 26755719168,
+            "memory.current": "11254693888",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        },
+        {
+          "monotonic_ns": 890477643396,
+          "backend_exit_code": -15,
+          "memory": {
+            "host_available_bytes": 32157237248,
+            "memory.current": "6026190848",
+            "memory.max": "32212254720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+          }
+        }
+      ],
+      "memory_before_shutdown": {
+        "host_available_bytes": 32157237248,
+        "memory.current": "6026190848",
+        "memory.max": "32212254720",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      },
+      "backend_exit_code_before_shutdown": -15,
+      "shutdown": {
+        "session_id": "e33aca1c-e42f-4830-8a49-72ceabb9ef07",
+        "config_sha256": "a757670d7a83880c63a19ee06b6596c270ce5aa66631f460f259600b2378d9b6",
+        "stopped_at_utc": "2026-11-14T13:26:41.776235+00:00",
+        "stop_completed": true,
+        "errors": [],
+        "backends": {
+          "minimax-h3": {
+            "model": "minimax-h3",
+            "backend": "comfyui",
+            "adapter": "minimax",
+            "session_id": "e33aca1c-e42f-4830-8a49-72ceabb9ef07",
+            "checkpoint_graph_sha256": "a96a768a8a4fbca315ae4e96ae87edb362b5fee2b5dc5ca4ea7cc4829beca933",
+            "devices": [
+              0
+            ],
+            "state": "STOPPED",
+            "pid": 333,
+            "pid_started_at": 1794662701.58,
+            "port": 18990,
+            "weights_verified": true,
+            "model_loaded": false,
+            "gpu_processes": [
+              {
+                "pid": 333,
+                "device": 0,
+                "used_memory_mb": 10194.0
+              }
+            ],
+            "log_path": "/tmp/factory_phase8_a/runtime_fp16/e33aca1c-e42f-4830-8a49-72ceabb9ef07/minimax-h3/backend.log",
+            "executable": "/usr/bin/python3.13",
+            "source_revision": "c5751c81abe131202eea9e4c66d000589013dd0b",
+            "sdk_runtime": null,
+            "adapter_assets": {
+              "comfy_base/minimax_upstream_supported_models.py": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0",
+              "comfy_base/minimax_upstream_nodes.py": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35",
+              "comfy_base/minimax_upstream_nodes_minimax_h3.py": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498",
+              "comfy_base/custom_nodes/factory_minimax_loader/__init__.py": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530",
+              "comfy_base/custom_nodes/factory_vae_diagnostic/__init__.py": "b8ee4c4811dc1d2ee4bd146f6b5082f7dbedcc3179c5fbf177cb8f917f78eb2d"
+            },
+            "executable_sha256": "a35753ccb97941cce1467786cce892e608141f09d717188a3235d4f51a754446",
+            "backend_package_version": null,
+            "error": "Current-session health/identity/GPU check failed",
+            "production_ready": false,
+            "inference_verified": false
+          }
+        },
+        "production_ready": false
+      }
+    }
+  ],
+  "canonical_manifest_changed": false,
+  "case_definition": {
+    "id": "minimax-i2v-native-768p-one-call-diagnosis",
+    "model": "minimax-h3",
+    "capability": "video.image_to_video",
+    "operation": "video",
+    "assets": [
+      "astronaut_first"
+    ],
+    "asset_identities": {
+      "astronaut_first": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+    },
+    "seed_sequence": [
+      314159,
+      271828,
+      161803,
+      141421
+    ],
+    "request": {
+      "prompt": "The astronaut in an orange spacesuit gently turns her head and smiles. Static camera, realistic live action video, natural subtle movement.",
+      "width": 1152,
+      "height": 768,
+      "num_frames": 124,
+      "steps": 30,
+      "fps": 24,
+      "image": "@astronaut_first"
+    },
+    "expected": {
+      "positive_text": "a video frame of an astronaut in an orange spacesuit",
+      "negative_texts": [
+        "a photograph of a blue car",
+        "a photograph of a black dog",
+        "a photograph of a green tree"
+      ],
+      "minimum_mean_text_cosine": 0.25,
+      "minimum_frame_text_cosine": 0.22,
+      "minimum_text_margin": 0.03,
+      "minimum_distinct_frames": 5,
+      "minimum_mean_frame_change": 0.002,
+      "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+      "keyframe_anchors": [
+        {
+          "frame_index": 0,
+          "asset": "astronaut_first",
+          "maximum_mean_absolute_error": 0.12
+        }
+      ]
+    }
+  },
+  "source_driver_sha256": "f45d5cbb6c69a8f0041d9e0595618e597614668f5b28d76aa78488f21a8b315b",
+  "diagnostic_runtime_policy": {
+    "inference_timeout_seconds": 5400,
+    "extra_vram_headroom_gb": 2.0,
+    "fixed_gpu": [
+      0
+    ],
+    "unchanged_gpu_budget_gib": 14.2
+  },
+  "hardware": {
+    "0": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    },
+    "1": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    }
+  },
+  "input_assets": {
+    "astronaut_first": {
+      "fixture_path": "tests/fixtures/native/astronaut_first.png",
+      "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+      "size_bytes": 170704,
+      "mime_type": "image/png",
+      "original_url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+      "original_sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+      "conversion": "Full original recorded astronaut photograph resized to 384x256; no generated pixels."
+    }
+  },
+  "error": {
+    "type": "ReadError",
+    "message": "[Errno 104] Connection reset by peer",
+    "traceback": "Traceback (most recent call last):\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_transports/default.py\", line 101, in map_httpcore_exceptions\n    yield\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_transports/default.py\", line 250, in handle_request\n    resp = self._pool.handle_request(req)\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py\", line 256, in handle_request\n    raise exc from None\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py\", line 236, in handle_request\n    response = connection.handle_request(\n        pool_request.request\n    )\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/connection.py\", line 103, in handle_request\n    return self._connection.handle_request(request)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/http11.py\", line 136, in handle_request\n    raise exc\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/http11.py\", line 106, in handle_request\n    ) = self._receive_response_headers(**kwargs)\n        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/http11.py\", line 177, in _receive_response_headers\n    event = self._receive_event(timeout=timeout)\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/http11.py\", line 217, in _receive_event\n    data = self._network_stream.read(\n        self.READ_NUM_BYTES, timeout=timeout\n    )\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_backends/sync.py\", line 126, in read\n    with map_exceptions(exc_map):\n         ~~~~~~~~~~~~~~^^^^^^^^^\n  File \"/usr/lib/python3.13/contextlib.py\", line 162, in __exit__\n    self.gen.throw(value)\n    ~~~~~~~~~~~~~~^^^^^^^\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_exceptions.py\", line 14, in map_exceptions\n    raise to_exc(exc) from exc\nhttpcore.ReadError: [Errno 104] Connection reset by peer\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/tmp/factory_phase8_a/benchmarks/native/minimax_vae_diagnostic.py\", line 190, in run\n    actual = await asyncio.to_thread(adapter.infer, context, prepared)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/asyncio/threads.py\", line 26, in to_thread\n    return await loop.run_in_executor(None, func_call)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/concurrent/futures/thread.py\", line 59, in run\n    result = self.fn(*self.args, **self.kwargs)\n  File \"/tmp/factory_phase8_a/factory/adapters/comfy.py\", line 85, in infer\n    response = client.get(\"/history/\" + prompt_id)\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 1053, in get\n    return self.request(\n           ~~~~~~~~~~~~^\n        \"GET\",\n        ^^^^^^\n    ...<7 lines>...\n        extensions=extensions,\n        ^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 825, in request\n    return self.send(request, auth=auth, follow_redirects=follow_redirects)\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 914, in send\n    response = self._send_handling_auth(\n        request,\n    ...<2 lines>...\n        history=[],\n    )\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 942, in _send_handling_auth\n    response = self._send_handling_redirects(\n        request,\n        follow_redirects=follow_redirects,\n        history=history,\n    )\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 979, in _send_handling_redirects\n    response = self._send_single_request(request)\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 1014, in _send_single_request\n    response = transport.handle_request(request)\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_transports/default.py\", line 249, in handle_request\n    with map_httpcore_exceptions():\n         ~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/usr/lib/python3.13/contextlib.py\", line 162, in __exit__\n    self.gen.throw(value)\n    ~~~~~~~~~~~~~~^^^^^^^\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_transports/default.py\", line 118, in map_httpcore_exceptions\n    raise mapped_exc(message) from exc\nhttpx.ReadError: [Errno 104] Connection reset by peer\n"
+  },
+  "models": [
+    {
+      "model": "minimax-h3",
+      "cases": [
+        {
+          "native_inference_executed": false,
+          "status": "DIAGNOSTIC_ONLY",
+          "runs": []
+        }
+      ]
+    }
+  ]
+}

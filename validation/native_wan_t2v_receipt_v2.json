@@ -1,0 +1,57 @@
+{
+  "kind": "wan_t2v",
+  "version": 2,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-wan-t2v",
+  "run_record_sha256": "189af37eb107bc47a65b167d94ab29a7f57d078562d19fbe3037e9b98e8078da",
+  "artifacts": [
+    {
+      "file": "validation/native_wan_t2v_v2/driver.log",
+      "sha256": "365b178215618a221458d7eb34fa1c86ec97ca091e0831771d0a6990a710cd90"
+    },
+    {
+      "file": "validation/native_wan_t2v_v2/setup.json",
+      "sha256": "4d77e3662276df56dcdc5006f2ac8ef833f2a043cfc54e90fb97ccc71e0534b4"
+    },
+    {
+      "file": "validation/native_wan_t2v_v2/wave_d.json",
+      "sha256": "0a460eb077b9b8fb186bac996acb802a88e38f25edb8c6f1f06e1485bb08c29b"
+    },
+    {
+      "file": "validation/native_wan_t2v_v2/runtime_packages.json",
+      "sha256": "79a84ef37147f6dbf61ecd554976a60fcfacd843750c040de4941e24e72edc2d"
+    },
+    {
+      "file": "validation/native_wan_t2v_v2/installation.log",
+      "sha256": "b8821bebcfbf2ffd41392c427a52f28e7203cd1bd4b98e4a592b0205d4233170"
+    },
+    {
+      "file": "validation/native_wan_t2v_v2/wan-2.2/wan-t2v-red-ball-motion-1.json",
+      "sha256": "0666c8a1f2996d154703083eb521b67a4540c0b323449b1f3d18eec029a6b7be"
+    },
+    {
+      "file": "validation/native_wan_t2v_v2/wan-2.2/observation.json",
+      "sha256": "7d52807bc0c3c33d0552c04cb16ea3ac19beae6b2124be3b0f03c2d1d64b5ddb"
+    },
+    {
+      "file": "validation/native_wan_t2v_v2/wan-2.2/backend.log",
+      "sha256": "e4c51547cb125a9de25e0c5c94d40675461af408965066e311ff4bf010008af2"
+    },
+    {
+      "file": "validation/native_wan_t2v_v2/wan-2.2/wan-t2v-red-ball-motion-3.json",
+      "sha256": "260cf1aed12804e3e86799da0e2b14bfd9de79d7762fff8990c15e086fc79cb8"
+    },
+    {
+      "file": "validation/native_wan_t2v_v2/wan-2.2/wan-t2v-red-ball-motion-2.json",
+      "sha256": "687cb4ab0eabe5cf8f4470482fda5eec6c662470168fffaaeb5b8b9136f00e51"
+    },
+    {
+      "file": "validation/native_wan_t2v_v2/wan-2.2/wan-t2v-red-ball-motion-0.json",
+      "sha256": "9f82bc5415324d65f7e433bf8cca584ee0eb457afd1ffc61a397c4ae6ce82af6"
+    }
+  ]
+}

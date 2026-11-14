@@ -1,0 +1,23 @@
+{
+  "observed_at_utc": "2026-11-13T12:05:14.678307+00:00",
+  "slug": "factory-phase-8-native-wan-t2v",
+  "response": {
+    "versionNumberNullable": 5,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-wan-t2v",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-wan-t2v",
+    "versionNumber": 5,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144757751
+  },
+  "kernel_code_sha256": "1e6016e284e48029f7195ff2a5c07347a9a6f06cfe72c3b445c2d32b1825be96",
+  "source_bundle_sha256": "8291f9aa8bb99043869cee21581123a0f66ff98f62054474345c8a76e43ffb69",
+  "validation_bundle_sha256": "f1280e88b7d8afa3654d2db2186584ae611c48fac1ecc497e261176d6205db88",
+  "accelerator": "NvidiaTeslaT4"
+}

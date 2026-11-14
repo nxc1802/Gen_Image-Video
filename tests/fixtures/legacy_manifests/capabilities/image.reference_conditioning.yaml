@@ -1,0 +1,45 @@
+apiVersion: factory.ai/v1
+kind: CapabilityManifest
+id: image.reference_conditioning
+subsystem: image
+display_name: "Reference Conditioning Image Generation"
+description: "Generates image conditioned on one or more reference images for style or character consistency"
+
+inputs:
+  - name: prompt
+    type: string
+    description: "Detailed description of desired visual content"
+    required: true
+  - name: reference_image_urls
+    type: array
+    description: "List of reference image URLs"
+    required: true
+  - name: mode
+    type: string
+    description: "Conditioning mode: character_consistency or style_transfer"
+    required: false
+    default: "character_consistency"
+  - name: fidelity
+    type: float
+    description: "Fidelity weighting for reference characteristics"
+    required: false
+    default: 0.85
+    constraints:
+      min_value: 0.1
+      max_value: 1.0
+  - name: seed
+    type: integer
+    description: "Deterministic random seed"
+    required: false
+
+outputs:
+  - name: image
+    type: image_url
+    format: "image/png"
+
+validation:
+  test_fixture: "fixtures/image_reference_conditioning.json"
+  verification_method: "schema_check"
+
+supported_model_families:
+  - qwen-image

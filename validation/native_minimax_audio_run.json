@@ -1,0 +1,25 @@
+{
+  "observed_at_utc": "2026-11-14T03:59:17.129682+00:00",
+  "slug": "factory-phase-8-native-minimax-audio",
+  "response": {
+    "versionNumberNullable": 2,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-minimax-audio",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-audio",
+    "versionNumber": 2,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144854632
+  },
+  "kernel_code_sha256": "e356f0bd747a8a8fd777046ff8424c47327ec3c73230ff20e4a86619d6ac29f8",
+  "source_bundle_sha256": "08eefd3477ebf7b31900855c881f291a355b74ecfc83d2ca47b21c8fedee574a",
+  "validation_bundle_sha256": "5349b46fb7e13d23c0b182b1d84e3a691ba75172951346f0a8803038d58c6638",
+  "accelerator": "NvidiaTeslaT4",
+  "driver_timeout_seconds": 7200,
+  "session_timeout_seconds": 10800
+}

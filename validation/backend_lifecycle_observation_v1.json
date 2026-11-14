@@ -1,0 +1,24 @@
+{
+  "classification": "REAL_BACKEND_LIFECYCLE_ONLY",
+  "source_bundle_sha256": "91ccabd2047539173dabbff0c95eaebfb1f63099e0cee9b33fcb967ecf05c688",
+  "phase4_exit_gate": "NOT_MET",
+  "native_inference_executed": false,
+  "semantic_validation_executed": false,
+  "full_factory_e2e_executed": false,
+  "production_ready": false,
+  "hardware": {
+    "0": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    },
+    "1": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    }
+  },
+  "error": {
+    "type": "ImportError",
+    "message": "cannot import name 'hf_hub_download' from 'huggingface_hub' (/usr/local/lib/python3.13/dist-packages/huggingface_hub/__init__.py)",
+    "traceback": "Traceback (most recent call last):\n  File \"/kaggle/src/script.py\", line 33, in <module>\n    from huggingface_hub import hf_hub_download\nImportError: cannot import name 'hf_hub_download' from 'huggingface_hub' (/usr/local/lib/python3.13/dist-packages/huggingface_hub/__init__.py)\n"
+  }
+}

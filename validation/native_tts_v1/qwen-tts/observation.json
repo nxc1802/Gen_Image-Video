@@ -1,0 +1,370 @@
+{
+  "model": "qwen-tts",
+  "engine": "EngineID.SPEECH",
+  "backend": "vllm_omni",
+  "checkpoint": {
+    "file_0": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "path": "config.json",
+      "sha256": "b4f01752d15a488abde3e1ab44723ae4f4b9e68a4037257b098b3737893cc1f9",
+      "size_bytes": 4494,
+      "destination": "model/config.json"
+    },
+    "file_1": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "path": "generation_config.json",
+      "sha256": "f1b90b4513f3b34c62851049e2492d7b4c5940daf1276f89c82b8ef04127f3aa",
+      "size_bytes": 245,
+      "destination": "model/generation_config.json"
+    },
+    "file_2": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "path": "merges.txt",
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "size_bytes": 1671839,
+      "destination": "model/merges.txt"
+    },
+    "primary": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "path": "model.safetensors",
+      "sha256": "38fc7fc51c5e776e840414b6fd443962e9411b9654888fd7913e4da643cb857c",
+      "size_bytes": 3857413744,
+      "destination": "model/model.safetensors"
+    },
+    "file_4": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "path": "preprocessor_config.json",
+      "sha256": "efdde1022ea9d76928bf7a9cd53139138f5ba2e466e837f08f6105ab1af1c119",
+      "size_bytes": 127,
+      "destination": "model/preprocessor_config.json"
+    },
+    "file_5": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "path": "speech_tokenizer/config.json",
+      "sha256": "ee65bb901c876664ab8707c487157aa1a6ee57c65969b28fb5ec9dc211e68167",
+      "size_bytes": 2336,
+      "destination": "model/speech_tokenizer/config.json"
+    },
+    "file_6": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "path": "speech_tokenizer/configuration.json",
+      "sha256": "6bc26d64eb5024b4d1dab5a52371958b429256d6c9d59787f1f5294a54e0cebd",
+      "size_bytes": 76,
+      "destination": "model/speech_tokenizer/configuration.json"
+    },
+    "file_7": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "path": "speech_tokenizer/model.safetensors",
+      "sha256": "836b7b357f5ea43e889936a3709af68dfe3751881acefe4ecf0dbd30ba571258",
+      "size_bytes": 682293092,
+      "destination": "model/speech_tokenizer/model.safetensors"
+    },
+    "file_8": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "path": "speech_tokenizer/preprocessor_config.json",
+      "sha256": "fcb3805e597e786d4067706e602f6688524640f8d3396790e2e09b5942fcbdfb",
+      "size_bytes": 234,
+      "destination": "model/speech_tokenizer/preprocessor_config.json"
+    },
+    "file_9": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "path": "tokenizer_config.json",
+      "sha256": "dc3c31c3bdaedd5016382bb3cbe07323026775ad51f5a4fb564505992ae4a670",
+      "size_bytes": 7344,
+      "destination": "model/tokenizer_config.json"
+    },
+    "file_10": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "path": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "destination": "model/vocab.json"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "tts-base-intelligibility",
+      "model": "qwen-tts",
+      "capability": "speech.tts",
+      "input_sha256": "7f079cc798b291bcf87832a668c3cb536adab3d6b4cc352ddfaf067b728b81e4",
+      "fallback": false,
+      "weights_verified": true,
+      "status": "NOT_MET",
+      "runs": [],
+      "error": {
+        "type": "ModelUnavailableError",
+        "message": "Native media backend unavailable.",
+        "details": {},
+        "traceback": "Traceback (most recent call last):\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_transports/default.py\", line 101, in map_httpcore_exceptions\n    yield\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_transports/default.py\", line 250, in handle_request\n    resp = self._pool.handle_request(req)\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py\", line 256, in handle_request\n    raise exc from None\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py\", line 236, in handle_request\n    response = connection.handle_request(\n        pool_request.request\n    )\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/connection.py\", line 103, in handle_request\n    return self._connection.handle_request(request)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/http11.py\", line 136, in handle_request\n    raise exc\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/http11.py\", line 106, in handle_request\n    ) = self._receive_response_headers(**kwargs)\n        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/http11.py\", line 177, in _receive_response_headers\n    event = self._receive_event(timeout=timeout)\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpcore/_sync/http11.py\", line 231, in _receive_event\n    raise RemoteProtocolError(msg)\nhttpcore.RemoteProtocolError: Server disconnected without sending a response.\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/tmp/factory_phase8_a/factory/core/model_adapter.py\", line 102, in post_bytes\n    response = client.post(\n        path, json=payload, headers={\"Authorization\": \"Bearer \" + backend.token}\n    )\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 1144, in post\n    return self.request(\n           ~~~~~~~~~~~~^\n        \"POST\",\n        ^^^^^^^\n    ...<11 lines>...\n        extensions=extensions,\n        ^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 825, in request\n    return self.send(request, auth=auth, follow_redirects=follow_redirects)\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 914, in send\n    response = self._send_handling_auth(\n        request,\n    ...<2 lines>...\n        history=[],\n    )\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 942, in _send_handling_auth\n    response = self._send_handling_redirects(\n        request,\n        follow_redirects=follow_redirects,\n        history=history,\n    )\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 979, in _send_handling_redirects\n    response = self._send_single_request(request)\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_client.py\", line 1014, in _send_single_request\n    response = transport.handle_request(request)\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_transports/default.py\", line 249, in handle_request\n    with map_httpcore_exceptions():\n         ~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/usr/lib/python3.13/contextlib.py\", line 162, in __exit__\n    self.gen.throw(value)\n    ~~~~~~~~~~~~~~^^^^^^^\n  File \"/tmp/factory_phase8_a/venv/lib/python3.13/site-packages/httpx/_transports/default.py\", line 118, in map_httpcore_exceptions\n    raise mapped_exc(message) from exc\nhttpx.RemoteProtocolError: Server disconnected without sending a response.\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_a.py\", line 309, in model_run\n    actual = await executor(context, adapter, case)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_b.py\", line 292, in execute\n    raw = await asyncio.to_thread(adapter.infer, context, prepared)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/asyncio/threads.py\", line 26, in to_thread\n    return await loop.run_in_executor(None, func_call)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/concurrent/futures/thread.py\", line 59, in run\n    result = self.fn(*self.args, **self.kwargs)\n  File \"/tmp/factory_phase8_a/factory/adapters/qwen_tts/__init__.py\", line 102, in infer\n    return context.post_bytes(\"/v1/audio/speech\", prepared.payload)\n           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/factory_phase8_a/factory/core/model_adapter.py\", line 109, in post_bytes\n    raise ModelUnavailableError(\"Native media backend unavailable.\") from exc\nfactory_contracts.errors.error_contract.ModelUnavailableError: Native media backend unavailable.\n"
+      },
+      "native_inference_executed": false
+    },
+    {
+      "case_id": "tts-base-voice-cloning",
+      "model": "qwen-tts",
+      "capability": "speech.voice_cloning",
+      "input_sha256": "ff45c0490e0625869a7566be4b57bc8e9755325df147d70f198d4151efe6397c",
+      "fallback": false,
+      "weights_verified": true,
+      "status": "NOT_MET",
+      "runs": [],
+      "error": {
+        "type": "ModelUnavailableError",
+        "message": "Selected backend lost health.",
+        "details": {},
+        "traceback": "Traceback (most recent call last):\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_a.py\", line 309, in model_run\n    actual = await executor(context, adapter, case)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_b.py\", line 292, in execute\n    raw = await asyncio.to_thread(adapter.infer, context, prepared)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/asyncio/threads.py\", line 26, in to_thread\n    return await loop.run_in_executor(None, func_call)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/concurrent/futures/thread.py\", line 59, in run\n    result = self.fn(*self.args, **self.kwargs)\n  File \"/tmp/factory_phase8_a/factory/adapters/qwen_tts/__init__.py\", line 102, in infer\n    return context.post_bytes(\"/v1/audio/speech\", prepared.payload)\n           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/factory_phase8_a/factory/core/model_adapter.py\", line 94, in post_bytes\n    raise ModelUnavailableError(\"Selected backend lost health.\")\nfactory_contracts.errors.error_contract.ModelUnavailableError: Selected backend lost health.\n"
+      },
+      "native_inference_executed": false
+    }
+  ],
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "public_models": [],
+  "fallback": false,
+  "checkpoint_files": [
+    {
+      "key": "file_0",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "config.json",
+      "sha256": "b4f01752d15a488abde3e1ab44723ae4f4b9e68a4037257b098b3737893cc1f9",
+      "size_bytes": 4494,
+      "matched": true
+    },
+    {
+      "key": "file_1",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "generation_config.json",
+      "sha256": "f1b90b4513f3b34c62851049e2492d7b4c5940daf1276f89c82b8ef04127f3aa",
+      "size_bytes": 245,
+      "matched": true
+    },
+    {
+      "key": "file_2",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "merges.txt",
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "size_bytes": 1671839,
+      "matched": true
+    },
+    {
+      "key": "primary",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "model.safetensors",
+      "sha256": "38fc7fc51c5e776e840414b6fd443962e9411b9654888fd7913e4da643cb857c",
+      "size_bytes": 3857413744,
+      "matched": true
+    },
+    {
+      "key": "file_4",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "preprocessor_config.json",
+      "sha256": "efdde1022ea9d76928bf7a9cd53139138f5ba2e466e837f08f6105ab1af1c119",
+      "size_bytes": 127,
+      "matched": true
+    },
+    {
+      "key": "file_5",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "speech_tokenizer/config.json",
+      "sha256": "ee65bb901c876664ab8707c487157aa1a6ee57c65969b28fb5ec9dc211e68167",
+      "size_bytes": 2336,
+      "matched": true
+    },
+    {
+      "key": "file_6",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "speech_tokenizer/configuration.json",
+      "sha256": "6bc26d64eb5024b4d1dab5a52371958b429256d6c9d59787f1f5294a54e0cebd",
+      "size_bytes": 76,
+      "matched": true
+    },
+    {
+      "key": "file_7",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "speech_tokenizer/model.safetensors",
+      "sha256": "836b7b357f5ea43e889936a3709af68dfe3751881acefe4ecf0dbd30ba571258",
+      "size_bytes": 682293092,
+      "matched": true
+    },
+    {
+      "key": "file_8",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "speech_tokenizer/preprocessor_config.json",
+      "sha256": "fcb3805e597e786d4067706e602f6688524640f8d3396790e2e09b5942fcbdfb",
+      "size_bytes": 234,
+      "matched": true
+    },
+    {
+      "key": "file_9",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "tokenizer_config.json",
+      "sha256": "dc3c31c3bdaedd5016382bb3cbe07323026775ad51f5a4fb564505992ae4a670",
+      "size_bytes": 7344,
+      "matched": true
+    },
+    {
+      "key": "file_10",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "matched": true
+    }
+  ],
+  "status": "NOT_MET",
+  "lifecycle": {
+    "healthy_backends": [
+      "qwen-tts"
+    ],
+    "failures": {},
+    "backends": {
+      "qwen-tts": {
+        "model": "qwen-tts",
+        "backend": "vllm_omni",
+        "adapter": "qwen_tts",
+        "session_id": "7a4f573a-a72a-49d5-847e-34678acd30cb",
+        "checkpoint_graph_sha256": "ab6d2fb88987d2317496b21b9ba1a92f057bb82cb51a2fee2d798f3b3b7010f3",
+        "devices": [
+          0
+        ],
+        "state": "HEALTHY",
+        "pid": 202,
+        "pid_started_at": 1794494117.54,
+        "port": 18990,
+        "weights_verified": true,
+        "model_loaded": true,
+        "gpu_processes": [
+          {
+            "pid": 306,
+            "device": 0,
+            "used_memory_mb": 8096.0
+          },
+          {
+            "pid": 423,
+            "device": 0,
+            "used_memory_mb": 614.0
+          }
+        ],
+        "log_path": "/tmp/factory_phase8_a/runtime/7a4f573a-a72a-49d5-847e-34678acd30cb/qwen-tts/backend.log",
+        "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+        "source_revision": null,
+        "sdk_runtime": null,
+        "adapter_assets": {
+          "qwen3_tts_deploy.yaml": "aabc5c68f550b606e8a3fcc3732b3b1e65eebd87fe16a6e4ec575984d96f0845",
+          "qwen3_tts_upstream.yaml": "5a70f815a743f9814b55ebfa98094da1ffed58ef4eb73a3f8dbbf84879332649"
+        },
+        "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+        "backend_package_version": "0.32.0",
+        "error": null,
+        "production_ready": false,
+        "inference_verified": false
+      }
+    },
+    "production_ready": false,
+    "native_inference_verified": false
+  },
+  "runtime_after_inference": {
+    "model": "qwen-tts",
+    "backend": "vllm_omni",
+    "adapter": "qwen_tts",
+    "session_id": "7a4f573a-a72a-49d5-847e-34678acd30cb",
+    "checkpoint_graph_sha256": "ab6d2fb88987d2317496b21b9ba1a92f057bb82cb51a2fee2d798f3b3b7010f3",
+    "devices": [
+      0
+    ],
+    "state": "STOPPED",
+    "pid": 202,
+    "pid_started_at": 1794494117.54,
+    "port": 18990,
+    "weights_verified": true,
+    "model_loaded": false,
+    "gpu_processes": [],
+    "log_path": "/tmp/factory_phase8_a/runtime/7a4f573a-a72a-49d5-847e-34678acd30cb/qwen-tts/backend.log",
+    "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+    "source_revision": null,
+    "sdk_runtime": null,
+    "adapter_assets": {
+      "qwen3_tts_deploy.yaml": "aabc5c68f550b606e8a3fcc3732b3b1e65eebd87fe16a6e4ec575984d96f0845",
+      "qwen3_tts_upstream.yaml": "5a70f815a743f9814b55ebfa98094da1ffed58ef4eb73a3f8dbbf84879332649"
+    },
+    "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+    "backend_package_version": "0.32.0",
+    "error": "Current-session health/identity/GPU check failed",
+    "production_ready": false,
+    "inference_verified": false
+  },
+  "shutdown": {
+    "session_id": "7a4f573a-a72a-49d5-847e-34678acd30cb",
+    "config_sha256": "32b3e10189951c7926b03188bbd181898b1b96d8ed2ef408a44a5d4bbf704ec0",
+    "stopped_at_utc": "2026-11-12T14:37:42.953225+00:00",
+    "stop_completed": true,
+    "errors": [],
+    "backends": {
+      "qwen-tts": {
+        "model": "qwen-tts",
+        "backend": "vllm_omni",
+        "adapter": "qwen_tts",
+        "session_id": "7a4f573a-a72a-49d5-847e-34678acd30cb",
+        "checkpoint_graph_sha256": "ab6d2fb88987d2317496b21b9ba1a92f057bb82cb51a2fee2d798f3b3b7010f3",
+        "devices": [
+          0
+        ],
+        "state": "STOPPED",
+        "pid": 202,
+        "pid_started_at": 1794494117.54,
+        "port": 18990,
+        "weights_verified": true,
+        "model_loaded": false,
+        "gpu_processes": [],
+        "log_path": "/tmp/factory_phase8_a/runtime/7a4f573a-a72a-49d5-847e-34678acd30cb/qwen-tts/backend.log",
+        "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+        "source_revision": null,
+        "sdk_runtime": null,
+        "adapter_assets": {
+          "qwen3_tts_deploy.yaml": "aabc5c68f550b606e8a3fcc3732b3b1e65eebd87fe16a6e4ec575984d96f0845",
+          "qwen3_tts_upstream.yaml": "5a70f815a743f9814b55ebfa98094da1ffed58ef4eb73a3f8dbbf84879332649"
+        },
+        "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+        "backend_package_version": "0.32.0",
+        "error": "Current-session health/identity/GPU check failed",
+        "production_ready": false,
+        "inference_verified": false
+      }
+    },
+    "production_ready": false
+  },
+  "stop_verified": true
+}

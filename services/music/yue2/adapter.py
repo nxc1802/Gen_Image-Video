@@ -13,44 +13,13 @@ from factory_contracts.errors import (
 )
 from services.music.yue2.score import validate_abc_score
 
-TASK_ALIASES: Dict[str, str] = {
-    "text_to_music": "text_to_music",
-    "text2music": "text_to_music",
-    "music.t2m": "text_to_music",
-    "t2m": "text_to_music",
-    "lyrics_to_music": "lyrics_to_music",
-    "lyrics2music": "lyrics_to_music",
-    "music.lyrics": "lyrics_to_music",
-    "music.l2m": "lyrics_to_music",
-    "l2m": "lyrics_to_music",
-    "symbolic_score": "symbolic_score",
-    "symbolic": "symbolic_score",
-    "score": "symbolic_score",
-    "music.score": "symbolic_score",
-    "music.symbolic": "symbolic_score",
-    "custom_score": "custom_score",
-    "custom": "custom_score",
-    "music.custom": "custom_score",
-    "music.custom_score": "custom_score",
-    "score_edit": "score_edit",
-    "edit": "score_edit",
-    "edit_score": "score_edit",
-    "music.edit": "score_edit",
-    "music.score_edit": "score_edit",
-    "song_variation": "song_variation",
-    "variation": "song_variation",
-    "song_var": "song_variation",
-    "music.variation": "song_variation",
-    "music.song_variation": "song_variation",
-}
-
 ALL_SUPPORTED_TASKS: Set[str] = {
-    "text_to_music",
-    "lyrics_to_music",
-    "symbolic_score",
-    "custom_score",
-    "score_edit",
-    "song_variation",
+    "music.text_to_music",
+    "music.lyrics_to_music",
+    "music.symbolic_score",
+    "music.custom_score",
+    "music.score_edit",
+    "music.song_variation",
 }
 
 VALID_VARIANTS: Set[str] = {
@@ -74,11 +43,6 @@ class YuE2Adapter:
     """Validates and maps Factory music requests to YuE2 native parameters."""
 
     @classmethod
-    def normalize_task(cls, task: str) -> str:
-        norm = str(task or "").strip().lower()
-        return TASK_ALIASES.get(norm, norm)
-
-    @classmethod
     def normalize_variant(cls, variant: Optional[str]) -> str:
         norm = str(variant or "").strip().lower()
         if not norm or norm in ("standard", "default"):
@@ -87,11 +51,11 @@ class YuE2Adapter:
 
     @classmethod
     def is_task_supported(cls, task: str) -> bool:
-        return cls.normalize_task(task) in ALL_SUPPORTED_TASKS
+        return task in ALL_SUPPORTED_TASKS
 
     @classmethod
     def is_task_supported_for_variant(cls, task: str, variant: Optional[str] = None) -> bool:
-        canonical_task = cls.normalize_task(task)
+        canonical_task = task
         if canonical_task not in ALL_SUPPORTED_TASKS:
             return False
         norm_var = cls.normalize_variant(variant)
@@ -99,7 +63,7 @@ class YuE2Adapter:
 
     @classmethod
     def validate_variant_capability(cls, task: str, variant: Optional[str] = None) -> None:
-        canonical_task = cls.normalize_task(task)
+        canonical_task = task
         if canonical_task not in ALL_SUPPORTED_TASKS:
             raise UnsupportedCapabilityError(
                 f"YuE2 does not support task '{task}'. "
@@ -198,7 +162,7 @@ class YuE2Adapter:
         Raises InvalidRequestError or UnsupportedCapabilityError if inputs are invalid.
         """
         inputs = dict(inputs or {})
-        canonical_task = cls.normalize_task(task)
+        canonical_task = task
         variant = cls.normalize_variant(inputs.get("variant"))
         cls.validate_variant_capability(canonical_task, variant)
 
@@ -233,25 +197,25 @@ class YuE2Adapter:
             custom_score = custom_score.strip()
 
         # Task specific requirements
-        if canonical_task == "text_to_music":
+        if canonical_task == "music.text_to_music":
             if not prompt:
                 raise InvalidRequestError("prompt is required for text_to_music")
 
-        elif canonical_task == "lyrics_to_music":
+        elif canonical_task == "music.lyrics_to_music":
             if not lyrics:
                 raise InvalidRequestError("lyrics are required for lyrics_to_music")
 
-        elif canonical_task == "custom_score":
+        elif canonical_task == "music.custom_score":
             if not custom_score:
                 raise InvalidRequestError("custom_score (valid ABC score) is required for custom_score task")
 
-        elif canonical_task == "symbolic_score":
+        elif canonical_task == "music.symbolic_score":
             if not prompt and not lyrics and not custom_score:
                 raise InvalidRequestError(
                     "symbolic_score requires at least one of prompt, lyrics, or existing score"
                 )
 
-        elif canonical_task == "score_edit":
+        elif canonical_task == "music.score_edit":
             base_score = (
                 inputs.get("base_score")
                 or inputs.get("abc_score")
@@ -265,7 +229,7 @@ class YuE2Adapter:
             if not modifications or not isinstance(modifications, dict):
                 raise InvalidRequestError("score_edit requires modifications dictionary")
 
-        elif canonical_task == "song_variation":
+        elif canonical_task == "music.song_variation":
             if not prompt and not lyrics and not custom_score:
                 raise InvalidRequestError("song_variation requires prompt, lyrics, or base score")
 

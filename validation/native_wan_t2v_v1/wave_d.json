@@ -1,0 +1,532 @@
+{
+  "classification": "REAL_NATIVE_VALIDATION_ATTEMPT",
+  "hardware": {
+    "0": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    },
+    "1": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    }
+  },
+  "case_definitions": [
+    {
+      "id": "wan-t2v-red-ball-motion",
+      "model": "wan-2.2",
+      "capability": "video.text_to_video",
+      "operation": "video",
+      "assets": [],
+      "asset_identities": {},
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "A single bright red ball rolling from the left side toward the right across a plain white table. Static locked camera, wide shot, realistic photograph, clear smooth horizontal movement. No other objects.",
+        "negative_prompt": "static image, still photo, blue car, dog, text, watermark",
+        "width": 384,
+        "height": 256,
+        "num_frames": 17,
+        "steps": 30,
+        "fps": 16,
+        "guidance_scale": 5.0
+      },
+      "expected": {
+        "positive_text": "a video frame of a red ball on a white table",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a green tree",
+          "a photograph of a black dog"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_red_fraction": 0.005,
+        "minimum_rightward_displacement_fraction": 0.025,
+        "minimum_distinct_frames": 5,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d"
+      }
+    }
+  ],
+  "input_assets": {},
+  "cases_sha256": "ef6880dbbc8746f50a29858b0412c6eba9c4503a5b59a4f38b1eb99b97cab173",
+  "runtime_versions": {
+    "diffusers": "0.43.0",
+    "torch": "2.11.0+cu130",
+    "torchvision": "0.26.0+cu130",
+    "torchaudio": "2.11.0+cu130",
+    "transformers": "5.19.0",
+    "accelerate": "1.15.0",
+    "huggingface-hub": "2.4.0",
+    "psutil": "7.2.2",
+    "imageio": "2.38.1",
+    "imageio-ffmpeg": "0.8.1"
+  },
+  "models": [
+    {
+      "model": "wan-2.2",
+      "engine": "EngineID.VIDEO",
+      "backend": "diffusers",
+      "checkpoint": {
+        "file_0": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "model_index.json",
+          "sha256": "6a72faeb564b0e894aea8fc4ef27241106eb739e8584e869b61589a65473add7",
+          "size_bytes": 499,
+          "destination": "model/model_index.json"
+        },
+        "file_1": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "scheduler/scheduler_config.json",
+          "sha256": "571a3eed68bcd943a61b9fea8efa9e141472216ada59f928c8b5128ce24b32e0",
+          "size_bytes": 820,
+          "destination": "model/scheduler/scheduler_config.json"
+        },
+        "file_2": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "text_encoder/config.json",
+          "sha256": "a2bcb24699f6c009a2427432bdd483ef8b2b42a712abc9503759cdc77d171f07",
+          "size_bytes": 855,
+          "destination": "model/text_encoder/config.json"
+        },
+        "file_3": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "text_encoder/model-00001-of-00003.safetensors",
+          "sha256": "a8e861969c7433e707cc5a74065d795d36cca07ec96eb6763eb4083df7248f58",
+          "size_bytes": 4935812536,
+          "destination": "model/text_encoder/model-00001-of-00003.safetensors"
+        },
+        "file_4": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "text_encoder/model-00002-of-00003.safetensors",
+          "sha256": "d57d948ece4837d850b7a859a4415121d57cacf8b9ee1d4db200c67f592902d7",
+          "size_bytes": 4983103192,
+          "destination": "model/text_encoder/model-00002-of-00003.safetensors"
+        },
+        "file_5": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "text_encoder/model-00003-of-00003.safetensors",
+          "sha256": "0da9ee284e21d1406df708788db1d502d95d75f69faa25cd26151bf8829b7c5f",
+          "size_bytes": 1442935480,
+          "destination": "model/text_encoder/model-00003-of-00003.safetensors"
+        },
+        "file_6": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "text_encoder/model.safetensors.index.json",
+          "sha256": "31c4c7bcce679eaa0dd4667462394ddb013dc2f748e0bffc893dc9146a320dab",
+          "size_bytes": 22476,
+          "destination": "model/text_encoder/model.safetensors.index.json"
+        },
+        "file_7": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "tokenizer/special_tokens_map.json",
+          "sha256": "456b58fd240a06c743a7c2cf8008bec501240d68ebd1fc4018ea569505fea270",
+          "size_bytes": 7079,
+          "destination": "model/tokenizer/special_tokens_map.json"
+        },
+        "file_8": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "tokenizer/spiece.model",
+          "sha256": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458",
+          "size_bytes": 4548313,
+          "destination": "model/tokenizer/spiece.model"
+        },
+        "file_9": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "tokenizer/tokenizer.json",
+          "sha256": "20a46ac256746594ed7e1e3ef733b83fbc5a6f0922aa7480eda961743de080ef",
+          "size_bytes": 16837459,
+          "destination": "model/tokenizer/tokenizer.json"
+        },
+        "file_10": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "tokenizer/tokenizer_config.json",
+          "sha256": "1d8d2a216bf8e70ac15b7ddcea566c4dd0433c024b39a58ca5e4c66bd78defbd",
+          "size_bytes": 61758,
+          "destination": "model/tokenizer/tokenizer_config.json"
+        },
+        "file_11": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "transformer/config.json",
+          "sha256": "dc00d9866e72cf77db6b531aaa33be4dc7148fef9338442bd0ae9181f7075e9b",
+          "size_bytes": 495,
+          "destination": "model/transformer/config.json"
+        },
+        "primary": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "transformer/diffusion_pytorch_model-00001-of-00005.safetensors",
+          "sha256": "511bec832a201caa410d09c5ce7dbbf8ad2708c345d82038f684fc74cce982be",
+          "size_bytes": 4978254344,
+          "destination": "model/transformer/diffusion_pytorch_model-00001-of-00005.safetensors"
+        },
+        "file_13": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "transformer/diffusion_pytorch_model-00002-of-00005.safetensors",
+          "sha256": "7c42724912b1911429125dc50c0e9a49ccbada5a601b657d4ed2e15e7597c193",
+          "size_bytes": 4846784976,
+          "destination": "model/transformer/diffusion_pytorch_model-00002-of-00005.safetensors"
+        },
+        "file_14": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "transformer/diffusion_pytorch_model-00003-of-00005.safetensors",
+          "sha256": "e9c3d0c76de786566382f8258101fea973ae37681c6e9fe0e5fe1fb93b806424",
+          "size_bytes": 4972658392,
+          "destination": "model/transformer/diffusion_pytorch_model-00003-of-00005.safetensors"
+        },
+        "file_15": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "transformer/diffusion_pytorch_model-00004-of-00005.safetensors",
+          "sha256": "a331121771790939678db6f585553fd5184609f7d02593c699a4d241b0d834c5",
+          "size_bytes": 4846785080,
+          "destination": "model/transformer/diffusion_pytorch_model-00004-of-00005.safetensors"
+        },
+        "file_16": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "transformer/diffusion_pytorch_model-00005-of-00005.safetensors",
+          "sha256": "78b655685c47efdb2349f36826bb101264e9f212a16325d584aeb5f53c88e719",
+          "size_bytes": 354751840,
+          "destination": "model/transformer/diffusion_pytorch_model-00005-of-00005.safetensors"
+        },
+        "file_17": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "transformer/diffusion_pytorch_model.safetensors.index.json",
+          "sha256": "d6c1f72d86fbddef8fb5ef1c03f5b56b2bfdb6ae58032db98c6019fd1dae9021",
+          "size_bytes": 73297,
+          "destination": "model/transformer/diffusion_pytorch_model.safetensors.index.json"
+        },
+        "file_18": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "vae/config.json",
+          "sha256": "d996c340fe9a7df5d7371f76a7d8d6956f6c98256080074d8434fa5eeac11360",
+          "size_bytes": 1701,
+          "destination": "model/vae/config.json"
+        },
+        "file_19": {
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "path": "vae/diffusion_pytorch_model.safetensors",
+          "sha256": "62cd18f19438e35b32ac63020e2852f566e9b02f46b6cdbd87972a356e3c6f4b",
+          "size_bytes": 2818777808,
+          "destination": "model/vae/diffusion_pytorch_model.safetensors"
+        }
+      },
+      "cases": [],
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "public_models": [],
+      "fallback": false,
+      "checkpoint_files": [
+        {
+          "key": "file_0",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "model_index.json",
+          "sha256": "6a72faeb564b0e894aea8fc4ef27241106eb739e8584e869b61589a65473add7",
+          "size_bytes": 499,
+          "matched": true
+        },
+        {
+          "key": "file_1",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "scheduler/scheduler_config.json",
+          "sha256": "571a3eed68bcd943a61b9fea8efa9e141472216ada59f928c8b5128ce24b32e0",
+          "size_bytes": 820,
+          "matched": true
+        },
+        {
+          "key": "file_2",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "text_encoder/config.json",
+          "sha256": "a2bcb24699f6c009a2427432bdd483ef8b2b42a712abc9503759cdc77d171f07",
+          "size_bytes": 855,
+          "matched": true
+        },
+        {
+          "key": "file_3",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "text_encoder/model-00001-of-00003.safetensors",
+          "sha256": "a8e861969c7433e707cc5a74065d795d36cca07ec96eb6763eb4083df7248f58",
+          "size_bytes": 4935812536,
+          "matched": true
+        },
+        {
+          "key": "file_4",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "text_encoder/model-00002-of-00003.safetensors",
+          "sha256": "d57d948ece4837d850b7a859a4415121d57cacf8b9ee1d4db200c67f592902d7",
+          "size_bytes": 4983103192,
+          "matched": true
+        },
+        {
+          "key": "file_5",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "text_encoder/model-00003-of-00003.safetensors",
+          "sha256": "0da9ee284e21d1406df708788db1d502d95d75f69faa25cd26151bf8829b7c5f",
+          "size_bytes": 1442935480,
+          "matched": true
+        },
+        {
+          "key": "file_6",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "text_encoder/model.safetensors.index.json",
+          "sha256": "31c4c7bcce679eaa0dd4667462394ddb013dc2f748e0bffc893dc9146a320dab",
+          "size_bytes": 22476,
+          "matched": true
+        },
+        {
+          "key": "file_7",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "tokenizer/special_tokens_map.json",
+          "sha256": "456b58fd240a06c743a7c2cf8008bec501240d68ebd1fc4018ea569505fea270",
+          "size_bytes": 7079,
+          "matched": true
+        },
+        {
+          "key": "file_8",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "tokenizer/spiece.model",
+          "sha256": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458",
+          "size_bytes": 4548313,
+          "matched": true
+        },
+        {
+          "key": "file_9",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "tokenizer/tokenizer.json",
+          "sha256": "20a46ac256746594ed7e1e3ef733b83fbc5a6f0922aa7480eda961743de080ef",
+          "size_bytes": 16837459,
+          "matched": true
+        },
+        {
+          "key": "file_10",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "tokenizer/tokenizer_config.json",
+          "sha256": "1d8d2a216bf8e70ac15b7ddcea566c4dd0433c024b39a58ca5e4c66bd78defbd",
+          "size_bytes": 61758,
+          "matched": true
+        },
+        {
+          "key": "file_11",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/config.json",
+          "sha256": "dc00d9866e72cf77db6b531aaa33be4dc7148fef9338442bd0ae9181f7075e9b",
+          "size_bytes": 495,
+          "matched": true
+        },
+        {
+          "key": "primary",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model-00001-of-00005.safetensors",
+          "sha256": "511bec832a201caa410d09c5ce7dbbf8ad2708c345d82038f684fc74cce982be",
+          "size_bytes": 4978254344,
+          "matched": true
+        },
+        {
+          "key": "file_13",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model-00002-of-00005.safetensors",
+          "sha256": "7c42724912b1911429125dc50c0e9a49ccbada5a601b657d4ed2e15e7597c193",
+          "size_bytes": 4846784976,
+          "matched": true
+        },
+        {
+          "key": "file_14",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model-00003-of-00005.safetensors",
+          "sha256": "e9c3d0c76de786566382f8258101fea973ae37681c6e9fe0e5fe1fb93b806424",
+          "size_bytes": 4972658392,
+          "matched": true
+        },
+        {
+          "key": "file_15",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model-00004-of-00005.safetensors",
+          "sha256": "a331121771790939678db6f585553fd5184609f7d02593c699a4d241b0d834c5",
+          "size_bytes": 4846785080,
+          "matched": true
+        },
+        {
+          "key": "file_16",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model-00005-of-00005.safetensors",
+          "sha256": "78b655685c47efdb2349f36826bb101264e9f212a16325d584aeb5f53c88e719",
+          "size_bytes": 354751840,
+          "matched": true
+        },
+        {
+          "key": "file_17",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model.safetensors.index.json",
+          "sha256": "d6c1f72d86fbddef8fb5ef1c03f5b56b2bfdb6ae58032db98c6019fd1dae9021",
+          "size_bytes": 73297,
+          "matched": true
+        },
+        {
+          "key": "file_18",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "vae/config.json",
+          "sha256": "d996c340fe9a7df5d7371f76a7d8d6956f6c98256080074d8434fa5eeac11360",
+          "size_bytes": 1701,
+          "matched": true
+        },
+        {
+          "key": "file_19",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "vae/diffusion_pytorch_model.safetensors",
+          "sha256": "62cd18f19438e35b32ac63020e2852f566e9b02f46b6cdbd87972a356e3c6f4b",
+          "size_bytes": 2818777808,
+          "matched": true
+        }
+      ],
+      "status": "NOT_MET",
+      "lifecycle": {
+        "healthy_backends": [],
+        "failures": {
+          "wan-2.2": {
+            "type": "BackendError",
+            "message": "Selected backend exited or failed before health passed"
+          }
+        },
+        "backends": {
+          "wan-2.2": {
+            "model": "wan-2.2",
+            "backend": "diffusers",
+            "adapter": "wan",
+            "session_id": "a413274f-e321-49b6-8ab4-b536c408295f",
+            "checkpoint_graph_sha256": "f6dc4f02720d9081458e1f37f061db480089b553842aab331867ce3a306711ff",
+            "devices": [
+              0
+            ],
+            "state": "STOPPED",
+            "pid": 439,
+            "pid_started_at": 1794559549.38,
+            "port": 18990,
+            "weights_verified": true,
+            "model_loaded": false,
+            "gpu_processes": [],
+            "log_path": "/tmp/factory_phase8_a/runtime/a413274f-e321-49b6-8ab4-b536c408295f/wan-2.2/backend.log",
+            "executable": "/usr/bin/python3.13",
+            "source_revision": null,
+            "sdk_runtime": null,
+            "adapter_assets": {},
+            "executable_sha256": "a35753ccb97941cce1467786cce892e608141f09d717188a3235d4f51a754446",
+            "backend_package_version": "0.43.0",
+            "error": "Selected backend exited or failed before health passed",
+            "production_ready": false,
+            "inference_verified": false
+          }
+        },
+        "production_ready": false,
+        "native_inference_verified": false
+      },
+      "error": {
+        "type": "RuntimeError",
+        "message": "Selected backend failed startup: {\"wan-2.2\": {\"type\": \"BackendError\", \"message\": \"Selected backend exited or failed before health passed\"}}",
+        "traceback": "Traceback (most recent call last):\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_a.py\", line 284, in model_run\n    raise RuntimeError(\"Selected backend failed startup: \" + json.dumps(session.failures))\nRuntimeError: Selected backend failed startup: {\"wan-2.2\": {\"type\": \"BackendError\", \"message\": \"Selected backend exited or failed before health passed\"}}\n"
+      },
+      "shutdown": {
+        "session_id": "a413274f-e321-49b6-8ab4-b536c408295f",
+        "config_sha256": "19744bc2c54bb064bb68fa146a91169b2cf7da3718d513b3affa1c86c39cf573",
+        "stopped_at_utc": "2026-11-13T08:48:33.920658+00:00",
+        "stop_completed": true,
+        "errors": [],
+        "backends": {
+          "wan-2.2": {
+            "model": "wan-2.2",
+            "backend": "diffusers",
+            "adapter": "wan",
+            "session_id": "a413274f-e321-49b6-8ab4-b536c408295f",
+            "checkpoint_graph_sha256": "f6dc4f02720d9081458e1f37f061db480089b553842aab331867ce3a306711ff",
+            "devices": [
+              0
+            ],
+            "state": "STOPPED",
+            "pid": 439,
+            "pid_started_at": 1794559549.38,
+            "port": 18990,
+            "weights_verified": true,
+            "model_loaded": false,
+            "gpu_processes": [],
+            "log_path": "/tmp/factory_phase8_a/runtime/a413274f-e321-49b6-8ab4-b536c408295f/wan-2.2/backend.log",
+            "executable": "/usr/bin/python3.13",
+            "source_revision": null,
+            "sdk_runtime": null,
+            "adapter_assets": {},
+            "executable_sha256": "a35753ccb97941cce1467786cce892e608141f09d717188a3235d4f51a754446",
+            "backend_package_version": "0.43.0",
+            "error": "Selected backend exited or failed before health passed",
+            "production_ready": false,
+            "inference_verified": false
+          }
+        },
+        "production_ready": false
+      },
+      "stop_verified": true
+    }
+  ],
+  "status": "NOT_MET",
+  "fallback": false,
+  "production_ready": false,
+  "full_factory_e2e_executed": false
+}

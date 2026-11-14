@@ -1,0 +1,57 @@
+{
+  "kind": "wan_t2v",
+  "version": 8,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-wan-t2v",
+  "run_record_sha256": "adb67517b10ac0887c1c2a43c91753707c451dd61a7725a0b3782146331f2df3",
+  "artifacts": [
+    {
+      "file": "validation/native_wan_t2v_v8/runtime_packages.json",
+      "sha256": "f1e4e5afcfc86af29d67f24e013544b80fe7f532ff32a81fd2d8a2e045831358"
+    },
+    {
+      "file": "validation/native_wan_t2v_v8/setup.json",
+      "sha256": "5169aa315480c3cb2968dd3f7853604770ee4a09dde052ccb3145c74473744c2"
+    },
+    {
+      "file": "validation/native_wan_t2v_v8/driver.log",
+      "sha256": "3db1afdea379886c67defbab85ff561ee993e76eb6e8da3cef9757f418940463"
+    },
+    {
+      "file": "validation/native_wan_t2v_v8/installation.log",
+      "sha256": "61ad88156fac7bb331554ecebc33f1a114fd7f3e71dc18ea15cdd781ab25d51e"
+    },
+    {
+      "file": "validation/native_wan_t2v_v8/wave_d.json",
+      "sha256": "6169fa3a4d65bcfddf0950ffed46ff051dad77a416420d8ca42ef6eca618a32c"
+    },
+    {
+      "file": "validation/native_wan_t2v_v8/wan-2.2/wan-t2v-red-ball-screen-right-v3-0.json",
+      "sha256": "4f820c7bd513b1b2eb651a96efbc7a5f37c70b971c3f3a2bf9e0a7d95f47b6d9"
+    },
+    {
+      "file": "validation/native_wan_t2v_v8/wan-2.2/wan-t2v-red-ball-screen-right-v3-3.json",
+      "sha256": "ee171e1147b0d024b3015858e8c4862efa48833b5fcdb6d3e1c431ac284eb6b7"
+    },
+    {
+      "file": "validation/native_wan_t2v_v8/wan-2.2/wan-t2v-red-ball-screen-right-v3-1.json",
+      "sha256": "9dcf097dab1f78e7533b8c5408962205654c9affd0c5f212a787ed9eaef9d754"
+    },
+    {
+      "file": "validation/native_wan_t2v_v8/wan-2.2/wan-t2v-red-ball-screen-right-v3-2.json",
+      "sha256": "b571a952855337f798f7ddd0b5228c5b9ae73adac0ae69806147a9b6d80d8280"
+    },
+    {
+      "file": "validation/native_wan_t2v_v8/wan-2.2/observation.json",
+      "sha256": "4b8b15f751ee49b746430e22a8afdbf668ef1aff36a39e7b18a16757d1d8b2ad"
+    },
+    {
+      "file": "validation/native_wan_t2v_v8/wan-2.2/backend.log",
+      "sha256": "a25d2863be5f34e2cec2cc1f5764f31e5fbbe96685dcb17c63103abf882a9f5f"
+    }
+  ]
+}

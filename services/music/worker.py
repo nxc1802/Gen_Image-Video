@@ -57,31 +57,15 @@ from factory_contracts.jobs.worker_contract import (
     WorkerLeaseRequest,
     WorkerLeaseResponse,
 )
-from services.music.acestep.adapter import ACEStepAdapter
+from services.music.acestep.adapter import ACEStepAdapter, ALL_SUPPORTED_TASKS as ACESTEP_TASKS
 from services.music.acestep.client import ACEStepClient
-from services.music.yue2.adapter import YuE2Adapter
+from services.music.yue2.adapter import YuE2Adapter, ALL_SUPPORTED_TASKS as YUE2_TASKS
 from services.music.yue2.client import YuE2Client
 
 logger = logging.getLogger("services.music.worker")
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] [MusicWorker]: %(message)s")
 
-SUPPORTED_TASKS = [
-    "text_to_music",
-    "lyrics_to_music",
-    "reference_audio",
-    "reference_conditioning",
-    "cover",
-    "repaint",
-    "extract",
-    "lego",
-    "complete",
-    "music_extend",
-    "audio_to_audio",
-    "symbolic_score",
-    "custom_score",
-    "score_edit",
-    "song_variation",
-]
+SUPPORTED_TASKS = sorted(ACESTEP_TASKS | YUE2_TASKS)
 SUPPORTED_MODELS = ["ace-step-1.5", "yue2"]
 
 
@@ -330,9 +314,9 @@ class MusicWorker:
 
             current_stage = "generating_music"
             if is_yue2:
-                if job.task == "symbolic_score" and inputs.get("plan_only", False):
+                if job.task == "music.symbolic_score" and inputs.get("plan_only", False):
                     result = await self.yue2_client.plan_score(params)
-                elif job.task == "score_edit" and not inputs.get("render_audio", True):
+                elif job.task == "music.score_edit" and not inputs.get("render_audio", True):
                     result = await self.yue2_client.edit_score(params["base_score"], params["modifications"])
                 else:
                     result = await self.yue2_client.generate_song(

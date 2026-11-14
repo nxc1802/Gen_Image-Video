@@ -9,16 +9,19 @@ Unit tests verifying Gate 2 (P0.5) Studio Web & Control Plane Contract Synchroni
 """
 import os
 import pytest
+
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from starlette.testclient import TestClient
 
-from factory.apps.control_api.src.main import app
+from factory.apps.control_api.src.legacy import app
 from factory.apps.control_api.src.telemetry.metrics import metrics
 
 VALID_TOKEN = "sk-factory-prod-secret-token"
 
 
 @pytest.fixture(scope="module")
-def api_client():
+def api_client(legacy_catalog, ):
     keys_to_preserve = ["FACTORY_API_KEY", "STORAGE_BACKEND", "FACTORY_DB_BACKEND", "SQLITE_DB_PATH"]
     old_env = {k: os.environ.get(k) for k in keys_to_preserve}
     os.environ["FACTORY_API_KEY"] = VALID_TOKEN
@@ -57,7 +60,7 @@ def test_studio_capability_task_submission_normalizes_image_t2i(api_client, auth
     res = api_client.post("/v1/jobs", headers=auth_headers, json=payload)
     assert res.status_code == 201
     data = res.json()
-    assert data["task"] == "text_to_image"
+    assert data["task"] == 'image.text_to_image'
     assert data["model"] == "qwen-image-2.1"
     assert data["service"] == "image"
     assert data["state"] == "QUEUED"
@@ -74,7 +77,7 @@ def test_studio_capability_task_submission_normalizes_video_t2v(api_client, auth
     res = api_client.post("/v1/jobs", headers=auth_headers, json=payload)
     assert res.status_code == 201
     data = res.json()
-    assert data["task"] == "text_to_video"
+    assert data["task"] == 'video.text_to_video'
     assert data["model"] == "minimax-h3"
     assert data["service"] == "video"
 

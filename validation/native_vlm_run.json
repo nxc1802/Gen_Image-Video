@@ -1,0 +1,23 @@
+{
+  "observed_at_utc": "2026-11-12T14:22:24.532265+00:00",
+  "slug": "factory-phase-8-native-vlm",
+  "response": {
+    "versionNumberNullable": 2,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-vlm",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-vlm",
+    "versionNumber": 2,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144607927
+  },
+  "kernel_code_sha256": "0c99d22e34ae556a6157a741c3b92dfa928a948b9397dfbdf22511040fe6680c",
+  "source_bundle_sha256": "b6f7e90e29d7c373426f1705bc56a8b6269084966c09d5f2561a82cf4d5029cc",
+  "validation_bundle_sha256": "1dc910ddd5812c2d7d317f553baba5c917dc3390c667d51eb11377434209db9d",
+  "accelerator": "NvidiaTeslaT4"
+}

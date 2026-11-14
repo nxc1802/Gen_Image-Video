@@ -1,0 +1,57 @@
+{
+  "wave": "D",
+  "observed_at_utc": "2026-11-14T05:20:30.566843+00:00",
+  "exit_gate": "NOT_MET",
+  "classification": "NATIVE_V3_SEMANTIC_CANDIDATES_ONLY",
+  "golden_sha256": "3ec8bce926bda5685c403e6a3c528b1dadbc86ee00f72af0ec1beec849700b92",
+  "attempts": [
+    {
+      "kind": "minimax_t2v",
+      "version": 3,
+      "observation": "validation/native_minimax_t2v_v3/wave_d.json",
+      "source_bundle_sha256": "eb845d5b8843b2244ea0d6c5190a46301127643f9d6f9b815eabeb77692e2fd6",
+      "validation_bundle_sha256": "5f03946e16af2a01dc4b28b6fd2c5a68dd8a6f41eec7b31ec97e9cda9923e700"
+    },
+    {
+      "kind": "minimax_conditioned",
+      "version": 2,
+      "observation": "validation/native_minimax_conditioned_v2/wave_d.json",
+      "source_bundle_sha256": "9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f",
+      "validation_bundle_sha256": "9e927a99c4d990b3354531580475ab4dbc24db71329af28de3b820f9e1556237"
+    },
+    {
+      "kind": "minimax_reference",
+      "version": 1,
+      "observation": "validation/native_minimax_reference_v1/wave_d.json",
+      "source_bundle_sha256": "2da7ad7773e50f27bf841590499ae65337c24210e87b9a1d27c5e366aa3766e0",
+      "validation_bundle_sha256": "b68596f5120fcf8f7142f181b1fbe930cfb9981ae0464e724e75c23cca599619"
+    },
+    {
+      "kind": "minimax_audio",
+      "version": 2,
+      "observation": "validation/native_minimax_audio_v2/wave_d.json",
+      "source_bundle_sha256": "08eefd3477ebf7b31900855c881f291a355b74ecfc83d2ca47b21c8fedee574a",
+      "validation_bundle_sha256": "5349b46fb7e13d23c0b182b1d84e3a691ba75172951346f0a8803038d58c6638"
+    }
+  ],
+  "cases": [],
+  "findings": [
+    "wan_t2v: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/factory_native_gate_audit/validation/native_wan_t2v_v7/setup.json'",
+    "wan_i2v: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/factory_native_gate_audit/validation/native_wan_i2v_receipt_v1.json'",
+    "wan_fl2v: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/factory_native_gate_audit/validation/native_wan_fl2v_receipt_v2.json'",
+    "wan_extension: native run not started",
+    "minimax_t2v: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/factory_native_gate_audit/validation/phase_status.json'",
+    "minimax_conditioned: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/factory_native_gate_audit/validation/phase_status.json'",
+    "minimax_turbo: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/factory_native_gate_audit/validation/native_minimax_turbo_v4/setup.json'",
+    "minimax_reference: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/factory_native_gate_audit/validation/phase_status.json'",
+    "minimax_audio: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/factory_native_gate_audit/validation/phase_status.json'",
+    "minimax_reference_audio: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/factory_native_gate_audit/validation/native_minimax_reference_audio_v1/setup.json'",
+    "wan-2.2: no collected native case evidence",
+    "minimax-h3: no collected native case evidence",
+    "minimax-h3-turbo: no collected native case evidence",
+    "minimax-h3-reference: no collected native case evidence"
+  ],
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "phase_8_exit_gate": "NOT_MET (remaining native waves require validation)"
+}

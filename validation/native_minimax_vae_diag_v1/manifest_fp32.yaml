@@ -1,0 +1,117 @@
+apiVersion: factory.ai/v2
+kind: ModelManifest
+metadata:
+  id: minimax-h3
+  family: minimax-video
+  display_name: MiniMax H3 FL2VA INT8 ConvRot
+  service_id: video-service
+  version: 3.0.0
+  license: other
+  license_url: https://huggingface.co/Comfy-Org/MiniMax-H3/blob/54472221d27c695fca9621b0c3ed52f06c4af707/README.md
+  commercial_use: false
+aliases:
+- minimax
+- minimax_h3
+engine: video
+weights:
+  files:
+    primary:
+      provider: huggingface
+      repository: Comfy-Org/MiniMax-H3
+      revision: 54472221d27c695fca9621b0c3ed52f06c4af707
+      path: diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors
+      sha256: e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a
+      size_bytes: 20970379616
+      destination: model/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors
+    clip:
+      provider: huggingface
+      repository: Comfy-Org/MiniMax-H3
+      revision: 54472221d27c695fca9621b0c3ed52f06c4af707
+      path: text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors
+      sha256: 35a88d51044231fe332301d7a62aa81e3f2cba62febeb446e2c1e3e0ef76f2c6
+      size_bytes: 15687142551
+      destination: text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors
+    video_vae:
+      provider: huggingface
+      repository: Comfy-Org/MiniMax-H3
+      revision: 54472221d27c695fca9621b0c3ed52f06c4af707
+      path: vae/minimax_h3_video_vae_fp16.safetensors
+      sha256: 7c1f131492e7eddacaac9069a61b81bdd39de5cc96561e677c5eab1cdce5e522
+      size_bytes: 5207808496
+      destination: vae/minimax_h3_video_vae_fp16.safetensors
+    audio_vae:
+      provider: huggingface
+      repository: Comfy-Org/MiniMax-H3
+      revision: 54472221d27c695fca9621b0c3ed52f06c4af707
+      path: vae/minimax_h3_audio_vae_fp32.safetensors
+      sha256: 8e505d95dd1561d47abd43d4238fd40d9bb1ae9e147ed0a4cba778d76ae4db48
+      size_bytes: 605254808
+      destination: vae/minimax_h3_audio_vae_fp32.safetensors
+  format: safetensors
+  quantization: int8_convrot
+  default_precision: fp32
+  component_precisions:
+    vae: fp32
+backend:
+  adapter: minimax
+  supported:
+  - comfyui
+capabilities:
+  video.text_to_video: true
+  video.image_to_video: true
+  video.first_last_frame_to_video: true
+  video.video_with_audio: true
+  video.reference_conditioning: false
+  video.video_extension: false
+parameters:
+  max_width:
+    type: integer
+    default: 1280
+  max_height:
+    type: integer
+    default: 720
+  max_frames:
+    type: integer
+    default: 124
+  max_duration_seconds:
+    type: number
+    default: 6.0
+  width:
+    type: integer
+    default: 768
+  height:
+    type: integer
+    default: 448
+  num_frames:
+    type: integer
+    default: 107
+  steps:
+    type: integer
+    default: 30
+    minimum: 1
+    maximum: 100
+  fps:
+    type: integer
+    minimum: 24
+    maximum: 24
+    default: 24
+runtime_profiles:
+  kaggle-dual-t4:
+    gpu_count: 1
+    min_vram_gb: 14.0
+    preferred_backend: comfyui
+    exclusive: false
+    cpu_offload: true
+    inference_timeout_seconds: 1200
+    notes: Declared preflight requirements; not hardware certification. CLI assigns
+      devices explicitly. Runtime load and semantic validation remain required.
+validation:
+  state: EXPERIMENTAL
+  reasons:
+  - Checkpoint identity is pinned; real backend/GPU inference and V3/V4/semantic certification
+    remain unverified.
+  implemented_capabilities:
+  - video.text_to_video
+  - video.image_to_video
+  - video.first_last_frame_to_video
+  - video.video_with_audio

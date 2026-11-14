@@ -1,0 +1,37 @@
+{
+  "kind": "vllm",
+  "version": 1,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-vllm",
+  "run_record_sha256": "88ef958dab893e83ced7fc53af68a3afe167c2f8e95a5223c82c0ff13b45c5e0",
+  "artifacts": [
+    {
+      "file": "validation/native_vllm_v1/setup.json",
+      "sha256": "3eb3f409795b860354063c9ceb972fe1915435cc634b62aac65790849f0fb8a5"
+    },
+    {
+      "file": "validation/native_vllm_v1/driver.log",
+      "sha256": "80b2982b9c15151dd950480c009320ef2a2fb77054d8b9c0e3ba0a6ca6113664"
+    },
+    {
+      "file": "validation/native_vllm_v1/wave_a.json",
+      "sha256": "4557852d81c78449c2078166103f9a9077e72e11e2a4cfbce0f58ef1818f928e"
+    },
+    {
+      "file": "validation/native_vllm_v1/qwen-decision/observation.json",
+      "sha256": "a70b7136517a8d674bc23bd1d9170b424779d6120b45f96ac582bea61d2a0704"
+    },
+    {
+      "file": "validation/native_vllm_v1/qwen-embedding/observation.json",
+      "sha256": "c591eaa5dc176100647331e9dee697baf19aa97300cdf5b9aea3dda00b4e2912"
+    },
+    {
+      "file": "validation/native_vllm_v1/qwen-reranker/observation.json",
+      "sha256": "3e704f76cf039b4fb363003fa9d5ecc41f738e8a1256f77bb0971a4c251d7d30"
+    }
+  ]
+}

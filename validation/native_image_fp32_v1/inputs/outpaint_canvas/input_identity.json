@@ -1,0 +1,19 @@
+{
+  "recipe": {
+    "kind": "expanded_canvas",
+    "size": [
+      640,
+      512
+    ],
+    "source": "astronaut",
+    "fill_rgba": [
+      0,
+      255,
+      0,
+      255
+    ]
+  },
+  "sha256": "d8a94cda090b9376af51c4e41421f992117e3e33a89adbce0b464e495b93199d",
+  "size_bytes": 1311400,
+  "mime_type": "image/png"
+}

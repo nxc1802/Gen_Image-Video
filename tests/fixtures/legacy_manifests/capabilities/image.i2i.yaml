@@ -1,0 +1,79 @@
+apiVersion: factory.ai/v1
+kind: CapabilityManifest
+id: image.i2i
+subsystem: image
+display_name: "Image to Image Generation"
+description: "Transforms source image based on text prompt and denoise strength"
+
+inputs:
+  - name: prompt
+    type: string
+    description: "Detailed description of desired visual modifications"
+    required: true
+  - name: image_url
+    type: image_url
+    description: "Source image URL to be transformed"
+    required: true
+  - name: negative_prompt
+    type: string
+    description: "Negative guidance prompt"
+    required: false
+    default: ""
+  - name: denoise_strength
+    type: float
+    description: "Denoising strength determining modification intensity"
+    required: false
+    default: 0.65
+    constraints:
+      min_value: 0.05
+      max_value: 1.0
+  - name: width
+    type: integer
+    description: "Target image width in pixels"
+    required: false
+    default: 1024
+    constraints:
+      min_value: 512
+      max_value: 2048
+      step: 64
+  - name: height
+    type: integer
+    description: "Target image height in pixels"
+    required: false
+    default: 1024
+    constraints:
+      min_value: 512
+      max_value: 2048
+      step: 64
+  - name: steps
+    type: integer
+    description: "Number of sampling steps"
+    required: false
+    default: 20
+    constraints:
+      min_value: 1
+      max_value: 50
+  - name: cfg
+    type: float
+    description: "Classifier-free guidance scale"
+    required: false
+    default: 1.0
+    constraints:
+      min_value: 1.0
+      max_value: 10.0
+  - name: seed
+    type: integer
+    description: "Deterministic random seed"
+    required: false
+
+outputs:
+  - name: image
+    type: image_url
+    format: "image/png"
+
+validation:
+  test_fixture: "fixtures/image_i2i.json"
+  verification_method: "schema_check"
+
+supported_model_families:
+  - qwen-image

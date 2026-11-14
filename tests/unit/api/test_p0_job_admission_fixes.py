@@ -5,6 +5,9 @@ Targeted regression tests for Phase 0 fixes:
 - FIX-07: Job admission checks implemented capability, backend readiness, variants, and hardware feasibility.
 """
 import pytest
+
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from unittest.mock import MagicMock
 
 from factory_contracts.errors import FactoryError, InvalidRequestError

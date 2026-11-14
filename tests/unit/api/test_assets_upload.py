@@ -14,9 +14,12 @@ Unit tests verifying the Asset Upload, Download, and SSRF Validation API:
 import hashlib
 import os
 import pytest
+
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from starlette.testclient import TestClient
 
-from factory.apps.control_api.src.main import app
+from factory.apps.control_api.src.legacy import app
 
 VALID_TOKEN = "sk-factory-prod-secret-token"
 VALID_PNG_BYTES = (
@@ -26,7 +29,7 @@ VALID_PNG_BYTES = (
 
 
 @pytest.fixture(scope="module")
-def api_client():
+def api_client(legacy_catalog, ):
     keys_to_preserve = ["FACTORY_API_KEY", "STORAGE_BACKEND", "FACTORY_DB_BACKEND", "SQLITE_DB_PATH"]
     old_env = {k: os.environ.get(k) for k in keys_to_preserve}
     os.environ["FACTORY_API_KEY"] = VALID_TOKEN

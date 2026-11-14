@@ -1,0 +1,83 @@
+{
+  "classification": "PREDECLARED_NATIVE_VIDEO_GOLDENS_NOT_INFERENCE_EVIDENCE",
+  "scope": "Initial exact Wan TI2V-5B and MiniMax FL2VA T2V baselines only. Remaining video capabilities remain unverified. No READY or Full Factory E2E.",
+  "assets": {},
+  "cases": [
+    {
+      "id": "wan-t2v-red-ball-motion",
+      "model": "wan-2.2",
+      "capability": "video.text_to_video",
+      "operation": "video",
+      "assets": [],
+      "asset_identities": {},
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "A single bright red ball rolling from the left side toward the right across a plain white table. Static locked camera, wide shot, realistic photograph, clear smooth horizontal movement. No other objects.",
+        "negative_prompt": "static image, still photo, blue car, dog, text, watermark",
+        "width": 384,
+        "height": 256,
+        "num_frames": 17,
+        "steps": 30,
+        "fps": 16,
+        "guidance_scale": 5.0
+      },
+      "expected": {
+        "positive_text": "a video frame of a red ball on a white table",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a green tree",
+          "a photograph of a black dog"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_red_fraction": 0.005,
+        "minimum_rightward_displacement_fraction": 0.025,
+        "minimum_distinct_frames": 5,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d"
+      }
+    },
+    {
+      "id": "minimax-t2v-red-ball-motion",
+      "model": "minimax-h3",
+      "capability": "video.text_to_video",
+      "operation": "video",
+      "assets": [],
+      "asset_identities": {},
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "A single bright red ball rolling from the left side toward the right across a plain white table. Static locked camera, wide shot, realistic photograph, clear smooth horizontal movement. No other objects.",
+        "width": 384,
+        "height": 256,
+        "num_frames": 124,
+        "steps": 30,
+        "fps": 24
+      },
+      "expected": {
+        "positive_text": "a video frame of a red ball on a white table",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a green tree",
+          "a photograph of a black dog"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_red_fraction": 0.005,
+        "minimum_rightward_displacement_fraction": 0.025,
+        "minimum_distinct_frames": 5,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d"
+      }
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-speech
+  family: qwen-speech
+  display_name: Qwen3 ASR & TTS Suite
+  service_id: speech-service
+  version: 3.0.0
+  license: Apache-2.0
+  license_url: https://huggingface.co/Qwen/Qwen3-ASR-1.7B/blob/main/LICENSE
+  commercial_use: true
+weights:
+  primary_checkpoint: Qwen/Qwen3-ASR-1.7B
+  repository: Qwen/Qwen3-ASR-1.7B
+  checkpoint_revision: 8a7b931c8d76e43f07a61d1988e0b23acdf55610
+  weights_file: model.safetensors
+  components:
+    tts_base: Qwen/Qwen3-TTS-12Hz-1.7B-Base
+  format: safetensors
+  quantization: none
+  default_precision: bf16
+hardware:
+  min_vram_gb: 8.0
+  preferred_gpu: t4
+  preferred_gpu_index: 0
+  quantization_format: none
+  offload_ram_gb: 0.0
+  allocation_policy: dual_gpu_split
+capabilities:
+  speech_to_text: true
+  text_to_speech: true
+  voice_cloning: true
+  word_timestamps: false
+status: partial
+coverage_percent: 75.0
+missing_capabilities:
+- word_timestamps
+limits:
+  max_duration_seconds: 300.0
+validation_status: pending_live
+validation_notes: 'Phase 0 audit: no admissible per-capability V3/V4 evidence on Kaggle
+  Dual Tesla T4 with exact verified weights and semantic validation. Historical claims
+  are frozen in validation/baseline.json; full/partial and coverage describe implementation
+  claims only, not production readiness. Static installed/checkpoint_valid/backend_ready
+  flags are legacy configuration claims, not session attestation; replacement is deferred
+  to Phases 1 and 3. Qwen TTS and voice cloning verification revoked: session2_audio_pipeline.py
+  can emit sine-wave WAV and allocate unrelated GPU tensors on failure; XTTS is a
+  different checkpoint. ASR remains unverified.'
+revision: 3.0.0
+dependencies:
+- torch>=2.4.0
+- torchaudio
+- transformers
+task_variant_matrix:
+  speech_to_text:
+  - standard
+  text_to_speech:
+  - standard
+  voice_cloning:
+  - standard
+validated_hardware_profiles: []
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+capabilities_truth:
+  speech_to_text:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  text_to_speech:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  voice_cloning:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  word_timestamps:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null
+aliases:
+- qwen_speech
+- qwen3-tts
+- qwen3-asr

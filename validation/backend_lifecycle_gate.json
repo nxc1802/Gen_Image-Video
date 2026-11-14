@@ -1,0 +1,75 @@
+{
+  "phase": 4,
+  "observed_at_utc": "2026-11-14T05:00:29.258057+00:00",
+  "exit_gate": "PASS",
+  "classification": "REAL_BACKEND_LIFECYCLE_ONLY",
+  "checks": [
+    {
+      "check": "previous_phase_gates",
+      "passed": true
+    },
+    {
+      "check": "recorded_exact_kernel",
+      "passed": true
+    },
+    {
+      "check": "current_source_bundle",
+      "passed": true
+    },
+    {
+      "check": "completed_kaggle_dual_t4_run",
+      "passed": true
+    },
+    {
+      "check": "collected_observation_integrity",
+      "passed": true
+    },
+    {
+      "check": "real_lifecycle_classification",
+      "passed": true
+    },
+    {
+      "check": "two_real_t4_devices",
+      "passed": true
+    },
+    {
+      "check": "complete_exact_checkpoint_bundle",
+      "passed": true
+    },
+    {
+      "check": "configured_provider_loaded_on_assigned_gpu",
+      "passed": true
+    },
+    {
+      "check": "runtime_identity_recorded",
+      "passed": true
+    },
+    {
+      "check": "real_asr_parameters_on_cuda",
+      "passed": true
+    },
+    {
+      "check": "unvalidated_public_inference_closed",
+      "passed": true
+    },
+    {
+      "check": "graceful_owned_process_cleanup",
+      "passed": true
+    },
+    {
+      "check": "live_checks_passed_without_error",
+      "passed": true
+    },
+    {
+      "check": "no_inference_or_production_claim",
+      "passed": true
+    }
+  ],
+  "findings": [],
+  "observation": "validation/backend_lifecycle_observation_v24.json",
+  "scope": "Selected ASR checkpoint load, current-session process/health/GPU identity and shutdown through factory serve; other providers need their own runtime validation",
+  "production_ready": false,
+  "native_inference_executed": false,
+  "semantic_validation_executed": false,
+  "full_factory_e2e_executed": false
+}

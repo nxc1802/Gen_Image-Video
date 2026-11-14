@@ -1,0 +1,31 @@
+{
+  "collected_at_utc": "2026-11-13T12:59:08.982356+00:00",
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-4-backend-lifecycle",
+  "version": 18,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "run_record_sha256": "5706e5f549ca1c88959f1df95d8c1e47185e80449a0be9aca8ea62c9fd517081",
+  "artifacts": [
+    {
+      "remote_name": "phase4_factory_serve.log",
+      "file": "validation/phase4_factory_serve_v18.log",
+      "sha256": "17b95d95e47517f24772e71169011d5b4d6d0a18d64c6a1d64a78d35fafcd2ea",
+      "size_bytes": 1319
+    },
+    {
+      "remote_name": "phase4_lifecycle.json",
+      "file": "validation/backend_lifecycle_observation_v18.json",
+      "sha256": "639f37a7092add9872a348d69c76fb13c19d0c827c91469fd27bf1c7c5e9406f",
+      "size_bytes": 9813
+    },
+    {
+      "remote_name": "phase4_qwen-asr_backend.log",
+      "file": "validation/phase4_qwen-asr_backend_v18.log",
+      "sha256": "b70d7be04d92b33ab2f2568f4164be6f5faa018bafe310c5553070cb8488aa8f",
+      "size_bytes": 1093
+    }
+  ]
+}

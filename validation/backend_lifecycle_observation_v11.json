@@ -1,0 +1,309 @@
+{
+  "classification": "REAL_BACKEND_LIFECYCLE_ONLY",
+  "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+  "phase4_exit_gate": "PASS",
+  "native_inference_executed": false,
+  "semantic_validation_executed": false,
+  "full_factory_e2e_executed": false,
+  "production_ready": false,
+  "hardware": {
+    "0": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    },
+    "1": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    }
+  },
+  "runtime_versions": {
+    "qwen-asr": "0.0.6",
+    "torch": "2.11.0+cu130",
+    "transformers": "4.57.6",
+    "huggingface-hub": "0.36.2",
+    "psutil": "7.2.2",
+    "fastapi": "0.141.1",
+    "uvicorn": "0.54.0"
+  },
+  "checkpoint_files": [
+    {
+      "key": "file_0",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "file": "chat_template.json",
+      "sha256": "75a8cfca24f00de72d796fbfed6858fc9614ef3dabd8696684cc3bc03a9c58ff",
+      "size_bytes": 1161,
+      "matched": true
+    },
+    {
+      "key": "file_1",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "file": "config.json",
+      "sha256": "2e74a751548b8ad7d7526d29365ad8144c345d8b412b1152d25dc6698452712f",
+      "size_bytes": 6194,
+      "matched": true
+    },
+    {
+      "key": "file_2",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "file": "generation_config.json",
+      "sha256": "1da527824d81e07118facff437e03f2e24a23311e3bdeb2368973fe77e5f275c",
+      "size_bytes": 142,
+      "matched": true
+    },
+    {
+      "key": "file_3",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "file": "merges.txt",
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "size_bytes": 1671853,
+      "matched": true
+    },
+    {
+      "key": "primary",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "file": "model-00001-of-00002.safetensors",
+      "sha256": "a4cd1f1a04d90b757dc7f7dd26254e69a013b19e80efe590a83c6a3bde8608d6",
+      "size_bytes": 4220320824,
+      "matched": true
+    },
+    {
+      "key": "file_5",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "file": "model-00002-of-00002.safetensors",
+      "sha256": "6e0b9d9e09e2e0238e7ef3cc8a484ab387e91b90f1900bedf88bc92d7929ccfc",
+      "size_bytes": 478200688,
+      "matched": true
+    },
+    {
+      "key": "file_6",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "file": "model.safetensors.index.json",
+      "sha256": "f994739fe38e5210b9e3e8ce6c6307315e2ceac3cb630e7b7414d69dce520f60",
+      "size_bytes": 64821,
+      "matched": true
+    },
+    {
+      "key": "file_7",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "file": "preprocessor_config.json",
+      "sha256": "45e120a4eda2c20c5d7f2ea9354e63536bf35e27aa573fb7cdf78017b378770d",
+      "size_bytes": 330,
+      "matched": true
+    },
+    {
+      "key": "file_8",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "file": "tokenizer_config.json",
+      "sha256": "4942d005604266809309cabc9f4e9cb89ce855d59b14681fdc0e1cc62ea26c4c",
+      "size_bytes": 12487,
+      "matched": true
+    },
+    {
+      "key": "file_9",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "file": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "matched": true
+    }
+  ],
+  "startup_observations": [
+    {
+      "stage": "waiting_for_selected_backend",
+      "owned_children": [],
+      "observed_gpu_processes": ""
+    },
+    {
+      "stage": "waiting_for_selected_backend",
+      "owned_children": [
+        {
+          "pid": 328,
+          "birth": 1794489356.75
+        }
+      ],
+      "observed_gpu_processes": ""
+    },
+    {
+      "stage": "waiting_for_selected_backend",
+      "owned_children": [
+        {
+          "pid": 328,
+          "birth": 1794489356.75
+        }
+      ],
+      "observed_gpu_processes": "328, GPU-a44812bf-b1e5-6bec-c0b2-dbd0ad60616f, 102"
+    }
+  ],
+  "session": {
+    "session_id": "c4f8a2a7-6c78-4a68-9ef4-2bcd36214665",
+    "config_sha256": "a221fa5e28019fa6bf81073e212040148816cacfc20cd9544dd80c362f15171b",
+    "created_at": 1794489330,
+    "configured": {
+      "hardware": "kaggle-dual-t4",
+      "api_host": "127.0.0.1",
+      "api_port": 18000,
+      "runtime_dir": "/tmp/factory_phase4/runtime",
+      "deployments": [
+        {
+          "model": "qwen-asr",
+          "backend": "qwen_asr",
+          "adapter": "qwen_asr",
+          "devices": [
+            0
+          ],
+          "exclusive": false,
+          "port": 19000,
+          "weights_dir": "/tmp/factory_phase4/models/qwen-asr",
+          "checkpoint_graph_sha256": "a199316d58efded446a0bcb52eceadb88bcfba1443872b9c4fdb0f937fd5cdd3",
+          "backend_options": {
+            "executable": null,
+            "source_dir": null,
+            "source_revision": null,
+            "startup_timeout_seconds": 600.0,
+            "stop_timeout_seconds": 10.0
+          }
+        }
+      ]
+    },
+    "active_models": [],
+    "production_ready": false,
+    "backend_lifecycle": {
+      "healthy_backends": [
+        "qwen-asr"
+      ],
+      "failures": {},
+      "backends": {
+        "qwen-asr": {
+          "model": "qwen-asr",
+          "backend": "qwen_asr",
+          "adapter": "qwen_asr",
+          "session_id": "c4f8a2a7-6c78-4a68-9ef4-2bcd36214665",
+          "checkpoint_graph_sha256": "a199316d58efded446a0bcb52eceadb88bcfba1443872b9c4fdb0f937fd5cdd3",
+          "devices": [
+            0
+          ],
+          "state": "HEALTHY",
+          "pid": 328,
+          "pid_started_at": 1794489356.75,
+          "port": 19000,
+          "weights_verified": true,
+          "model_loaded": true,
+          "gpu_processes": [
+            {
+              "pid": 328,
+              "device": 0,
+              "used_memory_mb": 4638.0
+            }
+          ],
+          "log_path": "/tmp/factory_phase4/runtime/c4f8a2a7-6c78-4a68-9ef4-2bcd36214665/qwen-asr/backend.log",
+          "executable": "/usr/bin/python3.13",
+          "source_revision": null,
+          "sdk_runtime": {
+            "implementation": "transformers",
+            "parameter_count": 2038052480,
+            "parameter_devices": [
+              "cuda:0"
+            ],
+            "parameter_dtypes": [
+              "torch.float16"
+            ]
+          },
+          "adapter_assets": {},
+          "executable_sha256": "a35753ccb97941cce1467786cce892e608141f09d717188a3235d4f51a754446",
+          "backend_package_version": "0.0.6",
+          "error": null,
+          "production_ready": false,
+          "inference_verified": false
+        }
+      },
+      "production_ready": false,
+      "native_inference_verified": false
+    },
+    "healthy_backends": [
+      "qwen-asr"
+    ],
+    "native_inference_verified": false
+  },
+  "control_plane": {
+    "pid": 322,
+    "mode": "single-host",
+    "job_storage": "memory",
+    "artifact_storage": "local_scratch",
+    "external_services_required": [],
+    "loaded_optional_infrastructure": [],
+    "legacy_components": [],
+    "jobs_accepting": true,
+    "production_ready": false
+  },
+  "public_discovery": {
+    "object": "list",
+    "data": []
+  },
+  "unvalidated_inference_rejected": true,
+  "launch_health_identity_gpu_checks": true,
+  "api_exit_code": -15,
+  "shutdown_receipt": {
+    "session_id": "c4f8a2a7-6c78-4a68-9ef4-2bcd36214665",
+    "config_sha256": "a221fa5e28019fa6bf81073e212040148816cacfc20cd9544dd80c362f15171b",
+    "stopped_at_utc": "2026-11-12T13:16:40.184742+00:00",
+    "stop_completed": true,
+    "errors": [],
+    "backends": {
+      "qwen-asr": {
+        "model": "qwen-asr",
+        "backend": "qwen_asr",
+        "adapter": "qwen_asr",
+        "session_id": "c4f8a2a7-6c78-4a68-9ef4-2bcd36214665",
+        "checkpoint_graph_sha256": "a199316d58efded446a0bcb52eceadb88bcfba1443872b9c4fdb0f937fd5cdd3",
+        "devices": [
+          0
+        ],
+        "state": "STOPPED",
+        "pid": 328,
+        "pid_started_at": 1794489356.75,
+        "port": 19000,
+        "weights_verified": true,
+        "model_loaded": false,
+        "gpu_processes": [
+          {
+            "pid": 328,
+            "device": 0,
+            "used_memory_mb": 4638.0
+          }
+        ],
+        "log_path": "/tmp/factory_phase4/runtime/c4f8a2a7-6c78-4a68-9ef4-2bcd36214665/qwen-asr/backend.log",
+        "executable": "/usr/bin/python3.13",
+        "source_revision": null,
+        "sdk_runtime": {
+          "implementation": "transformers",
+          "parameter_count": 2038052480,
+          "parameter_devices": [
+            "cuda:0"
+          ],
+          "parameter_dtypes": [
+            "torch.float16"
+          ]
+        },
+        "adapter_assets": {},
+        "executable_sha256": "a35753ccb97941cce1467786cce892e608141f09d717188a3235d4f51a754446",
+        "backend_package_version": "0.0.6",
+        "error": null,
+        "production_ready": false,
+        "inference_verified": false
+      }
+    },
+    "production_ready": false
+  },
+  "backend_processes_leaked": [],
+  "stop_verified": true
+}

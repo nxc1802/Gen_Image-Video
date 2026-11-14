@@ -211,6 +211,7 @@ class KaggleAPIClient:
         kernel_sources: Optional[List[str]] = None,
         model_sources: Optional[List[str]] = None,
         session_timeout_seconds: int = 7200,
+        accelerator: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Pushes kernel payload to Kaggle with Dual-T4 GPU configuration.
@@ -231,6 +232,10 @@ class KaggleAPIClient:
             "modelDataSources": model_sources or [],
             "sessionTimeoutSeconds": max(7200, session_timeout_seconds),
         }
+        if accelerator is not None:
+            if not enable_gpu or accelerator != "NvidiaTeslaT4":
+                raise ValueError("Factory GPU runs require the explicit NvidiaTeslaT4 accelerator")
+            payload["accelerator"] = accelerator
 
         resp = self._request("POST", "/kernels/push", json_data=payload)
         if resp.get("hasError"):

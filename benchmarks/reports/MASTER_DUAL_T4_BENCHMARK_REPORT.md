@@ -1,5 +1,7 @@
 # Factory v4 Lite — Master Dual-T4 Certification & Inference Benchmark Report
 
+> **Historical report — certification claims superseded (2026-11-12).** The architecture and validation authority is now `docs/MASTER_PLAN.md`. See `validation/baseline.json` and `validation/baseline_matrix.md` for the Phase 0 audit. No claim below grants V3, V4 or production readiness. In particular, Qwen Speech TTS/cloning verification is revoked: the associated runner can emit sine-wave audio and unrelated CUDA allocations on failure, and XTTS is a different checkpoint. Retained for migration provenance; not a runtime source of truth.
+
 > [!NOTE]
 > **Authoritative Engineering Audit & Certification Alignment (2026-11-11):**  
 > This report documents **Physical Hardware Telemetry Attestation**, **Native Foundation Model Executions (Shard 1 Visual & Shard 2 Audio)** on Kaggle Dual Tesla T4, **Factory Lifecycle Contract Verification**, and the **Live On-GPU Factory E2E Runner**.  

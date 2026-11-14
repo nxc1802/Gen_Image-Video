@@ -1,0 +1,20 @@
+# Configuration example only. No load/inference/production certification.
+apiVersion: factory.ai/v1
+kind: DeploymentConfig
+hardware: kaggle-dual-t4
+models_dir: ../../models
+api_host: 127.0.0.1
+api_port: 8000
+deployments:
+  - model: qwen-decision
+    backend: vllm
+    devices: [0]
+    port: 9000
+  - model: qwen-embedding
+    backend: vllm
+    devices: [0]
+    port: 9001
+  - model: qwen-reranker
+    backend: vllm
+    devices: [1]
+    port: 9002

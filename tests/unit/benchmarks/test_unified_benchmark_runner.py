@@ -21,6 +21,9 @@ from typing import Any, Dict, List
 import wave
 
 import pytest
+
+# Legacy lifecycle/runner contract coverage; never inference certification.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 import yaml
 
 from benchmarks.report import BenchmarkReportGenerator, CaseExecutionRecord
@@ -55,7 +58,7 @@ def test_cases_cover_all_11_model_manifests():
     cases = cases_doc.get("cases", [])
     assert len(cases) >= 80, f"Expected at least 80 cases, found {len(cases)}"
 
-    loader = ManifestLoader(WORKSPACE_ROOT / "manifests")
+    loader = ManifestLoader()
     models = loader.load_models()
     assert len(models) in (11, 12), f"Expected 11 or 12 models in registry, found {len(models)}"
 
@@ -709,3 +712,10 @@ def test_validators_corrupted_image_container_rejection():
     res_jpeg = validate_artifact(corrupt_jpeg, expected_mime="image/jpeg")
     assert res_jpeg.valid is False
     assert "Corrupted or truncated" in res_jpeg.error
+
+
+@pytest.fixture(autouse=True)
+def explicit_legacy_runner_app(monkeypatch):
+    """Historical runner contracts execute only against the retained migration app."""
+    from factory.apps.control_api.src.legacy import app
+    monkeypatch.setattr("benchmarks.runner.app",app)

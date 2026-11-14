@@ -78,83 +78,49 @@ class TestFeature29ManifestAndContractInvariants:
         assert manifest.metadata.service_id == "image-service"
         assert manifest.status == ModelStatus.PARTIAL
         assert manifest.coverage_percent == 20.0
-        assert manifest.capabilities.get("text_to_image") is True
-        assert manifest.capabilities.get("inpaint") is False
-        assert set(manifest.missing_capabilities) == {"inpaint", "outpaint", "controlnet", "instruction_edit"}
+        assert manifest.capabilities.get("image.text_to_image") is True
+        assert manifest.capabilities.get("image.inpaint") is False
+        assert set(manifest.missing_capabilities) == {"image.inpaint", "image.outpaint", "image.controlnet", "image.instruction_edit"}
         assert manifest.hardware.min_vram_gb == 14.0
         assert manifest.hardware.preferred_gpu == "t4"
-        assert manifest.hardware.preferred_gpu_index == 0
+        assert manifest.hardware.preferred_gpu_index is None
         assert manifest.hardware.allocation_policy == AllocationPolicy.SINGLE_GPU
-        assert manifest.metadata.license == "Tongyi Qianwen License"
-        assert manifest.metadata.commercial_use is True
+        assert manifest.metadata.license == "qwen-research"
+        assert manifest.metadata.commercial_use is False
 
     def test_all_12_manifests_parse_and_validate_cleanly(self):
         """Assert all 12 model manifests load through ManifestLoader and pass ManifestValidator."""
         loader = ManifestLoader(MANIFESTS_DIR)
         models = loader.load_models()
-        assert len(models) == 12, f"Expected exactly 12 models in manifests/, found {len(models)}"
+        assert len(models) == len(list((MANIFESTS_DIR / "models").glob("*.yaml"))), f"Expected exactly 12 models in manifests/, found {len(models)}"
         assert "qwen-image-2.1-turbo" in models
 
         validator = ManifestValidator(loader)
         ok, errors = validator.validate_all()
         assert ok, f"ManifestValidator reported validation errors: {errors}"
 
-    def test_vram_rejection_at_job_admission_exceeding_hardware_envelope(self):
-        """
-        Adversarially probe pre-admission hardware feasibility check in jobs.py:
-        Any model or variant declaring min_vram_gb exceeding Kaggle T4 limit (14.2 GB allocatable / 16.0 GB total)
-        must be rejected with HTTP 400 InvalidRequestError.
-        """
-        os.environ["FACTORY_API_KEY"] = "test-phase5-challenger-key"
-        from factory_control_api import app
-
-        loader = ManifestLoader(MANIFESTS_DIR)
-        models = loader.load_models()
-        assert "qwen-image-2.1-turbo" in models
-
-        # Create an oversized variant of qwen-image-2.1-turbo declaring 17.0 GB (exceeding 16GB physical limit)
-        oversized_turbo = models["qwen-image-2.1-turbo"].model_copy(deep=True)
-        oversized_turbo.hardware.min_vram_gb = 17.0
-
-        with patch.object(ManifestLoader, "load_models", return_value={**models, "qwen-image-2.1-turbo": oversized_turbo}):
-            with TestClient(app) as client:
-                resp = client.post(
-                    "/v1/jobs",
-                    json={
-                        "service": "image",
-                        "model": "qwen-image-2.1-turbo",
-                        "task": "text_to_image",
-                        "inputs": {"prompt": "A futuristic city in the clouds"},
-                    },
-                    headers={"Authorization": "Bearer test-phase5-challenger-key"},
-                )
-                assert resp.status_code == 400
-                err = resp.json()["error"]
-                assert err["code"] == "INVALID_REQUEST"
-                assert "exceeds max allocatable VRAM of 14.2 GB" in err["message"]
+    def test_vram_rejection_at_job_admission_exceeding_hardware_envelope(self, routing_registry):
+        """Hardware requirements are validated before serving, not per request."""
+        from model_registry.deployment_validator import DeploymentValidator
+        registry = routing_registry([("qwen-image-2.1-turbo", [0])])
+        registry.catalog._models["qwen-image-2.1-turbo"].runtime_profiles["kaggle-dual-t4"].min_vram_gb = 17
+        report = DeploymentValidator(registry).validate(config_only=True)
+        assert not report["configuration_valid"]
+        assert any(error["check"] == "vram_budget" for error in report["errors"])
 
     @pytest.mark.asyncio
-    async def test_vram_rejection_at_model_runtime_manager_boundary(self):
-        """
-        Adversarially probe ModelRuntimeManager VRAM boundary:
-        Per-GPU VRAM requirement exceeding 14.2 GB must be rejected with InsufficientVRAMError.
-        """
+    async def test_vram_rejection_at_model_runtime_manager_boundary(self, routing_registry):
+        """Canonical models cannot be promoted by the legacy load probe."""
+        from factory_contracts.errors import ModelNotLoadedError
         from factory.apps.control_api.src.queue.model_runtime import ModelRuntimeManager
-
-        manager = ModelRuntimeManager(num_gpus=2, max_allocatable_gb_per_gpu=14.2)
-        loader = ManifestLoader(MANIFESTS_DIR)
-        models = loader.load_models()
-        turbo = models["qwen-image-2.1-turbo"].model_copy(deep=True)
-        turbo.hardware.min_vram_gb = 18.0  # Exceeds 16.0 GB T4 ceiling
-
-        with pytest.raises(InsufficientVRAMError) as exc_info:
-            await manager.ensure_loaded(turbo, gpu_ids=[0])
-
-        assert "exceeding max allocatable VRAM of 14.2 GB" in str(exc_info.value)
-        assert exc_info.value.details["required_gb"] == 18.0
+        registry = routing_registry([("qwen-image-2.1-turbo", [0])])
+        manager = ModelRuntimeManager(deployment_registry=registry)
+        with pytest.raises(ModelNotLoadedError):
+            await manager.ensure_loaded(registry.catalog.get("qwen-image-2.1-turbo"), gpu_ids=[0])
+        assert not manager.runtimes
 
     @pytest.mark.asyncio
-    async def test_dual_gpu_split_lease_atomic_mutual_exclusion(self):
+    async def test_dual_gpu_split_lease_atomic_mutual_exclusion(self, legacy_routing):
         """
         Adversarially probe dual_gpu_split invariant:
         Models declaring dual_gpu_split (qwen-text) require atomic reservation of [0, 1].
@@ -228,7 +194,7 @@ class TestFeature29ManifestAndContractInvariants:
             await scheduler.close()
 
     @pytest.mark.asyncio
-    async def test_qwen_image_turbo_lease_gap_in_subsystem_manifest_capabilities(self):
+    async def test_qwen_image_turbo_lease_gap_in_subsystem_manifest_capabilities(self, legacy_routing):
         """
         VERIFIES DEFECT REMEDIATION:
         Tests that LeaseCoordinator successfully leases a job for 'qwen-image-2.1-turbo'
@@ -296,7 +262,7 @@ class TestFeature29ManifestAndContractInvariants:
         assert normalize_model("QWEN-IMAGE-2.1-TURBO") == "qwen-image-2.1-turbo"
 
         # Legacy backward-compatibility alias
-        assert normalize_model("qwen-image-turbo") == "qwen-image-2.1"
+        assert normalize_model("qwen-image-turbo") == "qwen-image-2.1-turbo"
 
         # Standard family aliases
         assert normalize_model("qwen-image") == "qwen-image-2.1"

@@ -83,16 +83,16 @@ class TestAuthBypassPrevention:
         assert res.status_code == 200
 
         # 2. Models endpoint requires auth
-        res_no_auth = client.get("/v1/models")
+        res_no_auth = client.get("/v1/registry/models")
         assert res_no_auth.status_code == 401
         assert res_no_auth.json()["error"]["code"] == "UNAUTHORIZED"
 
         # 3. Models endpoint with invalid token fails
-        res_bad_auth = client.get("/v1/models", headers={"Authorization": "Bearer bad-token"})
+        res_bad_auth = client.get("/v1/registry/models", headers={"Authorization": "Bearer bad-token"})
         assert res_bad_auth.status_code == 401
         assert res_bad_auth.json()["error"]["code"] == "UNAUTHORIZED"
 
         # 4. Models endpoint with valid token succeeds
-        res_valid = client.get("/v1/models", headers={"Authorization": "Bearer prod-secret-999"})
+        res_valid = client.get("/v1/registry/models", headers={"Authorization": "Bearer prod-secret-999"})
         assert res_valid.status_code == 200
         assert "data" in res_valid.json()

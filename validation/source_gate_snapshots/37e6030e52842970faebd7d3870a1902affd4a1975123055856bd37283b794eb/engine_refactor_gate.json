@@ -1,0 +1,403 @@
+{
+  "phase": 5,
+  "observed_at_utc": "2026-11-13T13:02:19.179019+00:00",
+  "exit_gate": "PASS",
+  "classification": "ARCHITECTURE_AND_SOFTWARE_WITH_SCOPED_ENHANCEMENT_NATIVE_PROBE",
+  "engines": [
+    {
+      "engine": "vector",
+      "class": "VectorEngine",
+      "source": "factory/engines/vector/__init__.py",
+      "models": [
+        {
+          "model": "qwen-embedding",
+          "adapter": "qwen_embedding",
+          "implemented_capabilities": [
+            "vector.text_embedding"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "qwen-reranker",
+          "adapter": "qwen_reranker",
+          "implemented_capabilities": [
+            "vector.reranking"
+          ],
+          "production_ready": false
+        }
+      ],
+      "source_sha256": "497aac997d23240e4b02d19df66ec5db20b81a0cb0e3889e70bc5a3f1db91af4",
+      "structural_checks": "PASS",
+      "findings": []
+    },
+    {
+      "engine": "decision",
+      "class": "DecisionEngine",
+      "source": "factory/engines/decision/__init__.py",
+      "models": [
+        {
+          "model": "qwen-decision",
+          "adapter": "qwen_decision",
+          "implemented_capabilities": [
+            "decision.choice_routing",
+            "decision.predicate_evaluation",
+            "decision.score_ranking"
+          ],
+          "production_ready": false
+        }
+      ],
+      "source_sha256": "77cfd887808e6414e521a1b6f979f41bd55cac45c8913e099e118eaa610dae75",
+      "structural_checks": "PASS",
+      "findings": []
+    },
+    {
+      "engine": "responses",
+      "class": "ResponsesEngine",
+      "source": "factory/engines/responses/__init__.py",
+      "models": [
+        {
+          "model": "qwen-text",
+          "adapter": "qwen_text",
+          "implemented_capabilities": [
+            "responses.chat_completion",
+            "responses.create",
+            "responses.streaming",
+            "responses.structured_output",
+            "responses.tool_calling"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "qwen-vlm",
+          "adapter": "qwen_vlm",
+          "implemented_capabilities": [
+            "responses.create",
+            "responses.document_qa",
+            "responses.image_chat",
+            "responses.video_chat",
+            "responses.visual_grounding"
+          ],
+          "production_ready": false
+        }
+      ],
+      "source_sha256": "098ca4b4dd3e8e950f6d424ac88be4ca6fe57c71ab8a2af2425ebb7276fe88e4",
+      "structural_checks": "PASS",
+      "findings": []
+    },
+    {
+      "engine": "speech",
+      "class": "SpeechEngine",
+      "source": "factory/engines/speech/__init__.py",
+      "models": [
+        {
+          "model": "qwen-asr",
+          "adapter": "qwen_asr",
+          "implemented_capabilities": [
+            "speech.asr"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "qwen-tts",
+          "adapter": "qwen_tts",
+          "implemented_capabilities": [
+            "speech.tts",
+            "speech.voice_cloning"
+          ],
+          "production_ready": false
+        }
+      ],
+      "source_sha256": "16ccdda6b3bd4ddfd410b547fc92bbdceafbb96969f1946ab1ef7375615e31da",
+      "structural_checks": "PASS",
+      "findings": []
+    },
+    {
+      "engine": "image",
+      "class": "ImageEngine",
+      "source": "factory/engines/image/__init__.py",
+      "models": [
+        {
+          "model": "qwen-image-2.1-turbo",
+          "adapter": "qwen_image",
+          "implemented_capabilities": [
+            "image.text_to_image"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "qwen-image-2.1-uncensored",
+          "adapter": "qwen_image",
+          "implemented_capabilities": [
+            "image.image_to_image",
+            "image.inpaint",
+            "image.instruction_edit",
+            "image.multi_reference",
+            "image.outpaint",
+            "image.reference_image",
+            "image.text_to_image"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "qwen-image-2.1",
+          "adapter": "qwen_image",
+          "implemented_capabilities": [
+            "image.image_to_image",
+            "image.inpaint",
+            "image.instruction_edit",
+            "image.multi_reference",
+            "image.outpaint",
+            "image.reference_image",
+            "image.text_to_image"
+          ],
+          "production_ready": false
+        }
+      ],
+      "source_sha256": "706b2d3fde2466d31d9311afb854e524098ab8851aa3fc53c45618d8b0771bea",
+      "structural_checks": "PASS",
+      "findings": []
+    },
+    {
+      "engine": "video",
+      "class": "VideoEngine",
+      "source": "factory/engines/video/__init__.py",
+      "models": [
+        {
+          "model": "minimax-h3-reference",
+          "adapter": "minimax",
+          "implemented_capabilities": [
+            "video.reference_conditioning",
+            "video.video_with_audio"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "minimax-h3-turbo",
+          "adapter": "minimax",
+          "implemented_capabilities": [
+            "video.first_last_frame_to_video",
+            "video.image_to_video",
+            "video.text_to_video"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "minimax-h3",
+          "adapter": "minimax",
+          "implemented_capabilities": [
+            "video.first_last_frame_to_video",
+            "video.image_to_video",
+            "video.text_to_video",
+            "video.video_with_audio"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "wan-2.2",
+          "adapter": "wan",
+          "implemented_capabilities": [
+            "video.first_last_frame_to_video",
+            "video.image_to_video",
+            "video.text_to_video",
+            "video.video_extension"
+          ],
+          "production_ready": false
+        }
+      ],
+      "source_sha256": "6a2cc52a746277181fe25a68df9d32ad2d92b1b078e484cacc0fdc9349cf0283",
+      "structural_checks": "PASS",
+      "findings": []
+    },
+    {
+      "engine": "music",
+      "class": "MusicEngine",
+      "source": "factory/engines/music/__init__.py",
+      "models": [
+        {
+          "model": "ace-step-1.5-sft",
+          "adapter": "acestep",
+          "implemented_capabilities": [
+            "music.cover",
+            "music.lyrics_to_music",
+            "music.reference_audio",
+            "music.repaint",
+            "music.text_to_music"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "ace-step-1.5-turbo",
+          "adapter": "acestep",
+          "implemented_capabilities": [
+            "music.cover",
+            "music.lyrics_to_music",
+            "music.reference_audio",
+            "music.repaint",
+            "music.text_to_music"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "ace-step-1.5-xl-base",
+          "adapter": "acestep",
+          "implemented_capabilities": [
+            "music.complete",
+            "music.cover",
+            "music.extend",
+            "music.extract",
+            "music.lego",
+            "music.lyrics_to_music",
+            "music.reference_audio",
+            "music.repaint",
+            "music.text_to_music"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "ace-step-1.5",
+          "adapter": "acestep",
+          "implemented_capabilities": [
+            "music.complete",
+            "music.cover",
+            "music.extend",
+            "music.extract",
+            "music.lego",
+            "music.lyrics_to_music",
+            "music.reference_audio",
+            "music.repaint",
+            "music.text_to_music"
+          ],
+          "production_ready": false
+        },
+        {
+          "model": "yue2",
+          "adapter": "yue2",
+          "implemented_capabilities": [
+            "music.custom_score",
+            "music.lyrics_to_music",
+            "music.score_edit",
+            "music.song_variation",
+            "music.symbolic_score",
+            "music.text_to_music"
+          ],
+          "production_ready": false
+        }
+      ],
+      "source_sha256": "f22dc0dacf8788f009e37a3ecb4396945b31438c9858602869b4a144ed65a195",
+      "structural_checks": "PASS",
+      "findings": []
+    },
+    {
+      "engine": "enhancement",
+      "class": "EnhancementEngine",
+      "source": "factory/engines/enhancement/__init__.py",
+      "models": [
+        {
+          "model": "enhancement-suite-v1",
+          "adapter": "enhancement",
+          "implemented_capabilities": [],
+          "production_ready": false
+        }
+      ],
+      "source_sha256": "e6e1b25b5db6c4b21a10eb92d54f43e313db98b0cf36851c2feb01f8834262d6",
+      "structural_checks": "PASS",
+      "findings": []
+    }
+  ],
+  "findings": [],
+  "prior_phase_gate": "PASS",
+  "extensibility_contracts": {
+    "exit_gate": "PASS",
+    "classification": "SOFTWARE_ONLY_EXPLICIT_MOCKS",
+    "command": [
+      "/Volumes/WorkSpace/Factory/Gen_Image:Video/.venv/bin/python",
+      "-m",
+      "pytest",
+      "/Volumes/WorkSpace/Factory/Gen_Image:Video/tests/contract/test_engine_extensibility.py",
+      "-q",
+      "-o",
+      "addopts=",
+      "--junitxml=/var/folders/4l/l8mn16sj5kg9sylmsyyz6_200000gn/T/factory-engine-gate-2cfja868/results.xml"
+    ],
+    "exit_code": 0,
+    "passed_cases": [
+      "test_model_addition_without_core_change[vector]",
+      "test_model_addition_without_core_change[decision]",
+      "test_model_addition_without_core_change[responses]",
+      "test_model_addition_without_core_change[speech]",
+      "test_model_addition_without_core_change[image]",
+      "test_model_addition_without_core_change[video]",
+      "test_model_addition_without_core_change[music]",
+      "test_model_addition_without_core_change[enhancement]"
+    ],
+    "junit_sha256": "916116d11b33c0ffc5aff18af19f99c605630976572030138ac3e088e3da6493",
+    "source_sha256": "6788d3a78ae58e28f7b777383ce1d9b3b5e2b8444892972b2cce9a18f000e7a3",
+    "diagnostics": null
+  },
+  "enhancement_native_probe": {
+    "classification": "ISOLATED_DISABLED_MODEL_NATIVE_BACKEND_PROBE",
+    "checks": [
+      {
+        "check": "current_kernel_and_source",
+        "passed": true
+      },
+      {
+        "check": "completed_exact_run",
+        "passed": true
+      },
+      {
+        "check": "artifact_integrity_phase5_enhancement.json",
+        "passed": true
+      },
+      {
+        "check": "artifact_integrity_phase5_enhancement_output.png",
+        "passed": true
+      },
+      {
+        "check": "two_real_t4_devices",
+        "passed": true
+      },
+      {
+        "check": "complete_exact_checkpoint_bundle",
+        "passed": true
+      },
+      {
+        "check": "configured_backend_identity",
+        "passed": true
+      },
+      {
+        "check": "owned_gpu_process_during_inference",
+        "passed": true
+      },
+      {
+        "check": "actual_checkpoint_graph",
+        "passed": true
+      },
+      {
+        "check": "real_pinned_photo_input",
+        "passed": true
+      },
+      {
+        "check": "decoded_actual_x4_output",
+        "passed": true
+      },
+      {
+        "check": "native_probe_success_and_cleanup",
+        "passed": true
+      },
+      {
+        "check": "no_production_or_v3_v4_promotion",
+        "passed": true
+      }
+    ],
+    "observation": "validation/enhancement_observation_v13.json",
+    "receipt": "validation/enhancement_receipt_v13.json",
+    "gpu_peak_memory_mb": 4558.0,
+    "exit_gate": "PASS"
+  },
+  "scope": "Eight engines support new Manifest/Adapter without core edits. Actual native inference is witnessed only for disabled RealESRGAN image x4; no other adapter is inference-certified.",
+  "production_ready": false,
+  "native_inference_executed": true,
+  "semantic_validation_executed": false,
+  "full_factory_e2e_executed": false
+}

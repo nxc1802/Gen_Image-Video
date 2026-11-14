@@ -60,6 +60,6 @@ async def health_check():
 
 @app.post("/v1/decisions", dependencies=[Depends(verify_bearer_token)])
 async def evaluate_decision(request: DecisionRequest):
-    """Evaluates decision tasks: predicate, choice, or continuous calibrated score."""
+    """Evaluates canonical decision tasks through the selected authorized adapter."""
     engine: DecisionEngine = getattr(app.state, "engine", None) or DecisionEngine()
     return engine.evaluate(request)

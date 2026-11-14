@@ -1,0 +1,32 @@
+apiVersion: factory.ai/v1
+kind: CapabilityManifest
+id: image.instruction_edit
+subsystem: image
+display_name: "Image Instruction Edit"
+description: "Edits an image using natural language instructions"
+
+inputs:
+  - name: image_url
+    type: image_url
+    description: "Source image URL to be edited"
+    required: true
+  - name: instruction
+    type: string
+    description: "Natural language instruction specifying desired visual change"
+    required: true
+  - name: seed
+    type: integer
+    description: "Deterministic random seed"
+    required: false
+
+outputs:
+  - name: image
+    type: image_url
+    format: "image/png"
+
+validation:
+  test_fixture: "fixtures/image_instruction_edit.json"
+  verification_method: "schema_check"
+
+supported_model_families:
+  - qwen-image

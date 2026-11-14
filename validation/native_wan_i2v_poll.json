@@ -1,0 +1,12 @@
+{
+  "observed_at_utc": "2026-11-14T05:50:12.058829+00:00",
+  "version": 1,
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-wan-i2v",
+  "run_record_sha256": "31fff80a0656afc3d204cba7dfee9541945d6299a1090e93c706df2cd47a24f8",
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "classification": "REMOTE_JOB_STATUS_ONLY_NOT_INFERENCE_EVIDENCE"
+}

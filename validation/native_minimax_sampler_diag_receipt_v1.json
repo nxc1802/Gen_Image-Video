@@ -1,0 +1,57 @@
+{
+  "kind": "minimax_sampler_diag",
+  "version": 1,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-sampler-diag",
+  "run_record_sha256": "0c828ac8c7260bd2774ac9c479b7445b78baac04daced5a6ca7e9c7f98ae63e6",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_sampler_diag_v1/installation.log",
+      "sha256": "abcd92369fe954e125cae572e9fb4fdec805982ee51828bc2484890b45ec514a"
+    },
+    {
+      "file": "validation/native_minimax_sampler_diag_v1/actual_sampled_video.safetensors",
+      "sha256": "3b8c9806abef6f4c565421500d15efc9cae9e940254ff298e58393d9f127eebe"
+    },
+    {
+      "file": "validation/native_minimax_sampler_diag_v1/setup.json",
+      "sha256": "32effdd2a684df111a7904235a21f6c2e63f7863e330d97316a2f1bcbf4b6ed6"
+    },
+    {
+      "file": "validation/native_minimax_sampler_diag_v1/runtime_packages.json",
+      "sha256": "6310d41c63fb44e6cc5f84d00219b1f3310fd25dac94973bd352c23e7968eb88"
+    },
+    {
+      "file": "validation/native_minimax_sampler_diag_v1/actual_inference_output.json",
+      "sha256": "b804adb3e6df21cfc6d63594fc1a610862294d2327aa0a828d73669dbadbc619"
+    },
+    {
+      "file": "validation/native_minimax_sampler_diag_v1/actual_fp16.mp4",
+      "sha256": "a4002d1e99a0cda5fa5b89a2e26a160dd808dfc590661d939f63ad33b6d21df1"
+    },
+    {
+      "file": "validation/native_minimax_sampler_diag_v1/manifest_fp16.yaml",
+      "sha256": "b38fd3a397bba8e11a45d91433f3a0545412d7d6777266496091b40792777cf0"
+    },
+    {
+      "file": "validation/native_minimax_sampler_diag_v1/driver.log",
+      "sha256": "8eaa0ad5f61d1e827cfc6e366b0276beb3f4ce8eccfab73188b7adb19aade311"
+    },
+    {
+      "file": "validation/native_minimax_sampler_diag_v1/backend_fp16.log",
+      "sha256": "28add8a364cc234d6c9b21622beee5b4a0fb292000568a8a5e4033656d6055ba"
+    },
+    {
+      "file": "validation/native_minimax_sampler_diag_v1/fp16_all_frames.png",
+      "sha256": "072c936e7c43de345be2ce7a58dbc04c4e86859ec6513c4b773c57fda4381af5"
+    },
+    {
+      "file": "validation/native_minimax_sampler_diag_v1/wave_d.json",
+      "sha256": "ac9a0e9fc24368db3aa1ba155fe86362000eb75744ddc557b5182c737d470871"
+    }
+  ]
+}

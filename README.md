@@ -1,27 +1,31 @@
 # Factory v4 Lite — Personal AI Production Platform
 
-Factory v4 Lite is a lightweight, inference-first Personal AI Production Platform delivering authentic model inference through a verified API and Studio Web Operations Console, backed by a unified benchmark suite on Kaggle Dual T4 hardware.
+> **Upgrade authority:** [Master Plan](docs/MASTER_PLAN.md) governs architecture and phase order. The [Phase 0 truth baseline](validation/baseline_matrix.md) supersedes historical certification claims. **No model/capability pair is currently production-certified under the Master Plan's V3 + V4 + semantic gates.**
 
-By default, Factory v4 Lite operates in a zero-external-dependency mode: in-memory job queuing, discrete Dual T4 GPU scheduling, streaming events, ephemeral scratch disk artifact delivery, and single API key Bearer authentication. For production and hybrid cloud environments, hardened extension modes are fully supported: S3/MinIO object storage, PostgreSQL/SQLite durable stores with Alembic schema migrations, and standardized JWT authentication.
+Factory is being refactored into an OpenAI-compatible, single-host inference platform targeting Kaggle Dual T4. Phases 0–7 passed their exit gates before the ongoing native integration refinements; current-source regressions are tracked in the upgrade status; all eight engines now select separate Manifest-owned adapters; the [upgrade status](docs/UPGRADE_STATUS.md) records current limits and reproduction commands. The [application API guide](docs/OPENAI_API.md) records the supported OpenAI SDK subset, tested with official Python SDK 3.49.0 over local HTTP. Positive SDK acceptance is software-only; production inference remains evidence-locked. Phase 8 Native V3 is in progress: Wave A passes 10/10 real semantic golden cases across Decision/Embedding/Rerank/Text; Wave B passes 8/8 real semantic cases across ASR/VLM/TTS/voice cloning; Wave C passes 8/8 Standard/Turbo image cases; Wave D Video is in progress (2/13 native golden pairs PASS); Waves E–F remain pending. No capability is production-ready before Full Factory E2E. The sections below describe the legacy implementation while migration proceeds through the Master Plan's exit gates.
 
-> **Validation Status:** Architecture, security, contract, and benchmark test suites are automated and 100% green (925+ unit, contract, and integration tests passing). Models adhere strictly to capability truth: unverified or unavailable capabilities fail closed with explicit non-success statuses (`BACKEND_UNAVAILABLE`, `HARDWARE_BLOCKED`, or 503 HTTP status) instead of returning mock or synthetic outputs. Negative API contract test passes are strictly isolated from model inference pass rates, ensuring zero false certifications.
+Explicit deployment examples are in [deployments/examples](deployments/examples). Use `factory deployment init/add/show/validate` to configure model/backend/GPU placement. `factory serve` now starts only the selected providers after full preflight, checks current-session process/health/GPU identity and shuts down owned processes. The Phase 4 live gate verified pinned ASR load/health/shutdown on Kaggle Dual-T4. Phase 5 also ran an isolated exact-checkpoint RealESRGAN x4 backend probe on GPU0 (512×512 photo → 2048×2048 PNG); Enhancement remains DISABLED without V3/semantic/Full Factory E2E certification. Healthy backends alone do not authorize public inference. `/v1/models` lists active session models only; `/v1/registry/models` is the separate catalog.
+
+The current core uses local asynchronous jobs, fixed deployment GPU bindings, one scratch artifact store and a single Factory API key. It has no Redis/Postgres/S3 or worker/lease requirement. The [Control Plane guide](docs/CONTROL_PLANE.md) explains cancellation and migration boundaries; legacy infrastructure integrations are isolated from production startup and retained for explicit migration tests.
+
+> **Validation Status:** Software tests verify contracts and implementation behavior. They do not certify model inference. Historical speech runners contain synthetic fallback paths; their outputs and GPU allocations are excluded from certification. Static legacy readiness flags do not attest to the current deployment. See [baseline.json](validation/baseline.json) for the frozen claims and audit decisions.
 
 ---
 
 ## Runtime Architecture
 
-- **Control Plane (`factory_control_api:app`)** — Lightweight FastAPI Control Plane in `factory/apps/control-api/`; in-memory queue, ephemeral scratch storage, discrete Dual T4 scheduler.
+- **Control Plane (`factory_control_api:app`)** — Single-host FastAPI composition with canonical Engine dispatch, local async jobs and scratch artifacts; worker leases and database/storage gateways are absent from default startup.
 - **Studio Web (`factory/apps/studio-web/`)** — Next.js 15 / React 19 Operations Console, API Explorer, Job Dashboard, Model Registry, and Streaming Inspector.
 - **Services (`services/*`)**:
-  - `services/text/` — Native vLLM OpenAI-compatible text serving (Qwen 2.5 Text).
-  - `services/vlm/` — Native vLLM multimodal serving with SSRF containment (Qwen 2.5 VLM).
-  - `services/decision/` — Native vLLM Structured Decisions API (Qwen 2.5 Decision).
-  - `services/embedding/` — Native vLLM embedding and rerank workers (Qwen 2.5 Embedding).
-  - `services/speech/` — Qwen3-ASR on vLLM + Qwen3-TTS on vLLM-Omni; zero fabricated inference.
+  - `services/text/` — Legacy vLLM launcher, currently blocked for the manifest-selected Qwen3.8 GGUF/llama.cpp backend pending lifecycle migration.
+  - `services/vlm/` — Legacy vLLM multimodal service with SSRF containment; canonical model identity is Qwen2-VL-7B AWQ.
+  - `services/decision/` — Canonical DecisionEngine with a manifest-selected adapter; software-only validation so far, without production authorization.
+  - `services/embedding/` — Legacy vector workers; canonical Embedding and Reranker have separate pinned Qwen3 identities.
+  - `services/speech/` — Separate pinned Qwen3-ASR and Qwen3-TTS models; the legacy launcher refuses incompatible backend selections pending migration.
   - `services/image/` and `services/video/` — Native ComfyUI / Diffusers workers with chunked streaming artifact delivery (Qwen-Image 2.1, Wan 2.2, MiniMax H3).
-  - `services/music/` — Native ACE-Step 1.5 and YuE2 workers with ABC notation verification.
+  - `services/music/` — Legacy music workers retained for migration. ACE-Step bundles have separate IDs; YuE2 is blocked on the selected BF16/T4 runtime.
   - `services/enhancement/` — Enhancement suite; unbacked or offline backends fail closed with 503.
-- **Manifests (`manifests/`)** — Authoritative model, service, capability, and hardware source of truth across all 11 foundation models and explicit fast-inference variants (12 model manifests total).
+- **Manifests (`manifests/`)** — Canonical catalog of 20 pinned model identities; model aliases, checkpoint files and requirements come from ModelManifest. Inspect with `factory models inspect MODEL`.
 - **Unified Kaggle Deployment (`deployments/kaggle/`)** — Single reproducible bootstrap engine (`deployments.kaggle.bootstrap`).
 - **Unified Benchmark Suite (`benchmarks/`)** — Multi-modal runner, test cases, and binary container validators (`benchmarks.runner`, `benchmarks.validators`).
 
@@ -38,15 +42,14 @@ NEVER                    -> mock PNG containers, mock MP4 headers, pseudo embedd
                             canned transcripts, sine-wave TTS, or fabricated telemetry
 ```
 
-1. **Zero External Infrastructure by Default**: Operates completely self-contained in Lite mode (in-memory queue/db, ephemeral scratch disk). Production extension modes (PostgreSQL/SQLite durable storage with Alembic migrations, S3 bucket storage, and JWT auth) can be enabled via configuration flags.
-2. **Authentication Security**: Constant-time verification using `FACTORY_API_KEY` via `Authorization: Bearer <key>`, or standardized JWT tokens (HS256/RS256) with audience and issuer verification.
-3. **Artifact Delivery & Scratch Retention**: Generated media resides in the scratch directory (`SCRATCH_ARTIFACTS_DIR`, default `/tmp/factory_lite/artifacts/{job_id}/`) and is retained until TTL expiration (`ARTIFACT_TTL_SECONDS=3600` by default), or persisted to S3 object storage when `STORAGE_BACKEND=s3`. Immediate unlinking on download can be enabled with `ARTIFACT_CLEANUP_ON_DOWNLOAD=true`.
-4. **Discrete Dual-T4 GPU Memory Partitioning**:
-   - 2x 16 GB Tesla T4 GPUs with **14.2 GB (14,540 MB)** max allocatable VRAM each (leaving >= 820 MB CUDA headroom).
-   - Zero assumed 32 GB shared memory pool; workloads must fit single-GPU partitions:
-     - **GPU 0**: Text, VLM, Decision, Image, Speech.
-     - **GPU 1**: Video, Music, Embedding, Enhancement.
-   - Strict 1-job-per-GPU concurrency mutual exclusion lock.
+1. **Local Core Runtime**: In-memory jobs and local scratch artifacts require no database, broker or object store. Old infrastructure settings belong to retained compatibility code; core startup does not initialize those systems.
+2. **Authentication**: Constant-time verification using `FACTORY_API_KEY` via `Authorization: Bearer <key>`. JWT remains an explicit optional extra; worker/RBAC gateways are outside core composition.
+3. **Artifact Lifecycle**: Core generated media uses `SCRATCH_ARTIFACTS_DIR` and TTL/quota sweeping. Downloads require owned completed jobs and matching stored hashes; cancelled or incomplete jobs publish no content.
+4. **Explicit Dual-T4 GPU Placement**:
+   - Deployment YAML assigns devices to each model before serving; subsystem names never select a GPU.
+   - Preflight checks each device's declared VRAM budget independently (14.2 GB allocatable per T4).
+   - Multiple resident models may share one GPU when preflight permits; execution locks remain per GPU.
+   - A dual-GPU entry uses explicit devices `[0, 1]` and exclusive access. Runtime load/VRAM observations remain distinct from Native V3/semantic/Full Factory E2E authorization.
 
 ---
 
@@ -56,7 +59,7 @@ The platform and benchmark suite enforce authentic, fail-closed status semantics
 
 | Status | Meaning |
 |---|---|
-| `PASS` | Authentic model inference verified against genuine checkpoint weights, valid artifact container (MIME, dimensions, duration, sha256 checksum), and sampled GPU VRAM telemetry. |
+| `PASS` | A named gate passed within its recorded scope; software/API/lifecycle PASS does not certify neural inference or production readiness. Production capability authorization requires exact-checkpoint Native V3, semantic validation and Full Factory E2E. |
 | `BACKEND_UNAVAILABLE` | Declared capability whose native backend engine or live worker is not actively running/reachable. No synthetic fallbacks, no mock passes. |
 | `HARDWARE_BLOCKED` | Workload or model variant exceeds the 14.2 GB per-GPU allocatable ceiling on Dual-T4. |
 | `FAIL` | Model execution completed but returned invalid artifact headers, empty bytes, or out-of-bounds parameters. |
@@ -65,7 +68,11 @@ The platform and benchmark suite enforce authentic, fail-closed status semantics
 
 ---
 
-## Single Working Deploy Path
+## Retained deployment and Studio notes
+
+The following sections describe the pre-refactor interfaces. Use `factory deployment ...` and `factory serve` for the canonical runtime; the old generic job/worker gateways are retained only in the non-production migration host. Studio consumption moves to the new API in Phase 10.
+
+### Historical launch path
 
 ### 1. Launch Control Plane API
 

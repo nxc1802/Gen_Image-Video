@@ -16,55 +16,24 @@ from factory_contracts.errors import (
 )
 
 # Canonical task aliases for ACE-Step 1.5
-TASK_ALIASES: Dict[str, str] = {
-    "text_to_music": "text_to_music",
-    "music.t2m": "text_to_music",
-    "t2m": "text_to_music",
-    "lyrics_to_music": "lyrics_to_music",
-    "music.lyrics": "lyrics_to_music",
-    "music.l2m": "lyrics_to_music",
-    "l2m": "lyrics_to_music",
-    "cover": "cover",
-    "music.cover": "cover",
-    "repaint": "repaint",
-    "music.repaint": "repaint",
-    "reference_audio": "reference_audio",
-    "reference_conditioning": "reference_audio",
-    "reference": "reference_audio",
-    "music.reference": "reference_audio",
-    "extract": "extract",
-    "music.extract": "extract",
-    "lego": "lego",
-    "music.lego": "lego",
-    "complete": "complete",
-    "music.complete": "complete",
-    "music_extend": "music_extend",
-    "music.extend": "music_extend",
-    "extend": "music_extend",
-    "audio_to_audio": "audio_to_audio",
-    "music.a2a": "audio_to_audio",
-    "a2a": "audio_to_audio",
-    "remix": "cover",
-}
-
 BASE_VARIANTS: Set[str] = {"base", "2b_base", "xl_base", "standard", "default"}
 TURBO_VARIANTS: Set[str] = {"turbo", "2b_turbo", "sft"}
 ALL_VARIANTS: Set[str] = BASE_VARIANTS | TURBO_VARIANTS
 
 # Tasks strictly restricted to base and xl_base variants
-SPECIALIZED_BASE_ONLY_TASKS: Set[str] = {"extract", "lego", "complete", "music_extend"}
+SPECIALIZED_BASE_ONLY_TASKS: Set[str] = {"music.extract", "music.lego", "music.complete", "music.extend"}
 
 ALL_SUPPORTED_TASKS: Set[str] = {
-    "text_to_music",
-    "lyrics_to_music",
-    "reference_audio",
-    "cover",
-    "repaint",
-    "extract",
-    "lego",
-    "complete",
-    "music_extend",
-    "audio_to_audio",
+    "music.text_to_music",
+    "music.lyrics_to_music",
+    "music.reference_audio",
+    "music.cover",
+    "music.repaint",
+    "music.extract",
+    "music.lego",
+    "music.complete",
+    "music.extend",
+    "music.audio_to_audio",
 }
 
 VALID_AUDIO_FORMATS: Set[str] = {"mp3", "wav", "flac"}
@@ -76,11 +45,6 @@ class ACEStepAdapter:
     """Validates and maps Factory music requests to ACE-Step native parameters."""
 
     @classmethod
-    def normalize_task(cls, task: str) -> str:
-        norm = str(task or "").strip().lower()
-        return TASK_ALIASES.get(norm, norm)
-
-    @classmethod
     def normalize_variant(cls, variant: Optional[str]) -> str:
         norm = str(variant or "").strip().lower()
         if not norm or norm in ("standard", "default"):
@@ -89,7 +53,7 @@ class ACEStepAdapter:
 
     @classmethod
     def is_task_supported_for_variant(cls, task: str, variant: Optional[str] = None) -> bool:
-        canonical_task = cls.normalize_task(task)
+        canonical_task = task
         norm_var = cls.normalize_variant(variant)
         if canonical_task not in ALL_SUPPORTED_TASKS:
             return False
@@ -99,7 +63,7 @@ class ACEStepAdapter:
 
     @classmethod
     def validate_variant_capability(cls, task: str, variant: Optional[str] = None) -> None:
-        canonical_task = cls.normalize_task(task)
+        canonical_task = task
         norm_var = cls.normalize_variant(variant)
 
         if canonical_task not in ALL_SUPPORTED_TASKS:
@@ -129,7 +93,7 @@ class ACEStepAdapter:
 
     @classmethod
     def map_inputs(cls, task: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        canonical_task = cls.normalize_task(task)
+        canonical_task = task
         variant = cls.normalize_variant(inputs.get("variant"))
 
         # 1. Variant and capability enforcement (§7.1)
@@ -137,25 +101,25 @@ class ACEStepAdapter:
 
         # 2. Prompt validation
         prompt = str(inputs.get("prompt") or "").strip()
-        if not prompt and canonical_task not in {"extract", "complete"}:
+        if not prompt and canonical_task not in {"music.extract", "music.complete"}:
             raise InvalidRequestError(f"Music task '{canonical_task}' requires a non-empty prompt.")
 
         # Default prompt for extract/complete if empty
         if not prompt:
-            if canonical_task == "extract":
+            if canonical_task == "music.extract":
                 stem = str(inputs.get("stem_name") or inputs.get("target_stem") or "vocals").strip()
                 prompt = f"extract {stem} stem"
-            elif canonical_task == "complete":
+            elif canonical_task == "music.complete":
                 prompt = "complete accompaniment"
 
         # 3. Instrumental and Lyrics mapping (ACE-02, ACE-03, ACE-15)
         instrumental = bool(inputs.get("instrumental", False))
         lyrics = str(inputs.get("lyrics") or "").strip()
-        if canonical_task == "lyrics_to_music":
+        if canonical_task == "music.lyrics_to_music":
             if not lyrics:
                 raise InvalidRequestError("lyrics_to_music requires non-empty lyrics.")
         elif instrumental or "[inst]" in prompt.lower() or not lyrics:
-            if canonical_task in {"text_to_music", "cover", "complete"}:
+            if canonical_task in {"music.text_to_music", "music.cover", "music.complete"}:
                 lyrics = "[inst]"
 
         # 4. Musical controls (ACE-06): BPM / Tempo
@@ -212,7 +176,7 @@ class ACEStepAdapter:
             or inputs.get("source_audio_path")
             or inputs.get("audio_url")
         )
-        if canonical_task in {"cover", "repaint", "extract", "lego", "complete", "music_extend", "audio_to_audio"}:
+        if canonical_task in {"music.cover", "music.repaint", "music.extract", "music.lego", "music.complete", "music.extend", "music.audio_to_audio"}:
             if not src_audio:
                 raise InvalidRequestError(
                     f"Task '{canonical_task}' requires source audio (source_audio_asset_id or source_audio_path)."
@@ -224,7 +188,7 @@ class ACEStepAdapter:
             or inputs.get("reference_audio_path")
             or inputs.get("reference_audio_url")
         )
-        if canonical_task == "reference_audio" and not ref_audio:
+        if canonical_task == "music.reference_audio" and not ref_audio:
             raise InvalidRequestError(
                 "Task 'reference_audio' requires reference audio (reference_audio_asset_id or reference_audio_path)."
             )
@@ -297,7 +261,7 @@ class ACEStepAdapter:
             params["source_audio_path"] = str(src_audio)
         if ref_audio:
             params["reference_audio_path"] = str(ref_audio)
-        if canonical_task in {"cover", "audio_to_audio", "reference_audio"}:
+        if canonical_task in {"music.cover", "music.audio_to_audio", "music.reference_audio"}:
             params["audio_cover_strength"] = cover_strength
             params["cover_strength"] = cover_strength
         if repainting_start is not None and repainting_end is not None:

@@ -13,7 +13,7 @@ import subprocess
 import pytest
 import yaml
 
-from factory.apps.control_api.src.main import app
+from factory.apps.control_api.src.legacy import app  # Retained Studio contract until Phase 10.
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 STUDIO_DIR = REPO_ROOT / "factory" / "apps" / "studio-web"
@@ -76,7 +76,7 @@ class TestStudioCrossStackIsolation:
         expected_studio_routes = [
             "/health",
             "/v1/services",
-            "/v1/models",
+            "/v1/registry/models",
             "/v1/capabilities",
             "/v1/jobs",
             "/v1/jobs/{job_id}",

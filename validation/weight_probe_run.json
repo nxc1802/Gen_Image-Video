@@ -1,0 +1,23 @@
+{
+  "observed_at_utc": "2026-11-11T18:15:27.722659+00:00",
+  "kernel": "cuongnguyen1802/factory-phase-1-weight-identity",
+  "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-1-weight-identity",
+  "purpose": "CPU file hashing only; no GPU/model inference",
+  "enable_gpu": false,
+  "enable_internet": false,
+  "response": {
+    "ref": "/code/cuongnguyen1802/factory-phase-1-weight-identity",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-1-weight-identity",
+    "versionNumber": 1,
+    "error": "",
+    "hasError": false
+  },
+  "requested_slug": "factory-phase1-weight-identity",
+  "kernel_status": "error",
+  "probe_exit_code": 1,
+  "expected_nonzero": true,
+  "result": "5 MiniMax MATCH; 3 image files OBSERVED_UNBOUND at run time. Later lookup identifies image primary as Uncensored mirror.",
+  "observation": "validation/weight_identity_observation.json",
+  "comparison": "validation/weight_identity_comparison.json",
+  "model_inference_executed": false
+}

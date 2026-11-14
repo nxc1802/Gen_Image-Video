@@ -1,0 +1,1112 @@
+{
+  "model": "qwen-decision",
+  "engine": "EngineID.DECISION",
+  "backend": "vllm",
+  "checkpoint": {
+    "file_0": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "config.json",
+      "sha256": "eed00b17e22553979d090fa492e587e92885e328914c8e0b0b78f0a0d3576b3b",
+      "size_bytes": 661,
+      "destination": "model/config.json"
+    },
+    "file_1": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "generation_config.json",
+      "sha256": "ea35dfb6fc5051b01114f9b995820d55dab01ed33ee490f6378b442af82c09f9",
+      "size_bytes": 242,
+      "destination": "model/generation_config.json"
+    },
+    "file_2": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "merges.txt",
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "size_bytes": 1671839,
+      "destination": "model/merges.txt"
+    },
+    "primary": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "model-00001-of-00002.safetensors",
+      "sha256": "67347b23fb4165b652eb6611f5e1f2a06dfcddba8e909df1b2b0b1857bee06c2",
+      "size_bytes": 3968658944,
+      "destination": "model/model-00001-of-00002.safetensors"
+    },
+    "file_4": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "model-00002-of-00002.safetensors",
+      "sha256": "a40d941d0e7e0b966ad8b62bb6d6b7c88cce1299197b599d9d0a4ce59aabfc1d",
+      "size_bytes": 2203268048,
+      "destination": "model/model-00002-of-00002.safetensors"
+    },
+    "file_5": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "model.safetensors.index.json",
+      "sha256": "bc8aaa0c87d4335177e01c765f1de0db81661c67c1a72fbfb0d521b09f5ddc56",
+      "size_bytes": 35581,
+      "destination": "model/model.safetensors.index.json"
+    },
+    "file_6": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "tokenizer.json",
+      "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+      "size_bytes": 7031645,
+      "destination": "model/tokenizer.json"
+    },
+    "file_7": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "tokenizer_config.json",
+      "sha256": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+      "size_bytes": 7305,
+      "destination": "model/tokenizer_config.json"
+    },
+    "file_8": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "destination": "model/vocab.json"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "decision-predicate-facts",
+      "model": "qwen-decision",
+      "capability": "decision.predicate_evaluation",
+      "input_sha256": "487920a842bd07401873e60ccf0201075fc5c98d2105a2f82a7af3fb03fd7047",
+      "fallback": false,
+      "weights_verified": true,
+      "status": "PASS",
+      "runs": [
+        {
+          "role": "warmup",
+          "iteration": 0,
+          "latency_ms": 2699.831038,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-predicate-facts-0.json",
+          "output_sha256": "f45cffd56b9f402a767f23c0833db4931148b09f1e49dd02813281923dde92c0",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "positive_expected_true": true,
+              "negative_expected_false": true
+            },
+            "metrics": {
+              "positive_probability": 0.9999996940976638,
+              "negative_probability": 1.0102783933368222e-10,
+              "brier_score": 4.678812476170582e-14
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 792120730643,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 792190903890,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 792369325896,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 792540214236,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 792712634626,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 792885482344,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 793061789633,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 793235016601,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 793408682119,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 793578536511,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 793749221142,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 793920629934,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 794095957260,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 794267376110,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 794438220072,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 794613686628,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 794782977615,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 1,
+          "latency_ms": 308.746845,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-predicate-facts-1.json",
+          "output_sha256": "8f415e45dec72a237950f8c72332d5f48e0534e131a3be3b220504c07e56105f",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "positive_expected_true": true,
+              "negative_expected_false": true
+            },
+            "metrics": {
+              "positive_probability": 0.9999996940976638,
+              "negative_probability": 1.0102783933368222e-10,
+              "brier_score": 4.678812476170582e-14
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 794953689849,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 795021722081,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 795194481849,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 2,
+          "latency_ms": 290.252774,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-predicate-facts-2.json",
+          "output_sha256": "8f415e45dec72a237950f8c72332d5f48e0534e131a3be3b220504c07e56105f",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "positive_expected_true": true,
+              "negative_expected_false": true
+            },
+            "metrics": {
+              "positive_probability": 0.9999996940976638,
+              "negative_probability": 1.0102783933368222e-10,
+              "brier_score": 4.678812476170582e-14
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 795370965175,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 795444877052,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 795612969685,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 3,
+          "latency_ms": 286.706065,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-predicate-facts-3.json",
+          "output_sha256": "8f415e45dec72a237950f8c72332d5f48e0534e131a3be3b220504c07e56105f",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "positive_expected_true": true,
+              "negative_expected_false": true
+            },
+            "metrics": {
+              "positive_probability": 0.9999996940976638,
+              "negative_probability": 1.0102783933368222e-10,
+              "brier_score": 4.678812476170582e-14
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 795784463535,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 795853115979,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 796024419669,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "latency_ms": {
+        "median": 290.252774,
+        "min": 286.706065,
+        "max": 308.746845
+      },
+      "peak_vram_mb": 7942.0,
+      "native_inference_executed": true
+    },
+    {
+      "case_id": "decision-choice-billing",
+      "model": "qwen-decision",
+      "capability": "decision.choice_routing",
+      "input_sha256": "196036abfacc04c7350963ba7e5503c82377dd6e744d76fd5742c3a880e8baff",
+      "fallback": false,
+      "weights_verified": true,
+      "status": "PASS",
+      "runs": [
+        {
+          "role": "warmup",
+          "iteration": 0,
+          "latency_ms": 300.572275,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-choice-billing-0.json",
+          "output_sha256": "96f3aad133b79d751a45ebd049a78c4e8803e7e5f03d34447f786e9bad695e59",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_choice": true
+            },
+            "metrics": {
+              "actual_choice": "billing"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 796193597083,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 796261281586,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 796432671459,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 1,
+          "latency_ms": 238.948656,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-choice-billing-1.json",
+          "output_sha256": "918c78523b7cb6e20a5f4553a23cb14f1e165d1279f4eb63c463b8539a7a516d",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_choice": true
+            },
+            "metrics": {
+              "actual_choice": "billing"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 796602576371,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 796670575721,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 796842864634,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 2,
+          "latency_ms": 262.777463,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-choice-billing-2.json",
+          "output_sha256": "918c78523b7cb6e20a5f4553a23cb14f1e165d1279f4eb63c463b8539a7a516d",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_choice": true
+            },
+            "metrics": {
+              "actual_choice": "billing"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 797011771650,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 797093564547,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 797264277552,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 3,
+          "latency_ms": 269.015329,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-choice-billing-3.json",
+          "output_sha256": "918c78523b7cb6e20a5f4553a23cb14f1e165d1279f4eb63c463b8539a7a516d",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_choice": true
+            },
+            "metrics": {
+              "actual_choice": "billing"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 797436228906,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 797508731410,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 797680975196,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "latency_ms": {
+        "median": 262.777463,
+        "min": 238.948656,
+        "max": 269.015329
+      },
+      "peak_vram_mb": 7942.0,
+      "native_inference_executed": true
+    },
+    {
+      "case_id": "decision-score-damage",
+      "model": "qwen-decision",
+      "capability": "decision.score_ranking",
+      "input_sha256": "4187fc33a7ed3b77076e405ffc02a1994093d6ec8623924562ce7c3dd153e3f8",
+      "fallback": false,
+      "weights_verified": true,
+      "status": "PASS",
+      "runs": [
+        {
+          "role": "warmup",
+          "iteration": 0,
+          "latency_ms": 298.903043,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-score-damage-0.json",
+          "output_sha256": "485c346d6701afe0a9dffabe06501548bc6de53c1a3cf4819310fc5bc252bcfa",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_ordering": true
+            },
+            "metrics": {
+              "lower_score": 2.2900987863203668e-05,
+              "higher_score": 1.999999525832122,
+              "margin": 1.9999766248442588
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 797858814221,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 797928194547,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 798101312150,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 1,
+          "latency_ms": 280.671109,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-score-damage-1.json",
+          "output_sha256": "a8e69d74e94df113cd2acc0ca3d8e43647674a33ace4dfddfd51c33a8b066cee",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_ordering": true
+            },
+            "metrics": {
+              "lower_score": 2.3063593554401175e-05,
+              "higher_score": 1.9999995107804251,
+              "margin": 1.9999764471868708
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 798271456613,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 798340731422,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 798511226837,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 2,
+          "latency_ms": 282.819049,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-score-damage-2.json",
+          "output_sha256": "a8e69d74e94df113cd2acc0ca3d8e43647674a33ace4dfddfd51c33a8b066cee",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_ordering": true
+            },
+            "metrics": {
+              "lower_score": 2.3063593554401175e-05,
+              "higher_score": 1.9999995107804251,
+              "margin": 1.9999764471868708
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 798682400785,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 798753195889,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 798924454535,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 3,
+          "latency_ms": 289.148108,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "decision-score-damage-3.json",
+          "output_sha256": "a8e69d74e94df113cd2acc0ca3d8e43647674a33ace4dfddfd51c33a8b066cee",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_ordering": true
+            },
+            "metrics": {
+              "lower_score": 2.3063593554401175e-05,
+              "higher_score": 1.9999995107804251,
+              "margin": 1.9999764471868708
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 799098196180,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 799168923953,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 799341185705,
+              "gpu_processes": [
+                {
+                  "pid": 216,
+                  "device": 0,
+                  "used_memory_mb": 7942.0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "latency_ms": {
+        "median": 282.819049,
+        "min": 280.671109,
+        "max": 289.148108
+      },
+      "peak_vram_mb": 7942.0,
+      "native_inference_executed": true
+    }
+  ],
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "public_models": [],
+  "fallback": false,
+  "checkpoint_files": [
+    {
+      "key": "file_0",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "config.json",
+      "sha256": "eed00b17e22553979d090fa492e587e92885e328914c8e0b0b78f0a0d3576b3b",
+      "size_bytes": 661,
+      "matched": true
+    },
+    {
+      "key": "file_1",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "generation_config.json",
+      "sha256": "ea35dfb6fc5051b01114f9b995820d55dab01ed33ee490f6378b442af82c09f9",
+      "size_bytes": 242,
+      "matched": true
+    },
+    {
+      "key": "file_2",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "merges.txt",
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "size_bytes": 1671839,
+      "matched": true
+    },
+    {
+      "key": "primary",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "model-00001-of-00002.safetensors",
+      "sha256": "67347b23fb4165b652eb6611f5e1f2a06dfcddba8e909df1b2b0b1857bee06c2",
+      "size_bytes": 3968658944,
+      "matched": true
+    },
+    {
+      "key": "file_4",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "model-00002-of-00002.safetensors",
+      "sha256": "a40d941d0e7e0b966ad8b62bb6d6b7c88cce1299197b599d9d0a4ce59aabfc1d",
+      "size_bytes": 2203268048,
+      "matched": true
+    },
+    {
+      "key": "file_5",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "model.safetensors.index.json",
+      "sha256": "bc8aaa0c87d4335177e01c765f1de0db81661c67c1a72fbfb0d521b09f5ddc56",
+      "size_bytes": 35581,
+      "matched": true
+    },
+    {
+      "key": "file_6",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "tokenizer.json",
+      "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+      "size_bytes": 7031645,
+      "matched": true
+    },
+    {
+      "key": "file_7",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "tokenizer_config.json",
+      "sha256": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+      "size_bytes": 7305,
+      "matched": true
+    },
+    {
+      "key": "file_8",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "matched": true
+    }
+  ],
+  "status": "PASS",
+  "lifecycle": {
+    "healthy_backends": [
+      "qwen-decision"
+    ],
+    "failures": {},
+    "backends": {
+      "qwen-decision": {
+        "model": "qwen-decision",
+        "backend": "vllm",
+        "adapter": "qwen_decision",
+        "session_id": "7e3381ef-ff3f-425f-946a-62ea5162181f",
+        "checkpoint_graph_sha256": "0dd2c68d96eb875de961cbea1067743d47b190f579bcd789b50f5539fc2c7826",
+        "devices": [
+          0
+        ],
+        "state": "HEALTHY",
+        "pid": 180,
+        "pid_started_at": 1794488676.59,
+        "port": 18990,
+        "weights_verified": true,
+        "model_loaded": true,
+        "gpu_processes": [
+          {
+            "pid": 216,
+            "device": 0,
+            "used_memory_mb": 7942.0
+          }
+        ],
+        "log_path": "/tmp/factory_phase8_a/runtime/7e3381ef-ff3f-425f-946a-62ea5162181f/qwen-decision/backend.log",
+        "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+        "source_revision": null,
+        "sdk_runtime": null,
+        "adapter_assets": {
+          "native_plugins/factory_qwen2_decision.py": "ba6b40287919df520e0daa3d85433ba9637350f2fda21437ab505259dc1370e2",
+          "native_plugins/factory_qwen2_decision-1.0.dist-info/METADATA": "e68f7a379e84eaa3fff2c3614ae64a3d123753b7bf4a6b2f127bec41915d884a",
+          "native_plugins/factory_qwen2_decision-1.0.dist-info/entry_points.txt": "f393b866a283234b4c9273d21abf61d2aa4f909efad25d55fa7b5ecc45b5f8fa"
+        },
+        "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+        "backend_package_version": "0.33.0",
+        "error": null,
+        "production_ready": false,
+        "inference_verified": false
+      }
+    },
+    "production_ready": false,
+    "native_inference_verified": false
+  },
+  "runtime_after_inference": {
+    "model": "qwen-decision",
+    "backend": "vllm",
+    "adapter": "qwen_decision",
+    "session_id": "7e3381ef-ff3f-425f-946a-62ea5162181f",
+    "checkpoint_graph_sha256": "0dd2c68d96eb875de961cbea1067743d47b190f579bcd789b50f5539fc2c7826",
+    "devices": [
+      0
+    ],
+    "state": "HEALTHY",
+    "pid": 180,
+    "pid_started_at": 1794488676.59,
+    "port": 18990,
+    "weights_verified": true,
+    "model_loaded": true,
+    "gpu_processes": [
+      {
+        "pid": 216,
+        "device": 0,
+        "used_memory_mb": 7942.0
+      }
+    ],
+    "log_path": "/tmp/factory_phase8_a/runtime/7e3381ef-ff3f-425f-946a-62ea5162181f/qwen-decision/backend.log",
+    "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+    "source_revision": null,
+    "sdk_runtime": null,
+    "adapter_assets": {
+      "native_plugins/factory_qwen2_decision.py": "ba6b40287919df520e0daa3d85433ba9637350f2fda21437ab505259dc1370e2",
+      "native_plugins/factory_qwen2_decision-1.0.dist-info/METADATA": "e68f7a379e84eaa3fff2c3614ae64a3d123753b7bf4a6b2f127bec41915d884a",
+      "native_plugins/factory_qwen2_decision-1.0.dist-info/entry_points.txt": "f393b866a283234b4c9273d21abf61d2aa4f909efad25d55fa7b5ecc45b5f8fa"
+    },
+    "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+    "backend_package_version": "0.33.0",
+    "error": null,
+    "production_ready": false,
+    "inference_verified": false
+  },
+  "shutdown": {
+    "session_id": "7e3381ef-ff3f-425f-946a-62ea5162181f",
+    "config_sha256": "5f120393a56d82d0af695dd48d67c398fdbde5ffcd455234c4a27811022c1784",
+    "stopped_at_utc": "2026-11-12T13:06:11.997213+00:00",
+    "stop_completed": true,
+    "errors": [],
+    "backends": {
+      "qwen-decision": {
+        "model": "qwen-decision",
+        "backend": "vllm",
+        "adapter": "qwen_decision",
+        "session_id": "7e3381ef-ff3f-425f-946a-62ea5162181f",
+        "checkpoint_graph_sha256": "0dd2c68d96eb875de961cbea1067743d47b190f579bcd789b50f5539fc2c7826",
+        "devices": [
+          0
+        ],
+        "state": "STOPPED",
+        "pid": 180,
+        "pid_started_at": 1794488676.59,
+        "port": 18990,
+        "weights_verified": true,
+        "model_loaded": false,
+        "gpu_processes": [
+          {
+            "pid": 216,
+            "device": 0,
+            "used_memory_mb": 7942.0
+          }
+        ],
+        "log_path": "/tmp/factory_phase8_a/runtime/7e3381ef-ff3f-425f-946a-62ea5162181f/qwen-decision/backend.log",
+        "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+        "source_revision": null,
+        "sdk_runtime": null,
+        "adapter_assets": {
+          "native_plugins/factory_qwen2_decision.py": "ba6b40287919df520e0daa3d85433ba9637350f2fda21437ab505259dc1370e2",
+          "native_plugins/factory_qwen2_decision-1.0.dist-info/METADATA": "e68f7a379e84eaa3fff2c3614ae64a3d123753b7bf4a6b2f127bec41915d884a",
+          "native_plugins/factory_qwen2_decision-1.0.dist-info/entry_points.txt": "f393b866a283234b4c9273d21abf61d2aa4f909efad25d55fa7b5ecc45b5f8fa"
+        },
+        "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+        "backend_package_version": "0.33.0",
+        "error": null,
+        "production_ready": false,
+        "inference_verified": false
+      }
+    },
+    "production_ready": false
+  },
+  "stop_verified": true
+}

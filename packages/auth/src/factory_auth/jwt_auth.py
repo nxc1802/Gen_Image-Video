@@ -4,7 +4,6 @@ JWT verification with sanitized client-facing failures and strict allowlist enfo
 """
 from typing import Any, Dict, Optional, Set
 
-import jwt
 
 from factory_contracts.errors import UnauthorizedError
 
@@ -28,6 +27,8 @@ def decode_jwt_token(
             message=f"Disallowed or unsupported JWT algorithm '{algorithm}'. "
             f"Allowed algorithms: {sorted(ALLOWED_ALGORITHMS)}."
         )
+
+    import jwt  # Optional legacy/JWT extra; API-key-only core does not import it.
 
     options: Dict[str, Any] = {
         "verify_signature": True,

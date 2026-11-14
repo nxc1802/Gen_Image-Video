@@ -3,7 +3,9 @@ factory_contracts/manifests/model.py
 Model Manifest Schema & Strict Completeness Rule Enforcement
 """
 from enum import Enum
-from typing import Dict, List, Optional
+from pathlib import PurePosixPath
+import re
+from typing import Dict, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
@@ -34,6 +36,7 @@ class QuantizationType(str, Enum):
     AWQ = "awq"
     GPTQ = "gptq"
     FOUR_BIT = "4bit"
+    INT8_CONVROT = "int8_convrot"
 
 
 class PrecisionType(str, Enum):
@@ -80,8 +83,35 @@ class ModelVariantSpec(BaseModel):
     min_vram_gb: Optional[float] = Field(default=None, ge=1.0, description="Minimum dedicated VRAM in GB")
 
 
+class CheckpointFileSpec(BaseModel):
+    """A pinned file identity. Expected hashes do not attest runtime readiness."""
+    model_config = ConfigDict(extra="forbid")
+
+    provider: Literal["huggingface", "kaggle", "github_release"] = "huggingface"
+    repository: str = Field(..., pattern=r"^[^\s/]+/[^\s/]+$")
+    revision: str = Field(..., min_length=1)
+    path: str = Field(..., min_length=1)
+    sha256: str = Field(..., pattern=r"^[a-f0-9]{64}$")
+    size_bytes: int = Field(..., gt=0)
+    destination: Optional[str] = None
+
+    @model_validator(mode="after")
+    def validate_identity(self) -> "CheckpointFileSpec":
+        if self.provider == "huggingface" and not re.fullmatch(r"[a-f0-9]{40}", self.revision):
+            raise ValueError("Hugging Face files require an immutable commit SHA")
+        if self.provider == "kaggle" and not re.fullmatch(r"[1-9][0-9]*", self.revision):
+            raise ValueError("Kaggle files require an explicit positive dataset version")
+        for path in (self.path, self.destination or self.path):
+            if path in (".", "..") or PurePosixPath(path).is_absolute() or ".." in PurePosixPath(path).parts or "\\" in path or any(c in path for c in "*?[]"):
+                raise ValueError("Checkpoint paths must be exact relative paths without traversal or wildcards")
+        return self
+
+
 class ModelWeightsSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+    files: Dict[str, CheckpointFileSpec] = Field(default_factory=dict,
+        description="Canonical pinned file identities. The primary key derives legacy fields during migration.")
 
     primary_checkpoint: str = Field(..., description="Hugging Face repo or local checkpoint path")
     repository: Optional[str] = Field(default=None, description="Exact Hugging Face or ModelScope repository")
@@ -95,10 +125,42 @@ class ModelWeightsSpec(BaseModel):
     format: ModelWeightFormat = Field(default=ModelWeightFormat.SAFETENSORS)
     quantization: QuantizationType = Field(default=QuantizationType.NONE)
     default_precision: PrecisionType = Field(default=PrecisionType.BF16)
+    component_precisions: Dict[str, PrecisionType] = Field(default_factory=dict,
+        description="Explicit native component compute precisions; Adapter interprets component names. No automatic dtype fallback.")
+    component_parameter_precisions: Dict[str, Dict[str, PrecisionType]] = Field(default_factory=dict,
+        description="Exact native parameter-name precision overrides, owned by Manifest and validated by Adapter. No wildcard matching or automatic fallback.")
     variants: Dict[str, ModelVariantSpec] = Field(
         default_factory=dict,
         description="Dictionary mapping variant IDs (e.g. 'turbo') to variant specifications"
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def derive_legacy_file_fields(cls, value):
+        """Keep legacy readers working without maintaining duplicate YAML pins."""
+        if not isinstance(value, dict) or not value.get("files"):
+            return value
+        data = dict(value)
+        if "primary" not in data["files"]:
+            raise ValueError("Canonical checkpoint files require a primary identity")
+        files = {key: CheckpointFileSpec.model_validate(spec) for key, spec in data["files"].items()}
+        primary = files["primary"]
+        projected = {
+            "primary_checkpoint": f"{primary.repository}/{primary.path}",
+            "repository": primary.repository,
+            "checkpoint_revision": primary.revision,
+            "weights_file": primary.path,
+            "sha256": primary.sha256,
+        }
+        # Primary-only migration retains explicitly unpinned legacy component
+        # claims. Full component migration replaces them with file projections.
+        if len(files) > 1:
+            projected["components"] = {key: PurePosixPath(spec.path).name for key, spec in files.items() if key != "primary"}
+        for key, expected in projected.items():
+            if key in data and data[key] != expected:
+                raise ValueError(f"Legacy weights.{key} conflicts with canonical file identity")
+            data[key] = expected
+        return data
 
 
 class ModelHardwareSpec(BaseModel):
@@ -147,20 +209,103 @@ class CapabilityTruthLevel(BaseModel):
     evidence_run_id: Optional[str] = Field(default=None, description="Artifact or run proof of verification")
 
 
+class EngineID(str, Enum):
+    RESPONSES = "responses"
+    DECISION = "decision"
+    VECTOR = "vector"
+    SPEECH = "speech"
+    IMAGE = "image"
+    VIDEO = "video"
+    MUSIC = "music"
+    ENHANCEMENT = "enhancement"
+
+
+class ModelBackendSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    adapter: str = Field(..., pattern=r"^[a-z0-9_]+$")
+    supported: List[str] = Field(..., min_length=1)
+
+
+class ComponentTilingSpec(BaseModel):
+    """Explicit spatial execution policy; supported components belong to the Adapter."""
+    model_config = ConfigDict(extra="forbid")
+    tile_height: int = Field(..., gt=0, strict=True)
+    tile_width: int = Field(..., gt=0, strict=True)
+    stride_height: int = Field(..., gt=0, strict=True)
+    stride_width: int = Field(..., gt=0, strict=True)
+
+    @model_validator(mode="after")
+    def overlapping_tiles(self):
+        if self.stride_height >= self.tile_height or self.stride_width >= self.tile_width:
+            raise ValueError("Spatial tiling requires positive overlap in both dimensions")
+        return self
+
+
+class ModelRuntimeProfile(BaseModel):
+    """Requirements, never a GPU assignment or hardware certification."""
+    model_config = ConfigDict(extra="forbid")
+    gpu_count: int = Field(..., ge=1)
+    min_vram_gb: float = Field(..., gt=0)
+    preferred_backend: str
+    exclusive: bool = False
+    cpu_offload: bool = False
+    offload_strategy: Optional[Literal["model", "sequential"]] = None
+    component_tiling: Dict[str, ComponentTilingSpec] = Field(default_factory=dict)
+    extra_vram_headroom_gb: float = Field(default=0, ge=0, le=8, multiple_of=0.001, allow_inf_nan=False,
+        description="Additional preconfigured native allocator headroom beyond topology reservation; never raises the residency acceptance budget.")
+    inference_timeout_seconds: int = Field(default=600, ge=1, le=7200)
+    notes: str = Field(..., min_length=1)
+
+    @model_validator(mode="after")
+    def multi_gpu_exclusivity(self):
+        if self.offload_strategy is not None and not self.cpu_offload:
+            raise ValueError("An explicit offload strategy requires CPU offload to be enabled")
+        if self.gpu_count > 1 and not self.exclusive:
+            raise ValueError("Multi-GPU runtime profiles must declare exclusive access")
+        return self
+
+
+class ModelValidationState(str, Enum):
+    READY = "READY"
+    EXPERIMENTAL = "EXPERIMENTAL"
+    BLOCKED = "BLOCKED"
+    DISABLED = "DISABLED"
+    DEPRECATED = "DEPRECATED"
+
+
+class ModelValidationSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    state: ModelValidationState = ModelValidationState.EXPERIMENTAL
+    reasons: List[str] = Field(..., min_length=1)
+    implemented_capabilities: List[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def no_static_certification(self):
+        if self.state == ModelValidationState.READY:
+            raise ValueError("A static manifest cannot grant READY; V3/V4/semantic evidence authorization is not implemented yet")
+        return self
+
+
 class ModelManifest(BaseModel):
-    """Declarative definition of a Model Family with strict capability completeness enforcement."""
+    """Model identity and declared support; deployment/inference readiness is separate."""
     model_config = ConfigDict(extra="forbid")
 
     apiVersion: str = Field(default="factory.ai/v1", pattern=r"^factory\.ai/v\d+$")
     kind: str = Field(default="ModelManifest")
     metadata: ModelMetadata
+    engine: Optional[EngineID] = None
+    backend: Optional[ModelBackendSpec] = None
+    aliases: List[str] = Field(default_factory=list)
+    parameters: Dict[str, dict] = Field(default_factory=dict)
+    runtime_profiles: Dict[str, ModelRuntimeProfile] = Field(default_factory=dict)
+    validation: Optional[ModelValidationSpec] = None
     weights: ModelWeightsSpec
     hardware: ModelHardwareSpec
     capabilities: Dict[str, bool] = Field(
         ...,
         description="Dictionary mapping standard capability identifiers to boolean support"
     )
-    status: ModelStatus = Field(..., description="'full' if 100% backed; otherwise 'partial'")
+    status: ModelStatus = Field(..., description="Legacy declared-support coverage; never inference certification")
     coverage_percent: float = Field(..., ge=0.0, le=100.0, description="Calculated percentage of supported capabilities")
     missing_capabilities: List[str] = Field(
         default_factory=list,
@@ -192,6 +337,73 @@ class ModelManifest(BaseModel):
         default_factory=dict,
         description="Truth model tracking declared, implemented, and live-verified status per capability"
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def canonical_manifest_projection(cls, value):
+        """v2 YAML owns truth; old fields are compatibility projections only."""
+        if not isinstance(value, dict) or value.get("apiVersion") != "factory.ai/v2":
+            return value
+        data = dict(value)
+        for key in ("engine", "backend", "runtime_profiles", "validation"):
+            if not data.get(key):
+                raise ValueError(f"Canonical manifest requires {key}")
+        if data.get("task_variant_matrix") or data.get("weights", {}).get("variants"):
+            raise ValueError("Checkpoint variants require separate model IDs, not task_variant_matrix/weights.variants")
+        weights = ModelWeightsSpec.model_validate(data["weights"])
+        if not weights.files or "primary" not in weights.files:
+            raise ValueError("Canonical manifests require complete pinned checkpoint files")
+        destinations = [spec.destination or spec.path for spec in weights.files.values()]
+        if len(destinations) != len(set(destinations)):
+            raise ValueError("Checkpoint files have colliding destinations")
+        backend = ModelBackendSpec.model_validate(data["backend"])
+        validation = ModelValidationSpec.model_validate(data["validation"])
+        profile = ModelRuntimeProfile.model_validate(data["runtime_profiles"]["kaggle-dual-t4"])
+        for runtime in data["runtime_profiles"].values():
+            parsed = ModelRuntimeProfile.model_validate(runtime)
+            if parsed.preferred_backend not in backend.supported:
+                raise ValueError("Runtime preferred backend must be supported by the manifest")
+        caps = data["capabilities"]
+        from factory_contracts.capabilities import require_canonical
+        for key in caps:
+            require_canonical(key, engine=data["engine"])
+        for spec in data.get("parameters", {}).values():
+            for key in spec.get("required_for", []):
+                require_canonical(key, engine=data["engine"])
+        if not caps:
+            raise ValueError("Canonical manifests require an explicit capability disposition")
+        if any(type(supported) is not bool for supported in caps.values()):
+            raise ValueError("Capability support must be an explicit boolean")
+        implemented = validation.implemented_capabilities
+        if any(not caps.get(key, False) for key in implemented):
+            raise ValueError("Implemented capabilities must be explicitly supported by this checkpoint")
+        missing = [key for key, supported in caps.items() if not supported]
+        limits = {key: spec["default"] for key, spec in data.get("parameters", {}).items()
+                  if key in ModelLimitsSpec.model_fields and "default" in spec}
+        derived = {
+            "hardware": {"min_vram_gb": profile.min_vram_gb, "preferred_gpu": "t4",
+                "preferred_gpu_index": None, "quantization_format": weights.quantization.value,
+                "offload_ram_gb": None if profile.cpu_offload else 0.0,
+                "allocation_policy": "dual_gpu_split" if profile.gpu_count > 1 else "single_gpu",
+                "context_window": limits.get("max_context_tokens")},
+            "limits": limits,
+            "status": "partial" if missing else "full",
+            "coverage_percent": round(100 * sum(caps.values()) / len(caps), 2) if caps else 0.0,
+            "missing_capabilities": missing, "installed": False, "backend_ready": False,
+            "checkpoint_valid": False, "validation_status": "pending_live",
+            "validated_hardware_profiles": [], "evidence_run_id": None,
+            "validation_notes": " ".join(validation.reasons),
+            "capabilities_truth": {key: {"declared": supported, "implemented": key in implemented,
+                "live_verified": False, "evidence_run_id": None} for key, supported in caps.items()},
+        }
+        for key, expected in derived.items():
+            if key in data and data[key] != expected:
+                raise ValueError(f"Legacy field {key} conflicts with canonical manifest truth")
+            data[key] = expected
+        for alias in data.get("aliases", []):
+            if alias != alias.strip().lower() or not re.fullmatch(r"[a-z0-9_.-]+", alias):
+                raise ValueError("Model aliases must be explicit normalized identifiers")
+        return data
 
     @model_validator(mode="after")
     def verify_completeness_integrity(self) -> "ModelManifest":
@@ -225,26 +437,23 @@ class ModelManifest(BaseModel):
                 )
 
         # Auto-populate capabilities_truth if not explicitly defined
+        # A model-wide legacy label cannot prove per-capability inference.
+        # Runtime installation/health likewise must never be inferred here.
         for cap, val in self.capabilities.items():
             if cap not in self.capabilities_truth:
-                is_live = (self.validation_status == ModelValidationStatus.LIVE_VERIFIED and bool(val))
                 self.capabilities_truth[cap] = CapabilityTruthLevel(
                     declared=True,
                     implemented=bool(val),
-                    live_verified=is_live,
-                    evidence_run_id=self.evidence_run_id if is_live else None,
+                    live_verified=False,
+                    evidence_run_id=None,
                 )
             else:
                 # Synchronize implemented flag with capabilities dictionary
                 truth = self.capabilities_truth[cap]
-                truth.implemented = bool(val)
+                if self.apiVersion != "factory.ai/v2":
+                    truth.implemented = bool(val)
                 if not val:
                     truth.live_verified = False
-
-        if self.validation_status == ModelValidationStatus.LIVE_VERIFIED:
-            self.installed = True
-            self.backend_ready = True
-            self.checkpoint_valid = True
 
         return self
 
@@ -254,12 +463,11 @@ class ModelManifest(BaseModel):
         if task in self.capabilities_truth:
             return self.capabilities_truth[task]
         val = self.capabilities.get(task, False)
-        is_live = (self.validation_status == ModelValidationStatus.LIVE_VERIFIED and val)
         return CapabilityTruthLevel(
             declared=val,
-            implemented=val,
-            live_verified=is_live,
-            evidence_run_id=self.evidence_run_id if is_live else None,
+            implemented=val if self.apiVersion != "factory.ai/v2" else bool(val and self.validation and task in self.validation.implemented_capabilities),
+            live_verified=False,
+            evidence_run_id=None,
         )
 
     def is_variant_supported_for_task(self, task: str, variant: Optional[str] = None) -> bool:
@@ -267,6 +475,8 @@ class ModelManifest(BaseModel):
         norm_variant = str(variant or "").strip().lower()
         if not norm_variant:
             norm_variant = "standard"
+        if self.apiVersion == "factory.ai/v2":
+            return bool(self.capabilities.get(task, False)) and norm_variant in ("standard", "default")
         if self.task_variant_matrix and task in self.task_variant_matrix:
             return norm_variant in [v.lower() for v in self.task_variant_matrix[task]]
         if norm_variant in ("standard", "base", "default"):

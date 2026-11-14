@@ -57,7 +57,7 @@ class ManifestValidator:
             # Capability Truth Model & Variant Invariants (§5.1)
             for task, variants in m.task_variant_matrix.items():
                 if task not in m.capabilities and not any(
-                    normalize_task(c) == normalize_task(task) for c in m.capabilities
+                    normalize_task(c, engine=m.metadata.service_id) == normalize_task(task, engine=m.metadata.service_id) for c in m.capabilities
                 ):
                     errors.append(f"Model '{m_id}' task_variant_matrix specifies unknown task '{task}'")
                 for var in variants:
@@ -74,7 +74,7 @@ class ManifestValidator:
 
             for cap, truth in m.capabilities_truth.items():
                 cap_supported = m.capabilities.get(cap, False)
-                if truth.implemented != cap_supported:
+                if m.apiVersion != "factory.ai/v2" and truth.implemented != cap_supported:
                     errors.append(
                         f"Model '{m_id}' capability '{cap}' truth.implemented ({truth.implemented}) does not match capabilities[{cap}] ({cap_supported})"
                     )

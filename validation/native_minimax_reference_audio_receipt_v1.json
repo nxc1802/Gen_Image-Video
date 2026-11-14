@@ -1,0 +1,85 @@
+{
+  "kind": "minimax_reference_audio",
+  "version": 1,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-reference-audio",
+  "run_record_sha256": "a0bfa68062bb79e7a68d51b3c1033940d4e8eccc10a58f63abe28765a04568ea",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_reference_audio_v1/installation.log",
+      "sha256": "e24fbe032f44befbdb718567e217bfadbf131be807782aadbf33e5cd3ca10c89"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/wave_d.json",
+      "sha256": "d380ff0b83a027c82d2099954659da79d8a5e711276674333dfff90f24066e90"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/setup.json",
+      "sha256": "2b563e2068eb9654853833607cf5fcd30a18bd6e83824006a5cda04e5a7b1398"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/driver.log",
+      "sha256": "48280df6b163ae4e010bf3f3e0402f966d52976aebabfffce7d56f71a6354cb9"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/runtime_packages.json",
+      "sha256": "4430a840141ccfeaec26e97c4002e53c87f8ec43daa3436ced9eaad4c3c8ce03"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/minimax-reference-spoken-audio-2.json",
+      "sha256": "b60a3d1c70454fb705f5e0cdfe630b8e48bc8e1b3f09f5861805d7bb29b31f7d"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/minimax-reference-spoken-audio-1.json",
+      "sha256": "25f7cd3a13d520a179dd55e1b2cbe287b6198a7896289fc536ae4da43e948aac"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/minimax-reference-spoken-audio-3.json",
+      "sha256": "23cf8f8568de83f43da25fafb06b74638ef106d5646f0a22fb915726451a5c24"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/observation.json",
+      "sha256": "3882c0173fad815239d01f4cd16fbfa1dc66cb929df56f150dc25191c9f3d490"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/native_node_schemas.json",
+      "sha256": "a8cdd8771cc8b9936dc554a9f7cc1226cbb2f101ed779faf4193a034acf11d40"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/backend.log",
+      "sha256": "fae8618945ebdc85e561f8b0673b60272ae361598a6e2af08e3a358135e430a6"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/minimax-reference-spoken-audio-0.json",
+      "sha256": "a7034d31370f2b6a58613c1ba6e9c637ee7f154366ded39f70e0e65f5c56f3d7"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+      "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+      "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+      "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+      "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/inputs/astronaut_first/source.bin",
+      "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v1/inputs/astronaut_first/input_identity.json",
+      "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+    }
+  ]
+}

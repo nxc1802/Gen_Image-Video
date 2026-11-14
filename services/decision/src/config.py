@@ -6,26 +6,30 @@ import os
 from pathlib import Path
 from typing import List, Optional
 import yaml
+from model_registry.bindings import bind_service_config
 from pydantic import BaseModel, Field
 
 
 class DecisionModelConfig(BaseModel):
-    name: str = "Qwen/Qwen2.5-3B-Instruct"
-    alias: str = "qwen-decision-8b"
-    quantization: str = "none"
-    precision: str = "bf16"
-    max_context_tokens: int = 8192
-    max_output_tokens: int = 2048
+    name: str
+    alias: str
+    quantization: str
+    precision: str
+    max_context_tokens: int
+    max_output_tokens: int
+
+    revision: str
 
 
 class DecisionHardwareConfig(BaseModel):
     gpu_required: bool = True
-    gpu_device_index: int = 0
-    min_vram_gb: float = 6.0
-    allocation_policy: str = "single_gpu"
+    gpu_device_index: Optional[int] = None
+    min_vram_gb: float
+    allocation_policy: str
 
 
 class DecisionSettings(BaseModel):
+    backend: str
     service_id: str = "decision-service"
     name: str = "vLLM Decision Routing Engine"
     host: str = "0.0.0.0"
@@ -33,8 +37,8 @@ class DecisionSettings(BaseModel):
     static_domain: str = "decision.ai.example.com"
     protocol: str = "http"
     cors_origins: List[str] = Field(default_factory=lambda: ["http://localhost:3000"])
-    model: DecisionModelConfig = Field(default_factory=DecisionModelConfig)
-    hardware: DecisionHardwareConfig = Field(default_factory=DecisionHardwareConfig)
+    model: DecisionModelConfig
+    hardware: DecisionHardwareConfig
 
 
 def load_decision_config(config_path: Optional[str] = None) -> DecisionSettings:
@@ -48,6 +52,7 @@ def load_decision_config(config_path: Optional[str] = None) -> DecisionSettings:
         with open(config_path, "r", encoding="utf-8") as f:
             config_data = yaml.safe_load(f) or {}
 
+    config_data = bind_service_config(config_data)
     config = DecisionSettings(**config_data)
 
     if "PORT" in os.environ:

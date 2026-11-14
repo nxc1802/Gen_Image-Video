@@ -21,6 +21,9 @@ from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock
 import pytest
 
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
+
 from factory_contracts.errors import (
     ErrorCode,
     FactoryError,
@@ -249,6 +252,7 @@ async def test_gpu_04_two_heavy_jobs_on_same_gpu(runtime_manager, manifest_loade
 # GPU-05: Dual-GPU Model (Atomic Reservation)
 # ==============================================================================
 @pytest.mark.asyncio
+@pytest.mark.contract_mock
 async def test_gpu_05_atomic_dual_gpu_reservation(runtime_manager):
     """
     GPU-05: Dual-GPU model requires atomic reservation across both GPUs.
@@ -278,7 +282,12 @@ async def test_gpu_05_atomic_dual_gpu_reservation(runtime_manager):
         status=ModelStatus.FULL,
         coverage_percent=100.0,
         missing_capabilities=[],
-        validation_status=ModelValidationStatus.LIVE_VERIFIED,
+        # Explicit fixture readiness for reservation logic; a validation label
+        # must not fabricate installation, checkpoint integrity or health.
+        validation_status=ModelValidationStatus.PENDING_LIVE,
+        installed=True,
+        checkpoint_valid=True,
+        backend_ready=True,
     )
 
     # 1. Occupy GPU 1 with a single-GPU job
@@ -656,7 +665,7 @@ def test_variant_turbo_vs_standard_checkpoint_selection():
     # Standard variant
     wf_std = ImageParameterMapper.apply(
         dict(base_wf),
-        task="text_to_image",
+        task='image.text_to_image',
         inputs={"prompt": "ocean", "variant": "standard"},
     )
     assert wf_std["478"]["inputs"]["unet_name"] == "qwen-image-2.1-Q4_K_M.gguf"
@@ -665,7 +674,7 @@ def test_variant_turbo_vs_standard_checkpoint_selection():
     # Turbo variant
     wf_turbo = ImageParameterMapper.apply(
         dict(base_wf),
-        task="text_to_image",
+        task='image.text_to_image',
         inputs={"prompt": "ocean", "variant": "turbo"},
     )
     assert wf_turbo["478"]["inputs"]["unet_name"] == "qwen-image-2.1-turbo-Q4_K_M.gguf"

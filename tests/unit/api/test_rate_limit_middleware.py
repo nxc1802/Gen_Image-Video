@@ -4,6 +4,9 @@ Unit tests for sliding-window RateLimitMiddleware in control-api.
 Verifies rate limit enforcement, 429 RATE_LIMITED envelope, client key isolation, and exemptions.
 """
 import pytest
+
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.testclient import TestClient

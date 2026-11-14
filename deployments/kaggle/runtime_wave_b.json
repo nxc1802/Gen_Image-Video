@@ -1,0 +1,32 @@
+{
+  "qwen_asr": {
+    "version": "0.0.6",
+    "torch": "2.11.0+cu130",
+    "torchvision": "0.26.0+cu130",
+    "torchaudio": "2.11.0+cu130",
+    "transformers": "4.57.6",
+    "huggingface_hub": "0.36.2",
+    "venv": "isolated; exact CUDA 13.0 Torch/TorchVision/TorchAudio installed from the official PyTorch wheel index; runtime identities checked after resolution",
+    "scope": "Same exact SDK/Torch/Transformers versions observed in successful load-only lifecycle v11; actual transcription is separately required"
+  },
+  "vllm_omni": {
+    "version": "0.32.0",
+    "transformers": "5.19.0",
+    "torch": "2.13.0+cu130",
+    "whisper": "20250625",
+    "scope": "Published matching Omni 0.32.0 / vLLM 0.32.0 backend explicitly selected for TTS; no alternate target model",
+    "wheel": {
+      "filename": "vllm_omni-0.32.0-py3-none-any.whl",
+      "url": "https://files.pythonhosted.org/packages/72/e9/9f8b93e0c59ba91a39530e55d5573edd544fdafaadaec48abe0950096e75/vllm_omni-0.32.0-py3-none-any.whl",
+      "sha256": "242b94e64b359d3cd6d1ebf1b9d6b43ae854a4f97c780fd5e2121dab06cb68e6",
+      "size_bytes": 9668735
+    },
+    "vllm_wheel": {
+      "filename": "vllm-0.32.0-cp38-abi3-manylinux_2_28_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/a5/0d/0b15fda9a56ac485ebb607e466f0e3386c8c115bafeced6514298bd325b5/vllm-0.32.0-cp38-abi3-manylinux_2_28_x86_64.whl",
+      "sha256": "5e2ecdc5b0baf72921c288486417ca82778456a448e4fe60b62ee43c0dfc8611",
+      "size_bytes": 326518482
+    },
+    "vllm_version": "0.32.0"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "observed_at_utc": "2026-11-14T05:00:59.396283+00:00",
+  "slug": "factory-phase-8-native-wan-fl2v",
+  "response": {
+    "versionNumberNullable": 2,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-wan-fl2v",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-wan-fl2v",
+    "versionNumber": 2,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144876684
+  },
+  "kernel_code_sha256": "5ff4ae91d6deb1754110a513871af5deaa6220a1edc3d851ba3c9365b09b9684",
+  "source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+  "validation_bundle_sha256": "334654399eee6635d54979d757e687685522a64ef6172c6fa3ba560e95988bf5",
+  "accelerator": "NvidiaTeslaT4",
+  "driver_timeout_seconds": 9600,
+  "session_timeout_seconds": 13200
+}

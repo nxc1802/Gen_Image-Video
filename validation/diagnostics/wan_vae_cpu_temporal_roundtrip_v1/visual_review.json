@@ -1,0 +1,22 @@
+{
+  "classification": "DIRECT_VISUAL_REVIEW_OF_LOCAL_CPU_COMPONENT_DIAGNOSIS_ONLY_NOT_NATIVE_T4_CERTIFICATION",
+  "execution_report_sha256": "18d820edf195d9e82e1fdd374faa20e40d90b8220505a5d7d0770836b0b1354d",
+  "files": {
+    "all_frame_comparison.png": "c27f3c98036386ba6317bf4a6e94dbbb60521530daa6ebbae6ede34afd7efe0d",
+    "input_0.png": "ee875ece2a3a8f9f309bed282c5ccf45fa267c318657429edc12aa4942d5e221",
+    "input_1.png": "5268c90b7308877c79e91813dff04cd36941bcdcf405128127ec636f1f506d18",
+    "input_2.png": "d584f8f9697d7a8e57f8363d83ccaa5796266e39a7bde7773fe3c13ef4647757",
+    "input_3.png": "8f24f79096c93e3e213c303aa7949a252664b61d0a12edfbc5337eca1d21ce29",
+    "input_4.png": "00ebec18322dc0408813cea6d1df850361464bd6638209a5a84ee67496dc8678",
+    "reconstructed_0.png": "3e23401f15059d6798572dabcf6f7ea46c63650a632c4512127036e0c0b32592",
+    "reconstructed_1.png": "43a5aaced75174ab59908eb0a711de17e8abf3581d04b30f3562e50d23a88574",
+    "reconstructed_2.png": "f7fafd8bf3920b4a2438d644d6da89d67b4b4d9653e002fdddf4f916513ea47d",
+    "reconstructed_3.png": "32b4e1e78bbb551eaeff048fc43c02e19325c4b98112d87a97254c1794a79719",
+    "reconstructed_4.png": "78a727266cc1c617fe63605dca3e06339a152db21c53742711d641804df58b31"
+  },
+  "all_recorded_input_and_reconstructed_frames_reviewed": true,
+  "observation": "All five original/reconstructed frame pairs were directly reviewed. The pedestrian positions, walking movement, courtyard, grass and natural colors are preserved; there is no severe color-block corruption. This does not validate CUDA/sequential-offload decoding or the text/diffusion path.",
+  "v3_certified": false,
+  "production_ready": false,
+  "full_factory_e2e_executed": false
+}

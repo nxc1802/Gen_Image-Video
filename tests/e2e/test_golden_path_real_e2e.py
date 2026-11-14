@@ -19,6 +19,9 @@ import time
 from typing import Dict, Generator
 
 import pytest
+
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from fastapi.testclient import TestClient
 
 from factory_contracts.jobs.job_contract import JobState
@@ -53,7 +56,7 @@ def configure_lite_environment():
 @pytest.fixture
 def client() -> Generator[TestClient, None, None]:
     """Provides a TestClient connected directly to the in-memory Factory Lite app."""
-    from factory.apps.control_api.src.main import app
+    from factory.apps.control_api.src.legacy import app
 
     with TestClient(app, base_url="http://testserver") as test_client:
         yield test_client

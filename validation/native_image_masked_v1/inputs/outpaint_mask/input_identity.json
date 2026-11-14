@@ -1,0 +1,18 @@
+{
+  "recipe": {
+    "kind": "alpha_mask",
+    "size": [
+      640,
+      512
+    ],
+    "region": [
+      512,
+      0,
+      640,
+      512
+    ]
+  },
+  "sha256": "0ae89067187c37ea66a79c38ce0309d46c6a127da9e4d27d2df488ce459229f5",
+  "size_bytes": 1311400,
+  "mime_type": "image/png"
+}

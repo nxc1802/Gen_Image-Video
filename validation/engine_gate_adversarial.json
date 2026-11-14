@@ -1,0 +1,51 @@
+{
+  "classification": "SOFTWARE_ONLY_EVIDENCE_VALIDATOR_TAMPER_CHECKS",
+  "unmodified_current_evidence": "PASS",
+  "cases": [
+    {
+      "mutation": "stale_source",
+      "expected_gate": "NOT_MET",
+      "actual_gate": "NOT_MET",
+      "failed_checks": [
+        "current_kernel_and_source"
+      ],
+      "error": null
+    },
+    {
+      "mutation": "wrong_checkpoint",
+      "expected_gate": "NOT_MET",
+      "actual_gate": "NOT_MET",
+      "failed_checks": [
+        "complete_exact_checkpoint_bundle"
+      ],
+      "error": null
+    },
+    {
+      "mutation": "production_promotion",
+      "expected_gate": "NOT_MET",
+      "actual_gate": "NOT_MET",
+      "failed_checks": [
+        "no_production_or_v3_v4_promotion"
+      ],
+      "error": null
+    },
+    {
+      "mutation": "fabricated_dimensions",
+      "expected_gate": "NOT_MET",
+      "actual_gate": "NOT_MET",
+      "failed_checks": [
+        "decoded_actual_x4_output"
+      ],
+      "error": null
+    },
+    {
+      "mutation": "corrupted_output",
+      "expected_gate": "NOT_MET",
+      "actual_gate": "NOT_MET",
+      "failed_checks": [],
+      "error": "OSError: image file is truncated"
+    }
+  ],
+  "production_ready": false,
+  "inference_executed_by_this_check": false
+}

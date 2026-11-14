@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
 
 from factory_contracts.errors import UnauthorizedError
+from factory_contracts.capabilities import canonical_model_capabilities, engine_context
 from factory_contracts.jobs.job_contract import JobState
 from factory_contracts.jobs.worker_contract import (
     WorkerHeartbeatRequest,
@@ -17,104 +18,13 @@ from factory_contracts.jobs.worker_contract import (
 )
 from factory_contracts.tasks import (
     get_model_aliases,
-    get_task_aliases,
     normalize_model,
-    normalize_task,
 )
 from factory.apps.control_api.src.queue.broker.base import BaseQueueBroker
 from factory.apps.control_api.src.queue.repository.base import BaseJobRepository
 from factory.apps.control_api.src.telemetry.metrics import metrics
-from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
-
-# Authoritative Declarative Manifest Capabilities per Subsystem
-SUBSYSTEM_MANIFEST_CAPABILITIES: Dict[str, Dict[str, List[str]]] = {
-    "image": {
-        "models": [
-            "qwen-image-2.1",
-            "qwen-image",
-            "qwen-image-2.1-turbo",
-            "qwen_image_2.1_turbo",
-        ],
-        "tasks": [
-            "text_to_image", "image.t2i", "t2i",
-            "image_to_image", "image.i2i", "i2i",
-            "inpaint", "image.inpaint",
-            "outpaint", "image.outpaint",
-            "instruction_edit", "image.instruction_edit", "edit",
-            "reference_conditioning", "image.reference", "image.reference_conditioning",
-            "controlnet", "image.controlnet",
-        ],
-    },
-    "video": {
-        "models": ["wan-2.2", "wan", "minimax-h3", "minimax"],
-        "tasks": [
-            "text_to_video", "video.t2v", "t2v",
-            "image_to_video", "video.i2v", "i2v",
-            "first_last_frame_to_video", "video.fl2v", "fl2v",
-            "video_extension", "video.extend", "video.extension",
-            "video_with_audio", "video.audio", "video.with_audio",
-            "reference_conditioning", "video.reference", "video.ref2va",
-        ],
-    },
-    "music": {
-        "models": ["ace-step-1.5", "ace-step"],
-        "tasks": [
-            "text_to_music", "music.t2m", "t2m",
-            "lyrics_to_music", "music.lyrics", "music.l2m", "l2m",
-            "audio_to_audio", "music.a2a", "a2a",
-        ],
-    },
-    "speech": {
-        "models": ["qwen-speech", "qwen3-tts", "qwen3-asr"],
-        "tasks": [
-            "speech_synthesis", "speech.tts", "tts", "text_to_speech", "text2speech",
-            "speech_transcription", "speech.asr", "asr", "speech_to_text", "speech2text",
-        ],
-    },
-    "enhancement": {
-        "models": ["enhancement-suite-v1", "enhancement-suite"],
-        "tasks": [
-            "image_super_resolution", "enhance.sr_image",
-            "video_super_resolution", "enhance.sr_video",
-            "frame_interpolation", "enhance.interpolation",
-            "audio_enhancement", "enhance.audio",
-        ],
-    },
-    "text": {
-        "models": ["qwen-text", "qwen-2.5-72b", "qwen-2.5-72b-instruct"],
-        "tasks": ["chat_completion", "chat", "text.chat"],
-    },
-    "vision": {
-        "models": ["qwen-vlm", "qwen-2.5-vl-72b"],
-        "tasks": ["visual_language", "vlm", "vision.vlm"],
-    },
-    "vlm": {
-        "models": ["qwen-vlm", "qwen-2.5-vl-72b"],
-        "tasks": ["visual_language", "vlm", "vision.vlm"],
-    },
-    "decision": {
-        "models": ["qwen-decision"],
-        "tasks": [
-            "decision",
-            "decision.classify",
-            "predicate_evaluation",
-            "predicate",
-            "choice_routing",
-            "choice",
-            "score_ranking",
-            "score",
-        ],
-    },
-    "embedding": {
-        "models": ["qwen-embedding"],
-        "tasks": ["embedding", "embedding.text"],
-    },
-    "rerank": {
-        "models": ["qwen-embedding"],
-        "tasks": ["rerank", "rerank.text"],
-    },
-}
-
+from model_registry.deployment import DeploymentRegistry
+from factory.apps.control_api.src.queue.policy import binding_for_job
 
 class LeaseCoordinator:
     """Coordinates capability-based worker job dispatch and liveness heartbeats."""
@@ -125,11 +35,13 @@ class LeaseCoordinator:
         broker: Optional[BaseQueueBroker] = None,
         candidate_limit: int = 50,
         manifest_loader: Optional[object] = None,
+        deployment_registry: Optional[DeploymentRegistry] = None,
     ):
         self.repository = repository
         self.broker = broker
         self.candidate_limit = candidate_limit
         self.manifest_loader = manifest_loader
+        self.deployment_registry = deployment_registry if deployment_registry is not None else DeploymentRegistry.from_environment(getattr(manifest_loader, "manifests_dir", None))
 
     def _verify_manifest_capabilities(
         self,
@@ -139,25 +51,38 @@ class LeaseCoordinator:
     ) -> Tuple[List[str], List[str]]:
         """Validates and filters requested capabilities against authoritative subsystem manifests."""
         norm_sub = str(subsystem).strip().lower() if subsystem else ""
-        manifest_info = SUBSYSTEM_MANIFEST_CAPABILITIES.get(norm_sub)
-        if not manifest_info:
-            return [], []
+        from model_registry.loader import ManifestLoader
+        loader = self.manifest_loader or ManifestLoader()
+        models = loader.load_models()
+        services = loader.load_services()
+        configured = {binding.model: binding for binding in self.deployment_registry.bindings()}
+        allowed_models = []
+        for model_id, model in models.items():
+            if model_id not in configured:
+                continue
+            service = services.get(model.metadata.service_id)
+            service_subsystem = service.metadata.subsystem.value if service else None
+            if service_subsystem == norm_sub:
+                allowed_models.append(model_id)
+            elif norm_sub == "rerank" and canonical_model_capabilities(model).get("vector.reranking", False):
+                allowed_models.append(model_id)
 
-        allowed_models = manifest_info["models"]
-        allowed_tasks = manifest_info["tasks"]
 
         if requested_models:
-            valid_models = [
-                m for m in requested_models
-                if normalize_model(m) in [normalize_model(am) for am in allowed_models]
-            ]
+            identities = {identity: mid for mid, model in models.items() for identity in [mid, *model.aliases]}
+            valid_models = [identities[m.strip().lower()] for m in requested_models
+                            if identities.get(m.strip().lower()) in allowed_models]
         else:
             valid_models = allowed_models
+
+        allowed_tasks = sorted({cid for mid in valid_models
+                                for cid, supported in canonical_model_capabilities(models[mid]).items()
+                                if supported and cid.startswith(engine_context(norm_sub) + ".")})
 
         if requested_tasks:
             valid_tasks = [
                 t for t in requested_tasks
-                if normalize_task(t) in [normalize_task(at) for at in allowed_tasks]
+                if t in allowed_tasks
             ]
         else:
             valid_tasks = allowed_tasks
@@ -210,7 +135,7 @@ class LeaseCoordinator:
         if req.supported_tasks:
             effective_tasks = [
                 t for t in req.supported_tasks
-                if normalize_task(t) in [normalize_task(rt) for rt in reg_tasks]
+                if t in reg_tasks
             ]
         else:
             effective_tasks = reg_tasks
@@ -224,27 +149,13 @@ class LeaseCoordinator:
             expanded_models.add(norm_m)
             expanded_models.update(get_model_aliases(norm_m))
 
-        expanded_tasks = set(effective_tasks)
-        for t in effective_tasks:
-            norm_t = normalize_task(t)
-            expanded_tasks.add(norm_t)
-            expanded_tasks.update(get_task_aliases(norm_t))
+        canonical_tasks = set(effective_tasks)
 
-        target_gpu = req.gpu_device
-        if target_gpu is None and registered_worker:
-            target_gpu = registered_worker.get("gpu_device")
-        if target_gpu is None:
-            target_gpu = SUBSYSTEM_GPU_MAP.get(req.subsystem, 0)
-
-        # Enforce strict GPU concurrency bound (max 1 concurrent job per discrete GPU)
-        if self.broker and hasattr(self.broker, "is_gpu_busy") and target_gpu is not None:
-            if self.broker.is_gpu_busy(target_gpu):
-                return WorkerLeaseResponse(job=None, lease_token=None, lease_expires_at=None)
-
+        # The worker declares a device; deployment configuration owns placement.
         candidates = await self.repository.find_eligible_jobs_for_worker(
             subsystem=registered_worker.get("subsystem", req.subsystem),
             supported_models=list(expanded_models),
-            supported_tasks=list(expanded_tasks),
+            supported_tasks=list(canonical_tasks),
             limit=self.candidate_limit,
         )
 
@@ -256,51 +167,22 @@ class LeaseCoordinator:
         expires_at = now + timedelta(seconds=duration)
 
         for job in candidates:
-            # Determine if candidate job requires dual_gpu_split
-            is_dual = False
-            try:
-                loader = getattr(self, "manifest_loader", None)
-                if loader is None:
-                    from model_registry import ManifestLoader
-                    loader = ManifestLoader()
-                models = loader.load_models()
-                m = models.get(normalize_model(job.model)) or models.get(job.model)
-                if m:
-                    alloc = getattr(m.hardware, "allocation_policy", None)
-                    if hasattr(alloc, "value"):
-                        alloc = alloc.value
-                    if str(alloc).lower() in ("dual_gpu_split", "allocationpolicy.dual_gpu_split"):
-                        is_dual = True
-            except Exception:
-                pass
-
-            if not is_dual and (
-                job.model in ("qwen-speech", "qwen-text")
-                or getattr(job, "allocation_policy", None) == "dual_gpu_split"
-            ):
-                is_dual = True
-
-            if is_dual:
-                target_devices = [0, 1]
-                if self.broker and hasattr(self.broker, "is_gpu_busy"):
-                    if any(self.broker.is_gpu_busy(d) for d in target_devices):
-                        continue
-                if self.broker and hasattr(self.broker, "acquire_gpus"):
-                    if not self.broker.acquire_gpus(target_devices, job.job_id):
-                        continue
-                elif self.broker and hasattr(self.broker, "acquire_gpu"):
-                    if not self.broker.acquire_gpu(0, job.job_id):
-                        continue
-                gpu_device_for_lease = 0
-            else:
-                target_dev = target_gpu if target_gpu is not None else SUBSYSTEM_GPU_MAP.get(job.service, 0)
-                target_devices = [target_dev]
-                if self.broker and hasattr(self.broker, "is_gpu_busy") and self.broker.is_gpu_busy(target_dev):
+            binding = binding_for_job(self.deployment_registry, job)
+            if req.gpu_device is not None and req.gpu_device != binding.devices[0]:
+                continue
+            target_devices = list(binding.devices)
+            gpu_device_for_lease = binding.devices[0]
+            if self.broker and hasattr(self.broker, "is_gpu_busy"):
+                if any(self.broker.is_gpu_busy(device) for device in target_devices):
                     continue
-                if self.broker and hasattr(self.broker, "acquire_gpu"):
-                    if not self.broker.acquire_gpu(target_dev, job.job_id):
-                        continue
-                gpu_device_for_lease = target_dev
+            if self.broker and hasattr(self.broker, "acquire_gpus"):
+                if not self.broker.acquire_gpus(target_devices, job.job_id):
+                    continue
+            elif len(target_devices) > 1:
+                continue  # Never half-reserve a multi-GPU deployment.
+            elif self.broker and hasattr(self.broker, "acquire_gpu"):
+                if not self.broker.acquire_gpu(gpu_device_for_lease, job.job_id):
+                    continue
 
             lease_token = getattr(req, "lease_token", None) or f"lease-{uuid.uuid4()}"
             try:

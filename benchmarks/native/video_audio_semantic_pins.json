@@ -1,0 +1,12 @@
+{
+  "scope": "EVALUATION_ONLY_NOT_FACTORY_TARGET_MODEL_OR_FALLBACK",
+  "whisper": {
+    "distribution": "openai-whisper",
+    "version": "20250625",
+    "model": "base.en",
+    "device": "cpu",
+    "url": "https://openaipublic.azureedge.net/main/whisper/models/25a8566e1d0c1e2231d1c762132cd20e0f96a85d16145c3a00adf5d1ac670ead/base.en.pt",
+    "sha256": "25a8566e1d0c1e2231d1c762132cd20e0f96a85d16145c3a00adf5d1ac670ead",
+    "size_bytes": 145261783
+  }
+}

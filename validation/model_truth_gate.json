@@ -1,0 +1,464 @@
+{
+  "phase": 1,
+  "exit_gate": "PASS",
+  "observed_at_utc": "2026-11-13T20:52:34.734436+00:00",
+  "classification": "STATIC_MODEL_TRUTH_ONLY",
+  "authority": "docs/MASTER_PLAN.md#28-phase-1--canonical-model-truth",
+  "reproduce": [
+    ".venv/bin/python benchmarks/checkpoint_probe.py --output validation/checkpoint_metadata_current.json",
+    ".venv/bin/python benchmarks/model_truth_gate.py"
+  ],
+  "probe_sha256": "3c387e88f2d0d7e00e78a379aad93366bfc40c306eba5a8e3d38a70da57b3e6f",
+  "models": [
+    {
+      "model": "ace-step-1.5-sft",
+      "engine": "music",
+      "current_manifest_sha256": "4fcff51fbfb130d3b84bbe51595871a1faec3812d35f132b713551682097768c",
+      "upstream_observation_manifest_sha256": "09ae95dec4a34ae6aee5359749bd76acc67ecc27b0695d7f9a285a2df6e60664",
+      "backend": {
+        "adapter": "acestep",
+        "supported": [
+          "acestep_native"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 26,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "ace-step-1.5-turbo",
+      "engine": "music",
+      "current_manifest_sha256": "72cfd6cee305e780b22ee3e69af3a17c54af5f1da1770f7ed83cfb73a1efaae7",
+      "upstream_observation_manifest_sha256": "708ff4fff8d6d97d0f2aee8d7ac4144a3e08df0dae390517dcf795359611167b",
+      "backend": {
+        "adapter": "acestep",
+        "supported": [
+          "acestep_native"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 25,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "ace-step-1.5-xl-base",
+      "engine": "music",
+      "current_manifest_sha256": "a0ff397f89d15f78da4a5e3dbd93e004aaa93db7a1a19430a9787f189c98a729",
+      "upstream_observation_manifest_sha256": "d7c3b09c3bbd899f3d0bf19652004e56e5acbde9525a7aaae0243e5f00a409ca",
+      "backend": {
+        "adapter": "acestep",
+        "supported": [
+          "acestep_native"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 30,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "ace-step-1.5",
+      "engine": "music",
+      "current_manifest_sha256": "2e4a11df86c2121365d939a8084828981fceb64f393b6e65d1239c4fbd3be119",
+      "upstream_observation_manifest_sha256": "74972565cc674b81006b8b4dd6bcdc2138e154a9f24a06092a643766a770d81a",
+      "backend": {
+        "adapter": "acestep",
+        "supported": [
+          "acestep_native"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 26,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "enhancement-suite-v1",
+      "engine": "enhancement",
+      "current_manifest_sha256": "5661e9eaff5ed210205a97c29dddb1211f962cca26ec709450302dcaebceba49",
+      "upstream_observation_manifest_sha256": "64fb61bc3f8799c525b09761bafc75e56ec2e8e145474e9bed67c4d950db1acc",
+      "backend": {
+        "adapter": "enhancement",
+        "supported": [
+          "comfyui"
+        ]
+      },
+      "validation_state": "DISABLED",
+      "checkpoint_files": 1,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "minimax-h3-reference",
+      "engine": "video",
+      "current_manifest_sha256": "eedc017c75e03fc21415102a19c5639464c771635182bea1eaf34c26c9aee9e9",
+      "upstream_observation_manifest_sha256": "16a5b50a7bf8add45c5001a2d705554152fcdf571bc346cc469ced42b7e78fc1",
+      "backend": {
+        "adapter": "minimax",
+        "supported": [
+          "comfyui"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 4,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "minimax-h3-turbo",
+      "engine": "video",
+      "current_manifest_sha256": "9b646cfce03d48918ac686c5af2b462777b5de3e95d3efb916354069d7c70373",
+      "upstream_observation_manifest_sha256": "a48ae7914a76eab12071d26a39d6657725aad658358df382d646cc1223b56fa2",
+      "backend": {
+        "adapter": "minimax",
+        "supported": [
+          "comfyui"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 5,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "minimax-h3",
+      "engine": "video",
+      "current_manifest_sha256": "37a71704cbe8e27998a7845c5e820f3aec7e062b38a2f1d5c579d79b48e1d421",
+      "upstream_observation_manifest_sha256": "eae8fef1a148a5175d0bd4b6ef927ab8418b46bf8056ffc2c7e87fbacc6848ce",
+      "backend": {
+        "adapter": "minimax",
+        "supported": [
+          "comfyui"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 4,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "qwen-asr",
+      "engine": "speech",
+      "current_manifest_sha256": "eedff5d865b9f16fbcfa2a792a5bca2b22fbfb59fe0542e7d51bff719ce90798",
+      "upstream_observation_manifest_sha256": "c60de7c6161fb5cb8983ff2f41bd9138189fb0e94082e134066a31d2c55377af",
+      "backend": {
+        "adapter": "qwen_asr",
+        "supported": [
+          "qwen_asr"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 10,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "qwen-decision",
+      "engine": "decision",
+      "current_manifest_sha256": "3b4825f57781e7e8d897e5a1b29eb5e84c57b703df9014c3a3b72f3c25309235",
+      "upstream_observation_manifest_sha256": "8bde4c0d5e6389fb14091f4b830d90aeb09e2e56643de20fa8f5ecc153722617",
+      "backend": {
+        "adapter": "qwen_decision",
+        "supported": [
+          "vllm"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 9,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "qwen-embedding",
+      "engine": "vector",
+      "current_manifest_sha256": "040c669b22b148af7f517b9bc55569b8eda2baebea94720ea5cf03c17f48f7ee",
+      "upstream_observation_manifest_sha256": "8b466f580629909a3709264173eee1f459c3254508ce5457298f8d7d32f9384b",
+      "backend": {
+        "adapter": "qwen_embedding",
+        "supported": [
+          "vllm"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 10,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "qwen-image-2.1-turbo",
+      "engine": "image",
+      "current_manifest_sha256": "0aba5b6105ef8cfea2abc3bfb19cb3a27cbaeb2e281d1516d9d367221e2ed65d",
+      "upstream_observation_manifest_sha256": "d5fe7cdf07b24073b4cf63c9db45c808067783ea4800bbd7da761414935111c3",
+      "backend": {
+        "adapter": "qwen_image",
+        "supported": [
+          "comfyui"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 3,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "qwen-image-2.1-uncensored",
+      "engine": "image",
+      "current_manifest_sha256": "c9734cc50b19ea5bd077966ebbb5b593742187e1a17671439aff5cd6908524bc",
+      "upstream_observation_manifest_sha256": "50a0e77377493c667a2f54c379be15c0441a9661fc784cb03cb250c2a7aec3ba",
+      "backend": {
+        "adapter": "qwen_image",
+        "supported": [
+          "comfyui"
+        ]
+      },
+      "validation_state": "DISABLED",
+      "checkpoint_files": 3,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "qwen-image-2.1",
+      "engine": "image",
+      "current_manifest_sha256": "95adfbfee4c6981faafeee7606a032edcf55fdf6aeb603de9743c85e4f58bcfc",
+      "upstream_observation_manifest_sha256": "b6468710de7774e051596f687097ef96226372071429772ede9405aabf58b4c7",
+      "backend": {
+        "adapter": "qwen_image",
+        "supported": [
+          "comfyui"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 3,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "qwen-reranker",
+      "engine": "vector",
+      "current_manifest_sha256": "d8cdc1e1a6c27b4b82859e464399d1cabc333ebda8f9c0f352225339391bb224",
+      "upstream_observation_manifest_sha256": "2a2bd8181bff089b8b66670dbfeae22ac962d4a88d5d2650b46777c0e6ae9246",
+      "backend": {
+        "adapter": "qwen_reranker",
+        "supported": [
+          "vllm"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 12,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "qwen-text",
+      "engine": "responses",
+      "current_manifest_sha256": "0aeb9823fc1b755fc246b9b05a4da7b1694a3bd6b5f8973b0214284b780af2e6",
+      "upstream_observation_manifest_sha256": "a517025afa11c26dd3c175d2199f8b3a35d772fa158650b2252b79c24e349e93",
+      "backend": {
+        "adapter": "qwen_text",
+        "supported": [
+          "llama_cpp"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 1,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "qwen-tts",
+      "engine": "speech",
+      "current_manifest_sha256": "05ecde8d82dc621d18a138445a8a7045b9b39335a466b9dc3c5b407bea780277",
+      "upstream_observation_manifest_sha256": "69c4d9fda1c9ecf3643ec0bce5c6b37eea8c9b19e11a93cda8a681c26f0fd6e4",
+      "backend": {
+        "adapter": "qwen_tts",
+        "supported": [
+          "vllm_omni"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 11,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "qwen-vlm",
+      "engine": "responses",
+      "current_manifest_sha256": "623e683c89be627ea97aa2382f392b78aadf834ff7100bed764b14b2274f7e67",
+      "upstream_observation_manifest_sha256": "d6b40d568eb1cd14383430b430ebd5e303f5d81576759c8ec089e9f3af91eb14",
+      "backend": {
+        "adapter": "qwen_vlm",
+        "supported": [
+          "vllm"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 13,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "wan-2.2",
+      "engine": "video",
+      "current_manifest_sha256": "7e065f15dbf3985bb7976eb6cc2f561d96fa1fd2beb1beedfdc35bb4b3277c99",
+      "upstream_observation_manifest_sha256": "dac96fc4e5ad5444ba938f6827f7effabab6bef34d5a58dc3e27a61466eb3a2e",
+      "backend": {
+        "adapter": "wan",
+        "supported": [
+          "diffusers"
+        ]
+      },
+      "validation_state": "EXPERIMENTAL",
+      "checkpoint_files": 20,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    },
+    {
+      "model": "yue2",
+      "engine": "music",
+      "current_manifest_sha256": "8782672de5ccfd71fb3ff9635839bf26183f5bda16e55d386bccd08be5c3a38d",
+      "upstream_observation_manifest_sha256": "0a27dc9105a3468679f3ffe7e01003b35337df7f36fe8bd12d356bd88618c9db",
+      "backend": {
+        "adapter": "yue2",
+        "supported": [
+          "yue2_native"
+        ]
+      },
+      "validation_state": "BLOCKED",
+      "checkpoint_files": 11,
+      "checks": {
+        "inspector_complete": true,
+        "canonical_v2": true,
+        "no_checkpoint_variants": true,
+        "no_static_readiness": true,
+        "probe_inventory_matches_model": true,
+        "complete_bundle_identity": true
+      }
+    }
+  ],
+  "model_count": 20,
+  "model_states": {
+    "EXPERIMENTAL": 17,
+    "DISABLED": 2,
+    "BLOCKED": 1
+  },
+  "production_ready": false,
+  "native_inference_executed": false,
+  "full_factory_e2e_executed": false,
+  "errors": []
+}

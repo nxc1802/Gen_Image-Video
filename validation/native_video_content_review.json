@@ -1,0 +1,512 @@
+{
+  "classification": "DIRECT_VISUAL_REVIEW_OF_ALL_DECODED_NATIVE_FRAMES_NOT_NEW_INFERENCE",
+  "scope": "Golden-case video acceptance only. Each review must inspect every decoded frame of all four actual native outputs and bind their collected output JSON hashes. No review creates inference, Full Factory E2E, or production readiness.",
+  "cases": {
+    "kaggle:factory-phase-8-native-minimax-t2v:v3:minimax-t2v-red-ball-motion-v2": {
+      "decision": "PASS",
+      "reviewed_at_utc": "2026-11-13T12:20:42.240481+00:00",
+      "method": "Direct visual inspection of all 107 numbered decoded frames in each of the four actual native MP4s; original collected output JSON hashes verified before contact-sheet derivation.",
+      "all_decoded_frames_reviewed": true,
+      "output_json_sha256": [
+        "90fd6af3ae83bf5c9fb7c0e6f4fd167abc1e3c22ac2ccbb254bcc2eac3db203b",
+        "c6e7f51881dc22881d1fe0aa65969f89a7ed0808fa1a30ec70c7c3ebb6d989cc",
+        "998b36788fe174e77412e1095357e024c673a75f04d4a254070e16289d741acd",
+        "984016d2e9a7d44bfe1d5e0428399b07913b6ee4383c2e0b22d1d247d3ed8509"
+      ],
+      "contact_sheets": [
+        {
+          "iteration": 0,
+          "file": "validation/native_video_reviews/minimax_t2v_v3/all_frames_0.png",
+          "sha256": "9e7e0c8dd35830ccf483d0ae8aaa49958db01c3df956da6f49ac1733cc26491c",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 1,
+          "file": "validation/native_video_reviews/minimax_t2v_v3/all_frames_1.png",
+          "sha256": "5fdbfe4e11ca21743345bd258c34ef11e56c4b7d9ded0e5a3013669fd29a9600",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 2,
+          "file": "validation/native_video_reviews/minimax_t2v_v3/all_frames_2.png",
+          "sha256": "3f6db42011d77d9dfc8bfbf81cd7a604933c7b6ce06ead12f077639b4c48642f",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 3,
+          "file": "validation/native_video_reviews/minimax_t2v_v3/all_frames_3.png",
+          "sha256": "e674899a40d97b1f6c4bb5a8ab53e7b42dd694628d6c999f3625767ecf3dc57f",
+          "decoded_frames": 107
+        }
+      ],
+      "observation": "All four clips show one recognizable red ball moving gradually from the left toward the right across a white table with a stable camera and coherent background. The ball remains identifiable through every frame. No abstract/global reconstruction corruption like Wan v2 is present. Some frames show mild transparency/ghosting; this is retained as a quality limitation, not hidden.",
+      "scope": "Small 107-frame 384x256 24-fps T2V golden only; no general quality estimate, Full Factory E2E, or production authorization."
+    },
+    "kaggle:factory-phase-8-native-wan-t2v:v5:wan-t2v-red-ball-motion": {
+      "decision": "FAIL",
+      "reviewed_at_utc": "2026-11-13T12:50:01.361737+00:00",
+      "all_decoded_frames_reviewed": true,
+      "output_json_sha256": [
+        "8fca49fb24f1e2c5c9618aee4f4cae42e2882ad0999f9dbbb6c62cc1365ff245",
+        "288d4b1eb4f8ea4e3f4b813acfeed41223e85e7f450973a0e398b3e908346d6e",
+        "1b66e91cde6164db3cf10c9d6149ab611c5f128643143d6f87f3f21a9094af8d",
+        "0eced6f88a2ccc51d3b4ed86620d334580b12888534b5dfcab6d5a7426cf4f0f"
+      ],
+      "contact_sheets": [
+        {
+          "iteration": 0,
+          "file": "validation/native_video_reviews/wan_t2v_v5/all_frames_0.png",
+          "sha256": "87de3ce2c7dcaba70eb738f3d2f1d365d20d943ff4c5aa13b6dd7e7307c5522a",
+          "decoded_frames": 17
+        },
+        {
+          "iteration": 1,
+          "file": "validation/native_video_reviews/wan_t2v_v5/all_frames_1.png",
+          "sha256": "f21b2c557d8f955914b58b6643dad9ffa88a57aee90e855b379f16b6b54519a8",
+          "decoded_frames": 17
+        },
+        {
+          "iteration": 2,
+          "file": "validation/native_video_reviews/wan_t2v_v5/all_frames_2.png",
+          "sha256": "b69a04aee25296833fe7b6e104ebe1c0f7dd9533e323bc36294b07ec15abdf3b",
+          "decoded_frames": 17
+        },
+        {
+          "iteration": 3,
+          "file": "validation/native_video_reviews/wan_t2v_v5/all_frames_3.png",
+          "sha256": "56fa7d56538fd2eabf54c5fed2704b8304ee84b71f15a085ac4710195bbeba3f",
+          "decoded_frames": 17
+        }
+      ],
+      "observation": "All four clips show severe abstract colorful block/reconstruction corruption. The measured iteration that passes numeric CLIP/color/displacement checks also fails meaningful scene review. No clean single red ball rolling on a white table is consistently represented.",
+      "scope": "Original 384x256/17-frame diagnostic remains failed; no V3/production authorization."
+    },
+    "kaggle:factory-phase-8-native-minimax-conditioned:v1:minimax-i2v-astronaut": {
+      "output_json_sha256": [
+        "821016a2529680bd0b38541738aa6ebc141a1d535ee91883e7cebe5982944724",
+        "ad8b2c5545e49d32fa1eb031217c6508bf5071e51540c9f7c462217860f59e57",
+        "52589b75a7c25c44d54727dfe40b381fbab0821bdd82cb809426bb5113bd5ddb",
+        "68db92422a75383429e19e6907aa73f050b82422199674f681ccfdff20fc0f37"
+      ],
+      "all_decoded_frames_reviewed": true,
+      "decision": "FAIL",
+      "observation": "All 107 decoded frames in each of four outputs were directly reviewed. Head motion/smiling and the astronaut scene are visible, but measured iteration 2 repeatedly introduces conspicuous red/green/blue floating discs over the subject and background; other iterations also show illumination flicker. Numeric CLIP/motion/anchor PASS is insufficient; the complete golden fails direct content quality."
+    },
+    "kaggle:factory-phase-8-native-minimax-conditioned:v1:minimax-fl2v-astronaut-zoom": {
+      "output_json_sha256": [
+        "2a2e3393da3e0f922620388e3492689944cf19a3aae81e81b5017f212a15f46e",
+        "9ceeec42943cc85542bc799a7169277cbb4c709dcb8ae153ed3c143866aec1af",
+        "c2e50bf832160ddb35bf87374c36246772cef11ebb98d16a68db40e8fbaaa4f3",
+        "cb69940ffe222d0dbd833e71f6082eb97633c731391f106c818b5c2ce0234133"
+      ],
+      "all_decoded_frames_reviewed": true,
+      "decision": "FAIL",
+      "observation": "All 107 decoded frames in each of four outputs were directly reviewed. The intended mild zoom and endpoint preservation are visible, but measured iteration 2 includes repeated extraneous luminous/colored discs over the suit/background and lighting flashes. The full four-output golden fails direct content quality despite all numeric rules passing."
+    },
+    "kaggle:factory-phase-8-native-wan-t2v:v7:wan-t2v-red-ball-native-grid-v2": {
+      "output_json_sha256": [
+        "5c3dce83667c357587e4500f8bc4021d367145ce150628541dc8e576c359b389",
+        "21a87c4e6ae66d29a1a40894961f73df18f0830e21909371619525b1e3c0a320",
+        "b44654bfe4f9b76a861eaa59084262db0206daeb820d0d7d206826cfb3022251",
+        "3894d37f9601402e022b53d17acff8b025f61d99edb75245bd8365c09ecb2190"
+      ],
+      "all_decoded_frames_reviewed": true,
+      "decision": "FAIL",
+      "observation": "All 41 frames of all four outputs directly reviewed. Native-grid output is now coherent: recognizable red balls and tables, without v5 abstract color-block corruption. However the complete requested golden fails: early frames crop the ball at the left edge in warmup/measured iteration 1; measured iteration 3 moves leftward. Numeric visibility/scene/direction failures remain authoritative. No V3 PASS."
+    },
+    "kaggle:factory-phase-8-native-minimax-reference:v1:minimax-reference-astronaut": {
+      "output_json_sha256": [
+        "ac7f6446882b62e080c8780bbe22b3c6be082927f77d36a28bb6d3ca745c884d",
+        "60c4e5a44d94a9f1c54913217c56eb471eccfaffa0ff38178e4815aee5687358",
+        "43d51b288761fa23357b3e346ac6b3c0281ce1eec7daede57618de4acda84d04",
+        "a0ab0b1f344137dcc4ca2e9c8b5595127a9073c3a4db452fbcdded560acc37cc"
+      ],
+      "all_decoded_frames_reviewed": true,
+      "decision": "PASS",
+      "observation": "All 107 decoded frames in each of four outputs directly reviewed. All clips preserve an identifiable person resembling the photograph, orange spacesuit and photographic scene, with visible gentle head turns and smiling. No abstract reconstruction corruption or large opaque multicolored discs obscuring the subject as in failed Base I2V iteration 2. Noticeable illumination flicker/specular glare occurs, especially in iteration 3 on the suit/helmet; retain this quality limitation. Acceptance is limited to reference identity/scene and meaningful motion in these four goldens, not artifact-free/general quality or production readiness."
+    },
+    "kaggle:factory-phase-8-native-minimax-conditioned:v2:minimax-i2v-astronaut-native-temporal-v2": {
+      "decision": "FAIL",
+      "reviewed_at_utc": "2026-11-14T03:58:21.009934+00:00",
+      "method": "Direct inspection of all 124 numbered decoded frames in each of the four actual collected MP4s; output JSON and contact-sheet hashes verified.",
+      "all_decoded_frames_reviewed": true,
+      "output_json_sha256": [
+        "f69b968b202ac3e3e88de4b379cdb551a0c6a62ff484410572ab450bced68d4e",
+        "6cbcc2949430cbc36d644159cdbee7e1d2539840d738fc3507acc9dc7034da54",
+        "f71a01995dc17bda7a66cc9403de7c2e0fb85876098e3c3cae0e1d78cc5c8c99",
+        "696a27f9e55c9b4b6954486f32c0b67b58df8e7a4b4e28de1457af853ab87ad5"
+      ],
+      "contact_sheets": [
+        {
+          "iteration": 0,
+          "file": "validation/native_video_reviews/minimax_conditioned_v2/minimax-i2v-astronaut-native-temporal-v2/all_frames_0.png",
+          "sha256": "a71c92b0478c19e9215f4cb8a252b44a74a22bbcc9fa6452b4ce62a508e05f29",
+          "decoded_frames": 124
+        },
+        {
+          "iteration": 1,
+          "file": "validation/native_video_reviews/minimax_conditioned_v2/minimax-i2v-astronaut-native-temporal-v2/all_frames_1.png",
+          "sha256": "959c7f90f4b4e89f0e5fb6bc5fde8b9d330f9086a33bb9a9601b6256c2e4bc38",
+          "decoded_frames": 124
+        },
+        {
+          "iteration": 2,
+          "file": "validation/native_video_reviews/minimax_conditioned_v2/minimax-i2v-astronaut-native-temporal-v2/all_frames_2.png",
+          "sha256": "f7570fd5ff866a29b60882717f2279f209f2277809b239890ceb76bedefb2784",
+          "decoded_frames": 124
+        },
+        {
+          "iteration": 3,
+          "file": "validation/native_video_reviews/minimax_conditioned_v2/minimax-i2v-astronaut-native-temporal-v2/all_frames_3.png",
+          "sha256": "f49a493808a54061aedf864170014d484bdf0704c7a48c6771c14a4ec3001730",
+          "decoded_frames": 124
+        }
+      ],
+      "observation": "The reference person, orange suit and head movement remain meaningful, and measured iteration 3 is coherent. Warmup and measured iterations 1-2 contain repeated extraneous colored/luminous patches across the face, helmet, suit or background. Warmup frames 32-35 obscure the face with blue/white light; measured iteration 2 has sustained green/purple flares. The complete four-output golden fails despite all numeric checks passing.",
+      "scope": "124-frame 384x256 native golden only. Temporal-envelope correction alone does not resolve the prior artifacts. No seed selection, oracle relaxation, V3 PASS or readiness."
+    },
+    "kaggle:factory-phase-8-native-minimax-conditioned:v2:minimax-fl2v-astronaut-zoom-native-temporal-v2": {
+      "decision": "FAIL",
+      "reviewed_at_utc": "2026-11-14T03:58:21.026832+00:00",
+      "method": "Direct inspection of all 124 numbered decoded frames in each of the four actual collected MP4s; output JSON and contact-sheet hashes verified.",
+      "all_decoded_frames_reviewed": true,
+      "output_json_sha256": [
+        "a1112a16f4280c5eff6d7190a644a5febccbade1c39d7ab1edb76bec27884992",
+        "901253fe248add9475c8f33a6f3516d10ea4207de8f6a9978f1085d890e7b7eb",
+        "ff15273b76e9adaeb9006937adfa23a2705553f19d1d18236376f9c31ee81beb",
+        "3618580d92e088669eefd719833ad56d1efaf70b79eef72015efa363d7260f8a"
+      ],
+      "contact_sheets": [
+        {
+          "iteration": 0,
+          "file": "validation/native_video_reviews/minimax_conditioned_v2/minimax-fl2v-astronaut-zoom-native-temporal-v2/all_frames_0.png",
+          "sha256": "59bcaca7e6df5b244bebdfb9f616aa3960cee9e2490ae750125ad709602ce322",
+          "decoded_frames": 124
+        },
+        {
+          "iteration": 1,
+          "file": "validation/native_video_reviews/minimax_conditioned_v2/minimax-fl2v-astronaut-zoom-native-temporal-v2/all_frames_1.png",
+          "sha256": "a4bfa367b62ed601fb2318e4495d1ae3b9a5bd03c4c3b3ac2d90cf80c5eb2799",
+          "decoded_frames": 124
+        },
+        {
+          "iteration": 2,
+          "file": "validation/native_video_reviews/minimax_conditioned_v2/minimax-fl2v-astronaut-zoom-native-temporal-v2/all_frames_2.png",
+          "sha256": "8c72fd9bf63df55388e9291a56c0188b225133a4db4065eb2986a86152d481ce",
+          "decoded_frames": 124
+        },
+        {
+          "iteration": 3,
+          "file": "validation/native_video_reviews/minimax_conditioned_v2/minimax-fl2v-astronaut-zoom-native-temporal-v2/all_frames_3.png",
+          "sha256": "5b2749e838e79d4c92db95f6b8e4cc9b314239370fbc991202b3f53734d916e6",
+          "decoded_frames": 124
+        }
+      ],
+      "observation": "The same reference person, scene and zoom remain recognizable, and measured iteration 3 is coherent. However warmup contains repeated conspicuous blue/white luminous patches obscuring the face (around frames 32-36 and 53-57), and measured iteration 2 contains repeated extraneous green/purple lights over the helmet, face/background and suit. Whole-case visual consistency fails despite all numeric anchor/scene/motion checks passing.",
+      "scope": "124-frame 384x256 native golden only. Temporal-envelope correction alone does not resolve the prior artifacts. No seed selection, oracle relaxation, V3 PASS or readiness."
+    },
+    "kaggle:factory-phase-8-native-wan-fl2v:v1:wan-fl2v-astronaut-zoom-native-grid-v2": {
+      "decision": "PASS",
+      "reviewed_at_utc": "2026-11-14T04:00:28.457032+00:00",
+      "method": "Direct inspection of all 41 numbered decoded frames in each of four actual native 1280x704 MP4s; original output JSON/MP4 and derived contact-sheet hashes verified.",
+      "all_decoded_frames_reviewed": true,
+      "output_json_sha256": [
+        "c17daac8ed5a9a3c1d6c52d1ae6ea5461fa5907eb8a7a724729febb5e84338fd",
+        "c79016cc62dfc462e08aac55454160f26706990d6d16f7963885d39a4e1dd7ce",
+        "bdf25576132dc35c713160e7a2ae8beabeceb3378ea74c48cefdffe195f668dd",
+        "e4c96c558e092bc94cf3f08d01efb1d2436fa610583ff27f80ac6f03da867d1c"
+      ],
+      "contact_sheets": [
+        {
+          "iteration": 0,
+          "file": "validation/native_video_reviews/wan_fl2v_v1/wan-fl2v-astronaut-zoom-native-grid-v2/all_frames_0.png",
+          "sha256": "ec4cbbd153a5b2241b0f0bf92d8f2d1b8ad5e3fb9d8f22f840c28cc0d6e6aaea",
+          "decoded_frames": 41
+        },
+        {
+          "iteration": 1,
+          "file": "validation/native_video_reviews/wan_fl2v_v1/wan-fl2v-astronaut-zoom-native-grid-v2/all_frames_1.png",
+          "sha256": "526489e0d3208c5564c640aa680a9dfee6ec6c2f0117bd1ea422d29d1d7923bd",
+          "decoded_frames": 41
+        },
+        {
+          "iteration": 2,
+          "file": "validation/native_video_reviews/wan_fl2v_v1/wan-fl2v-astronaut-zoom-native-grid-v2/all_frames_2.png",
+          "sha256": "ad9dfc8860ab84c1ae67c30c251f589e4c6151db5dbeaf1566339b15aec173d5",
+          "decoded_frames": 41
+        },
+        {
+          "iteration": 3,
+          "file": "validation/native_video_reviews/wan_fl2v_v1/wan-fl2v-astronaut-zoom-native-grid-v2/all_frames_3.png",
+          "sha256": "831bad2b2b5e3821f883c31113c6259252b93482ea321e9bfb86f917754f157f",
+          "decoded_frames": 41
+        }
+      ],
+      "observation": "All four clips preserve the same recognizable reference subject, orange suit, helmet/flag/shuttle scene and continuous gradual camera zoom between the real supplied endpoints. Every frame remains coherent; no severe double-image corruption or extraneous colored face-obscuring discs like the failed MiniMax conditioned cases is visible. Minor facial/detail changes and softening occur during interpolation. The actual Transformer denoises all free interior latent frames; input/output/mask evidence must also pass the native gate.",
+      "scope": "One 41-frame native-grid golden on the exact original 5B checkpoint with explicitly experimental two-endpoint Adapter. No general quality or officially trained FL2V claim, no V4/production readiness."
+    },
+    "kaggle:factory-phase-8-native-minimax-turbo:v4:minimax-turbo-i2v-astronaut": {
+      "decision": "FAIL",
+      "reviewed_at_utc": "2026-11-14T04:14:53.734910+00:00",
+      "method": "Direct inspection of all 107 decoded frames in each of four actual collected native MP4s; original output/contact-sheet identities verified.",
+      "all_decoded_frames_reviewed": true,
+      "output_json_sha256": [
+        "ea7206458b60a1564a18a80edb004055c5d738d108e3551b885240738c490bf9",
+        "8ba19534bce13bce66ab6fbb961a4eb0460912be1c9be6130db14cc954986be2",
+        "e415db4e024b5b0b823fd4e8b99425357964b471063c9aa10af1368fa65ff6f0",
+        "5ec05aed226f25cdfe0de5bccca00de2d94b965e8d3061577cc79f152267a310"
+      ],
+      "contact_sheets": [
+        {
+          "iteration": 0,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-i2v-astronaut/all_frames_0.png",
+          "sha256": "8e998003723b7b76b9a3b2a9ccbc8d1b2f845878eb38a9e79e00a6ab9e124f23",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 1,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-i2v-astronaut/all_frames_1.png",
+          "sha256": "012e552c8715826e9cd0339b77981351ba75407ea3961f7e42e2951db95dc389",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 2,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-i2v-astronaut/all_frames_2.png",
+          "sha256": "b39f9dd5e5addfbfbc7c57b9b1b673b86232732dd284206e1892b466adcc320f",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 3,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-i2v-astronaut/all_frames_3.png",
+          "sha256": "e71ea4b3ccc326444c602fca288051de4ee00a3ea498fedfc2395592d97309dd",
+          "decoded_frames": 107
+        }
+      ],
+      "observation": "Warmup and measured iteration1 preserve a coherent reference subject and head movement. Measured iteration2 repeatedly adds green/cyan luminous patches over face/neck, helmet and background; some partially obscure the face (e.g. frames24,56 and76-80). The complete four-output case fails despite numeric semantics PASS.",
+      "scope": "107-frame 384x256 golden; same content rule, no seed selection, V3 PASS, V4 or readiness."
+    },
+    "kaggle:factory-phase-8-native-minimax-turbo:v4:minimax-turbo-fl2v-astronaut-zoom": {
+      "decision": "FAIL",
+      "reviewed_at_utc": "2026-11-14T04:14:53.748380+00:00",
+      "method": "Direct inspection of all 107 decoded frames in each of four actual collected native MP4s; original output/contact-sheet identities verified.",
+      "all_decoded_frames_reviewed": true,
+      "output_json_sha256": [
+        "6b59bc9d182e4043c8f8284fb0a8038157dd2ecba3a862f13c378582368361d1",
+        "0e028af02049ce9259182026d607f26cf9b67602daee7f1dbfa3ec8c2e9495bf",
+        "fa35b043924e0dad1151d784ea680c30700b0fb91d711ed66be52253e4eb1667",
+        "92c0534874455d7c011b8894a6cf4dbb2e523c6fcfae4ad2bfeba89e17f88572"
+      ],
+      "contact_sheets": [
+        {
+          "iteration": 0,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-fl2v-astronaut-zoom/all_frames_0.png",
+          "sha256": "9146b1daaa102d776892a13192809ff34c236296f7f2ebaa12d3c7425b5990e6",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 1,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-fl2v-astronaut-zoom/all_frames_1.png",
+          "sha256": "2c056dcf8794b87eb76d43288a81044c4072f4dc176526f32e72e0d7b0ff5dae",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 2,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-fl2v-astronaut-zoom/all_frames_2.png",
+          "sha256": "277d7563e11223d4c41721f77e4c3c0510ce39d5ef2ce87b507156ae532f89c1",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 3,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-fl2v-astronaut-zoom/all_frames_3.png",
+          "sha256": "99ff68d5d25e3f6d7c6c709094c79c6d9bb65fc9f2a238b620567a6bb3c780c6",
+          "decoded_frames": 107
+        }
+      ],
+      "observation": "All four clips preserve the subject/scene/zoom and numeric anchors; most are coherent. Measured iteration 2 repeatedly adds conspicuous cyan circular luminous objects around the suit/helmet/background. This remains an extraneous-element failure under the same review rule used for failed Base FL2V; do not accept the clean iterations alone.",
+      "scope": "107-frame 384x256 golden; same content rule, no seed selection, V3 PASS, V4 or readiness."
+    },
+    "kaggle:factory-phase-8-native-minimax-audio:v2:minimax-spoken-audio-native-dialogue-v2": {
+      "decision": "FAIL",
+      "reviewed_at_utc": "2026-11-14T04:51:46.230846+00:00",
+      "method": "Direct visual inspection of all 107 numbered decoded frames from each of the four real native MP4s (428 total), derived after receipt and output digest verification.",
+      "all_decoded_frames_reviewed": true,
+      "output_json_sha256": [
+        "0c4b6999583198fdcd12e45a7df49d585586d1c3ed153793aca3c645783b8a22",
+        "73c46d75b5ab8e44e1e47ee10d81affd2674f584c4db6f013db5b1a104a1bea0",
+        "5e7130b160f228072d33569beed53d31740cc4e326b95ff338a476c50615e39a",
+        "5fc12eaa083034840e69fb0146121714bcfdb5d6cbdf5c4d39d27ee129d48e91"
+      ],
+      "native_mp4_sha256": [
+        "259ee3fc8703dea1d74f088291b80b1b849fc3325d85e7ed0460ce4819b22674",
+        "078a39b4664b7a56b53b58a63b273c87ce492820eb7862f51a259cafc083a65e",
+        "465555f56521f972bff9826f46301ca406551e4163a31131d48cf77c4e81e6b3",
+        "3f9ebf64622c92ab63901a0814c29d789fee638894252d3ab571f9d599c51b00"
+      ],
+      "contact_sheets": [
+        {
+          "iteration": 0,
+          "file": "validation/native_video_reviews/minimax_audio_v2/minimax-spoken-audio-native-dialogue-v2/all_frames_0.png",
+          "sha256": "6a4fe74c7e347d6df98dbc25a8dac0ef23384bad51976933d059fae02da9902d",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 1,
+          "file": "validation/native_video_reviews/minimax_audio_v2/minimax-spoken-audio-native-dialogue-v2/all_frames_1.png",
+          "sha256": "108ab04a01d61107fe23f0ac1f6b0c02ca4c22c8e862d62d1c7a12812f30fb6d",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 2,
+          "file": "validation/native_video_reviews/minimax_audio_v2/minimax-spoken-audio-native-dialogue-v2/all_frames_2.png",
+          "sha256": "09f5e9779e51da8403fcf663a226c0e46ce4199f47440f156b5b83098183503c",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 3,
+          "file": "validation/native_video_reviews/minimax_audio_v2/minimax-spoken-audio-native-dialogue-v2/all_frames_3.png",
+          "sha256": "67e10de928edf2287cc08a322d5c8376b3e23b0e061e6e6a753bddf96e1ae555",
+          "decoded_frames": 107
+        }
+      ],
+      "observation": "All four retain the recognizable real reference person, orange suit, helmet, flag and shuttle, with mouth/head movement. All four independent audio transcripts equal Factory makes useful tools. However measured iteration 2 contains repeated extraneous saturated luminous discs/patches throughout the clip: green/yellow/cyan flares on suit/background at frames 4-5,24,31-35; face/neck interference at 48,53,81-84,99-100, including conspicuous green face occlusion at 100. This fails the same visual corruption rule applied to Base conditioned and Turbo; the three cleaner seeds cannot certify the complete golden. Other outputs also show occasional mild illumination flicker/specular blooms. No oracle or seed is changed.",
+      "production_ready": false
+    },
+    "kaggle:factory-phase-8-native-minimax-turbo:v4:minimax-turbo-t2v-red-ball-motion": {
+      "decision": "FAIL",
+      "reviewed_at_utc": "2026-11-14T05:28:09.325794+00:00",
+      "method": "Direct visual inspection of all107 numbered decoded frames in each of four actual native MP4s (428 total), derived after exact receipt/output digest checks.",
+      "all_decoded_frames_reviewed": true,
+      "output_json_sha256": [
+        "dc26a6b13cb62913a2303be8dcec42336d47ae7a884143f5ff4efc243fc2c84f",
+        "e803d3005e2861c1b0b45de35186a4c9239fae47a4aac0173b17ea47dfc56183",
+        "dc6ca3b10bcbaa8da45d6ebca5c8eadb78b1cbb9d7944f99164d8bfee82cc87a",
+        "85586f73fc4cfc6bf3330f6281751e6ca659dc5665fdbbaf0101d833e30cfe05"
+      ],
+      "native_mp4_sha256": [
+        "8990b06a3e24325056c27ed38a53028f8e4447d9e9606023fac2fb785b30adc7",
+        "1dbb698261f3db3d920552c2c7b3382078f96e8652f2e4c35357e45adaa73041",
+        "2bb6e04522a9effef3b8b09ff5681b32e2149d1695b42317557ed29cf3cd3545",
+        "c7f0468f9811ecaa8ffd3507ed8d89f7a5c427565127fa8fa8f6321172e8e3da"
+      ],
+      "contact_sheets": [
+        {
+          "iteration": 0,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-t2v-red-ball-motion/all_frames_0.png",
+          "sha256": "b1c02255f2a917fe4f058a46e45acf374f9b087229e8ccbc6414e4fd5bfa907e",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 1,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-t2v-red-ball-motion/all_frames_1.png",
+          "sha256": "d0824436e35b658dd29b040b8a8e65c451f2d6b122eba31fb5ab134efd419b50",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 2,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-t2v-red-ball-motion/all_frames_2.png",
+          "sha256": "1ea3e2a29fef38d4a86bfa1565204987e1000a5f5a52e772acf7f1f84c74a170",
+          "decoded_frames": 107
+        },
+        {
+          "iteration": 3,
+          "file": "validation/native_video_reviews/minimax_turbo_v4/minimax-turbo-t2v-red-ball-motion/all_frames_3.png",
+          "sha256": "374b716917632783cf8209c430603be0735eb9ea95e35d8c85041f5c62638d38",
+          "decoded_frames": 107
+        }
+      ],
+      "observation": "All four show a recognizable red ball moving right on a white table. Warmup has a coherent plain background. Measured2 starts with the ball partially outside the left frame (0-6) and ends leaving the right edge (97-106), explaining the original all-frame red-visibility failure; do not lower the visibility threshold. Measured1 and3 also introduce an unrequested person/torso/hands and repeated colored luminous patches on tabletop/background; measured2 has occasional milder colored flares. These are further content failures beyond the numeric framing failure. Preserve all seeds and outputs. Decoder precision diagnosis cannot by itself be assumed to fix sampling/framing.",
+      "production_ready": false
+    },
+    "kaggle:factory-phase-8-native-wan-i2v:v1:wan-i2v-astronaut-native-grid-v2": {
+      "decision": "PASS",
+      "reviewed_at_utc": "2026-11-14T05:51:16.562885+00:00",
+      "method": "Direct visual inspection of all41 numbered decoded frames in each of the four actual native MP4s (164 total), after receipt/JSON/MP4 identity checks.",
+      "all_decoded_frames_reviewed": true,
+      "output_json_sha256": [
+        "642d5b59094cbd5eff003cb3c5ca325cebd3223960f10ba30e9e5a9aca6fa0bd",
+        "9dfb5a7e300d65504d1bc7f23a143d6f3f52d18d9f2296eb8aa032373a99bf18",
+        "d17e964f246da2d2e09c0ef20747cd39c38b450eaea5acc856c1442d8308f533",
+        "d004fb5bf2af99368e1adef5d56370dfa82b30576d084607d46ec11a935b45c0"
+      ],
+      "native_mp4_sha256": [
+        "34bc4b2150978a1304b5c466f516bc5d11592e0b5616e930d756f248bd9c6735",
+        "cfa55f62b54a7c2cf518cdc7247f7c2668bf4cb7772dfa0f202eeede99e01850",
+        "0074763425f39f6c194cf4cc2bd1eb0cfe83cea5c86d8adaadda733439c060bb",
+        "5c2864c9ac28098d78e8aff7ab2f4c0aa407a80fb996a6690cb806bd0c3e8a2a"
+      ],
+      "contact_sheets": [
+        {
+          "iteration": 0,
+          "file": "validation/native_video_reviews/wan_i2v_v1/wan-i2v-astronaut-native-grid-v2/all_frames_0.png",
+          "sha256": "2d1006fa1f7fefa20d9cdc3d089838231fa22638ce1f4d2ef7cae038cfaf552a",
+          "decoded_frames": 41
+        },
+        {
+          "iteration": 1,
+          "file": "validation/native_video_reviews/wan_i2v_v1/wan-i2v-astronaut-native-grid-v2/all_frames_1.png",
+          "sha256": "135e5b1cd475a1116298c125fad7a6bd4f6f6daa441e28dea04829776515319e",
+          "decoded_frames": 41
+        },
+        {
+          "iteration": 2,
+          "file": "validation/native_video_reviews/wan_i2v_v1/wan-i2v-astronaut-native-grid-v2/all_frames_2.png",
+          "sha256": "5bbe5793755bb0834f9013948a6a3b410bc93e7f7be34238548b86f2135c3744",
+          "decoded_frames": 41
+        },
+        {
+          "iteration": 3,
+          "file": "validation/native_video_reviews/wan_i2v_v1/wan-i2v-astronaut-native-grid-v2/all_frames_3.png",
+          "sha256": "0f7d8cdcb322d40ed80a7c781cfd77b5a29d4ba044574c46a39302aabf6a753d",
+          "decoded_frames": 41
+        }
+      ],
+      "observation": "All four actual clips retain a coherent recognizable photographed person, orange astronaut suit, helmet, flag and shuttle background. Each contains visible smooth head/expression movement; measured2 turns toward the shuttle/right, others smile/tilt gently. First-frame reference is preserved. No conspicuous colored luminous face-occluding patches, severe geometry corruption, scene substitution or unrelated objects were observed across the164 decoded frames. Minor facial/detail softening and tiny background drift remain quality limitations, not a claim of artifact-free generalization.",
+      "production_ready": false
+    },
+    "kaggle:factory-phase-8-native-wan-fl2v:v2:wan-fl2v-astronaut-zoom-native-grid-v2": {
+      "output_json_sha256": [
+        "c17daac8ed5a9a3c1d6c52d1ae6ea5461fa5907eb8a7a724729febb5e84338fd",
+        "c79016cc62dfc462e08aac55454160f26706990d6d16f7963885d39a4e1dd7ce",
+        "bdf25576132dc35c713160e7a2ae8beabeceb3378ea74c48cefdffe195f668dd",
+        "e4c96c558e092bc94cf3f08d01efb1d2436fa610583ff27f80ac6f03da867d1c"
+      ],
+      "all_decoded_frames_reviewed": true,
+      "decision": "PASS",
+      "observation": "All 164 decoded frames reviewed across four outputs. Same astronaut, orange suit, helmet, flag and shuttle remain coherent through the gentle zoom between the supplied endpoints; minor facial texture softening and background detail drift remain. No face-obscuring colored patches observed."
+    },
+    "kaggle:factory-phase-8-native-wan-extension:v1:wan-extension-pedestrians-native-grid-v2": {
+      "output_json_sha256": [
+        "2a9cc2cef111ac9f6216d1b4416dff804099aa93bf604805beaa4b4336d52a65",
+        "63b58b658d398630e4eb0510de6d62eda432b2f98c56ba86f070af9593412096",
+        "d4ab8dcf6902da90cc767ac404c1877d02c5b272a129ede57ecf5e50753fef51",
+        "317ce327ce31661a44a755c88bc9e0287d6edd93178873a73a81385235676003"
+      ],
+      "all_decoded_frames_reviewed": true,
+      "decision": "PASS",
+      "observation": "All 356 decoded frames reviewed across four outputs, including the original prefix and generated continuation. Pedestrians continue walking across the courtyard with a static camera and coherent scene. Small distant figures soften and occasionally blend when crossing; no major scene replacement or abrupt cut observed."
+    },
+    "kaggle:factory-phase-8-native-wan-t2v:v8:wan-t2v-red-ball-screen-right-v3": {
+      "output_json_sha256": [
+        "4f820c7bd513b1b2eb651a96efbc7a5f37c70b971c3f3a2bf9e0a7d95f47b6d9",
+        "9dcf097dab1f78e7533b8c5408962205654c9affd0c5f212a787ed9eaef9d754",
+        "b571a952855337f798f7ddd0b5228c5b9ae73adac0ae69806147a9b6d80d8280",
+        "ee171e1147b0d024b3015858e8c4862efa48833b5fcdb6d3e1c431ac284eb6b7"
+      ],
+      "all_decoded_frames_reviewed": true,
+      "decision": "PASS",
+      "observation": "All 164 frames viewed. A single glossy red ball remains fully visible on a pale tabletop and moves screen-right across each output; warmup starts with a long near-static interval then moves. Rounded shape and reflection remain coherent, with small highlight/shape flicker. Visual review does not override measured iteration 3 numeric semantic FAIL."
+    },
+    "kaggle:factory-phase-8-native-minimax-reference-audio:v2:minimax-reference-spoken-audio-native-dialogue-v2": {
+      "output_json_sha256": [
+        "85734191c8fc0295f53900031a3bfd2a5b8c757f54b1e5bf357c4e9acd46f796",
+        "ecba03a02e2268d9973643a504d184d74f65afc509dc1ab10e1efec70a9b4aa4",
+        "36855b520267946d35c210371765bc4d536f87357a6d04668739fb07a444b73c",
+        "e4a8096861b9d46c8f13ea82d90066c645b6d27c21b35f9c7f992d505e507ba3"
+      ],
+      "all_decoded_frames_reviewed": true,
+      "decision": "PASS",
+      "observation": "All 428 decoded frames directly reviewed. Four coherent astronaut speech videos with moving mouth/head and preserved person, orange suit and flag; two outputs use closer portrait framing. Minor facial/detail softening and slight expression/illumination drift; no material face-obscuring colored glows or scene replacement observed. Independent native ASR transcripts exactly match requested sentence in all four; frame review alone does not certify phoneme-level audiovisual synchronization."
+    }
+  },
+  "production_ready": false
+}

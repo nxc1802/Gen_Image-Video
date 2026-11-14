@@ -11,13 +11,14 @@ from factory_contracts.manifests.service import ServiceManifest
 from factory_contracts.manifests.model import ModelManifest
 from factory_contracts.manifests.capability import CapabilityManifest
 from factory_contracts.manifests.hardware import HardwareTopologyManifest
+from factory_contracts.manifests.catalog import manifest_root, load_model_manifests
 
 
 class ManifestLoader:
     """Loads and caches declarative manifests from the filesystem."""
 
-    def __init__(self, manifests_dir: str | Path = "manifests"):
-        self.manifests_dir = Path(manifests_dir)
+    def __init__(self, manifests_dir: str | Path | None = None):
+        self.manifests_dir = manifest_root(manifests_dir)
 
     def load_services(self) -> Dict[str, ServiceManifest]:
         services: Dict[str, ServiceManifest] = {}
@@ -33,17 +34,7 @@ class ManifestLoader:
         return services
 
     def load_models(self) -> Dict[str, ModelManifest]:
-        models: Dict[str, ModelManifest] = {}
-        mod_dir = self.manifests_dir / "models"
-        if not mod_dir.exists():
-            return models
-        for p in sorted(list(mod_dir.glob("*.yaml")) + list(mod_dir.glob("*.yml"))):
-            with open(p, "r", encoding="utf-8") as f:
-                data = yaml.safe_load(os.path.expandvars(f.read()))
-            if data:
-                mm = ModelManifest.model_validate(data)
-                models[mm.metadata.id] = mm
-        return models
+        return load_model_manifests(self.manifests_dir)
 
     def load_capabilities(self) -> Dict[str, CapabilityManifest]:
         caps: Dict[str, CapabilityManifest] = {}
@@ -55,6 +46,8 @@ class ManifestLoader:
                 data = yaml.safe_load(os.path.expandvars(f.read()))
             if data:
                 cm = CapabilityManifest.model_validate(data)
+                if cm.id in caps:
+                    raise ValueError(f"Duplicate capability parameter specification: {cm.id}")
                 caps[cm.id] = cm
         return caps
 

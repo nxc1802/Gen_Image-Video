@@ -1,0 +1,45 @@
+apiVersion: factory.ai/v1
+kind: CapabilityManifest
+id: video.with_audio
+subsystem: video
+display_name: "Video Generation with Synchronized Audio"
+description: "Generates synchronized video and audio using joint audio-visual VAE"
+
+inputs:
+  - name: prompt
+    type: string
+    description: "Detailed description of scene visual actions and audio sounds"
+    required: true
+  - name: image_url
+    type: image_url
+    description: "Optional initial frame for image-to-video with audio"
+    required: false
+  - name: audio_channels
+    type: integer
+    description: "Audio channels: 1 (mono) or 2 (stereo)"
+    required: false
+    default: 2
+    constraints:
+      min_value: 1
+      max_value: 2
+  - name: enable_audio
+    type: boolean
+    description: "Whether to decode and combine audio track"
+    required: false
+    default: true
+  - name: seed
+    type: integer
+    description: "Deterministic random seed"
+    required: false
+
+outputs:
+  - name: video
+    type: video_url
+    format: "video/mp4"
+
+validation:
+  test_fixture: "fixtures/video_with_audio.json"
+  verification_method: "schema_check"
+
+supported_model_families:
+  - minimax-video

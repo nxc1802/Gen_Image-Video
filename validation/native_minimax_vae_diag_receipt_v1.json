@@ -1,0 +1,69 @@
+{
+  "kind": "minimax_vae_diag",
+  "version": 1,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-vae-diag",
+  "run_record_sha256": "233fb067834072ef970f3fafae7684ae6ca332ae673802928060ccf79bc2b7f9",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_vae_diag_v1/backend_fp16.log",
+      "sha256": "8c2c981d5f810e8f23a6ac77f6fdc9ffb5db851d06b98ba6a284edd90ec4f17b"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/driver.log",
+      "sha256": "d67599f8a6fd393a37873d630df43068bf23b7bce68a92ce9d246532713f5a64"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/installation.log",
+      "sha256": "0bcaa6f6a0d5585b1721ff785d101a668990d7abb2f53da43aaed2bb4fe32caa"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/actual_fp16.mp4",
+      "sha256": "9e077d5e4683d382604e9e9233486484133b7908b254a8971754e64d8e241c0d"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/manifest_fp32.yaml",
+      "sha256": "5ea6143b9a7d32356ccb9161d1e937d23086e1276397f49f3e0433b1d570cc3a"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/actual_sampled_video.safetensors",
+      "sha256": "7bc1305d917e77eec7fe78e0eafa4b35e3d15d94b81ca7844afc0e34665b76c7"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/wave_d.json",
+      "sha256": "4357bcdfa09132fb51f02b3cee10313b104ee17eb8821e29c71e43c56278a47a"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/backend_fp32.log",
+      "sha256": "2bf0781d939e338b0f8bd08a662266c2da2c565d608f3c59d53850518ca7f44a"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/fp32_all_frames.png",
+      "sha256": "c4fa031bef1dc4876e4c703cf84a97c584984d933c72a9d304976a35bf6e767b"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/setup.json",
+      "sha256": "96a563e485498386061f8c80e796f9fabe80927a9ced729e5549564ec238d5dd"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/manifest_fp16.yaml",
+      "sha256": "b38fd3a397bba8e11a45d91433f3a0545412d7d6777266496091b40792777cf0"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/fp16_all_frames.png",
+      "sha256": "2cb11c34654577fc1b9c05946cf3a8b4953d55dcca3159cc2c89fc6d78445fca"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/runtime_packages.json",
+      "sha256": "6310d41c63fb44e6cc5f84d00219b1f3310fd25dac94973bd352c23e7968eb88"
+    },
+    {
+      "file": "validation/native_minimax_vae_diag_v1/actual_fp32.mp4",
+      "sha256": "23d8225d537c6c8a409f23f7c25f762b0c913fc7241b07d914e44262d34ec0ec"
+    }
+  ]
+}

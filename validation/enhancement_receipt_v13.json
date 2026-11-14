@@ -1,0 +1,27 @@
+{
+  "version": 13,
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-5-enhancement-native",
+  "run_record_sha256": "9d4be667b21b2fed352327da62915b6388b91d051c28d53c639cd5be208566f5",
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "artifacts": [
+    {
+      "file": "validation/enhancement_observation_v13.json",
+      "sha256": "7117450e6a68ed05274b217148764f15757a3105576faa19ab3832e104d42b1c",
+      "remote_name": "phase5_enhancement.json"
+    },
+    {
+      "file": "validation/phase5_enhancement_v13.log",
+      "sha256": "86b0dd3511bdde5e6430d665714ae6a53e3d6dc2951dd885db2d2e7ca43026a1",
+      "remote_name": "phase5_enhancement_backend.log"
+    },
+    {
+      "file": "validation/phase5_enhancement_v13.png",
+      "sha256": "4cbe5043f7812e1058b7e305b85cf7622a1149225e99c205f8e8862a451f3b0d",
+      "remote_name": "phase5_enhancement_output.png"
+    }
+  ]
+}

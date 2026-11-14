@@ -1,0 +1,79 @@
+# Contract-only routing fixture. NOT a valid resident production deployment.
+apiVersion: factory.ai/v1
+kind: DeploymentConfig
+hardware: kaggle-dual-t4
+deployments:
+- model: qwen-text
+  devices:
+  - 0
+  - 1
+  exclusive: true
+  backend: legacy_contract
+  port: 9100
+- model: qwen-speech
+  devices:
+  - 0
+  - 1
+  exclusive: true
+  backend: legacy_contract
+  port: 9101
+- model: qwen-vlm
+  devices:
+  - 0
+  exclusive: false
+  backend: legacy_contract
+  port: 9102
+- model: qwen-decision
+  devices:
+  - 0
+  exclusive: false
+  backend: legacy_contract
+  port: 9103
+- model: qwen-embedding
+  devices:
+  - 1
+  exclusive: false
+  backend: legacy_contract
+  port: 9104
+- model: qwen-image-2.1
+  devices:
+  - 0
+  exclusive: false
+  backend: legacy_contract
+  port: 9105
+- model: qwen-image-2.1-turbo
+  devices:
+  - 0
+  exclusive: false
+  backend: legacy_contract
+  port: 9106
+- model: wan-2.2
+  devices:
+  - 1
+  exclusive: false
+  backend: legacy_contract
+  port: 9107
+- model: minimax-h3
+  devices:
+  - 1
+  exclusive: false
+  backend: legacy_contract
+  port: 9108
+- model: ace-step-1.5
+  devices:
+  - 1
+  exclusive: false
+  backend: legacy_contract
+  port: 9109
+- model: yue2
+  devices:
+  - 1
+  exclusive: false
+  backend: legacy_contract
+  port: 9110
+- model: enhancement-suite-v1
+  devices:
+  - 1
+  exclusive: false
+  backend: legacy_contract
+  port: 9111

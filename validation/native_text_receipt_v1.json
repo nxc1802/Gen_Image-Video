@@ -1,0 +1,21 @@
+{
+  "kind": "text",
+  "version": 1,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-text",
+  "run_record_sha256": "67ecaecae8bcea9403a2f690bf9843b0f96fd2f76235fc41298886ca73132fcb",
+  "artifacts": [
+    {
+      "file": "validation/native_text_v1/installation.log",
+      "sha256": "1fd0331d21022800cabfbf3e329bc724acc123e9bbb6fca217446f2059b2dce4"
+    },
+    {
+      "file": "validation/native_text_v1/setup.json",
+      "sha256": "ad43a36a064baa6a4b9ea084ee7aeb5b4880646ffd35aaaf3301a74eb60fc099"
+    }
+  ]
+}

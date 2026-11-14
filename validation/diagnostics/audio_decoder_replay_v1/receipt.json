@@ -1,0 +1,30 @@
+{
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "run_record_sha256": "18bf7a5feed1af35b6f74310227d3150b424c5722bf227e2ca58e78c330f00b4",
+  "artifacts": [
+    {
+      "file": "validation/diagnostics/audio_decoder_replay_v1/replay.json",
+      "sha256": "b0c150b901ab4b35f000866aada7e02864d2f61d05448e56e2722358e5778eca"
+    },
+    {
+      "file": "validation/diagnostics/audio_decoder_replay_v1/actual_decoded_0.f32le",
+      "sha256": "6dc18c82a29ae2ddabca217cd3a627fa1ed0dcbeda1c2c9bd05d31a8a2dbb5a0"
+    },
+    {
+      "file": "validation/diagnostics/audio_decoder_replay_v1/actual_decoded_1.f32le",
+      "sha256": "fdb42b8dec63710f632dde5dadeba4ef92056a87a66f9dae140485059e0e6601"
+    },
+    {
+      "file": "validation/diagnostics/audio_decoder_replay_v1/actual_decoded_2.f32le",
+      "sha256": "d86e6bfa0cecf0ea5b90bd0cdba78eaa160ceb17b6b8c2f31ce91feff7302bce"
+    },
+    {
+      "file": "validation/diagnostics/audio_decoder_replay_v1/actual_decoded_3.f32le",
+      "sha256": "76d8227272d3a8a55fbe2c2c4b6436976758885948fa9fdbac4e4bd79846d06a"
+    }
+  ]
+}

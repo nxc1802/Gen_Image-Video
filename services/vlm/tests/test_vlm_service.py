@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from factory_auth.config import AuthConfig
 from services.vlm.src.app import app
-from services.vlm.src.engine import VLMEngine
+from services.vlm.src.legacy_engine import LegacyVLMEngine as VLMEngine
 from starlette.testclient import TestClient
 
 AUTH_TOKEN = "sk-factory-test-token-valid"
@@ -20,6 +20,10 @@ ONE_FRAME_MP4_DATA_URL = "data:video/mp4;base64,AAAAHGZ0eXBtcDQyAAAAAGlzb21tcDQy
 
 @pytest.fixture
 def vlm_client():
+    from services.vlm.src.legacy_engine import LegacyVLMEngine
+    from services.text.src.legacy_responses_handler import LegacyResponsesHandler
+    app.state.engine = LegacyVLMEngine()
+    app.state.responses_handler = LegacyResponsesHandler()
     app.state.auth_config = AuthConfig(api_key=AUTH_TOKEN, jwt_secret=None, environment="test")
     app.state.engine = VLMEngine(upstream_url=None)
     return TestClient(app)
@@ -148,3 +152,5 @@ def test_vlm_configured_proxy_chat(vlm_client):
         data = res.json()
         assert data["object"] == "chat.completion"
         assert "diagram" in data["choices"][0]["message"]["content"]
+
+pytestmark = pytest.mark.contract_mock

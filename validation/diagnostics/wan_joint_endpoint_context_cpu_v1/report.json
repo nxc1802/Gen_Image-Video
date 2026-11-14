@@ -1,0 +1,123 @@
+{
+  "classification": "ORIGINAL_CPU_VAE_JOINT_CAUSAL_ENDPOINT_COMPONENT_STUDY_ONLY",
+  "status": "JOINT_CONTEXT_COMPONENT_STUDY_COMPLETE_NOT_FL2V_CERTIFICATION",
+  "script_sha256": "725e2e022f67b14349739ee936fbb84673ea9acea067da10281450ab3eba2fff",
+  "runtime_versions": {
+    "torch": "2.11.0",
+    "diffusers": "0.43.0",
+    "numpy": "2.5.4"
+  },
+  "input_sequence_scope": "Explicit photo-crop diagnostic sequence and held/interpolated conditioning sequences derived from two real photographs. None is recorded motion or Transformer output.",
+  "native_gpu_inference_executed": false,
+  "full_wan_model_inference_executed": false,
+  "v3_certified": false,
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "source_tensor_sha256": "56d78dff83bae7d244790ecf2d40a9ddbecc669bad36e5921318bb11e87793e8",
+  "conditioning_tensor_sha256": {
+    "held_first_then_last": "eb6703e1a15d2d3235a210965143dccc4eb04a692f3972020d131ab7c494729e",
+    "linear_endpoint_blend": "fa4a559f79ea38766e9a80e3e9a1f22ee84dce9d870769a510a4c13a54b2433d"
+  },
+  "load_info": {
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "mismatched_keys": [],
+    "error_msgs": []
+  },
+  "cases": [
+    {
+      "name": "actual_photo_crop_sequence_roundtrip",
+      "latent_sha256": "4c73f17dd8da15ec802abca7f2db31e28d902ef17acfbc597c4b995e93296c85",
+      "decoded_tensor_sha256": "bbcf5bec030bce95f36396af53304aad3616b40c9f805f5c6d6ab1160c45ff6b",
+      "first_frame_pixel_mae": 0.014584164135158062,
+      "last_frame_pixel_mae": 0.013013394549489021,
+      "per_frame_pixel_mae": [
+        0.014584164135158062,
+        0.01329200342297554,
+        0.013208477757871151,
+        0.013021085411310196,
+        0.013045884668827057,
+        0.012529835104942322,
+        0.0124607402831316,
+        0.012509014457464218,
+        0.012627093121409416,
+        0.012648730538785458,
+        0.012686348520219326,
+        0.012725322507321835,
+        0.01290104165673256,
+        0.012647172436118126,
+        0.012848149053752422,
+        0.012914990074932575,
+        0.013013394549489021
+      ],
+      "decoded_frames": 17,
+      "all_frame_contact_sheet": {
+        "file": "actual_photo_crop_sequence_roundtrip-all-frames.png",
+        "sha256": "4d81f05fab5a67873a9de82fd0f5e59f65d368c012d0799069cc30f3e5f04d10"
+      }
+    },
+    {
+      "name": "joint_held_first_then_last",
+      "latent_sha256": "3c51fd3f20480f647416ceaa7734cc3a8f3aa93917e17411a887e7301678f6c7",
+      "decoded_tensor_sha256": "8908a88ca2526e50456ff9b31407dd5b8b15898cbf914bf7fdc83cabb1f08c2c",
+      "first_frame_pixel_mae": 0.014584164135158062,
+      "last_frame_pixel_mae": 0.05355602502822876,
+      "per_frame_pixel_mae": [
+        0.014584164135158062,
+        0.01329200342297554,
+        0.013208477757871151,
+        0.013021085411310196,
+        0.013045884668827057,
+        0.012529835104942322,
+        0.0124607402831316,
+        0.012509014457464218,
+        0.012627093121409416,
+        0.012648730538785458,
+        0.012686348520219326,
+        0.012725322507321835,
+        0.01290104165673256,
+        0.07165985554456711,
+        0.13328076899051666,
+        0.16600759327411652,
+        0.05355602502822876
+      ],
+      "decoded_frames": 17,
+      "all_frame_contact_sheet": {
+        "file": "joint_held_first_then_last-all-frames.png",
+        "sha256": "8e0304a01af6dcd8b4ab9c8ecacadbfacd9d126f9a7bc5e05f892f4214553570"
+      }
+    },
+    {
+      "name": "joint_linear_endpoint_blend",
+      "latent_sha256": "7258bba4e4a4b8a1773cd88fc08b8a0b4ded2e3cd26042eae0d1c2192fa686e6",
+      "decoded_tensor_sha256": "d13b888709d403e6eaa19013d414f7da721dbb4b3b7fe650c168dd0d73c5ea0b",
+      "first_frame_pixel_mae": 0.014584164135158062,
+      "last_frame_pixel_mae": 0.026835620403289795,
+      "per_frame_pixel_mae": [
+        0.014584164135158062,
+        0.01329200342297554,
+        0.013208477757871151,
+        0.013021085411310196,
+        0.013045884668827057,
+        0.012529835104942322,
+        0.0124607402831316,
+        0.012509014457464218,
+        0.012627093121409416,
+        0.012648730538785458,
+        0.012686348520219326,
+        0.012725322507321835,
+        0.01290104165673256,
+        0.0371369905769825,
+        0.04628758504986763,
+        0.03909118473529816,
+        0.026835620403289795
+      ],
+      "decoded_frames": 17,
+      "all_frame_contact_sheet": {
+        "file": "joint_linear_endpoint_blend-all-frames.png",
+        "sha256": "cdab3a9b126b07985def4238123906f9372d0a3fb84526b2b7e18773b036f566"
+      }
+    }
+  ],
+  "elapsed_seconds": 226.68725383421406
+}

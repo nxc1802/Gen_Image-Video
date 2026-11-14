@@ -1,0 +1,2 @@
+[vllm.general_plugins]
+factory_qwen_tts_fp16 = factory_qwen_tts_fp16:register

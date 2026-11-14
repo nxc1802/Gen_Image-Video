@@ -1,0 +1,73 @@
+{
+  "kind": "wan_fl2v",
+  "version": 1,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-wan-fl2v",
+  "run_record_sha256": "95490606b4a3dc18e575cec1d910999a8c76749c39843a788f9492284d2f6e8c",
+  "artifacts": [
+    {
+      "file": "validation/native_wan_fl2v_v1/wave_d.json",
+      "sha256": "6dbc27ee15e4f4102d9a91242158b667f644a979bfe74a134eeabde9742cc9c8"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/setup.json",
+      "sha256": "a73317ef8aec688b69f380c7005b01478e37005e20c9d625ad15830c3ad41aad"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/driver.log",
+      "sha256": "69866eb8bcfa434077203fb4d06e48ff4e54c0f6317d49db38b67ef873bf9403"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/runtime_packages.json",
+      "sha256": "f1e4e5afcfc86af29d67f24e013544b80fe7f532ff32a81fd2d8a2e045831358"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/installation.log",
+      "sha256": "8190650f8dcf86d64957df05b83cab5943a6609b09fb2ebb07d2ef8601df301e"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/wan-2.2/backend.log",
+      "sha256": "99b6b65e2ff0c423d83ef6c767092b33bad100745ff280638352c198f5660f0c"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/wan-2.2/wan-fl2v-astronaut-zoom-native-grid-v2-1.json",
+      "sha256": "c79016cc62dfc462e08aac55454160f26706990d6d16f7963885d39a4e1dd7ce"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/wan-2.2/wan-fl2v-astronaut-zoom-native-grid-v2-2.json",
+      "sha256": "bdf25576132dc35c713160e7a2ae8beabeceb3378ea74c48cefdffe195f668dd"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/wan-2.2/wan-fl2v-astronaut-zoom-native-grid-v2-0.json",
+      "sha256": "c17daac8ed5a9a3c1d6c52d1ae6ea5461fa5907eb8a7a724729febb5e84338fd"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/wan-2.2/observation.json",
+      "sha256": "66bd1360e66fb905b845280bdca69d2678bd125dbf9451fac2ec37d0c9371f69"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/wan-2.2/wan-fl2v-astronaut-zoom-native-grid-v2-3.json",
+      "sha256": "e4c96c558e092bc94cf3f08d01efb1d2436fa610583ff27f80ac6f03da867d1c"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/inputs/astronaut_native_last/source.bin",
+      "sha256": "f82b8fd703a0d224274a597db19f31ee406dcc632c26ddfb34a7b7bca08a2763"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/inputs/astronaut_native_last/input_identity.json",
+      "sha256": "a786b6e3271b56bb666bbca703f62b03c384e6e02b7de4594f2f7fcb816d1cfc"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/inputs/astronaut_native_first/source.bin",
+      "sha256": "06804d22a934c2ed88916036bf3f46050a74310d4e22b223ce2d14a3eb6dfbe3"
+    },
+    {
+      "file": "validation/native_wan_fl2v_v1/inputs/astronaut_native_first/input_identity.json",
+      "sha256": "0c6571cefe820ad35ed8698061b272cd800b3f43951e01f86b3eb634db7de8c5"
+    }
+  ]
+}

@@ -11,7 +11,10 @@ from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 
 from factory_auth import verify_bearer_token, load_auth_config
 from factory_contracts.jobs.job_contract import FactoryJob, JobSubmissionRequest, JobState
-from factory_contracts.tasks import normalize_model, normalize_task
+from factory_contracts.tasks import normalize_model
+from factory_contracts.capabilities import canonical_model_capabilities, model_capability_truth
+from model_registry.deployment import DeploymentRegistry
+from factory_contracts.errors import ModelNotLoadedError
 from factory_contracts.errors import (
     ArtifactNotFoundError,
     FactoryError,
@@ -61,41 +64,13 @@ SERVICE_IDS = {
     "enhancement": "enhancement-service",
 }
 
-TASK_CAPABILITY_ALIASES = {
-    "predicate": "predicate_evaluation",
-    "choice": "choice_routing",
-    "score": "score_ranking",
-    "embeddings": "text_embedding",
-    "embedding": "text_embedding",
-    "vector_embeddings": "text_embedding",
-    "rerank": "reranking",
-    "transcription": "speech_to_text",
-    "speech_to_text": "speech_to_text",
-    "speech_transcription": "speech_to_text",
-    "tts": "text_to_speech",
-    "text_to_speech": "text_to_speech",
-    "speech_synthesis": "text_to_speech",
-    "visual_language": "image_chat",
-    "vlm": "image_chat",
-    "reference_conditioning": "reference_image",
-    "reference": "reference_image",
-    "fl2v": "first_last_frame_to_video",
-    "extension": "video_extension",
-    "chat": "chat_completion",
-}
-
-MODEL_ALIASES = {
-    "qwen3-tts": "qwen-speech",
-    "qwen3-asr": "qwen-speech",
-    "qwen-text-2.5": "qwen-text",
-    "qwen-2.5-vl": "qwen-vlm",
-    "qwen-embed": "qwen-embedding",
-    "qwen-embed-text": "qwen-embedding",
-    "qwen-rerank": "qwen-embedding",
-}
-
+# Read-only import compatibility. The catalog owns the data; request resolution
+# below uses the catalog selected by the current app's loader.
+from factory_contracts.tasks import CANONICAL_MODEL_MAP as MODEL_ALIASES
 
 def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> None:
+    if any(key in req.inputs for key in {"gpu", "gpu_id", "gpu_ids", "gpu_device", "devices", "device", "backend"}):
+        raise InvalidRequestError("Backend and GPU assignment belong to deployment configuration, not inference requests.")
     loader = getattr(request.app.state, "manifest_loader", None)
     if loader is None:
         raise FactoryError(
@@ -104,8 +79,9 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
             status_code=503,
         )
     models = loader.load_models()
-    norm_model = normalize_model(req.model)
-    resolved_model = MODEL_ALIASES.get(norm_model, norm_model)
+    # Identity resolution uses this app's catalog, including custom paths.
+    identities = {identity: key for key, item in models.items() for identity in [key, *item.aliases]}
+    resolved_model = identities.get(str(req.model).strip().lower(), str(req.model).strip().lower())
     model = models.get(resolved_model)
     if model is not None:
         req.model = resolved_model
@@ -114,11 +90,21 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
             message=f"Unknown model '{req.model}'.",
             details={"model": req.model},
         )
+    auth_config = getattr(request.app.state, "auth_config", None)
+    if model.apiVersion != "factory.ai/v2" and getattr(auth_config, "environment", None) == "production":
+        raise ModelNotLoadedError(message="Legacy catalog readiness cannot authorize production inference.")
 
 
     # FIX-07: Hardware feasibility and variant validation
     min_vram = getattr(model.hardware, "min_vram_gb", 0.0) if hasattr(model, "hardware") else 0.0
     variant_name = str(req.inputs.get("variant", "")).lower().strip() if req.inputs else ""
+    if model.apiVersion == "factory.ai/v2" and variant_name not in ("", "standard", "default"):
+        raise UnsupportedCapabilityError("Checkpoint variants require an explicit model ID.")
+    if model.apiVersion == "factory.ai/v2":
+        registry = getattr(request.app.state, "deployment_registry", None)
+        if not isinstance(registry, DeploymentRegistry):
+            raise ModelNotLoadedError(message=f"Model '{req.model}' has no active deployment in this session.")
+        registry.require_active(req.model, req.task)
     if variant_name and hasattr(model, "weights") and hasattr(model.weights, "variants"):
         variants = model.weights.variants
         if variants and variant_name not in variants and variant_name not in ("standard", "base", "default"):
@@ -129,7 +115,7 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
         if variant_name in variants and variants[variant_name].min_vram_gb:
             min_vram = max(min_vram, variants[variant_name].min_vram_gb)
 
-    if min_vram > 14.2:
+    if model.apiVersion != "factory.ai/v2" and min_vram > 14.2:
         raise InvalidRequestError("Requested model exceeds max allocatable VRAM of 14.2 GB")
 
     # FIX-07: Backend service readiness check
@@ -144,7 +130,7 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
         )
 
     # C2: Fail closed if model backend is marked offline or not installed
-    if not getattr(model, "backend_ready", True) or not getattr(model, "installed", True):
+    if model.apiVersion != "factory.ai/v2" and (not getattr(model, "backend_ready", True) or not getattr(model, "installed", True)):
         raise FactoryError(
             message=f"Backend for model '{req.model}' is offline or not installed.",
             code="BACKEND_UNAVAILABLE",
@@ -170,39 +156,13 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
             },
         )
 
-    task = str(req.task or "").strip()
-    canonical_task = normalize_task(task)
-    req.task = canonical_task
-    capability = TASK_CAPABILITY_ALIASES.get(canonical_task, canonical_task)
+    task = req.task
+    canonical_task = task
+    capability = task
+    support = canonical_model_capabilities(model)
 
-    if req.service == "image":
-        if canonical_task in {"reference_conditioning", "reference"}:
-            refs = req.inputs.get("reference_image_urls")
-            capability = "multi_reference" if isinstance(refs, list) and len(refs) > 1 else "reference_image"
-        elif canonical_task == "controlnet":
-            control_type = str(req.inputs.get("control_type", "pose")).lower()
-            capability = {
-                "pose": "control_pose",
-                "depth": "control_depth",
-            }.get(control_type, f"control_{control_type}")
-
-    if req.service == "video":
-        capability = {
-            "t2v": "text_to_video",
-            "i2v": "image_to_video",
-            "fl2v": "first_last_frame_to_video",
-            "extension": "video_extension",
-            "with_audio": "video_with_audio",
-            "ref2va": "reference_conditioning",
-            "reference_conditioning": "reference_conditioning",
-            "reference_image": "reference_conditioning",
-        }.get(canonical_task, {
-            "reference_image": "reference_conditioning",
-        }.get(capability, capability))
-
-
-    supported = model.capabilities.get(capability)
-    if supported is not True or (hasattr(model, "missing_capabilities") and capability in model.missing_capabilities):
+    supported = support.get(capability)
+    if supported is not True:
         raise FactoryError(
             message=f"Task '{task}' (canonical: '{canonical_task}') is not supported by model '{req.model}'.",
             code="CAPABILITY_NOT_SUPPORTED",
@@ -218,8 +178,8 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
         )
 
     # Capability Truth: Fail closed if capability is declared but not implemented in truth model
-    if hasattr(model, "capabilities_truth") and capability in model.capabilities_truth:
-        cap_truth = model.capabilities_truth[capability]
+    if capability in support:
+        cap_truth = model_capability_truth(model, capability)
         if not cap_truth.implemented:
             raise UnsupportedCapabilityError(
                 message=f"Capability '{capability}' is declared but not implemented for model '{req.model}'.",
@@ -234,8 +194,14 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
 
     # Phase 1 Variant-Safe Contracts: Task-Variant Matrix Validation (§5.2 & C2)
     effective_variant = variant_name or "standard"
+    variant_task = capability
+    if model.apiVersion != "factory.ai/v2":
+        from factory_contracts.capabilities import CAPABILITIES
+        definition = CAPABILITIES.get(capability)
+        if definition:
+            variant_task = definition.legacy_key or capability.split(".", 1)[1]
     if hasattr(model, "task_variant_matrix") and model.task_variant_matrix:
-        for t in (task, canonical_task, capability):
+        for t in (variant_task,):
             if t and t in model.task_variant_matrix:
                 if not model.is_variant_supported_for_task(t, effective_variant):
                     raise UnsupportedCapabilityError(
@@ -248,7 +214,7 @@ def _validate_job_capability(req: JobSubmissionRequest, request: Request) -> Non
                         },
                     )
     elif variant_name:
-        for t in (task, canonical_task, capability):
+        for t in (variant_task,):
             if t and not model.is_variant_supported_for_task(t, variant_name):
                 raise UnsupportedCapabilityError(
                     message=f"Variant '{variant_name}' is not supported for task '{t}' by model '{req.model}'.",

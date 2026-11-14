@@ -1,0 +1,23 @@
+{
+  "observed_at_utc": "2026-11-12T14:32:40.429088+00:00",
+  "slug": "factory-phase-8-native-tts",
+  "response": {
+    "versionNumberNullable": 1,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-tts",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-tts",
+    "versionNumber": 1,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144611488
+  },
+  "kernel_code_sha256": "474e4f93bdea30f45b04de609cbbf078b6b5be0f189f7f06d7264628eeaa1d86",
+  "source_bundle_sha256": "b6f7e90e29d7c373426f1705bc56a8b6269084966c09d5f2561a82cf4d5029cc",
+  "validation_bundle_sha256": "c6ea5585d210dbf28b5ec6c4da35d2a3e48d6ea20c801a55b9b51deba7619dc1",
+  "accelerator": "NvidiaTeslaT4"
+}

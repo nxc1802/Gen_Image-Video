@@ -1,0 +1,13 @@
+# Configuration example only. No load/inference/production certification.
+apiVersion: factory.ai/v1
+kind: DeploymentConfig
+hardware: kaggle-dual-t4
+models_dir: ../../models
+api_host: 127.0.0.1
+api_port: 8000
+deployments:
+  - model: qwen-text
+    backend: llama_cpp
+    devices: [0, 1]
+    exclusive: true
+    port: 9000

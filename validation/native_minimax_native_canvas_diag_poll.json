@@ -1,0 +1,11 @@
+{
+  "observed_at_utc": "2026-11-14T14:52:10.779673+00:00",
+  "version": 4,
+  "kernel_status": {
+    "status": "queued",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "run_record_sha256": "c4fb82574457e63801037b8b349f2928be1eb1415e710a1f1bf67fdcb62860f1",
+  "classification": "REMOTE_DIAGNOSTIC_STATUS_ONLY_NOT_NATIVE_CERTIFICATION"
+}

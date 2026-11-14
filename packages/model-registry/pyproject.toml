@@ -6,10 +6,37 @@ requires-python = ">=3.11"
 dependencies = [
     "factory-contracts",
     "pyyaml>=6.0.1",
+    "psutil>=6.0",
 ]
 
 [project.scripts]
 factory-manifest = "model_registry.cli:main"
+factory = "model_registry.cli:factory_main"
+
+[project.entry-points."factory.backends"]
+vllm = "model_registry.backends.providers:VLLMBackend"
+llama_cpp = "model_registry.backends.providers:LlamaCppBackend"
+comfyui = "model_registry.backends.providers:ComfyUIBackend"
+vllm_omni = "model_registry.backends.providers:OmniBackend"
+qwen_asr = "model_registry.backends.providers:ASRBackend"
+diffusers = "model_registry.backends.providers:DiffusersBackend"
+acestep_native = "model_registry.backends.providers:ACEStepBackend"
+yue2_native = "model_registry.backends.providers:YuEBackend"
+
+[project.entry-points."factory.adapters"]
+qwen_text = "model_registry.adapters.launch:GGUFLaunchAdapter"
+qwen_vlm = "model_registry.adapters.launch:VLLMLaunchAdapter"
+qwen_decision = "model_registry.adapters.launch:DecisionLaunchAdapter"
+qwen_embedding = "model_registry.adapters.launch:EmbeddingLaunchAdapter"
+qwen_reranker = "model_registry.adapters.launch:RerankerLaunchAdapter"
+qwen_image = "model_registry.adapters.launch:ComfyLaunchAdapter"
+minimax = "model_registry.adapters.launch:ComfyLaunchAdapter"
+enhancement = "model_registry.adapters.launch:ComfyLaunchAdapter"
+qwen_asr = "model_registry.adapters.launch:ASRLaunchAdapter"
+qwen_tts = "model_registry.adapters.launch:OmniLaunchAdapter"
+wan = "model_registry.adapters.launch:DiffusersLaunchAdapter"
+acestep = "model_registry.adapters.launch:ACEStepLaunchAdapter"
+yue2 = "model_registry.adapters.launch:YuELaunchAdapter"
 
 [build-system]
 requires = ["hatchling"]

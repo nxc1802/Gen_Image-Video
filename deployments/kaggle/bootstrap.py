@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 from dataclasses import asdict, dataclass, field
 import json
+import hashlib
 import logging
 import os
 from pathlib import Path
@@ -38,180 +39,10 @@ if str(WORKSPACE_ROOT) not in sys.path:
 TOTAL_VRAM_PER_GPU_MB = 15360.0  # 15.0 GB physical ceiling
 MAX_ALLOCATABLE_VRAM_PER_GPU_MB = 14540.0  # 14.2 GB allocatable limit (leaves >=820 MB for CUDA context/activations)
 
-SUBSYSTEM_GPU_MAP: Dict[str, int] = {
-    "text": 0,
-    "decision": 0,
-    "vlm": 0,
-    "vision": 0,
-    "speech": 0,
-    "image": 0,
-    "embedding": 1,
-    "rerank": 1,
-    "video": 1,
-    "music": 1,
-    "enhancement": 1,
-}
-
-# Service backend mapping for health probes and port reconciliation
-SERVICE_BACKEND_MAP: Dict[str, Dict[str, Any]] = {
-    "qwen-text": {"service_id": "text-service", "port": 8080, "health_endpoint": "/health", "target_gpu": 0},
-    "qwen-vlm": {"service_id": "vision-service", "port": 8081, "health_endpoint": "/health", "target_gpu": 0},
-    "qwen-decision": {"service_id": "decision-service", "port": 8082, "health_endpoint": "/health", "target_gpu": 0},
-    "qwen-embedding": {"service_id": "embed-service", "port": 8083, "health_endpoint": "/health", "target_gpu": 1},
-    "qwen-speech": {"service_id": "speech-service", "port": 8288, "health_endpoint": "/health", "target_gpu": 0},
-    "qwen-image-2.1": {"service_id": "image-service", "port": 8188, "health_endpoint": "/system_stats", "target_gpu": 0},
-    "qwen-image-2.1-turbo": {"service_id": "image-service", "port": 8188, "health_endpoint": "/system_stats", "target_gpu": 0},
-    "wan-2.2": {"service_id": "video-service", "port": 8189, "health_endpoint": "/system_stats", "target_gpu": 1},
-    "minimax-h3": {"service_id": "video-service", "port": 8189, "health_endpoint": "/system_stats", "target_gpu": 1},
-    "ace-step-1.5": {"service_id": "music-service", "port": 8008, "health_endpoint": "/health", "target_gpu": 1},
-    "yue2": {"service_id": "music-service", "port": 8009, "health_endpoint": "/health", "target_gpu": 1},
-    "enhancement-suite-v1": {"service_id": "enhancement-service", "port": 8002, "health_endpoint": "/health", "target_gpu": 1},
-}
-
-# Known Kaggle dataset slugs and expected weight files
-DATASET_SPECS: List[Dict[str, Any]] = [
-    {
-        "id": "qwen-text",
-        "slug": "qwen25-7b-instruct-awq",
-        "huggingface": "Qwen/Qwen2.5-7B-Instruct-AWQ",
-        "service": "text",
-        "target_gpu": 0,
-        "format": "safetensors",
-        "min_vram_gb": 12.0,
-        "files": ["model.safetensors.index.json"],
-    },
-    {
-        "id": "qwen-image-2.1",
-        "slug": "qwen-image-2-1-gguf",
-        "huggingface": "abenzerps/Qwen-Image-2.1-GGUF",
-        "service": "image",
-        "target_gpu": 0,
-        "format": "gguf",
-        "min_vram_gb": 14.0,
-        "files": ["qwen-image-2.1-Q4_K_M.gguf"],
-        "components": {
-            "clip": "qwen3vl_8b_fp8_scaled.safetensors",
-            "vae": "qwen_image_2.1_vae_bf16.safetensors",
-            "control_pose": "qwen_image_control_pose.safetensors",
-            "control_depth": "qwen_image_control_depth.safetensors",
-        },
-    },
-    {
-        "id": "qwen-image-2.1-turbo",
-        "slug": "qwen-image-2-1-turbo-gguf",
-        "huggingface": "unsloth/Qwen-Image-2.1-Turbo-GGUF",
-        "service": "image",
-        "target_gpu": 0,
-        "format": "gguf",
-        "min_vram_gb": 14.0,
-        "files": ["qwen-image-2.1-turbo-Q4_K_M.gguf"],
-    },
-    {
-        "id": "wan-2.2",
-        "slug": "wan22-ti2v-5b-diffusers",
-        "huggingface": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
-        "service": "video",
-        "target_gpu": 1,
-        "format": "diffusers",
-        "min_vram_gb": 14.0,
-        "files": ["model_index.json"],
-    },
-    {
-        "id": "minimax-h3",
-        "slug": "hailuo-h3-diffusers",
-        "huggingface": "MiniMax/Hailuo-H3-Diffusers",
-        "service": "video",
-        "target_gpu": 1,
-        "format": "diffusers",
-        "min_vram_gb": 14.0,
-        "files": ["model_index.json"],
-        "components": {
-            "audio_vae": "minimax_h3_audio_vae_fp32.safetensors",
-            "video_vae": "minimax_h3_video_vae_fp16.safetensors",
-        },
-    },
-    {
-        "id": "ace-step-1.5",
-        "slug": "acestep-1-5",
-        "huggingface": "ACE-Studio/ACE-Step-1.5",
-        "service": "music",
-        "target_gpu": 1,
-        "format": "safetensors",
-        "min_vram_gb": 12.0,
-        "files": ["model.safetensors"],
-    },
-    {
-        "id": "yue2",
-        "slug": "yue-s1-7b",
-        "huggingface": "m-a-p/YuE-s1-7B-anneal-en-cot",
-        "service": "music",
-        "target_gpu": 1,
-        "format": "safetensors",
-        "min_vram_gb": 12.0,
-        "files": ["model.safetensors"],
-    },
-    {
-        "id": "qwen-speech",
-        "slug": "qwen3-asr-1-7b",
-        "huggingface": "Qwen/Qwen3-ASR-1.7B",
-        "service": "speech",
-        "target_gpu": 0,
-        "format": "safetensors",
-        "min_vram_gb": 8.0,
-        "files": ["model.safetensors"],
-        "components": {
-            "tts_base": "tts_base/model.safetensors",
-        },
-    },
-    {
-        "id": "qwen-decision",
-        "slug": "qwen25-3b-instruct",
-        "huggingface": "Qwen/Qwen2.5-3B-Instruct",
-        "service": "decision",
-        "target_gpu": 0,
-        "format": "safetensors",
-        "min_vram_gb": 6.0,
-        "files": ["model.safetensors"],
-    },
-    {
-        "id": "qwen-vlm",
-        "slug": "qwen2-vl-7b-instruct-awq",
-        "huggingface": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
-        "service": "vision",
-        "target_gpu": 0,
-        "format": "safetensors",
-        "min_vram_gb": 14.0,
-        "files": ["model.safetensors.index.json"],
-    },
-    {
-        "id": "qwen-embedding",
-        "slug": "qwen3-embedding-0-6b",
-        "huggingface": "Qwen/Qwen3-Embedding-0.6B",
-        "service": "embedding",
-        "target_gpu": 1,
-        "format": "safetensors",
-        "min_vram_gb": 4.0,
-        "files": ["model.safetensors"],
-        "components": {
-            "reranker": "reranker/model.safetensors",
-        },
-    },
-    {
-        "id": "enhancement-suite-v1",
-        "slug": "real-esrgan",
-        "huggingface": "xinntao/Real-ESRGAN",
-        "service": "enhancement",
-        "target_gpu": 1,
-        "format": "safetensors",
-        "min_vram_gb": 6.0,
-        "files": ["RealESRGAN_x4plus.pth"],
-        "components": {
-            "rife": "rife.pth",
-            "bsrgan": "bsrgan.pth",
-            "audio_denoise": "deepfilternet.pth",
-        },
-    },
-]
+# Compatibility views; no independent checkpoint or model catalog tables.
+from model_registry.datasets import CatalogDatasetSpecs, CatalogServiceBackends
+SERVICE_BACKEND_MAP = CatalogServiceBackends()
+DATASET_SPECS = CatalogDatasetSpecs(bootstrap=True)
 
 REQUIRED_PACKAGES: Dict[str, str] = {
     "torch": ">=2.4.0",
@@ -447,6 +278,42 @@ class KaggleBootstrap:
 
         return len(missing_shards) == 0, found_shards, missing_shards
 
+    def _discover_pinned_files(self, spec, dataset_path, create_symlinks):
+        found, missing, corrupt, links = [], [], [], []
+        for item in spec["expected_files"]:
+            name = item["dest"]
+            path = dataset_path / name
+            if not path.is_file():
+                missing.append(name)
+                continue
+            digest = hashlib.sha256()
+            with path.open("rb") as stream:
+                while chunk := stream.read(8 * 1024 * 1024):
+                    digest.update(chunk)
+            if path.stat().st_size != item["size_bytes"] or digest.hexdigest() != item["sha256"]:
+                corrupt.append(name + " (integrity mismatch)")
+            else:
+                found.append(name)
+        complete = not missing and not corrupt and bool(found)
+        if complete and create_symlinks:
+            for name in found:
+                target = self.models_dir / spec["id"] / name
+                if (target.exists() or target.is_symlink()) and target.resolve() != (dataset_path / name).resolve():
+                    corrupt.append(name + " (destination already exists)")
+            complete = not corrupt
+        if complete and create_symlinks:
+            for name in found:
+                target = self.models_dir / spec["id"] / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                if not target.exists() and not target.is_symlink():
+                    target.symlink_to((dataset_path / name).resolve())
+                if target.is_symlink():
+                    links.append(str(target))
+        return {"model_id": spec["id"], "dataset_path": str(dataset_path),
+            "found_files": found, "missing_files": missing, "corrupted_files": corrupt,
+            "found_components": {}, "missing_components": {}, "symlinks": links,
+            "complete": complete, "weights_verified": complete, "model_inference_verified": False}
+
     def discover_and_mount_datasets(
         self,
         create_symlinks: bool = True,
@@ -476,6 +343,9 @@ class KaggleBootstrap:
             dataset_path = self.kaggle_input_dir / slug
 
             if dataset_path.exists() and dataset_path.is_dir():
+                if spec.get("canonical"):
+                    discovered[model_id] = self._discover_pinned_files(spec, dataset_path, create_symlinks)
+                    continue
                 found_files: List[str] = []
                 missing_files: List[str] = []
                 corrupted_files: List[str] = []
@@ -624,6 +494,15 @@ class KaggleBootstrap:
         Enforces 14.2 GB VRAM allocatable limit per discrete GPU.
         For YuE2, unquantized 7B BF16 reports HARDWARE_BLOCKED on T4 unless Track B weights are loaded.
         """
+        from model_registry.loader import ManifestLoader
+        model = ManifestLoader().load_models().get(model_id)
+        if model is None:
+            return {"model_id": model_id, "status": "MODEL_NOT_FOUND", "feasible": False,
+                    "reason": "Unknown explicit model identity; no substitution is permitted."}
+        if model.apiVersion == "factory.ai/v2":
+            return {"model_id": model_id, "status": "DEPLOYMENT_VALIDATION_PENDING", "feasible": False,
+                    "reason": "Canonical runtime requirements require explicit deployment validation; legacy variant heuristics cannot attest them.",
+                    "requirements": model.runtime_profiles["kaggle-dual-t4"].model_dump(mode="json")}
         if model_id == "yue2":
             is_track_b = (
                 quantization in ("awq", "gguf", "int8", "int4", "4bit", "8bit")
@@ -733,6 +612,15 @@ class KaggleBootstrap:
         2. Checkpoint weights are complete and non-corrupted.
         3. Native backend daemon is actively running and responsive to health probes.
         """
+        from model_registry.loader import ManifestLoader
+        model = ManifestLoader().load_models().get(model_id)
+        if model is None or model.apiVersion == "factory.ai/v2":
+            return {"model_id": model_id, "ready": False, "production_ready": False,
+                    "status": "MODEL_NOT_FOUND" if model is None else "BACKEND_LIFECYCLE_PENDING",
+                    "reason": "File integrity and a shared health endpoint do not attest the selected model/backend or certify inference. Explicit deployment lifecycle is required.",
+                    "checkpoint_valid": bool(dataset_entry and dataset_entry.get("weights_verified")),
+                    "backend_online": bool(backend_probe and backend_probe.get("online")),
+                    "model_inference_verified": False}
         hw = hw_report or self.detect_hardware()
 
         # 1. Hardware Feasibility

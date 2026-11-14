@@ -1,0 +1,702 @@
+{
+  "classification": "PREDECLARED_NATIVE_VIDEO_GOLDENS_NOT_INFERENCE_EVIDENCE",
+  "scope": "All thirteen Manifest-declared Wan/MiniMax model-capability pairs predeclared. Native output and semantic evidence remain required for every pair; no READY or Full Factory E2E.",
+  "assets": {
+    "astronaut_first": {
+      "fixture_path": "tests/fixtures/native/astronaut_first.png",
+      "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+      "size_bytes": 170704,
+      "mime_type": "image/png",
+      "original_url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+      "original_sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+      "conversion": "Full original recorded astronaut photograph resized to 384x256; no generated pixels."
+    },
+    "astronaut_last": {
+      "fixture_path": "tests/fixtures/native/astronaut_last.png",
+      "sha256": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f",
+      "size_bytes": 174767,
+      "mime_type": "image/png",
+      "original_url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+      "original_sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+      "conversion": "Same actual photograph cropped by 32 pixels and resized to 384x256 as an explicit zoom keyframe; no generated output."
+    },
+    "pedestrians": {
+      "fixture_path": "tests/fixtures/native/vtest-first2s.mp4",
+      "sha256": "9579648ba27debc6e31a632fcb095edb4fa4b29f6403a6f0716415adc6eb5c99",
+      "size_bytes": 65911,
+      "mime_type": "video/mp4",
+      "original_url": "https://raw.githubusercontent.com/opencv/opencv/4.12.0/samples/data/vtest.avi",
+      "original_sha256": "45cddc9490be69345cbdab64ca583be65987e864ca408038e648db99e10516cf",
+      "original_size_bytes": 8131690,
+      "conversion": "ffmpeg -i vtest.avi -t 2 -vf fps=2,scale=384:-2 -an -c:v libx264 -pix_fmt yuv420p -crf 18 -map_metadata -1 -movflags +faststart vtest-first2s.mp4",
+      "duration_seconds": 2,
+      "frames": 4,
+      "ground_truth": "Visible outdoor pedestrians walking in original recorded surveillance footage; no generated frames"
+    },
+    "astronaut_native_first": {
+      "fixture_path": "tests/fixtures/native/astronaut_native_first.jpg",
+      "sha256": "06804d22a934c2ed88916036bf3f46050a74310d4e22b223ce2d14a3eb6dfbe3",
+      "size_bytes": 122957,
+      "mime_type": "image/jpeg",
+      "original_url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+      "original_sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+      "derived_from_sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+      "conversion": "Same recorded photograph/keyframe derivative resized to 1280x704 using Pillow Lanczos, JPEG quality 88/subsampling 2/optimize; no model-generated pixels."
+    },
+    "astronaut_native_last": {
+      "fixture_path": "tests/fixtures/native/astronaut_native_last.jpg",
+      "sha256": "f82b8fd703a0d224274a597db19f31ee406dcc632c26ddfb34a7b7bca08a2763",
+      "size_bytes": 124248,
+      "mime_type": "image/jpeg",
+      "original_url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+      "original_sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+      "derived_from_sha256": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f",
+      "conversion": "Same recorded photograph/keyframe derivative resized to 1280x704 using Pillow Lanczos, JPEG quality 88/subsampling 2/optimize; no model-generated pixels."
+    }
+  },
+  "cases": [
+    {
+      "id": "wan-t2v-red-ball-native-grid-v2",
+      "model": "wan-2.2",
+      "capability": "video.text_to_video",
+      "operation": "video",
+      "assets": [],
+      "asset_identities": {},
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "A single bright red ball rolling from the left side toward the right across a plain white table. Static locked camera, wide shot, realistic photograph, clear smooth horizontal movement. No other objects.",
+        "negative_prompt": "static image, still photo, blue car, dog, text, watermark",
+        "width": 1280,
+        "height": 704,
+        "num_frames": 41,
+        "steps": 50,
+        "fps": 24,
+        "guidance_scale": 5.0
+      },
+      "expected": {
+        "positive_text": "a video frame of a red ball on a white table",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a green tree",
+          "a photograph of a black dog"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_red_fraction": 0.005,
+        "minimum_rightward_displacement_fraction": 0.025,
+        "minimum_distinct_frames": 5,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d"
+      }
+    },
+    {
+      "id": "minimax-t2v-red-ball-motion-v2",
+      "model": "minimax-h3",
+      "capability": "video.text_to_video",
+      "operation": "video",
+      "assets": [],
+      "asset_identities": {},
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "A single bright red ball rolling from the left side toward the right across a plain white table. Static locked camera, wide shot, realistic photograph, clear smooth horizontal movement. No other objects.",
+        "width": 384,
+        "height": 256,
+        "num_frames": 107,
+        "steps": 30,
+        "fps": 24
+      },
+      "expected": {
+        "positive_text": "a video frame of a red ball on a white table",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a green tree",
+          "a photograph of a black dog"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_red_fraction": 0.005,
+        "minimum_rightward_displacement_fraction": 0.025,
+        "minimum_distinct_frames": 5,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d"
+      }
+    },
+    {
+      "id": "wan-i2v-astronaut-native-grid-v2",
+      "model": "wan-2.2",
+      "capability": "video.image_to_video",
+      "operation": "video",
+      "assets": [
+        "astronaut_native_first"
+      ],
+      "asset_identities": {
+        "astronaut_native_first": "06804d22a934c2ed88916036bf3f46050a74310d4e22b223ce2d14a3eb6dfbe3"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "The astronaut in an orange spacesuit gently turns her head and smiles. Static camera, realistic live action video, natural subtle movement.",
+        "negative_prompt": "static image, still photo, text, watermark",
+        "width": 1280,
+        "height": 704,
+        "num_frames": 41,
+        "steps": 50,
+        "fps": 24,
+        "guidance_scale": 5.0,
+        "image": "@astronaut_native_first"
+      },
+      "expected": {
+        "positive_text": "a video frame of an astronaut in an orange spacesuit",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a black dog",
+          "a photograph of a green tree"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_distinct_frames": 5,
+        "minimum_mean_frame_change": 0.002,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "keyframe_anchors": [
+          {
+            "frame_index": 0,
+            "asset": "astronaut_native_first",
+            "maximum_mean_absolute_error": 0.12
+          }
+        ]
+      }
+    },
+    {
+      "id": "wan-fl2v-astronaut-zoom-native-grid-v2",
+      "model": "wan-2.2",
+      "capability": "video.first_last_frame_to_video",
+      "operation": "video",
+      "assets": [
+        "astronaut_native_first",
+        "astronaut_native_last"
+      ],
+      "asset_identities": {
+        "astronaut_native_first": "06804d22a934c2ed88916036bf3f46050a74310d4e22b223ce2d14a3eb6dfbe3",
+        "astronaut_native_last": "f82b8fd703a0d224274a597db19f31ee406dcc632c26ddfb34a7b7bca08a2763"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "A smooth camera zoom closer to the astronaut in an orange spacesuit, preserving the same person and photographic scene.",
+        "negative_prompt": "static image, still photo, text, watermark",
+        "width": 1280,
+        "height": 704,
+        "num_frames": 41,
+        "steps": 50,
+        "fps": 24,
+        "guidance_scale": 5.0,
+        "image": "@astronaut_native_first",
+        "last_image": "@astronaut_native_last"
+      },
+      "expected": {
+        "positive_text": "a video frame of an astronaut in an orange spacesuit",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a black dog",
+          "a photograph of a green tree"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_distinct_frames": 5,
+        "minimum_mean_frame_change": 0.002,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "keyframe_anchors": [
+          {
+            "frame_index": 0,
+            "asset": "astronaut_native_first",
+            "maximum_mean_absolute_error": 0.12
+          },
+          {
+            "frame_index": -1,
+            "asset": "astronaut_native_last",
+            "maximum_mean_absolute_error": 0.12
+          }
+        ]
+      }
+    },
+    {
+      "id": "wan-extension-pedestrians",
+      "model": "wan-2.2",
+      "capability": "video.video_extension",
+      "operation": "video",
+      "assets": [
+        "pedestrians"
+      ],
+      "asset_identities": {
+        "pedestrians": "9579648ba27debc6e31a632fcb095edb4fa4b29f6403a6f0716415adc6eb5c99"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "Continue the recorded surveillance scene. People keep walking naturally across the outdoor paved courtyard. Static camera, realistic video.",
+        "negative_prompt": "static image, still photo, text, watermark",
+        "width": 384,
+        "height": 256,
+        "num_frames": 17,
+        "steps": 30,
+        "fps": 16,
+        "guidance_scale": 5.0,
+        "video": "@pedestrians"
+      },
+      "expected": {
+        "positive_text": "a surveillance camera view of people walking outdoors on pavement",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a black dog",
+          "a photograph of a green tree"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_distinct_frames": 5,
+        "minimum_mean_frame_change": 0.002,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "generated_segment_start_frame": 32,
+        "output_num_frames": 49,
+        "preserved_source": {
+          "asset": "pedestrians",
+          "frames": 32,
+          "maximum_mean_absolute_error": 0.06
+        }
+      }
+    },
+    {
+      "id": "minimax-i2v-astronaut-native-temporal-v2",
+      "model": "minimax-h3",
+      "capability": "video.image_to_video",
+      "operation": "video",
+      "assets": [
+        "astronaut_first"
+      ],
+      "asset_identities": {
+        "astronaut_first": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "The astronaut in an orange spacesuit gently turns her head and smiles. Static camera, realistic live action video, natural subtle movement.",
+        "width": 384,
+        "height": 256,
+        "num_frames": 124,
+        "steps": 30,
+        "fps": 24,
+        "image": "@astronaut_first"
+      },
+      "expected": {
+        "positive_text": "a video frame of an astronaut in an orange spacesuit",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a black dog",
+          "a photograph of a green tree"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_distinct_frames": 5,
+        "minimum_mean_frame_change": 0.002,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "keyframe_anchors": [
+          {
+            "frame_index": 0,
+            "asset": "astronaut_first",
+            "maximum_mean_absolute_error": 0.12
+          }
+        ]
+      }
+    },
+    {
+      "id": "minimax-fl2v-astronaut-zoom-native-temporal-v2",
+      "model": "minimax-h3",
+      "capability": "video.first_last_frame_to_video",
+      "operation": "video",
+      "assets": [
+        "astronaut_first",
+        "astronaut_last"
+      ],
+      "asset_identities": {
+        "astronaut_first": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+        "astronaut_last": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "A smooth camera zoom closer to the astronaut in an orange spacesuit, preserving the same person and photographic scene.",
+        "width": 384,
+        "height": 256,
+        "num_frames": 124,
+        "steps": 30,
+        "fps": 24,
+        "image": "@astronaut_first",
+        "last_image": "@astronaut_last"
+      },
+      "expected": {
+        "positive_text": "a video frame of an astronaut in an orange spacesuit",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a black dog",
+          "a photograph of a green tree"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_distinct_frames": 5,
+        "minimum_mean_frame_change": 0.002,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "keyframe_anchors": [
+          {
+            "frame_index": 0,
+            "asset": "astronaut_first",
+            "maximum_mean_absolute_error": 0.12
+          },
+          {
+            "frame_index": -1,
+            "asset": "astronaut_last",
+            "maximum_mean_absolute_error": 0.12
+          }
+        ]
+      }
+    },
+    {
+      "id": "minimax-turbo-t2v-red-ball-motion",
+      "model": "minimax-h3-turbo",
+      "capability": "video.text_to_video",
+      "operation": "video",
+      "assets": [],
+      "asset_identities": {},
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "A single bright red ball rolling from the left side toward the right across a plain white table. Static locked camera, wide shot, realistic photograph, clear smooth horizontal movement. No other objects.",
+        "width": 384,
+        "height": 256,
+        "num_frames": 107,
+        "steps": 8,
+        "fps": 24
+      },
+      "expected": {
+        "positive_text": "a video frame of a red ball on a white table",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a green tree",
+          "a photograph of a black dog"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_red_fraction": 0.005,
+        "minimum_rightward_displacement_fraction": 0.025,
+        "minimum_distinct_frames": 5,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d"
+      }
+    },
+    {
+      "id": "minimax-turbo-i2v-astronaut",
+      "model": "minimax-h3-turbo",
+      "capability": "video.image_to_video",
+      "operation": "video",
+      "assets": [
+        "astronaut_first"
+      ],
+      "asset_identities": {
+        "astronaut_first": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "The astronaut in an orange spacesuit gently turns her head and smiles. Static camera, realistic live action video, natural subtle movement.",
+        "width": 384,
+        "height": 256,
+        "num_frames": 107,
+        "steps": 8,
+        "fps": 24,
+        "image": "@astronaut_first"
+      },
+      "expected": {
+        "positive_text": "a video frame of an astronaut in an orange spacesuit",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a black dog",
+          "a photograph of a green tree"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_distinct_frames": 5,
+        "minimum_mean_frame_change": 0.002,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "keyframe_anchors": [
+          {
+            "frame_index": 0,
+            "asset": "astronaut_first",
+            "maximum_mean_absolute_error": 0.12
+          }
+        ]
+      }
+    },
+    {
+      "id": "minimax-turbo-fl2v-astronaut-zoom",
+      "model": "minimax-h3-turbo",
+      "capability": "video.first_last_frame_to_video",
+      "operation": "video",
+      "assets": [
+        "astronaut_first",
+        "astronaut_last"
+      ],
+      "asset_identities": {
+        "astronaut_first": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+        "astronaut_last": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "A smooth camera zoom closer to the astronaut in an orange spacesuit, preserving the same person and photographic scene.",
+        "width": 384,
+        "height": 256,
+        "num_frames": 107,
+        "steps": 8,
+        "fps": 24,
+        "image": "@astronaut_first",
+        "last_image": "@astronaut_last"
+      },
+      "expected": {
+        "positive_text": "a video frame of an astronaut in an orange spacesuit",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a black dog",
+          "a photograph of a green tree"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_distinct_frames": 5,
+        "minimum_mean_frame_change": 0.002,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "keyframe_anchors": [
+          {
+            "frame_index": 0,
+            "asset": "astronaut_first",
+            "maximum_mean_absolute_error": 0.12
+          },
+          {
+            "frame_index": -1,
+            "asset": "astronaut_last",
+            "maximum_mean_absolute_error": 0.12
+          }
+        ]
+      }
+    },
+    {
+      "id": "minimax-reference-astronaut",
+      "model": "minimax-h3-reference",
+      "capability": "video.reference_conditioning",
+      "operation": "video",
+      "assets": [
+        "astronaut_first"
+      ],
+      "asset_identities": {
+        "astronaut_first": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "<Picture 1> The astronaut in an orange spacesuit gently turns her head and smiles. Static camera, realistic live action video, natural subtle movement.",
+        "width": 384,
+        "height": 256,
+        "num_frames": 107,
+        "steps": 30,
+        "fps": 24,
+        "reference_images": [
+          "@astronaut_first"
+        ]
+      },
+      "expected": {
+        "positive_text": "a video frame of an astronaut in an orange spacesuit",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a black dog",
+          "a photograph of a green tree"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_distinct_frames": 5,
+        "minimum_mean_frame_change": 0.002,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "reference_cosines": {
+          "astronaut_first": 0.65
+        }
+      }
+    },
+    {
+      "id": "minimax-spoken-audio",
+      "model": "minimax-h3",
+      "capability": "video.video_with_audio",
+      "operation": "video",
+      "assets": [
+        "astronaut_first"
+      ],
+      "asset_identities": {
+        "astronaut_first": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "The astronaut in an orange spacesuit speaks clearly in English, saying exactly: \"Factory makes useful tools.\" Static camera, realistic live action video, audible clear speech, no music.",
+        "width": 384,
+        "height": 256,
+        "num_frames": 107,
+        "steps": 30,
+        "fps": 24,
+        "image": "@astronaut_first"
+      },
+      "expected": {
+        "positive_text": "a video frame of an astronaut in an orange spacesuit",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a black dog",
+          "a photograph of a green tree"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_distinct_frames": 5,
+        "minimum_mean_frame_change": 0.002,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "keyframe_anchors": [
+          {
+            "frame_index": 0,
+            "asset": "astronaut_first",
+            "maximum_mean_absolute_error": 0.12
+          }
+        ],
+        "spoken_audio": {
+          "transcript": "Factory makes useful tools",
+          "maximum_word_error_rate": 0.25,
+          "required_phrases": [
+            "factory",
+            "useful tools"
+          ],
+          "minimum_rms": 0.003,
+          "maximum_clipped_fraction": 0.01,
+          "maximum_av_duration_difference_seconds": 0.2,
+          "verifier_pins_sha256": "17ba5ebdf6f9ba3e63ddf2bdc6fbf20925806ac9be2d317bd31740f4b7829067"
+        }
+      }
+    },
+    {
+      "id": "minimax-reference-spoken-audio",
+      "model": "minimax-h3-reference",
+      "capability": "video.video_with_audio",
+      "operation": "video",
+      "assets": [
+        "astronaut_first"
+      ],
+      "asset_identities": {
+        "astronaut_first": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "<Picture 1> The astronaut in an orange spacesuit speaks clearly in English, saying exactly: \"Factory makes useful tools.\" Static camera, realistic live action video, audible clear speech, no music.",
+        "width": 384,
+        "height": 256,
+        "num_frames": 107,
+        "steps": 30,
+        "fps": 24,
+        "reference_images": [
+          "@astronaut_first"
+        ]
+      },
+      "expected": {
+        "positive_text": "a video frame of an astronaut in an orange spacesuit",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a black dog",
+          "a photograph of a green tree"
+        ],
+        "minimum_mean_text_cosine": 0.25,
+        "minimum_frame_text_cosine": 0.22,
+        "minimum_text_margin": 0.03,
+        "minimum_distinct_frames": 5,
+        "minimum_mean_frame_change": 0.002,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "reference_cosines": {
+          "astronaut_first": 0.65
+        },
+        "spoken_audio": {
+          "transcript": "Factory makes useful tools",
+          "maximum_word_error_rate": 0.25,
+          "required_phrases": [
+            "factory",
+            "useful tools"
+          ],
+          "minimum_rms": 0.003,
+          "maximum_clipped_fraction": 0.01,
+          "maximum_av_duration_difference_seconds": 0.2,
+          "verifier_pins_sha256": "17ba5ebdf6f9ba3e63ddf2bdc6fbf20925806ac9be2d317bd31740f4b7829067"
+        }
+      }
+    }
+  ]
+}

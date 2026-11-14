@@ -4,7 +4,8 @@ Worker daemon registration, leasing, heartbeats, progress, and completion contra
 """
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+from factory_contracts.tasks import normalize_model, normalize_task
 from factory_contracts.jobs.job_contract import FactoryJob, ArtifactReference
 from factory_contracts.errors.error_contract import ErrorDetail
 
@@ -19,6 +20,12 @@ class WorkerLeaseRequest(BaseModel):
     supported_tasks: List[str] = Field(..., description="List of task names worker can execute")
     gpu_device: Optional[int] = Field(default=None, description="Physical GPU device index")
     lease_duration_seconds: int = Field(default=300, ge=30, le=1800)
+
+    @model_validator(mode="after")
+    def normalize_registration(self):
+        self.supported_tasks = list(dict.fromkeys(normalize_task(task, engine=self.subsystem) for task in self.supported_tasks))
+        self.supported_models = list(dict.fromkeys(normalize_model(mid) for mid in self.supported_models))
+        return self
 
 
 class WorkerLeaseResponse(BaseModel):

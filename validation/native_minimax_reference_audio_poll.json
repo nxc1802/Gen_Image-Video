@@ -1,0 +1,12 @@
+{
+  "observed_at_utc": "2026-11-14T13:05:14.623231+00:00",
+  "version": 2,
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-reference-audio",
+  "run_record_sha256": "72adf7e01f99d81afc98ca2126668c5e9742bf72d2a94b348e8761f382ee1198",
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "classification": "REMOTE_JOB_STATUS_ONLY_NOT_INFERENCE_EVIDENCE"
+}

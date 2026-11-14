@@ -58,19 +58,19 @@ def test_fix_09_native_acestep_launcher_health_check():
 def test_fix_10_acestep_task_type_and_payload_alignment():
     """FIX-10: ACEStepClient._release_payload correctly maps native tasks and parameters."""
     # 1. Text to music
-    p1 = ACEStepClient._release_payload("text_to_music", {"prompt": "A jazz groove", "tempo": 110})
+    p1 = ACEStepClient._release_payload('music.text_to_music', {"prompt": "A jazz groove", "tempo": 110})
     assert p1["task_type"] == "text2music"
     assert p1["lyrics"] == "[inst]"
     assert p1["bpm"] == 110
 
     # 2. Lyrics to music
-    p2 = ACEStepClient._release_payload("lyrics_to_music", {"prompt": "Pop ballad", "lyrics": "Hello sun"})
+    p2 = ACEStepClient._release_payload('music.lyrics_to_music', {"prompt": "Pop ballad", "lyrics": "Hello sun"})
     assert p2["task_type"] == "lyrics2music"
     assert p2["lyrics"] == "Hello sun"
 
     # 3. Cover task with audio path and cover strength
     p3 = ACEStepClient._release_payload(
-        "cover",
+        'music.cover',
         {
             "prompt": "Rock cover",
             "source_audio_path": "/tmp/source.wav",
@@ -83,7 +83,7 @@ def test_fix_10_acestep_task_type_and_payload_alignment():
 
     # 4. Repaint task with interval
     p4 = ACEStepClient._release_payload(
-        "repaint",
+        'music.repaint',
         {
             "prompt": "Guitar solo",
             "src_audio_path": "/tmp/source.wav",
@@ -97,7 +97,7 @@ def test_fix_10_acestep_task_type_and_payload_alignment():
 
     # 5. Reference conditioning
     p5 = ACEStepClient._release_payload(
-        "reference_conditioning",
+        'music.reference_audio',
         {
             "prompt": "Vocal style transfer",
             "reference_audio_path": "/tmp/style_ref.wav",
@@ -107,5 +107,5 @@ def test_fix_10_acestep_task_type_and_payload_alignment():
     assert p5["reference_audio_path"] == "/tmp/style_ref.wav"
 
     # 6. Extract stem
-    p6 = ACEStepClient._release_payload("extract", {"prompt": "Vocal stem", "src_audio_path": "/tmp/mix.wav"})
+    p6 = ACEStepClient._release_payload('music.extract', {"prompt": "Vocal stem", "src_audio_path": "/tmp/mix.wav"})
     assert p6["task_type"] == "extract"

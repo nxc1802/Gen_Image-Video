@@ -1,0 +1,59 @@
+{
+  "classification": "UPSTREAM_REFERENCE_REVIEW_ONLY_NOT_INFERENCE_EVIDENCE",
+  "revision": "33cc7c272c546a06b8f95d078ec1e7cc2c531221",
+  "references": [
+    {
+      "url": "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/33cc7c272c546a06b8f95d078ec1e7cc2c531221/templates/image_qwen_image_2_1_t2i.json",
+      "sha256": "5f2b50eeaf27e56a45456681ad5319df1ae51243d9653ac3f92c7dc05d1e1503",
+      "native_nodes": [
+        {
+          "type": "TextEncodeQwenImage21",
+          "widgets_values": [
+            "",
+            "",
+            1024
+          ]
+        },
+        {
+          "type": "KSampler",
+          "widgets_values": [
+            0,
+            "fixed",
+            25,
+            1,
+            "euler",
+            "simple",
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/33cc7c272c546a06b8f95d078ec1e7cc2c531221/templates/image_qwen_image_2_1_image_edit.json",
+      "sha256": "c1e6551759de131f083a040da072ac6f032c3c8401ceca202412cd912897d0fc",
+      "native_nodes": [
+        {
+          "type": "KSampler",
+          "widgets_values": [
+            0,
+            "randomize",
+            25,
+            1,
+            "euler",
+            "simple",
+            1
+          ]
+        },
+        {
+          "type": "TextEncodeQwenImage21",
+          "widgets_values": [
+            "",
+            "",
+            1024
+          ]
+        }
+      ]
+    }
+  ],
+  "disposition": "Official native Comfy workflows use CFG 1.0 for Standard T2I and image edit. Retain predeclared native goldens CFG 1.0; do not substitute the stable-diffusion.cpp CLI CFG 6.0 convention. No output-dependent threshold or prompt change."
+}

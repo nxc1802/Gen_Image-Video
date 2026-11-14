@@ -1,0 +1,88 @@
+{
+  "classification": "LOCAL_CPU_EXACT_VAE_COMPONENT_ROUNDTRIP_ONLY_NOT_WAN_T2V_OR_T4_CERTIFICATION",
+  "status": "COMPONENT_EXECUTION_COMPLETE_NOT_CERTIFICATION",
+  "script_sha256": "59264d907a216a600beca13424c6c97912120b5e64db800b5f2497f41a29ce28",
+  "native_gpu_inference_executed": false,
+  "full_wan_model_inference_executed": false,
+  "v3_certified": false,
+  "full_factory_e2e_executed": false,
+  "production_ready": false,
+  "runtime_versions": {
+    "torch": "2.11.0",
+    "diffusers": "0.43.0",
+    "transformers": "5.19.0",
+    "numpy": "2.5.4",
+    "pillow": "13.0.0"
+  },
+  "verified_files": {
+    "vae/config.json": {
+      "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+      "revision": "b8fff7315c768468a5333511427288870b2e9635",
+      "sha256": "d996c340fe9a7df5d7371f76a7d8d6956f6c98256080074d8434fa5eeac11360",
+      "size_bytes": 1701,
+      "matched": true
+    },
+    "vae/diffusion_pytorch_model.safetensors": {
+      "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+      "revision": "b8fff7315c768468a5333511427288870b2e9635",
+      "sha256": "62cd18f19438e35b32ac63020e2852f566e9b02f46b6cdbd87972a356e3c6f4b",
+      "size_bytes": 2818777808,
+      "matched": true
+    }
+  },
+  "input": {
+    "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+    "size_bytes": 170704,
+    "dimensions": [
+      384,
+      256
+    ]
+  },
+  "load_info": {
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "mismatched_keys": [],
+    "error_msgs": []
+  },
+  "parameters": {
+    "count": 704688668,
+    "devices": [
+      "cpu"
+    ],
+    "dtypes": [
+      "torch.float32"
+    ]
+  },
+  "roundtrip_seconds": 12.742546708788723,
+  "latent": {
+    "shape": [
+      1,
+      48,
+      1,
+      16,
+      24
+    ],
+    "minimum": -2.1040616035461426,
+    "maximum": 2.465559244155884,
+    "finite": true
+  },
+  "decoded": {
+    "shape": [
+      1,
+      3,
+      1,
+      256,
+      384
+    ],
+    "minimum": -1.0,
+    "maximum": 1.0,
+    "finite": true,
+    "mean_absolute_error_0_to_1": 0.014584164135158062,
+    "root_mean_square_error_0_to_1": 0.028759382665157318
+  },
+  "output": {
+    "file": "reconstructed.png",
+    "sha256": "5c160b20c2382a0a2409c682882903d1692b29acb125eece4e80016b9eb281c0",
+    "size_bytes": 160024
+  }
+}

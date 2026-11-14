@@ -12,6 +12,9 @@ import asyncio
 from pathlib import Path
 import re
 import pytest
+
+# Legacy lifecycle/runner contract coverage; never inference certification.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from httpx import AsyncClient, ASGITransport
 
 WORKSPACE_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -114,7 +117,7 @@ class TestControlApiServerInitialization:
         from factory_control_api.server import app
 
         assert app is not None
-        assert app.title == "Factory v4 Control Plane API"
+        assert app.title == "Factory Control Plane API"
         assert app.version == "4.0.0"
 
     @pytest.mark.asyncio
@@ -126,9 +129,10 @@ class TestControlApiServerInitialization:
             # Assert state components were initialized
             assert hasattr(app.state, "auth_config")
             assert hasattr(app.state, "scratch_disk")
-            assert hasattr(app.state, "storage_provider")
-            assert hasattr(app.state, "repository")
-            assert hasattr(app.state, "broker")
+            assert hasattr(app.state, "public_media_jobs")
+            assert not hasattr(app.state, "repository")
+            assert not hasattr(app.state, "broker")
+            assert not hasattr(app.state, "lease_coordinator")
             assert hasattr(app.state, "manifest_loader")
 
             transport = ASGITransport(app=app)
@@ -142,7 +146,7 @@ class TestControlApiServerInitialization:
 
                 # 2. Models endpoint with auth
                 api_key = app.state.auth_config.api_key
-                res_models = await client.get("/v1/models", headers={"Authorization": f"Bearer {api_key}"})
+                res_models = await client.get("/v1/registry/models", headers={"Authorization": f"Bearer {api_key}"})
                 assert res_models.status_code == 200
                 data_models = res_models.json()
                 assert "data" in data_models

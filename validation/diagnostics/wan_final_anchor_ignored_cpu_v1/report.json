@@ -1,0 +1,98 @@
+{
+  "classification": "EXACT_CPU_VAE_AND_NATIVE_LATENT_PREPARATION_ONLY_NOT_FULL_WAN_OR_GPU_INFERENCE",
+  "script_sha256": "30ae0514aa6c7c3ab3d88e05a21c35a0f61f5a619a73d5cddeac7303881c1a78",
+  "status": "LAST_IMAGE_IGNORED_REPRODUCED_COMPONENT_ONLY",
+  "native_gpu_inference_executed": false,
+  "full_wan_model_inference_executed": false,
+  "v3_certified": false,
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "runtime_versions": {
+    "torch": "2.11.0",
+    "diffusers": "0.43.0",
+    "transformers": "5.19.0",
+    "numpy": "2.5.4"
+  },
+  "verified_files": {
+    "vae/config.json": {
+      "sha256": "d996c340fe9a7df5d7371f76a7d8d6956f6c98256080074d8434fa5eeac11360",
+      "size_bytes": 1701
+    },
+    "vae/diffusion_pytorch_model.safetensors": {
+      "sha256": "62cd18f19438e35b32ac63020e2852f566e9b02f46b6cdbd87972a356e3c6f4b",
+      "size_bytes": 2818777808
+    }
+  },
+  "exact_model_index_sha256": "6a72faeb564b0e894aea8fc4ef27241106eb739e8584e869b61589a65473add7",
+  "distinct_actual_photographed_inputs": {
+    "astronaut_first": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+    "astronaut_last": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f"
+  },
+  "load_info": {
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "mismatched_keys": [],
+    "error_msgs": []
+  },
+  "vae_parameters": {
+    "count": 704688668,
+    "devices": [
+      "cpu"
+    ],
+    "dtypes": [
+      "torch.float32"
+    ]
+  },
+  "native_prepare_latents_sha256": "1dd276939a11065e52837f8424aec6f48f8c119487d9bb855f74796d36a45a74",
+  "elapsed_seconds": 0.1236281250603497,
+  "returned_tensors": [
+    {
+      "name": "noise",
+      "shape": [
+        1,
+        48,
+        2,
+        4,
+        4
+      ],
+      "finite": true,
+      "identical_when_last_image_changes": true,
+      "sha256": [
+        "ded79142cbe816832525c4b23cdf03bca997a7d18b0c2125c0345cb7a3a50f26",
+        "ded79142cbe816832525c4b23cdf03bca997a7d18b0c2125c0345cb7a3a50f26"
+      ]
+    },
+    {
+      "name": "condition",
+      "shape": [
+        1,
+        48,
+        1,
+        4,
+        4
+      ],
+      "finite": true,
+      "identical_when_last_image_changes": true,
+      "sha256": [
+        "6631e55e64320e321e676f17c18b490eac8fa4e1a110ea19e0aa3d10d294aafb",
+        "6631e55e64320e321e676f17c18b490eac8fa4e1a110ea19e0aa3d10d294aafb"
+      ]
+    },
+    {
+      "name": "first_frame_mask",
+      "shape": [
+        1,
+        1,
+        2,
+        4,
+        4
+      ],
+      "finite": true,
+      "identical_when_last_image_changes": true,
+      "sha256": [
+        "0d2d4246e69d141a20db6d30f1aac38a12ca1afce410d3e04280f979ddae1a45",
+        "0d2d4246e69d141a20db6d30f1aac38a12ca1afce410d3e04280f979ddae1a45"
+      ]
+    }
+  ]
+}

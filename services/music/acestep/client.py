@@ -46,40 +46,12 @@ class ACEStepClient:
             headers["Authorization"] = f"Bearer {self.api_key}"
         return headers
 
-    TASK_TYPE_MAPPING = {
-        "text_to_music": "text2music",
-        "music.t2m": "text2music",
-        "t2m": "text2music",
-        "lyrics_to_music": "lyrics2music",
-        "music.lyrics": "lyrics2music",
-        "music.l2m": "lyrics2music",
-        "l2m": "lyrics2music",
-        "cover": "cover",
-        "music.cover": "cover",
-        "remix": "cover",
-        "repaint": "repaint",
-        "music.repaint": "repaint",
-        "reference_conditioning": "reference",
-        "reference_audio": "reference",
-        "reference": "reference",
-        "music.reference": "reference",
-        "extract": "extract",
-        "music.extract": "extract",
-        "lego": "lego",
-        "music.lego": "lego",
-        "complete": "complete",
-        "music.complete": "complete",
-        "music_extend": "extend",
-        "music.extend": "extend",
-        "extend": "extend",
-        "audio_to_audio": "audio2audio",
-        "music.a2a": "audio2audio",
-        "a2a": "audio2audio",
-    }
+    # Canonical capability -> native API operation, not request aliases.
+    TASK_TYPE_MAPPING = {'music.text_to_music': 'text2music', 'music.lyrics_to_music': 'lyrics2music', 'music.cover': 'cover', 'music.repaint': 'repaint', 'music.reference_audio': 'reference', 'music.extract': 'extract', 'music.lego': 'lego', 'music.complete': 'complete', 'music.extend': 'extend', 'music.audio_to_audio': 'audio2audio'}
 
     @classmethod
     def _release_payload(cls, task: str, params: Dict[str, Any]) -> Dict[str, Any]:
-        norm_task = str(task).lower().strip()
+        norm_task = task
         task_type = cls.TASK_TYPE_MAPPING.get(norm_task)
         if not task_type:
             raise InvalidRequestError(

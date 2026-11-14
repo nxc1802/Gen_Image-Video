@@ -1,0 +1,12 @@
+{
+  "observed_at_utc": "2026-11-13T07:48:54.501979+00:00",
+  "version": 1,
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-image-masked",
+  "run_record_sha256": "864407739d7485f6a21542e86642f27911f597c2a8f09f585718984a6611fdbe",
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "classification": "REMOTE_JOB_STATUS_ONLY_NOT_INFERENCE_EVIDENCE"
+}

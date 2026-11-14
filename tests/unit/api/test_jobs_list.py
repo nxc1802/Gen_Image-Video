@@ -11,16 +11,19 @@ Unit tests verifying the GET /v1/jobs list endpoint:
 import os
 import time
 import pytest
+
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from starlette.testclient import TestClient
 
-from factory.apps.control_api.src.main import app
+from factory.apps.control_api.src.legacy import app
 from factory_contracts.jobs.job_contract import ArtifactReference
 
 VALID_TOKEN = "sk-factory-prod-secret-token"
 
 
 @pytest.fixture(scope="module")
-def api_client():
+def api_client(legacy_catalog, ):
     keys_to_preserve = ["FACTORY_API_KEY", "STORAGE_BACKEND", "FACTORY_DB_BACKEND", "SQLITE_DB_PATH"]
     old_env = {k: os.environ.get(k) for k in keys_to_preserve}
     os.environ["FACTORY_API_KEY"] = VALID_TOKEN

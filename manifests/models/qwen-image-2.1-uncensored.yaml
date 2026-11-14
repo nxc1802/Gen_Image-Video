@@ -1,0 +1,112 @@
+apiVersion: factory.ai/v2
+kind: ModelManifest
+metadata:
+  id: qwen-image-2.1-uncensored
+  family: qwen-image
+  display_name: Qwen Image 2.1 Uncensored Q4_K_M (legacy dataset identity)
+  service_id: image-service
+  version: 2.1.0
+  license: other
+  license_url: https://huggingface.co/0xSojalSec/Qwen-Image-2.1-Uncensored-GGUF/blob/242be4d1f70cc26fa45773c452f81980ed656e2e/README.md
+  commercial_use: false
+aliases: []
+engine: image
+weights:
+  files:
+    primary:
+      provider: huggingface
+      repository: 0xSojalSec/Qwen-Image-2.1-Uncensored-GGUF
+      revision: 242be4d1f70cc26fa45773c452f81980ed656e2e
+      path: qwen-image-2.1-Q4_K_M.gguf
+      sha256: 833439e91bc1152d28f37aa198c7f6f4218b7de95754c2f7a318a2422ab4b2f8
+      size_bytes: 4604557984
+      destination: model/qwen-image-2.1-Q4_K_M.gguf
+    clip:
+      provider: huggingface
+      repository: Comfy-Org/Qwen3-VL
+      revision: 02f0d3eefb59528799653d16735818801177ef1f
+      path: text_encoders/qwen3vl_8b_fp8_scaled.safetensors
+      sha256: 4ba424cf62e51392e4d1a39933e803706f4e823c1065f36aaf149c6453f66bcd
+      size_bytes: 10588637512
+      destination: text_encoders/qwen3vl_8b_fp8_scaled.safetensors
+    vae:
+      provider: huggingface
+      repository: Comfy-Org/Qwen-Image-2.1
+      revision: aacf31a6d48e707f352ecba714cee0680da3479b
+      path: vae/qwen_image_2.1_vae_bf16.safetensors
+      sha256: bb21f7473051e1ac368515dd3f2e15cd44d7a11748ee8823e1ddca3e4876b7c9
+      size_bytes: 675509688
+      destination: vae/qwen_image_2.1_vae_bf16.safetensors
+  format: gguf
+  quantization: q4_k_m
+  default_precision: fp16
+backend:
+  adapter: qwen_image
+  supported:
+  - comfyui
+capabilities:
+  image.text_to_image: true
+  image.image_to_image: true
+  image.inpaint: true
+  image.outpaint: true
+  image.instruction_edit: true
+  image.reference_image: true
+  image.multi_reference: true
+  image.control_pose: false
+  image.control_depth: false
+parameters:
+  max_width:
+    type: integer
+    default: 2048
+  max_height:
+    type: integer
+    default: 2048
+  steps:
+    type: integer
+    minimum: 1
+    maximum: 100
+    default: 50
+  width:
+    type: integer
+    minimum: 32
+    maximum: 2048
+    default: 1024
+  height:
+    type: integer
+    minimum: 32
+    maximum: 2048
+    default: 1024
+  cfg:
+    type: number
+    minimum: 0
+    maximum: 20
+    default: 1.0
+  strength:
+    type: number
+    minimum: 0
+    maximum: 1
+    default: 0.6
+runtime_profiles:
+  kaggle-dual-t4:
+    gpu_count: 1
+    min_vram_gb: 14.0
+    preferred_backend: comfyui
+    exclusive: false
+    cpu_offload: true
+    notes: Declared preflight requirements; not hardware certification. CLI assigns
+      devices explicitly. Runtime load and semantic validation remain required.
+validation:
+  state: DISABLED
+  reasons:
+  - Preserves the exact prior Kaggle file identity under a distinct disabled model
+    ID. Never alias or substitute it for Standard or Turbo.
+  - Pose/depth ControlNet weights are not part of this pinned bundle; those capabilities
+    are not declared as supported. No implicit auxiliary-checkpoint selection.
+  implemented_capabilities:
+  - image.text_to_image
+  - image.image_to_image
+  - image.inpaint
+  - image.outpaint
+  - image.instruction_edit
+  - image.reference_image
+  - image.multi_reference

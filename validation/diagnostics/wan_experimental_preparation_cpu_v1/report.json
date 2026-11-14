@@ -1,0 +1,91 @@
+{
+  "classification": "EXACT_CPU_VAE_EXPERIMENTAL_ADAPTER_LATENT_PREPARATION_ONLY",
+  "script_sha256": "82188fe6cde7c8e67976a482bfbdb6fa1f1f874639f1d4ffac4d0c346b3c01eb",
+  "status": "BOTH_ENDPOINT_CONSUMPTION_REPRODUCED_COMPONENT_ONLY",
+  "native_gpu_inference_executed": false,
+  "full_wan_model_inference_executed": false,
+  "v3_certified": false,
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "runtime_identity": {
+    "implementation": "experimental_joint_linear_context_two_endpoint_mask_v1",
+    "experimental": true,
+    "source_sha256": "fa54b786c847b5581cc51f5f6a86d6df0b84c18810b4279b6b59fc419be2a80a",
+    "upstream_method_sha256": {
+      "prepare_latents": "1dd276939a11065e52837f8424aec6f48f8c119487d9bb855f74796d36a45a74",
+      "__call__": "841e083f84da734b2c82485e6188ced22bc72e0b66a3c7a78e780332abb7e53c"
+    },
+    "checkpoint_changed": false,
+    "returned_pixel_frame_replacement": false
+  },
+  "checks": {
+    "same_noise_for_same_seed": true,
+    "same_first_condition": true,
+    "different_real_last_image_changes_final_condition": true,
+    "mask_exactly_two_endpoints_and_one_free_interior": true,
+    "inactive_middle_condition_zero": true,
+    "all_finite": true
+  },
+  "actual_call_evidence": [
+    {
+      "implementation": "experimental_joint_linear_context_two_endpoint_mask_v1",
+      "experimental": true,
+      "source_sha256": "fa54b786c847b5581cc51f5f6a86d6df0b84c18810b4279b6b59fc419be2a80a",
+      "upstream_method_sha256": {
+        "prepare_latents": "1dd276939a11065e52837f8424aec6f48f8c119487d9bb855f74796d36a45a74",
+        "__call__": "841e083f84da734b2c82485e6188ced22bc72e0b66a3c7a78e780332abb7e53c"
+      },
+      "checkpoint_changed": false,
+      "returned_pixel_frame_replacement": false,
+      "normalized_first_image_sha256": "09e091810c26cddeda0f782828933b5695066780f5ee77f223e5bb8b6c4adb2f",
+      "normalized_last_image_sha256": "09e091810c26cddeda0f782828933b5695066780f5ee77f223e5bb8b6c4adb2f",
+      "first_condition_sha256": "2817c7b25598b4e511ad09c3055f6a06feae3038119729948be930af77382858",
+      "last_condition_sha256": "d99641d811e6436d6ebaf40234e2111684b3be54b16b6122c2d97b4833f08d4b",
+      "condition_sha256": "85067ba0b13275828b9f871abf2cc5b019b911b4fbf54014520f23b1b4367741",
+      "mask_sha256": "15cb8f46aaa7ad29c2a72490419138d7c15b67fb318e60c3104f53972bcc429d",
+      "condition_shape": [
+        1,
+        48,
+        3,
+        4,
+        4
+      ],
+      "context_pixel_frames": 9,
+      "conditioned_latent_indices": [
+        0,
+        2
+      ],
+      "free_interior_latent_frames": 1
+    },
+    {
+      "implementation": "experimental_joint_linear_context_two_endpoint_mask_v1",
+      "experimental": true,
+      "source_sha256": "fa54b786c847b5581cc51f5f6a86d6df0b84c18810b4279b6b59fc419be2a80a",
+      "upstream_method_sha256": {
+        "prepare_latents": "1dd276939a11065e52837f8424aec6f48f8c119487d9bb855f74796d36a45a74",
+        "__call__": "841e083f84da734b2c82485e6188ced22bc72e0b66a3c7a78e780332abb7e53c"
+      },
+      "checkpoint_changed": false,
+      "returned_pixel_frame_replacement": false,
+      "normalized_first_image_sha256": "09e091810c26cddeda0f782828933b5695066780f5ee77f223e5bb8b6c4adb2f",
+      "normalized_last_image_sha256": "56edb357ebbcccffe21346c5ff410af86e7096d62932546e11c701992b84db74",
+      "first_condition_sha256": "2817c7b25598b4e511ad09c3055f6a06feae3038119729948be930af77382858",
+      "last_condition_sha256": "d0581aa4b8ed997fa154d0b8364690efb2d8e2f747d13b4f7de537b2d3bd1b97",
+      "condition_sha256": "c64e926aac75ab12d08802f0df27acd8222bc61bcd64bd34dadf6b63b43c6c1a",
+      "mask_sha256": "15cb8f46aaa7ad29c2a72490419138d7c15b67fb318e60c3104f53972bcc429d",
+      "condition_shape": [
+        1,
+        48,
+        3,
+        4,
+        4
+      ],
+      "context_pixel_frames": 9,
+      "conditioned_latent_indices": [
+        0,
+        2
+      ],
+      "free_interior_latent_frames": 1
+    }
+  ]
+}

@@ -1,0 +1,933 @@
+{
+  "classification": "CPU_NATIVE_EVIDENCE_REVALIDATION_NOT_NEW_MODEL_INFERENCE",
+  "status": "REVALIDATION_COMPLETE",
+  "native_inference_executed": false,
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "inputs": {
+    "source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+    "input_files_sha256": {
+      "benchmarks/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "benchmarks/native/__init__.py": "c08f2222fd9280c2e944f7049ae0c43939613c3743c0f06bfb7972512c5f0fa6",
+      "benchmarks/native/adversarial.py": "9e259d0d4df1a89dc3466bf331f45d9048b04ea34aff610c4126da422e5c178a",
+      "benchmarks/native/gate_audit_kernel.py": "bb4d941339ada9fbe724ee6059003a5792039a43886356fe1748911c977d49d5",
+      "benchmarks/native/golden_wave_a.json": "a8837087bbcbb20d8f22c479096fb2dcb96db365208db08931cafbc683995522",
+      "benchmarks/native/golden_wave_b.json": "44361fbf3a6a9b1554b30ac8d56b5608e392c34068f50dbb274a58af088d4e82",
+      "benchmarks/native/golden_wave_c.json": "4eaed7749bde69dfb35bd4bc5363a8d6510da1ee67280ac79dd5518b3f4bdbdb",
+      "benchmarks/native/golden_wave_d.json": "dacfa94b34ca51614208cc22b3cd00348442d12cd95d700452fe5aa89b6a4989",
+      "benchmarks/native/image_inputs.py": "da692f7890fd189046e302a211652109b95d5d732c00f577a3e31228de45d435",
+      "benchmarks/native/image_semantic.py": "dada773751f89e88a2488f46be1fce0266b6d39cae76409981a8eeddbfb546b3",
+      "benchmarks/native/image_semantic_pins.json": "f99b3440621cc39f798c9ec8fe2571dc06c241856edd95494a6f4f940f8ec395",
+      "benchmarks/native/matrix.py": "52e57d75446057ceaf7da2fe3055c7de828d8890a46947d5c3d586620008f374",
+      "benchmarks/native/progress.py": "8b219d21feb02386fad08e114adc53e3fe208993cf925651639e16e08933ae15",
+      "benchmarks/native/semantic_pins.json": "4ee05aee4cf1535f95cd29f29e30d2235104149f4f1e88c75432f074476aeef9",
+      "benchmarks/native/source_archives.py": "d9e04b386bda7af45302e5a846099e1e2f8dbefba3a80562172fdcee7379bd0d",
+      "benchmarks/native/speech_semantic.py": "a4457353992c355dcf44815d7e2167f6b89d0e200a789783b26170f07be87bf1",
+      "benchmarks/native/video_audio.py": "57571657762c4c2b982947eb7cb949d2b3efefd5dba9aa589c0267b63540b57b",
+      "benchmarks/native/video_audio_semantic_pins.json": "45320ae9688488b737196c7ddc339591ad2a56102e7e1e9c4388ae493fddbfc9",
+      "benchmarks/native/video_content_review.py": "46d9de4354118e3d444edf10e1f6b977c615aed45cc0a8fa3ac7a9093150bcc0",
+      "benchmarks/native/video_review.py": "06e9c7ac0d678e0c4d05e3799dc9fc48b71339a7d7983d30bce622d810994949",
+      "benchmarks/native/video_semantic.py": "dd32e874bf30772a055a34b609a4fc138d72cc438e5b3cf56ac848ecc7fda290",
+      "benchmarks/native/wan_endpoint_evidence.py": "23c932b34fc37fea232a77a0058425b44541c313204db6794add0b6a6dfcf1ef",
+      "benchmarks/native/wan_precision_schema.py": "e86279878a5d03f0a85f2f000e46990cc94d3f1f600270c087318ed9eb31d7bd",
+      "benchmarks/native/wave_a.py": "3cec4d8fb954888be6d62b0f25468c9e97d2b50881e24fa32a91f5987fbaba87",
+      "benchmarks/native/wave_a_gate.py": "4eef88a97cc82715de170fa76aa132fd74b812c96033472839066b62e65cc254",
+      "benchmarks/native/wave_b.py": "2316465c401ad7e6aade2505ca27d5fa65eea9e31c18952ecf1a6122e5518cc0",
+      "benchmarks/native/wave_b_gate.py": "7ec5c825f4c9f1f413f030df217b2558ae084cbfe06318e79c096c6279489901",
+      "benchmarks/native/wave_c.py": "c298180034c79ab048fac0ac83098713c9fe19a24c028fd1959d5ac2bd039b5f",
+      "benchmarks/native/wave_c_gate.py": "760776423978be1e7f0cdffbeb79d7b186dede929175143c3dc05d85ba72c0d7",
+      "benchmarks/native/wave_d.py": "7f96fea35f272211d4b7d62b54c0ada479fb0dc1caf32765412fa65debf408f7",
+      "benchmarks/native/wave_d_gate.py": "8d6ded483f225501697ee51890e2f48403ad5083e9678cbe9283d3d3bafb815b",
+      "deployments/kaggle/runtime_wave_d.json": "43836e3f0001bc2fc15822d1bafa14764030df15a32f5973c803bfeff99285d7",
+      "factory/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "factory/adapters/__init__.py": "d8075e391900e7a077e61f6ab4b3ed2965639fb3f1abd5f8da1de70e4cab0807",
+      "factory/adapters/acestep/__init__.py": "3e4544fea1598d7c38f730f2b1ac12d407a26df676b55f2fc0eead3a0b4c0b95",
+      "factory/adapters/comfy.py": "da537852b02f4b8509f904b8044e5a53283e757252bc6fdae18bf523aeda0fba",
+      "factory/adapters/enhancement/__init__.py": "db532f62fc2c60f675cf20f13eda05a07d5775e0587dde9c0f6f2302174afea7",
+      "factory/adapters/minimax/__init__.py": "3e73a83e28784733f3a560382f40d3625d92d97b3fbda8a755ccd992383f339a",
+      "factory/adapters/minimax/loader_node.py": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530",
+      "factory/adapters/minimax/native_nodes.py": "4a0bec59972bd73e1624bc2c9988bafe7a0f8db7873543fd175506e530bb9a1a",
+      "factory/adapters/qwen_asr/__init__.py": "60be3d1c6b1a23220a8b6d3b8a4c7fea3e1eb3e28c7231a30865bbd67f8c7f74",
+      "factory/adapters/qwen_decision/__init__.py": "7450a79adf0b6774283d0a4ef6fd8e5c3f5d4606dcb5b74ef13088fb81694c86",
+      "factory/adapters/qwen_decision/vllm_plugin.py": "ba6b40287919df520e0daa3d85433ba9637350f2fda21437ab505259dc1370e2",
+      "factory/adapters/qwen_embedding/__init__.py": "78be61a8b830453e6da9434163b79769bb13f3d858f1b07eae689921559ad710",
+      "factory/adapters/qwen_image/__init__.py": "f69ea53a71280865a2ae60e0c9d5edff247d7cce6b4995e29724475388365609",
+      "factory/adapters/qwen_image/latent_node.py": "f240567347d90b3bc17fa931508950e6b952795c68779609ceca4de6b4bec313",
+      "factory/adapters/qwen_image/native_nodes.py": "4b635a62377573ef053594b166a737dfe7a5c692c89f9f746dab56578befefd1",
+      "factory/adapters/qwen_reranker/__init__.py": "6c2ddbe6f89e0dc4225d7c582e2a419e4b59eeb56ffd30390bacc6f80890c4ab",
+      "factory/adapters/qwen_text/__init__.py": "458c3c3abe28a842415f05a22fc344a4536f2dbba5302c2d839dccd9f53357e0",
+      "factory/adapters/qwen_tts/__init__.py": "176e065e0b93386396661836f9698bc3c5837f28bf7b2b76eb8d1c3fcbce004f",
+      "factory/adapters/qwen_tts/native_compat.py": "d5e5046f9ea12dbf930871135ad4ab13ee31d4d5bb0ae4801a9588f3e8fad289",
+      "factory/adapters/qwen_tts/vllm_plugin.py": "3ca6a5eb28010e01a1c4c8a31aac60e2aaa67cde9e67fc722ab1325ef47a82a3",
+      "factory/adapters/qwen_vlm/__init__.py": "ccb6a28ca347defb5595ea92a62d6ba977c975270de43c8f21eb3bed85dda7f8",
+      "factory/adapters/response_protocol.py": "fbcc7198c44c551aeb467cc40bc8a21efdd257164c6ee91cbf5c737e32c5908e",
+      "factory/adapters/wan/__init__.py": "d8210b5d20ce515734c7b7fa3d55b44cc5883c41fbd1df553894c003460a1976",
+      "factory/adapters/wan/endpoint_conditioning.py": "fa54b786c847b5581cc51f5f6a86d6df0b84c18810b4279b6b59fc419be2a80a",
+      "factory/adapters/yue2/__init__.py": "e41adebd57cdcada2c1f0aab44fafe01a1380702c0cb747876f778a9da2e8a32",
+      "factory/apps/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "factory/apps/control-api/alembic/env.py": "8ece7f3cc552f724270b2ec349097a1cacbbdee2fa3dbf61fcb5ba116ea0ff3f",
+      "factory/apps/control-api/alembic/versions/0001_initial_schema.py": "c56a463eec343360004096bceaefe301de60fdb3826fbc4b392f8e668e9b05f3",
+      "factory/apps/control-api/alembic/versions/0002_add_assets_table.py": "704818c351cc31402f4eeda3b82565a9edca579fdbbdc758fe70e67ef8983349",
+      "factory/apps/control-api/alembic/versions/0003_add_worker_telemetry_fields.py": "9fc51314d8270cc2206901b9835adaae7726f9ac4afe562a705421adb544b06f",
+      "factory/apps/control-api/pyproject.toml": "aac86ac1002aca61354de5fe8473e99337f77a376135453632b5038a51ab2d29",
+      "factory/apps/control-api/src/api/__init__.py": "664006ebb6fec523e02e0dd9773dda14d4ec16b08be48c759601f6901572e444",
+      "factory/apps/control-api/src/api/errors.py": "c9ca88825fe12e80afa55693421e8300364cfc11b64126982e0065653413c58b",
+      "factory/apps/control-api/src/api/middleware/__init__.py": "878ef8efce6fddae76a398bfe07c9275a896e4b67c01c5dd6c8fe9fb7a0b11cc",
+      "factory/apps/control-api/src/api/middleware/rate_limit.py": "42aa4010a0b6c9e6754ccb57beed63ec80bb63dc1b9e30ced2980769df3852ca",
+      "factory/apps/control-api/src/api/middleware/timeout.py": "bf2bde0d825cd376c9208d768ed5cbc21d1a0e79547661183435b7aaf898331e",
+      "factory/apps/control-api/src/api/public/__init__.py": "efa011a8ea3f0648bc141192156f0bde06f93704a8f7f3a3da9230a8e575c9dd",
+      "factory/apps/control-api/src/api/public/body_limit.py": "f6ac4e1ef4ddcf4219ffc1bad9b96132ee86c05e3eaef9c8aa742f8e8cfbdd5b",
+      "factory/apps/control-api/src/api/public/jobs.py": "9905d6cb7f5805be6cfbe881390ef6c0efba9d1de8f88be4ccbcc29f06c81e58",
+      "factory/apps/control-api/src/api/routers/assets.py": "184c082484f2b391bc28287eeb1bb58909ae952528e0355bd2e586785fbf3782",
+      "factory/apps/control-api/src/api/routers/chat.py": "0509ef84a94d6d98c47944ef56cd0fd97bac380209ff84d2b3ef4c336df7a4d1",
+      "factory/apps/control-api/src/api/routers/health.py": "a7e4d78aa864986085cc10a1ecca397df7f683a7dadd1a415e2afa4da6c7b77a",
+      "factory/apps/control-api/src/api/routers/inference.py": "382e3354ca13287df96766651c9d24d2747313ad91761159dac6cbedb8b8970a",
+      "factory/apps/control-api/src/api/routers/inspector.py": "62132924f51d80824fffadda13b6074c95994b9406d7346d39b6cd0a928c0213",
+      "factory/apps/control-api/src/api/routers/jobs.py": "2a5c9c5e42aae0e8c256d41b182e224b656a0ac0dfe7e0d2bad17c3ed18042ff",
+      "factory/apps/control-api/src/api/routers/local_jobs.py": "44f500fd1ab5c2cf4bd64d09d5834e59570b9a16f53977e034ef48e58745a162",
+      "factory/apps/control-api/src/api/routers/models.py": "ad465121592cf63a8cf25dc1a534db0654a08b2fd52752af97b6b31e9fcae756",
+      "factory/apps/control-api/src/api/routers/workers.py": "9a121b364fdc43d5c7e386ad3715efd460c03de89688ba6f930a762e5aeea112",
+      "factory/apps/control-api/src/assets/__init__.py": "e436312bc85564c5df76c412f25edfedf9dcd6c289207079b3ec3d9ac56e6980",
+      "factory/apps/control-api/src/assets/media_validator.py": "7db159b24c6226bdca2192ff90b8e1a143f9a2cbb0b9422392b6a1d5d4722bde",
+      "factory/apps/control-api/src/assets/service.py": "6d11a1d82b358b3565b5bff3b2ccc28161c1d96f8a13552c9be0ed107216b565",
+      "factory/apps/control-api/src/assets/ssrf.py": "cb2f55259d98c985457d0ae715ce0e7672ffddcd324fc2002df0ebe244cf446e",
+      "factory/apps/control-api/src/assets/transport.py": "8fff1631fa9a573c5d9ecb42380eca65c4511eaf1d8255cf0d0d4c964cd3b7b0",
+      "factory/apps/control-api/src/auth/__init__.py": "87125b1cc8628d7a079d2c31d4f12182b4796bb64bf40d0b4076ed2ebd86595d",
+      "factory/apps/control-api/src/factory_control_api/__init__.py": "3c5c423a6ae53432c119a9e579ebff2ca6c06a4446f6fa215af9938498334d1c",
+      "factory/apps/control-api/src/factory_control_api/server.py": "ad63982760465302d213a0788bccc4679373d93d09b7706427c0e13913260371",
+      "factory/apps/control-api/src/legacy.py": "c0e9f8c3726e2f88b1c97ee77157ea31e03b13c05c410aba6b3ae1fbfa2e69ac",
+      "factory/apps/control-api/src/main.py": "fcfba27ab6674599a2f0a9fcc64222712bb6de714ad5d488e5a5a4215e2c4401",
+      "factory/apps/control-api/src/queue/__init__.py": "7e0bd2fc8f77789873e83a4c5e1e9b5e3ae31d9afbeaa868a8800a3a9a698709",
+      "factory/apps/control-api/src/queue/broker/__init__.py": "4c64102c5257484f1a7330339e1864002b091e6023bc6079227744e7822935a6",
+      "factory/apps/control-api/src/queue/broker/base.py": "2b4806f4e0239745ddf6ddd4f2b81f851c5ea8902dae0d4c486c5889ed7e6900",
+      "factory/apps/control-api/src/queue/broker/memory_broker.py": "0032ac9ef8b62c414abdf75ac4307435f9e5d80a96297765371b1953d2afcbc8",
+      "factory/apps/control-api/src/queue/leasing.py": "c392c541b8b5f9e102328cf2c573565a7732ae26167c1d31ca9bfcca7e4f05b6",
+      "factory/apps/control-api/src/queue/manager.py": "a11a6bf797a769989ca7c616361f868a03032b7f1d61e9b1e4c058eca4c7c997",
+      "factory/apps/control-api/src/queue/model_runtime.py": "3589ce7b3aa1907d91b46b62fafb8ad3b56b168b9ca100c5cfba49c56b560c34",
+      "factory/apps/control-api/src/queue/policy.py": "c5aad3be4ab1da94f83334d03fb871d0e8f0488d08b5a4ef80d217db66032877",
+      "factory/apps/control-api/src/queue/repository/__init__.py": "49f263f19ec36c179aedf5d46022a913f9e41f084c3b848e9ece6e229a77c1ea",
+      "factory/apps/control-api/src/queue/repository/base.py": "22cac495b4ec4c3605f5a1a264af66159b0fe1fab2126da700116941adef100a",
+      "factory/apps/control-api/src/queue/repository/memory.py": "e6eefc02c8557507f22320ed2110ebb5b928afec3f8f432574b25725d5964018",
+      "factory/apps/control-api/src/queue/repository/migration_runner.py": "9049aaa26776bd68ef905b6e41bb2a0eff82ad9b7b8178847e899678b745153b",
+      "factory/apps/control-api/src/queue/scheduler.py": "ff813d57f6f475013e0e61f8fdb703682789c84013225667a414e474d1f60aeb",
+      "factory/apps/control-api/src/queue/state_machine.py": "f0b893ddf062e95a7943bd4d808b7de3081beda15a7b9ff3096920aa60a9b2d3",
+      "factory/apps/control-api/src/queue/watchdog.py": "02800abd580d734739c1f88e84b54feb400497bc78aca034f59012359240f27c",
+      "factory/apps/control-api/src/storage/__init__.py": "fb0f3c0013c0dd323bac75d15862305e0ffe845194cca050330e80c089a0041c",
+      "factory/apps/control-api/src/storage/config.py": "84facb549615907c641668808ecc63c0a1481bcbd7eb7b41b2d3153460f63fb7",
+      "factory/apps/control-api/src/storage/integrity.py": "be52f81cbadf9faf6b97458abb66d03fa614129f52d3142ffd137b591e0f949a",
+      "factory/apps/control-api/src/storage/keys.py": "17cdf33c7c23555e43043b9f2892b99483db68fcd86e897fc0991437acc6fb6f",
+      "factory/apps/control-api/src/storage/local.py": "88e53d363239e87918a7b75a341269b3080605ab6f1305f724d576f7c465b4aa",
+      "factory/apps/control-api/src/storage/provider.py": "c1cab77be44a50de1714773270ba93b993544cf53062e89641d0385c1e91b415",
+      "factory/apps/control-api/src/storage/router.py": "60eeff55bde24417c83a30e89596055c9bc83a21b544d8e0b0bf94bf65a66f82",
+      "factory/apps/control-api/src/storage/s3.py": "7be0a8f1af388ec3f2e648eaeb1efc154dffb699834f4dd4e6f564d2b498f170",
+      "factory/apps/control-api/src/storage/scratch_disk.py": "fb1c70ead9323b01ce9224394fc35a9894715d58c9ed50cc7d042dc4f42c1f16",
+      "factory/apps/control-api/src/storage/threshold.py": "b81dc4e9237de6f7fb79d35b206c3dc33ccc4ae900b072d72521603a674d1059",
+      "factory/apps/control-api/src/streaming/__init__.py": "717038be6de34e96d461a9357c7447ca52948ad6f24e4fe1b561d4d880b07bd3",
+      "factory/apps/control-api/src/streaming/audio.py": "3a56a4759e9cc675f9e26d4dd0e94879cc804e6c39cfbbdcb75d2643fe4be240",
+      "factory/apps/control-api/src/streaming/history.py": "33adc2df25895e8f8072e3c53db81e6dca374782c2546eb56c6b1109ee56e09b",
+      "factory/apps/control-api/src/streaming/inspector.py": "02505072287dd8e369862ff96a105db35f1428935244b916b77d75b265705e0c",
+      "factory/apps/control-api/src/streaming/manager.py": "c23e3b93b5eec2f222a0fe11afb81587de3166387f8033cdad7674775604003d",
+      "factory/apps/control-api/src/streaming/sse.py": "3016e52928b1182a2dac7ceb73a541376d06de10e146dcf3346fbec727c9c735",
+      "factory/apps/control-api/src/streaming/ws.py": "c52363e67b874d89a6d4a4944d418fe6ae8af642e0b16af7736678dd83cf9845",
+      "factory/apps/control-api/src/telemetry/__init__.py": "cafee2feccb335eddd1df3050c15ae3894192a35f4eeb5d999f8a3cd572a7e79",
+      "factory/apps/control-api/src/telemetry/context.py": "b5e571e8b365ce2f0b1fdd7b59589015a8298e288f92a290335e84b89546d029",
+      "factory/apps/control-api/src/telemetry/decorators.py": "ef058df37f7036c6d0a7bf342e282e0392fcfee33bfadfa98b8a49528b0af1ea",
+      "factory/apps/control-api/src/telemetry/logging.py": "611303272b447e4a0ae4e9d70c471abfc8ea60d24b1fb92dd3bb8fe156aa77be",
+      "factory/apps/control-api/src/telemetry/metrics.py": "1b160bafae4d12e0f2dec6e95a29c0cb4cdf7a875cfa60211097712c16e6f226",
+      "factory/apps/control-api/src/telemetry/middleware.py": "d498b9c3626ab8dd9be75fee3dc9ff5757b39ac19ec29d06de776a3e43ff9d97",
+      "factory/apps/control-api/src/telemetry/propagation.py": "0b0958ab1adfe9fc10ae2dd662cf4d6153c1512aceacb85a59ec58725a1b608a",
+      "factory/core/__init__.py": "d79ee21a79d3699dd38242cb67180ec50f003366004a258e30faf477e29d066c",
+      "factory/core/execution.py": "dac6a1db177a97ce149eabfb33bfb4a3b913a3028a6f798aa1e1b422e9f1ce7c",
+      "factory/core/legacy.py": "7df228638a1b1dc39441e615193bb2ca591f19573c8570f5febe92a73e2028ba",
+      "factory/core/media.py": "8316f6dc88728f234cb0f92278bb5e7390660856ce6f7ab86d54d5a324c1d00a",
+      "factory/core/model_adapter.py": "42496b468386f905c82b95f69bbd1a1cef987721676eef69b2d9bd0c57cc99b1",
+      "factory/engines/__init__.py": "9cf6c022490c9bcfb25de49541b1f7f7a2a8e70e074ea782c2587f79ea481038",
+      "factory/engines/decision/__init__.py": "77cfd887808e6414e521a1b6f979f41bd55cac45c8913e099e118eaa610dae75",
+      "factory/engines/decision/contracts.py": "3b7b718c17c5f856313477cf25c9ba19f92ce3617231586ad3aa439ef3c90e90",
+      "factory/engines/enhancement/__init__.py": "e6e1b25b5db6c4b21a10eb92d54f43e313db98b0cf36851c2feb01f8834262d6",
+      "factory/engines/image/__init__.py": "706b2d3fde2466d31d9311afb854e524098ab8851aa3fc53c45618d8b0771bea",
+      "factory/engines/music/__init__.py": "f22dc0dacf8788f009e37a3ecb4396945b31438c9858602869b4a144ed65a195",
+      "factory/engines/responses/__init__.py": "098ca4b4dd3e8e950f6d424ac88be4ca6fe57c71ab8a2af2425ebb7276fe88e4",
+      "factory/engines/responses/contracts.py": "8c6d24d8443d4944cab3739e7029adc52c3e502d47ee1096bc6e1b558e33cf2c",
+      "factory/engines/speech/__init__.py": "16ccdda6b3bd4ddfd410b547fc92bbdceafbb96969f1946ab1ef7375615e31da",
+      "factory/engines/vector/__init__.py": "497aac997d23240e4b02d19df66ec5db20b81a0cb0e3889e70bc5a3f1db91af4",
+      "factory/engines/vector/contracts.py": "43e10246e3ba1dfc67ff0213156dacff4c8c96b3d73e597be420953eef354b35",
+      "factory/engines/video/__init__.py": "6a2cc52a746277181fe25a68df9d32ad2d92b1b078e484cacc0fdc9349cf0283",
+      "manifests/capabilities/image.controlnet.yaml": "5e2dacead777885194581e963dce33ff574703f1dcb96e80b06f2530ef302232",
+      "manifests/capabilities/image.i2i.yaml": "5b60b78512f13a208e8a8d58cdbda8317ae0f3d4e163da509d317f666b3f54a3",
+      "manifests/capabilities/image.inpaint.yaml": "236b6f76e2ded37115252fa2f94cf48afd3e25d24c37c2be6b680bfa81cb5910",
+      "manifests/capabilities/image.instruction_edit.yaml": "b5bd3630b365583ca9bc5cd8911ec1439fcb8a3e3d63ed76d5f2cfe3208042c3",
+      "manifests/capabilities/image.outpaint.yaml": "c23cd7f9d379525a60e29c0c9c63cfa84dc358d2f50ffaaa334dab81e789db95",
+      "manifests/capabilities/image.reference_conditioning.yaml": "b88fc8befc3d243a6f254ed6b7135ad263351f18a5ad28d47256991fd56b9c46",
+      "manifests/capabilities/image.t2i.yaml": "538265faa8f98ed9259b0a8dc4a557ba7c2cefd184a739c1bb5f9c4178004980",
+      "manifests/capabilities/video.extension.yaml": "ccacfc05d6622a370f12e7fda66243364d413b84246ff7ca58c8872ff0533c96",
+      "manifests/capabilities/video.fl2v.yaml": "47bb74d049219f7721ed6a43173eddd8bd33404bf311ca5d6674dd841b7b2f1f",
+      "manifests/capabilities/video.i2v.yaml": "e9f0108d9a5af78899acd1eee499b61348a2c9c2d9dc373c7637d53fd19d8c75",
+      "manifests/capabilities/video.t2v.yaml": "73897e62f483f4dbd7e05e6182d982e6bddc1d08f57bd6e7a5327a221a95393d",
+      "manifests/capabilities/video.with_audio.yaml": "fc949b28821d15caa47e1aaba5abd7363f4d5cc4800686f33623b4f3d13cbc2a",
+      "manifests/hardware/colab-single-t4.yaml": "93732127d29fe5e232886f8c353eb637622daa20bff4c07788af9221c68a875f",
+      "manifests/hardware/kaggle-dual-t4.yaml": "a656219dc7d77c22d853fb3694d48ce4e25d41128070391d2d01080752c89a76",
+      "manifests/hardware/local-dev.yaml": "83b802bdbf3959f36d44da71dc1878e585f921085c5aff6f6747b961a1d18497",
+      "manifests/models/ace-step-1.5-sft.yaml": "4fcff51fbfb130d3b84bbe51595871a1faec3812d35f132b713551682097768c",
+      "manifests/models/ace-step-1.5-turbo.yaml": "72cfd6cee305e780b22ee3e69af3a17c54af5f1da1770f7ed83cfb73a1efaae7",
+      "manifests/models/ace-step-1.5-xl-base.yaml": "a0ff397f89d15f78da4a5e3dbd93e004aaa93db7a1a19430a9787f189c98a729",
+      "manifests/models/ace-step-1.5.yaml": "2e4a11df86c2121365d939a8084828981fceb64f393b6e65d1239c4fbd3be119",
+      "manifests/models/enhancement-suite-v1.yaml": "5661e9eaff5ed210205a97c29dddb1211f962cca26ec709450302dcaebceba49",
+      "manifests/models/minimax-h3-reference.yaml": "eedc017c75e03fc21415102a19c5639464c771635182bea1eaf34c26c9aee9e9",
+      "manifests/models/minimax-h3-turbo.yaml": "9b646cfce03d48918ac686c5af2b462777b5de3e95d3efb916354069d7c70373",
+      "manifests/models/minimax-h3.yaml": "37a71704cbe8e27998a7845c5e820f3aec7e062b38a2f1d5c579d79b48e1d421",
+      "manifests/models/qwen-asr.yaml": "eedff5d865b9f16fbcfa2a792a5bca2b22fbfb59fe0542e7d51bff719ce90798",
+      "manifests/models/qwen-decision.yaml": "3b4825f57781e7e8d897e5a1b29eb5e84c57b703df9014c3a3b72f3c25309235",
+      "manifests/models/qwen-embedding.yaml": "040c669b22b148af7f517b9bc55569b8eda2baebea94720ea5cf03c17f48f7ee",
+      "manifests/models/qwen-image-2.1-turbo.yaml": "0aba5b6105ef8cfea2abc3bfb19cb3a27cbaeb2e281d1516d9d367221e2ed65d",
+      "manifests/models/qwen-image-2.1-uncensored.yaml": "c9734cc50b19ea5bd077966ebbb5b593742187e1a17671439aff5cd6908524bc",
+      "manifests/models/qwen-image-2.1.yaml": "95adfbfee4c6981faafeee7606a032edcf55fdf6aeb603de9743c85e4f58bcfc",
+      "manifests/models/qwen-reranker.yaml": "d8cdc1e1a6c27b4b82859e464399d1cabc333ebda8f9c0f352225339391bb224",
+      "manifests/models/qwen-text.yaml": "0aeb9823fc1b755fc246b9b05a4da7b1694a3bd6b5f8973b0214284b780af2e6",
+      "manifests/models/qwen-tts.yaml": "05ecde8d82dc621d18a138445a8a7045b9b39335a466b9dc3c5b407bea780277",
+      "manifests/models/qwen-vlm.yaml": "623e683c89be627ea97aa2382f392b78aadf834ff7100bed764b14b2274f7e67",
+      "manifests/models/wan-2.2.yaml": "7e065f15dbf3985bb7976eb6cc2f561d96fa1fd2beb1beedfdc35bb4b3277c99",
+      "manifests/models/yue2.yaml": "8782672de5ccfd71fb3ff9635839bf26183f5bda16e55d386bccd08be5c3a38d",
+      "manifests/services/decision.yaml": "dbee40d32cd737074d6374fe1b243e70b2611d51f439396d006214312aadf9b3",
+      "manifests/services/embedding.yaml": "80bd915fd56417773b2fc1c729cdcfaeb1fe5b7923265bd710af2c58880ddb55",
+      "manifests/services/enhancement.yaml": "8dea7d4ee378e9e171e9e5a846328269ca9a40b27c1fda626f565893abef9585",
+      "manifests/services/image.yaml": "ec35190e0af74a6cea2e7bf1bd11af3444f0cbc570ebd23e94aad2c6dd2a5767",
+      "manifests/services/jobs.yaml": "06099cf9eb88f53ebc3db67ec39cea603bfb864d213c4486ab93bca6de0e6941",
+      "manifests/services/music.yaml": "5502653962a6c0d47371e24412ad64b493c246bb7fb09ad263aafc0ea4d1b3df",
+      "manifests/services/rerank.yaml": "8c963bf438d63016faaaecb9e2bc2db0ac2a267489b5603c3c388402d0561bf3",
+      "manifests/services/speech.yaml": "53a424d1e89ee96647c6a7979b1aa4f71a1520bd5251db1a9a6c9b7fa91f8e7e",
+      "manifests/services/text.yaml": "4cdf6ee1e717230779f141322cf5e960ae036eae9f8ea48a9c8614fdc0969f2c",
+      "manifests/services/video.yaml": "9134f8cf6518aa3c769e5df9aec92fbb80576f511744b4ef80059cba6c8e4bb4",
+      "manifests/services/vision.yaml": "c747a8fe6f517c1a9ac3e0fcdb6f711996ddde0fe9bb030f97d9cb7b18b707c8",
+      "packages/auth/pyproject.toml": "7b1125a0ab4dcca9e4ca0ac8f0591df5a14d71d0e2c52e6f28d37796ff993df3",
+      "packages/auth/src/factory_auth/__init__.py": "326dbc0e7fa00cd794f2ac75964914880ddbe1c45061dad1cdcea2954b2f7c43",
+      "packages/auth/src/factory_auth/bearer.py": "b1ef8653deb59786de8c6cd900038c0cc99bca6dc4e643bb77e0fdfd9070c0f2",
+      "packages/auth/src/factory_auth/config.py": "adf5022b5e144d1bd0ca491e0f8466385517a740335d20769daa6e99a035442f",
+      "packages/auth/src/factory_auth/jwt_auth.py": "7cd11f369c2dae524c787e360895caad0d06caa641e5bd681f9fc5932f7bb6f2",
+      "packages/contracts/pyproject.toml": "4a83abc4a1792b38c66e4b9f6825f153054f74974769d84e81b536813b383da1",
+      "packages/contracts/src/contracts/__init__.py": "4a8361380fd4e6adb4803c9cb79328e3bce8d0248ec2db391b9feea7d0bedd62",
+      "packages/contracts/src/factory_contracts/__init__.py": "496da722d7dc67cd1d5f21e9b4022c0db8f1309f237aeb23eb6dfb514f42a24b",
+      "packages/contracts/src/factory_contracts/capabilities.py": "759e53db506f30f4f4bc5fbcd84fc75fb49eb1da6b6f6304f2bc55595a555c34",
+      "packages/contracts/src/factory_contracts/cli.py": "65dc7e3dc03510a29d1cc4e9536a882cdb8666c19442553337bc4d912625c889",
+      "packages/contracts/src/factory_contracts/deployment.py": "0fee85e73fe8e025daf6fc0458983123e4db2beb2839482475cec228bc06ec96",
+      "packages/contracts/src/factory_contracts/errors/__init__.py": "7bb1d718be4c884a1468fc590c4a8849c539f8a99c10e6911ed26ae4b27dbf31",
+      "packages/contracts/src/factory_contracts/errors/error_contract.py": "1a7f54fe3434a8c06461c67e2336f4c30acf55bddfffb5e0753036dd2c651e04",
+      "packages/contracts/src/factory_contracts/jobs/__init__.py": "6c273061a94017bab0df3d2db002bf7a8a6c29709c943a001f95b8056c229fc9",
+      "packages/contracts/src/factory_contracts/jobs/job_contract.py": "ed4ad273aa4a0f0049ce48763d5b231df458a8496f0c284dbc5b95beee84c91a",
+      "packages/contracts/src/factory_contracts/jobs/worker_contract.py": "6799a4a738af55eb76b6da5ad33e60b6cb8f9544ad5415f298c1f4dc6124b171",
+      "packages/contracts/src/factory_contracts/manifests/__init__.py": "6d8a2701b609f04c17995d5c767821187e49bb969ed8a870db03b4e848a4b949",
+      "packages/contracts/src/factory_contracts/manifests/capability.py": "40f318ac34ce212ddce260d795bf263830832734254b00d4992ae0b668d1b350",
+      "packages/contracts/src/factory_contracts/manifests/catalog.py": "5cf022987a8b5de3dfacd533b45de8e3b8c518b7d0648c5806bf8a92f14e448e",
+      "packages/contracts/src/factory_contracts/manifests/hardware.py": "62149e0fe00714294c65b81d13f262f0ca5482c9e34868d28373578316214dee",
+      "packages/contracts/src/factory_contracts/manifests/model.py": "c2b04cf3e622c5d1a9f01c7af185887973459372cd01dadae7ae61e89ed79a9f",
+      "packages/contracts/src/factory_contracts/manifests/service.py": "56d87d84d0ff7674bd0baa6e298d5578236359642a6572964425fa45418611c6",
+      "packages/contracts/src/factory_contracts/models/__init__.py": "873eccf5c1b0041563c02342beeb610466393b309db1c26ac9ee2f827e7da1b1",
+      "packages/contracts/src/factory_contracts/models/qwen_image.py": "564b1b2af9c7976f296e44c93fff5b87866a269faf0f7dc306269bb984ca2115",
+      "packages/contracts/src/factory_contracts/resilience.py": "ed92ee8498435a163fc92eab3e80742ca3090596325449179219a68486ea57d0",
+      "packages/contracts/src/factory_contracts/tasks.py": "ad21ca4b0713966d3917683419c6e6c889060f57fe5b8dc424234796bfa8417e",
+      "packages/contracts/src/factory_contracts/telemetry.py": "3fef8d4d0ff2e4f79e1f035d7dc943167659fa06d60b2ea19d08578e80e3c050",
+      "packages/model-registry/pyproject.toml": "0df6370993aa0fbc7a82abae2933420ee10c6035b729f4b83b608c7573e65621",
+      "packages/model-registry/src/model_registry/__init__.py": "ddf74563f3ca79daff93d444818637c2f12e50c25b9c76cb24ac71498499eb3a",
+      "packages/model-registry/src/model_registry/adapters/LICENSE.vllm": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "packages/model-registry/src/model_registry/adapters/__init__.py": "132441f69391274e88cf253931ab220cd06e6c397eca3c860e7f6c66387c585a",
+      "packages/model-registry/src/model_registry/adapters/launch.py": "2b54f95b7599a025f02f524faaccd28c264398c84af56dcdd65bb42e75e61a48",
+      "packages/model-registry/src/model_registry/adapters/qwen3_reranker.jinja": "1f00a0e0a36679a27f32abe465493ab6aa3d4c09aed6e9116dd7a5968e88bfc6",
+      "packages/model-registry/src/model_registry/backends/__init__.py": "1122a44a96a499747301916666350c7da150252fb4d2ac52118a366c5245fb59",
+      "packages/model-registry/src/model_registry/backends/native_server.py": "5917cae76d48121a42f2f8cbafebbbd4c3a4c6a942221be9e7130503b3b7f913",
+      "packages/model-registry/src/model_registry/backends/process.py": "33b6dd6cc82c5502e3d1be9112324762e07fcb326606b3a473d47e09ecc9dec4",
+      "packages/model-registry/src/model_registry/backends/providers.py": "1ab57a7f4c7f53ae88cbea323536294071558f6a36d550cf2139d0b3034aab60",
+      "packages/model-registry/src/model_registry/backends/session.py": "1a278e5fa15152888a679825520e2e7cf0339931fdc362789c68ad8079997436",
+      "packages/model-registry/src/model_registry/bindings.py": "d1a3a5493b7a16063cf0109c3f54d91e928d88cb5ad2523a8eb5f6b475d9b930",
+      "packages/model-registry/src/model_registry/cli.py": "43ee29b4e6133594b5c134d7890952672d84cbda959ce8ab7fdcfbf0d73ab9bc",
+      "packages/model-registry/src/model_registry/datasets.py": "d0d18f3d738887ffb9501fe0847b223082dd90556b670f6bd80110cb264b3573",
+      "packages/model-registry/src/model_registry/deployment.py": "9240bec6928f1c605a697a6087a8e0ee0357420043219f7780934c815b0bd902",
+      "packages/model-registry/src/model_registry/deployment_cli.py": "7a9809765322172880d5f5f589a1fc86e7eaa4332eea5d04f31009e732884885",
+      "packages/model-registry/src/model_registry/deployment_validator.py": "9447a45aae5f4e0b77aaa561b9865ece6784779820af45f8240479260a785c8d",
+      "packages/model-registry/src/model_registry/loader.py": "9ec3acc9e0a78765f1ea40b26e34e26f759ddc95e6e02bbfa53289846de0f990",
+      "packages/model-registry/src/model_registry/validator.py": "c7f7badd0cd0d63914481f56c0480d3a02af3a3558f987b3d31fe7afe5f7dd2c",
+      "services/text/src/__init__.py": "068c038ffcebf6a9d50914f1fb1aa630a977fb5b0139293c534d1cbf87a938f4",
+      "services/text/src/app.py": "e374aa91c2c68b0a267c9d1865759dae399f3a7814ef5a8daaf52d3f6b4dd478",
+      "services/text/src/config.py": "f517b42c32b2023a9f189d4b57787bc9999553d9447d6c2ce39028f8fab5a660",
+      "services/text/src/engine.py": "68c45810c4c9b2876ba5e9ea73b0d0b3adff952b57361b48ade405334574d5e3",
+      "services/text/src/legacy_engine.py": "265f1d4025c31cc3a864f3f3f8f9ddf2a924b6810612130d76b142bd730de1b1",
+      "services/text/src/legacy_models.py": "ee594acad92414228a15011dab2b08670d69a3fcf80a4b905fb384628fbed05d",
+      "services/text/src/legacy_responses_handler.py": "f9452eeab8ab481424f68ca5bbe184598f4344248756c70b8ec9eed3e4b7d4bd",
+      "services/text/src/models.py": "d283e269ffb5ce7d8a0728d47292d9caa715decadc38690d33ebb81e3b72b131",
+      "services/text/src/multimodal.py": "e837b9fa800667929eabcf81aa9eee7f4137a9a40c362a6d9db6b90b6f754ad2",
+      "services/text/src/responses_handler.py": "7172d69ecd2abb856f6efc207078c07c99c851b5d1136881665ecd6c67fb6b2a",
+      "services/vlm/src/__init__.py": "52b992d912e50fe82b77a4445d960e15aae7175ee3965e940578aceedd5d3636",
+      "services/vlm/src/app.py": "c6c23f7528de131757e9f54c151c7865fb1fdf3f16b5271e1dbfc70524286209",
+      "services/vlm/src/config.py": "033db810256ae3e28e872740248389f2be0a7c14810e3182e6f7347fb9434758",
+      "services/vlm/src/engine.py": "31f35b0b6f9d8dfecd9cb6dbcb958b7012c28077105beb8b67f3d32685619dd9",
+      "services/vlm/src/legacy_engine.py": "cee3d70cff43b696e93ea6a8db009bffd88c13110b9f19f91b82ba85978ca4ac",
+      "services/vlm/src/models.py": "d37efa2b984cfdac7932cfd8267ba312aa8f0a2a7ebef0ad9450abc9f5376f17",
+      "services/vlm/src/processor.py": "5963534262ad4f44747aa2be4ed1c3d2dd36f4fbb27266d0ff844e209ac76024",
+      "validation/native_minimax_audio_receipt_v2.json": "ca52293e4c28b13e2d45e4c2a9ead2cbc2f0f763a3646fffeea13a9a2a3aa163",
+      "validation/native_minimax_audio_run.json": "75d08fbf3d466e997bbfc21d0b68fd6e8756301ec4ed6e561a243936019a0e93",
+      "validation/native_minimax_conditioned_receipt_v2.json": "d1cbaa212c9d3235dad7c4d354b98232af50c006b11724d13a39ccfc95207088",
+      "validation/native_minimax_conditioned_run.json": "f6e8e78fbe7cd00dc90872dd87d1229546ce8cc0cc71dfc8f1f40a41aee61a72",
+      "validation/native_minimax_reference_audio_receipt_v1.json": "928b5bcb3bb45f498c77d9b308103001e299a59de3a765329d0868bf14d29256",
+      "validation/native_minimax_reference_audio_run.json": "a0bfa68062bb79e7a68d51b3c1033940d4e8eccc10a58f63abe28765a04568ea",
+      "validation/native_minimax_reference_receipt_v1.json": "3c23ac1c8c96bfea511089700f9bf633ba789d963ac4cd60b6d75157ac41856e",
+      "validation/native_minimax_reference_run.json": "1ab9a83a0dcda6c11da104b511ba0b1ca88edd2cb130cc58e9dd8fc0390fcd7c",
+      "validation/native_minimax_t2v_receipt_v3.json": "55fdb50a146961203c813c0b49afa25d62f5c2177669e5a4179d06df74d128d6",
+      "validation/native_minimax_t2v_run.json": "c5707dc6114efa8e8c1eaa7b2e6f10e4f62ee1fc4fb1be6ce400082343a07272",
+      "validation/native_minimax_turbo_receipt_v4.json": "7bd9657d30722a18f78616d727167711dcb149cf02439fe5407e47caf63a073d",
+      "validation/native_minimax_turbo_run.json": "d677381eb22d49991857ff12e217b3910489073c34327e8a49d22d3402f97bad",
+      "validation/native_video_content_review.json": "5c92e952f628cb7961d66240c54350f9b370babdd845325865a73502425c8ad4",
+      "validation/native_wan_fl2v_run.json": "4ce24d3a666f31a916ffdead9c7f95a28ccdb12218bdf9b4d81846c719997a40",
+      "validation/native_wan_i2v_run.json": "31fff80a0656afc3d204cba7dfee9541945d6299a1090e93c706df2cd47a24f8",
+      "validation/native_wan_t2v_receipt_v7.json": "5def4c5450ac0d0dcb8e07444aea12a024b8aeb72fa849574c728f30cabbf31a",
+      "validation/native_wan_t2v_run.json": "f06627c97edcdd1d9188418642bcc40a592e09a783bd7ce021ca8147da62d320",
+      "validation/native_wave_c_gate.json": "8ccd000da5103e8a6e92ccf6efbcb4090f2dfa98442d778d5f91efe366182bd1",
+      "validation/phase_status.json": "fc7f6a6333f49a1f5ba8e52656027d36511748bc10fa76c42cc4c4de7d3e44c3"
+    },
+    "native_attempts": [
+      {
+        "kind": "wan_t2v",
+        "version": 7,
+        "folder": "validation/native_wan_t2v_v7",
+        "artifacts": [
+          {
+            "file": "validation/native_wan_t2v_v7/setup.json",
+            "sha256": "9e5308899e7855bdac3490a5e6b4d87bd7b42fb5d53ab5ffd18674a4e219a3a5"
+          },
+          {
+            "file": "validation/native_wan_t2v_v7/driver.log",
+            "sha256": "2e4d8821319b5bd67acad99b60e55cb29e434975589944250d82bcc4fe3dbdae"
+          },
+          {
+            "file": "validation/native_wan_t2v_v7/installation.log",
+            "sha256": "e2d84845e2c2ca7f921fd37a4be9ecff6a217b32b4a8a9b71105197f9432ad49"
+          },
+          {
+            "file": "validation/native_wan_t2v_v7/runtime_packages.json",
+            "sha256": "79a84ef37147f6dbf61ecd554976a60fcfacd843750c040de4941e24e72edc2d"
+          },
+          {
+            "file": "validation/native_wan_t2v_v7/wave_d.json",
+            "sha256": "358d1e01bba36171c3ed5ac71a3f64f708013ceca961488bbfbe7d74ebd66e4b"
+          },
+          {
+            "file": "validation/native_wan_t2v_v7/wan-2.2/wan-t2v-red-ball-native-grid-v2-0.json",
+            "sha256": "5c3dce83667c357587e4500f8bc4021d367145ce150628541dc8e576c359b389"
+          },
+          {
+            "file": "validation/native_wan_t2v_v7/wan-2.2/wan-t2v-red-ball-native-grid-v2-1.json",
+            "sha256": "21a87c4e6ae66d29a1a40894961f73df18f0830e21909371619525b1e3c0a320"
+          },
+          {
+            "file": "validation/native_wan_t2v_v7/wan-2.2/backend.log",
+            "sha256": "c872e4e2d1ee7cb13e0fc53330543856a426f7622f827d83a24d1220fcc7c446"
+          },
+          {
+            "file": "validation/native_wan_t2v_v7/wan-2.2/wan-t2v-red-ball-native-grid-v2-3.json",
+            "sha256": "3894d37f9601402e022b53d17acff8b025f61d99edb75245bd8365c09ecb2190"
+          },
+          {
+            "file": "validation/native_wan_t2v_v7/wan-2.2/wan-t2v-red-ball-native-grid-v2-2.json",
+            "sha256": "b44654bfe4f9b76a861eaa59084262db0206daeb820d0d7d206826cfb3022251"
+          },
+          {
+            "file": "validation/native_wan_t2v_v7/wan-2.2/observation.json",
+            "sha256": "f373ffc1c6e6e1266442f15e3be7b360d4e9bc43f28848416996cb6f8040ce7e"
+          }
+        ]
+      },
+      {
+        "kind": "minimax_t2v",
+        "version": 3,
+        "folder": "validation/native_minimax_t2v_v3",
+        "artifacts": [
+          {
+            "file": "validation/native_minimax_t2v_v3/setup.json",
+            "sha256": "9a95cabed0277a9addaa6e003126b47ad6d1c014b66beb8a09e334e1c5436272"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/wave_d.json",
+            "sha256": "872b1845ce48e84419bb3afc04afa4d554a79d9eb333ed36665c488f635133e1"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/driver.log",
+            "sha256": "9fd9be4472e171e50d18f8f082bb4ff6256ffdf427ac6ec220ad09fb3a6f1135"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/installation.log",
+            "sha256": "758e8ed0911ac7b15709db5ab7c92b8fa3d950f891d8a23631223a74465fa535"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/runtime_packages.json",
+            "sha256": "743e47a5c96a759f88f294fe86e0d9157a85396338c2ba23dd7518e000869620"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/minimax-h3/backend.log",
+            "sha256": "279907d42db8a06553aa877038f8ece06667af280659e1ee5b415fd09bc45314"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/minimax-h3/native_node_schemas.json",
+            "sha256": "6284dd1c68d9a30a12e26f4ce5cf0051d082470965182986dda141d36dd2b241"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/minimax-h3/observation.json",
+            "sha256": "894c91bf439b820fcedcb320e727aebc4ceb47dec0d3c59a16c268e42ead256e"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/minimax-h3/minimax-t2v-red-ball-motion-v2-2.json",
+            "sha256": "998b36788fe174e77412e1095357e024c673a75f04d4a254070e16289d741acd"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/minimax-h3/minimax-t2v-red-ball-motion-v2-0.json",
+            "sha256": "90fd6af3ae83bf5c9fb7c0e6f4fd167abc1e3c22ac2ccbb254bcc2eac3db203b"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/minimax-h3/minimax-t2v-red-ball-motion-v2-3.json",
+            "sha256": "984016d2e9a7d44bfe1d5e0428399b07913b6ee4383c2e0b22d1d247d3ed8509"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/minimax-h3/minimax-t2v-red-ball-motion-v2-1.json",
+            "sha256": "c6e7f51881dc22881d1fe0aa65969f89a7ed0808fa1a30ec70c7c3ebb6d989cc"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+            "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+            "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/minimax-h3/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+            "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+          },
+          {
+            "file": "validation/native_minimax_t2v_v3/minimax-h3/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+            "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+          }
+        ]
+      },
+      {
+        "kind": "minimax_conditioned",
+        "version": 2,
+        "folder": "validation/native_minimax_conditioned_v2",
+        "artifacts": [
+          {
+            "file": "validation/native_minimax_conditioned_v2/setup.json",
+            "sha256": "11ae1239c2299e9bb3619390f8aa920a563d20f5e020f000eb60adcff516f4e8"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/wave_d.json",
+            "sha256": "ca91bf71e4ca3e356018145c645f6d4e9e5ca1943f5c9bf94d4c3256536c01ed"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/installation.log",
+            "sha256": "b63e07c9ca7dd58f2e437d9eb99047f77cff26720b59e0bbcd724fe101d7e751"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/driver.log",
+            "sha256": "b5396667ec81657ab747783101103113c69e69523b42c2c1241c8f0d39497230"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/runtime_packages.json",
+            "sha256": "4430a840141ccfeaec26e97c4002e53c87f8ec43daa3436ced9eaad4c3c8ce03"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/minimax-i2v-astronaut-native-temporal-v2-3.json",
+            "sha256": "696a27f9e55c9b4b6954486f32c0b67b58df8e7a4b4e28de1457af853ab87ad5"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/minimax-fl2v-astronaut-zoom-native-temporal-v2-1.json",
+            "sha256": "901253fe248add9475c8f33a6f3516d10ea4207de8f6a9978f1085d890e7b7eb"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/minimax-i2v-astronaut-native-temporal-v2-1.json",
+            "sha256": "6cbcc2949430cbc36d644159cdbee7e1d2539840d738fc3507acc9dc7034da54"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/minimax-fl2v-astronaut-zoom-native-temporal-v2-0.json",
+            "sha256": "a1112a16f4280c5eff6d7190a644a5febccbade1c39d7ab1edb76bec27884992"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/backend.log",
+            "sha256": "6c02ea624b71159f4424383790cf9b8b5f7e795e0e7fa8e3c7aeda1a52186460"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/native_node_schemas.json",
+            "sha256": "497d2bfda50e60d766fae057bd452bec8cc521cf416c5be47d4b3ce3e964c4f5"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/minimax-fl2v-astronaut-zoom-native-temporal-v2-2.json",
+            "sha256": "ff15273b76e9adaeb9006937adfa23a2705553f19d1d18236376f9c31ee81beb"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/observation.json",
+            "sha256": "2970d53366d47ee9f20f4bc0c43fe5677430f0a27c85afd7d218237d43ed4cab"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/minimax-i2v-astronaut-native-temporal-v2-2.json",
+            "sha256": "f71a01995dc17bda7a66cc9403de7c2e0fb85876098e3c3cae0e1d78cc5c8c99"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/minimax-fl2v-astronaut-zoom-native-temporal-v2-3.json",
+            "sha256": "3618580d92e088669eefd719833ad56d1efaf70b79eef72015efa363d7260f8a"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/minimax-i2v-astronaut-native-temporal-v2-0.json",
+            "sha256": "f69b968b202ac3e3e88de4b379cdb551a0c6a62ff484410572ab450bced68d4e"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/inputs/astronaut_first/input_identity.json",
+            "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/inputs/astronaut_first/source.bin",
+            "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/inputs/astronaut_last/input_identity.json",
+            "sha256": "f396c7e72b9fa8eec8a8bebb12078d7c75d44e85356a130d5a96592fcb0b6f06"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/inputs/astronaut_last/source.bin",
+            "sha256": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+            "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+            "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+            "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+          },
+          {
+            "file": "validation/native_minimax_conditioned_v2/minimax-h3/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+            "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+          }
+        ]
+      },
+      {
+        "kind": "minimax_turbo",
+        "version": 4,
+        "folder": "validation/native_minimax_turbo_v4",
+        "artifacts": [
+          {
+            "file": "validation/native_minimax_turbo_v4/installation.log",
+            "sha256": "28d9fcfc3f902f0201b7a6d66d348be0ffbfca0aff9a0286131c081b305c5aed"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/driver.log",
+            "sha256": "59e1919f43ad9a39c1bf3314cc52dd21da3d5fb5ffba716375f0d179dd2eafea"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/runtime_packages.json",
+            "sha256": "4430a840141ccfeaec26e97c4002e53c87f8ec43daa3436ced9eaad4c3c8ce03"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/wave_d.json",
+            "sha256": "5aa9e009213b66e46f714c2bb4f50df7c32f8b88dbe1184af37c7f16793fdeb3"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/setup.json",
+            "sha256": "600eff061e85434e5a9ae86695d026d6fa54ef0d0775a4caa80abd2261f1f0de"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-i2v-astronaut-2.json",
+            "sha256": "e415db4e024b5b0b823fd4e8b99425357964b471063c9aa10af1368fa65ff6f0"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/native_node_schemas.json",
+            "sha256": "562c71455ac3a72e0351101a10884c431451af68961fcb379428f55d96626704"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-t2v-red-ball-motion-3.json",
+            "sha256": "85586f73fc4cfc6bf3330f6281751e6ca659dc5665fdbbaf0101d833e30cfe05"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-fl2v-astronaut-zoom-3.json",
+            "sha256": "92c0534874455d7c011b8894a6cf4dbb2e523c6fcfae4ad2bfeba89e17f88572"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-fl2v-astronaut-zoom-1.json",
+            "sha256": "0e028af02049ce9259182026d607f26cf9b67602daee7f1dbfa3ec8c2e9495bf"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-fl2v-astronaut-zoom-2.json",
+            "sha256": "fa35b043924e0dad1151d784ea680c30700b0fb91d711ed66be52253e4eb1667"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-t2v-red-ball-motion-0.json",
+            "sha256": "dc26a6b13cb62913a2303be8dcec42336d47ae7a884143f5ff4efc243fc2c84f"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-i2v-astronaut-3.json",
+            "sha256": "5ec05aed226f25cdfe0de5bccca00de2d94b965e8d3061577cc79f152267a310"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-fl2v-astronaut-zoom-0.json",
+            "sha256": "6b59bc9d182e4043c8f8284fb0a8038157dd2ecba3a862f13c378582368361d1"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/observation.json",
+            "sha256": "0a33dacd11f214bd8c74b02f2c8322300f0f9c41a2da5ff95a65c97f6a2ea06b"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-t2v-red-ball-motion-2.json",
+            "sha256": "dc6ca3b10bcbaa8da45d6ebca5c8eadb78b1cbb9d7944f99164d8bfee82cc87a"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/backend.log",
+            "sha256": "680fa4e8e3cea881e0e6b7ed7248a5794c24f7b968687297d568485c1374d321"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-i2v-astronaut-0.json",
+            "sha256": "ea7206458b60a1564a18a80edb004055c5d738d108e3551b885240738c490bf9"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-i2v-astronaut-1.json",
+            "sha256": "8ba19534bce13bce66ab6fbb961a4eb0460912be1c9be6130db14cc954986be2"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-t2v-red-ball-motion-1.json",
+            "sha256": "e803d3005e2861c1b0b45de35186a4c9239fae47a4aac0173b17ea47dfc56183"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+            "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+            "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+            "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+            "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/inputs/astronaut_first/input_identity.json",
+            "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/inputs/astronaut_first/source.bin",
+            "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/inputs/astronaut_last/input_identity.json",
+            "sha256": "f396c7e72b9fa8eec8a8bebb12078d7c75d44e85356a130d5a96592fcb0b6f06"
+          },
+          {
+            "file": "validation/native_minimax_turbo_v4/inputs/astronaut_last/source.bin",
+            "sha256": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f"
+          }
+        ]
+      },
+      {
+        "kind": "minimax_reference",
+        "version": 1,
+        "folder": "validation/native_minimax_reference_v1",
+        "artifacts": [
+          {
+            "file": "validation/native_minimax_reference_v1/installation.log",
+            "sha256": "cb6b9842b9bb8b61ef9cf62f752f64389d143fa0d9ec8b2427f67df138aca69b"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/setup.json",
+            "sha256": "711e46aee93580113046340dffe49f138f29af6c74281bf24509f155d795e547"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/driver.log",
+            "sha256": "b1cbb94d3349bad08ba1a10725d9bdf569a213174f64cd5f800e7498c7054761"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/wave_d.json",
+            "sha256": "88af0f051de86b61e13fb56d55d2572fdb7bfc09ee64774386bf3192347703aa"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/runtime_packages.json",
+            "sha256": "4430a840141ccfeaec26e97c4002e53c87f8ec43daa3436ced9eaad4c3c8ce03"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/minimax-h3-reference/native_node_schemas.json",
+            "sha256": "c19f5c8099058dd5c0250e62a344e7790594e24a6ab1ac3413cb656d764bad13"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/minimax-h3-reference/observation.json",
+            "sha256": "cfc93a9290f90820f0b3517ebcd62b6417fd26bbf278028e3bf749a807361aa7"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/minimax-h3-reference/minimax-reference-astronaut-0.json",
+            "sha256": "ac7f6446882b62e080c8780bbe22b3c6be082927f77d36a28bb6d3ca745c884d"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/minimax-h3-reference/backend.log",
+            "sha256": "1e9882af77ba580743e0588155ec6c3425124ef1664f0fc548ac3370eaa53a79"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/minimax-h3-reference/minimax-reference-astronaut-1.json",
+            "sha256": "60c4e5a44d94a9f1c54913217c56eb471eccfaffa0ff38178e4815aee5687358"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/minimax-h3-reference/minimax-reference-astronaut-3.json",
+            "sha256": "a0ab0b1f344137dcc4ca2e9c8b5595127a9073c3a4db452fbcdded560acc37cc"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/minimax-h3-reference/minimax-reference-astronaut-2.json",
+            "sha256": "43d51b288761fa23357b3e346ac6b3c0281ce1eec7daede57618de4acda84d04"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/inputs/astronaut_first/source.bin",
+            "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/inputs/astronaut_first/input_identity.json",
+            "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+            "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+            "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+            "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+          },
+          {
+            "file": "validation/native_minimax_reference_v1/minimax-h3-reference/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+            "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+          }
+        ]
+      },
+      {
+        "kind": "minimax_audio",
+        "version": 2,
+        "folder": "validation/native_minimax_audio_v2",
+        "artifacts": [
+          {
+            "file": "validation/native_minimax_audio_v2/installation.log",
+            "sha256": "c9db3eabe993536216aa9d3c3c79854f3de8f9969be201a02b719a19162c6524"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/runtime_packages.json",
+            "sha256": "6310d41c63fb44e6cc5f84d00219b1f3310fd25dac94973bd352c23e7968eb88"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/wave_d.json",
+            "sha256": "ec5a8a3e48fc96f73021d569b6aae6265103be4daa1abdfbaa9ff41564ea5283"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/driver.log",
+            "sha256": "2683a234e41cadabe1801c2f998c1c94af947bc7c8090efc9a01d2ed5a572a53"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/setup.json",
+            "sha256": "8e54a9bf2b0ee984f2add4e98996e529c82f40d91486808d4eac8d197b2a2be1"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/minimax-h3/minimax-spoken-audio-native-dialogue-v2-3.json",
+            "sha256": "5fc12eaa083034840e69fb0146121714bcfdb5d6cbdf5c4d39d27ee129d48e91"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/minimax-h3/minimax-spoken-audio-native-dialogue-v2-2.json",
+            "sha256": "5e7130b160f228072d33569beed53d31740cc4e326b95ff338a476c50615e39a"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/minimax-h3/native_node_schemas.json",
+            "sha256": "87476e650822a0ac59f945d21d113b14e64ae62f5d3655269607d8e67ee0b966"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/minimax-h3/observation.json",
+            "sha256": "6f48832deaa51e7cf8d15151fdfe6cb54285de5f6709085ad763531964827032"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/minimax-h3/backend.log",
+            "sha256": "92ee7293a018b34f3868f92afe19e0009b38fa2ddb5e638f5e4e26e0d8cd8305"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/minimax-h3/minimax-spoken-audio-native-dialogue-v2-0.json",
+            "sha256": "0c4b6999583198fdcd12e45a7df49d585586d1c3ed153793aca3c645783b8a22"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/minimax-h3/minimax-spoken-audio-native-dialogue-v2-1.json",
+            "sha256": "73c46d75b5ab8e44e1e47ee10d81affd2674f584c4db6f013db5b1a104a1bea0"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+            "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+            "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/minimax-h3/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+            "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/minimax-h3/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+            "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/inputs/astronaut_first/source.bin",
+            "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+          },
+          {
+            "file": "validation/native_minimax_audio_v2/inputs/astronaut_first/input_identity.json",
+            "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+          }
+        ]
+      },
+      {
+        "kind": "minimax_reference_audio",
+        "version": 1,
+        "folder": "validation/native_minimax_reference_audio_v1",
+        "artifacts": [
+          {
+            "file": "validation/native_minimax_reference_audio_v1/installation.log",
+            "sha256": "e24fbe032f44befbdb718567e217bfadbf131be807782aadbf33e5cd3ca10c89"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/wave_d.json",
+            "sha256": "d380ff0b83a027c82d2099954659da79d8a5e711276674333dfff90f24066e90"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/setup.json",
+            "sha256": "2b563e2068eb9654853833607cf5fcd30a18bd6e83824006a5cda04e5a7b1398"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/driver.log",
+            "sha256": "48280df6b163ae4e010bf3f3e0402f966d52976aebabfffce7d56f71a6354cb9"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/runtime_packages.json",
+            "sha256": "4430a840141ccfeaec26e97c4002e53c87f8ec43daa3436ced9eaad4c3c8ce03"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/minimax-reference-spoken-audio-2.json",
+            "sha256": "b60a3d1c70454fb705f5e0cdfe630b8e48bc8e1b3f09f5861805d7bb29b31f7d"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/minimax-reference-spoken-audio-1.json",
+            "sha256": "25f7cd3a13d520a179dd55e1b2cbe287b6198a7896289fc536ae4da43e948aac"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/minimax-reference-spoken-audio-3.json",
+            "sha256": "23cf8f8568de83f43da25fafb06b74638ef106d5646f0a22fb915726451a5c24"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/observation.json",
+            "sha256": "3882c0173fad815239d01f4cd16fbfa1dc66cb929df56f150dc25191c9f3d490"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/native_node_schemas.json",
+            "sha256": "a8cdd8771cc8b9936dc554a9f7cc1226cbb2f101ed779faf4193a034acf11d40"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/backend.log",
+            "sha256": "fae8618945ebdc85e561f8b0673b60272ae361598a6e2af08e3a358135e430a6"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/minimax-reference-spoken-audio-0.json",
+            "sha256": "a7034d31370f2b6a58613c1ba6e9c637ee7f154366ded39f70e0e65f5c56f3d7"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+            "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+            "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+            "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/minimax-h3-reference/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+            "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/inputs/astronaut_first/source.bin",
+            "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+          },
+          {
+            "file": "validation/native_minimax_reference_audio_v1/inputs/astronaut_first/input_identity.json",
+            "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+          }
+        ]
+      }
+    ]
+  },
+  "verified_native_attempts": [
+    {
+      "kind": "minimax_t2v",
+      "version": 3,
+      "setup_sha256": "9a95cabed0277a9addaa6e003126b47ad6d1c014b66beb8a09e334e1c5436272"
+    },
+    {
+      "kind": "minimax_conditioned",
+      "version": 2,
+      "setup_sha256": "11ae1239c2299e9bb3619390f8aa920a563d20f5e020f000eb60adcff516f4e8"
+    },
+    {
+      "kind": "minimax_reference",
+      "version": 1,
+      "setup_sha256": "711e46aee93580113046340dffe49f138f29af6c74281bf24509f155d795e547"
+    },
+    {
+      "kind": "minimax_audio",
+      "version": 2,
+      "setup_sha256": "8e54a9bf2b0ee984f2add4e98996e529c82f40d91486808d4eac8d197b2a2be1"
+    }
+  ],
+  "unavailable_native_attempts": [
+    {
+      "kind": "wan_t2v",
+      "version": 7,
+      "expected_setup_sha256": "9e5308899e7855bdac3490a5e6b4d87bd7b42fb5d53ab5ffd18674a4e219a3a5"
+    },
+    {
+      "kind": "minimax_turbo",
+      "version": 4,
+      "expected_setup_sha256": "600eff061e85434e5a9ae86695d026d6fa54ef0d0775a4caa80abd2261f1f0de"
+    },
+    {
+      "kind": "minimax_reference_audio",
+      "version": 1,
+      "expected_setup_sha256": "2b563e2068eb9654853833607cf5fcd30a18bd6e83824006a5cda04e5a7b1398"
+    }
+  ],
+  "decoder": {
+    "sha256": "ed16af623947494a72e284b6eb8ff225f2da22b38b5d5069c2fd4b4ba3384e41",
+    "version_output": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers\nbuilt with gcc 13 (Ubuntu 13.2.0-23ubuntu3)\nconfiguration: --prefix=/usr --extra-version=3ubuntu5 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --disable-omx --enable-gnutls --enable-libaom --enable-libass --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libglslang --enable-libgme --enable-libgsm --enable-libharfbuzz --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-openal --enable-opencl --enable-opengl --disable-sndio --enable-libvpl --disable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-ladspa --enable-libbluray --enable-libjack --enable-libpulse --enable-librabbitmq --enable-librist --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libx264 --enable-libzmq --enable-libzvbi --enable-lv2 --enable-sdl2 --enable-libplacebo --enable-librav1e --enable-pocketsphinx --enable-librsvg --enable-libjxl --enable-shared\nlibavutil      58. 29.100 / 58. 29.100\nlibavcodec     60. 31.102 / 60. 31.102\nlibavformat    60. 16.100 / 60. 16.100\nlibavdevice    60.  3.100 / 60.  3.100\nlibavfilter     9. 12.100 /  9. 12.100\nlibswscale      7.  5.100 /  7.  5.100\nlibswresample   4. 12.100 /  4. 12.100\nlibpostproc    57.  3.100 / 57.  3.100\n"
+  },
+  "mounted_archive_setup_digests": [
+    {
+      "path": "/kaggle/input/notebooks/cuongnguyen1802/factory-phase-8-native-minimax-t2v/native_wave_d.zip",
+      "sha256": "9a95cabed0277a9addaa6e003126b47ad6d1c014b66beb8a09e334e1c5436272"
+    },
+    {
+      "path": "/kaggle/input/notebooks/cuongnguyen1802/factory-phase-8-native-minimax-conditioned/native_wave_d.zip",
+      "sha256": "11ae1239c2299e9bb3619390f8aa920a563d20f5e020f000eb60adcff516f4e8"
+    },
+    {
+      "path": "/kaggle/input/notebooks/cuongnguyen1802/factory-phase-8-native-minimax-audio/native_wave_d.zip",
+      "sha256": "8e54a9bf2b0ee984f2add4e98996e529c82f40d91486808d4eac8d197b2a2be1"
+    },
+    {
+      "path": "/kaggle/input/notebooks/cuongnguyen1802/factory-phase-8-native-minimax-reference/native_wave_d.zip",
+      "sha256": "711e46aee93580113046340dffe49f138f29af6c74281bf24509f155d795e547"
+    }
+  ],
+  "gate_exit_code": 1,
+  "native_exit_gate": "NOT_MET",
+  "gate_sha256": "457f4ed18c8bcc15889f38bc838717d9874461e1b238f0ab7cdc7057714973dd"
+}

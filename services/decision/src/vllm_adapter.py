@@ -1,9 +1,11 @@
 """
-Strict adapter to vLLM's native OpenAI-compatible Decisions API.
+Retained pre-refactor proxy for explicit historical software fixtures.
 
 This module translates the legacy single-task Factory request into one native
 /v1/decisions question. All probabilities/scores come from vLLM; there are no
-hand-written lexical, probability, or midpoint fallbacks.
+hand-written lexical, probability, or midpoint fallbacks. Its permissive response
+mapping is not the canonical protocol validator; production imports the adapter
+selected by ModelManifest through factory.engines.decision.DecisionEngine.
 """
 import os
 from typing import Any, Dict, Optional

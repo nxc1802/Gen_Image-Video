@@ -1,0 +1,202 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: ace-step-1.5
+  family: acestep-music
+  display_name: ACE-Step 1.5 Music Generation
+  service_id: music-service
+  version: 1.5.0
+  license: CC-BY-NC-4.0
+  license_url: https://creativecommons.org/licenses/by-nc/4.0/
+  commercial_use: false
+weights:
+  primary_checkpoint: ACE-Studio/ACE-Step-1.5
+  repository: ACE-Studio/ACE-Step-1.5
+  checkpoint_revision: 9d82e1c312781b0a70cf6bf79e2730ca7f918042
+  weights_file: model.safetensors
+  format: safetensors
+  quantization: none
+  default_precision: bf16
+  variants:
+    turbo:
+      id: turbo
+      display_name: ACE-Step 1.5 2B Turbo
+      checkpoint: ACE-Studio/ACE-Step-1.5-Turbo
+      format: safetensors
+      quantization: none
+      default_precision: bf16
+      recommended_steps: 8
+      min_vram_gb: 6.0
+    sft:
+      id: sft
+      display_name: ACE-Step 1.5 2B SFT
+      checkpoint: ACE-Studio/ACE-Step-1.5-SFT
+      format: safetensors
+      quantization: none
+      default_precision: bf16
+      recommended_steps: 25
+      min_vram_gb: 6.0
+    base:
+      id: base
+      display_name: ACE-Step 1.5 2B Base
+      checkpoint: ACE-Studio/ACE-Step-1.5
+      format: safetensors
+      quantization: none
+      default_precision: bf16
+      recommended_steps: 50
+      min_vram_gb: 6.0
+    xl_base:
+      id: xl_base
+      display_name: ACE-Step 1.5 XL Base
+      checkpoint: ACE-Studio/ACE-Step-1.5-XL
+      format: safetensors
+      quantization: none
+      default_precision: bf16
+      recommended_steps: 50
+      min_vram_gb: 12.0
+hardware:
+  min_vram_gb: 6.0
+  preferred_gpu: t4
+  preferred_gpu_index: 1
+  quantization_format: none
+  offload_ram_gb: 0.0
+  allocation_policy: single_gpu
+capabilities:
+  text_to_music: true
+  lyrics_to_music: true
+  reference_audio: true
+  cover: true
+  repaint: true
+  extract: true
+  lego: true
+  complete: true
+  music_extend: true
+  audio_to_audio: false
+  audio_to_music: false
+status: partial
+coverage_percent: 81.82
+missing_capabilities:
+- audio_to_audio
+- audio_to_music
+validation_status: pending_live
+validation_notes: 'Phase 0 audit: no admissible per-capability V3/V4 evidence on Kaggle
+  Dual Tesla T4 with exact verified weights and semantic validation. Historical claims
+  are frozen in validation/baseline.json; full/partial and coverage describe implementation
+  claims only, not production readiness. Static installed/checkpoint_valid/backend_ready
+  flags are legacy configuration claims, not session attestation; replacement is deferred
+  to Phases 1 and 3.'
+limits:
+  max_duration_seconds: 180.0
+revision: 1.5.0
+dependencies:
+- torch>=2.4.0
+- torchaudio
+- transformers
+task_variant_matrix:
+  text_to_music:
+  - standard
+  - base
+  - turbo
+  - sft
+  - xl_base
+  lyrics_to_music:
+  - standard
+  - base
+  - turbo
+  - sft
+  - xl_base
+  reference_audio:
+  - standard
+  - base
+  - turbo
+  - sft
+  - xl_base
+  cover:
+  - standard
+  - base
+  - turbo
+  - sft
+  - xl_base
+  repaint:
+  - standard
+  - base
+  - turbo
+  - sft
+  - xl_base
+  extract:
+  - base
+  - xl_base
+  lego:
+  - base
+  - xl_base
+  complete:
+  - base
+  - xl_base
+  music_extend:
+  - base
+  - xl_base
+validated_hardware_profiles: []
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+capabilities_truth:
+  text_to_music:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  lyrics_to_music:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  reference_audio:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  cover:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  repaint:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  extract:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  lego:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  complete:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  music_extend:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  audio_to_audio:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null
+  audio_to_music:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null
+aliases:
+- ace-step
+- ace_step
+- ace_step_1.5

@@ -1,0 +1,41 @@
+{
+  "kind": "wan_t2v",
+  "version": 1,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-wan-t2v",
+  "run_record_sha256": "f7a1673f21cbeaf4ee53d5d81f3361ad62b7370ec848bc9ca138885aec6facb0",
+  "artifacts": [
+    {
+      "file": "validation/native_wan_t2v_v1/runtime_packages.json",
+      "sha256": "79a84ef37147f6dbf61ecd554976a60fcfacd843750c040de4941e24e72edc2d"
+    },
+    {
+      "file": "validation/native_wan_t2v_v1/setup.json",
+      "sha256": "428b95ff3c6c52218d02932b54aefebcf07d9e527873d67b98f683fda90ef37a"
+    },
+    {
+      "file": "validation/native_wan_t2v_v1/driver.log",
+      "sha256": "6952e180b4ad2635c3068fe30433fe5e466442de490eb5c851ec2605fc17cc5b"
+    },
+    {
+      "file": "validation/native_wan_t2v_v1/wave_d.json",
+      "sha256": "1b7a28549e9016d38c8eda0771e3c0db039c4e72e6ac9633c9e48b45e79cf8b9"
+    },
+    {
+      "file": "validation/native_wan_t2v_v1/installation.log",
+      "sha256": "60ab696953f74f9abc623f1cb6198de0c20f4f4947640091e7df18a4cb6b5dbb"
+    },
+    {
+      "file": "validation/native_wan_t2v_v1/wan-2.2/backend.log",
+      "sha256": "46e1ac5e4e652fe00e0d158851c58402893d4539d77a479d6e1f067b2ecbfbbd"
+    },
+    {
+      "file": "validation/native_wan_t2v_v1/wan-2.2/observation.json",
+      "sha256": "6a3ac4fd663d72a5ad1ad0a80623d591615266bd63185079eb283d9d472823cd"
+    }
+  ]
+}

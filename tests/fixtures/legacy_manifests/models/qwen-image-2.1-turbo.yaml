@@ -1,0 +1,91 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-image-2.1-turbo
+  family: qwen-image
+  display_name: Qwen-Image 2.1 Turbo
+  service_id: image-service
+  version: 2.1.0
+  license: Tongyi Qianwen License
+  license_url: https://huggingface.co/unsloth/Qwen-Image-2.1-Turbo-GGUF
+  commercial_use: true
+weights:
+  files:
+    primary:
+      provider: huggingface
+      repository: unsloth/Qwen-Image-2.1-Turbo-GGUF
+      revision: bd53e520a64472adaff780da0b2f2d7eb1605e30
+      path: qwen-image-2.1-turbo-Q4_K_M.gguf
+      sha256: 8940e8b522af886e0c0f5afddf720e82dd223cb9a43580b5f61c4d740452ac20
+      size_bytes: 4199565120
+  components:
+    clip: qwen3vl_8b_fp8_scaled.safetensors
+    vae: qwen_image_2.1_vae_bf16.safetensors
+    control_pose: qwen_image_control_pose.safetensors
+    control_depth: qwen_image_control_depth.safetensors
+  format: gguf
+  quantization: q4_k_m
+  default_precision: bf16
+  variants:
+    turbo:
+      id: turbo
+      display_name: Qwen-Image 2.1 Turbo GGUF (8 Euler steps)
+      checkpoint: qwen-image-2.1-turbo-Q4_K_M.gguf
+      format: gguf
+      quantization: q4_k_m
+      default_precision: bf16
+      recommended_steps: 8
+      kaggle_dataset: cuongnguyen1802/qwen-image-2-1-turbo-gguf
+      huggingface_repo: unsloth/Qwen-Image-2.1-Turbo-GGUF
+      file_name: qwen-image-2.1-turbo-Q4_K_M.gguf
+      size_bytes: 4199565120
+      min_vram_gb: 14.0
+hardware:
+  min_vram_gb: 14.0
+  preferred_gpu: t4
+  preferred_gpu_index: 0
+  quantization_format: q4_k_m
+  offload_ram_gb: 0.0
+  allocation_policy: single_gpu
+capabilities:
+  text_to_image: true
+  inpaint: false
+  outpaint: false
+  controlnet: false
+  instruction_edit: false
+status: partial
+coverage_percent: 20.0
+missing_capabilities:
+- inpaint
+- outpaint
+- controlnet
+- instruction_edit
+validation_status: pending_live
+validation_notes: 'Phase 0 audit: no admissible per-capability V3/V4 evidence on Kaggle
+  Dual Tesla T4 with exact verified weights and semantic validation. Historical claims
+  are frozen in validation/baseline.json; full/partial and coverage describe implementation
+  claims only, not production readiness. Static installed/checkpoint_valid/backend_ready
+  flags are legacy configuration claims, not session attestation; replacement is deferred
+  to Phases 1 and 3.'
+limits:
+  max_width: 2048
+  max_height: 2048
+revision: 2.1.0
+dependencies:
+- torch>=2.4.0
+- diffusers
+- gguf
+- comfyui
+validated_hardware_profiles: []
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+capabilities_truth:
+  text_to_image:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+aliases:
+- qwen_image_2.1_turbo

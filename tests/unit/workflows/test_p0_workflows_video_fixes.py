@@ -25,7 +25,7 @@ def test_fix_11_image_variant_checkpoint_selection():
     # 1. Turbo variant
     wf_turbo = ImageParameterMapper.apply(
         workflow=dict(template),
-        task="text_to_image",
+        task='image.text_to_image',
         inputs={"prompt": "A coastline", "variant": "turbo"},
     )
     assert wf_turbo["478"]["inputs"]["unet_name"] == "qwen-image-2.1-turbo-Q4_K_M.gguf"
@@ -34,7 +34,7 @@ def test_fix_11_image_variant_checkpoint_selection():
     # 2. Standard variant
     wf_std = ImageParameterMapper.apply(
         workflow=dict(template),
-        task="text_to_image",
+        task='image.text_to_image',
         inputs={"prompt": "A coastline", "variant": "standard"},
     )
     assert wf_std["478"]["inputs"]["unet_name"] == "qwen-image-2.1-Q4_K_M.gguf"
@@ -51,7 +51,7 @@ def test_fix_12_minimax_ref2va_binds_8_ref():
     res = VideoParameterMapper.apply(
         workflow=workflow,
         model="minimax-h3",
-        task="reference_conditioning",
+        task='video.reference_conditioning',
         inputs={"prompt": "Cinematic motion", "reference_image_url": "https://example.com/character.png"},
         staged_files={"reference_image_url": "staged_character_123.png"},
     )

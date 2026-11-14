@@ -1,0 +1,97 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-text
+  family: qwen-text
+  display_name: Qwen3.8 27B GGUF Q4_K_M
+  service_id: text-service
+  version: 3.8.0
+  license: Apache-2.0
+  license_url: https://huggingface.co/unsloth/Qwen3.8-27B-GGUF/blob/ce331efc48d5722b4b8041f72793e530eae18d9b/README.md
+  commercial_use: true
+weights:
+  files:
+    primary:
+      provider: huggingface
+      repository: unsloth/Qwen3.8-27B-GGUF
+      revision: ce331efc48d5722b4b8041f72793e530eae18d9b
+      path: Qwen3.8-27B-UD-Q4_K_M.gguf
+      sha256: 1bce504dfecd84153666928a41d8a66706f0158d3a317bc5196b72819d7dc529
+      size_bytes: 16564259744
+  format: gguf
+  quantization: q4_k_m
+  default_precision: bf16
+hardware:
+  min_vram_gb: 11.0
+  context_window: 32768
+  preferred_gpu: t4
+  preferred_gpu_index: 0
+  quantization_format: q4_k_m
+  offload_ram_gb: 0.0
+  allocation_policy: dual_gpu_split
+capabilities:
+  chat_completion: true
+  responses_api: true
+  structured_output: true
+  tool_calling: true
+  streaming: true
+status: full
+coverage_percent: 100.0
+missing_capabilities: []
+validation_status: pending_live
+validation_notes: 'Phase 0 audit: no admissible per-capability V3/V4 evidence on Kaggle
+  Dual Tesla T4 with exact verified weights and semantic validation. Historical claims
+  are frozen in validation/baseline.json; full/partial and coverage describe implementation
+  claims only, not production readiness. Static installed/checkpoint_valid/backend_ready
+  flags are legacy configuration claims, not session attestation; replacement is deferred
+  to Phases 1 and 3.'
+limits:
+  max_context_tokens: 32768
+revision: 3.8.0
+dependencies:
+- vllm>=0.6.0
+- torch>=2.4.0
+task_variant_matrix:
+  chat_completion:
+  - standard
+  responses_api:
+  - standard
+  structured_output:
+  - standard
+  tool_calling:
+  - standard
+  streaming:
+  - standard
+validated_hardware_profiles: []
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+capabilities_truth:
+  chat_completion:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  responses_api:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  structured_output:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  tool_calling:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  streaming:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+aliases:
+- qwen_text

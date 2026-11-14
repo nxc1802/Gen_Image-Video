@@ -7,35 +7,22 @@ import copy
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from factory_contracts.capabilities import require_canonical
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 
 TASK_TEMPLATE_MAP = {
-    "text_to_image": "qwen_image_t2i.json",
-    "image_to_image": "qwen_image_i2i.json",
-    "inpaint": "qwen_image_inpaint.json",
-    "outpaint": "qwen_image_outpaint.json",
-    "instruction_edit": "qwen_image_edit.json",
-    "reference_conditioning": "qwen_image_reference.json",
-    "controlnet": "qwen_image_controlnet.json",
+    "image.text_to_image": "qwen_image_t2i.json",
+    "image.image_to_image": "qwen_image_i2i.json",
+    "image.inpaint": "qwen_image_inpaint.json",
+    "image.outpaint": "qwen_image_outpaint.json",
+    "image.instruction_edit": "qwen_image_edit.json",
+    "image.reference_image": "qwen_image_reference.json",
+    "image.control_pose": "qwen_image_controlnet.json",
+    "image.control_depth": "qwen_image_controlnet.json",
+    "image.multi_reference": "qwen_image_reference.json",
 }
 
-TASK_ALIASES: Dict[str, str] = {
-    # Short aliases
-    "t2i": "text_to_image",
-    "i2i": "image_to_image",
-    "edit": "instruction_edit",
-    "reference": "reference_conditioning",
-    # Capability IDs
-    "image.t2i": "text_to_image",
-    "image.i2i": "image_to_image",
-    "image.inpaint": "inpaint",
-    "image.outpaint": "outpaint",
-    "image.instruction_edit": "instruction_edit",
-    "image.reference": "reference_conditioning",
-    "image.reference_conditioning": "reference_conditioning",
-    "image.controlnet": "controlnet",
-}
 
 
 class ImageWorkflowRegistry:
@@ -69,7 +56,7 @@ class ImageWorkflowRegistry:
 
     def get_workflow(self, task: str) -> Dict[str, Any]:
         """Returns a deep copy of the raw workflow graph for the given task."""
-        canonical_task = TASK_ALIASES.get(task, task)
+        canonical_task = require_canonical(task, engine="image")
         if canonical_task not in self._cache:
             raise KeyError(f"Unknown image task: {task}. Supported tasks: {list(self._cache.keys())}")
         return copy.deepcopy(self._cache[canonical_task])

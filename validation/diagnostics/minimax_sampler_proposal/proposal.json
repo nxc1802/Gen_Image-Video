@@ -1,0 +1,66 @@
+{
+  "classification": "PREDECLARED_SAMPLER_ONE_CALL_GPU_DIAGNOSIS_NOT_V3",
+  "source_template": {
+    "revision": "79b02f4a79e233c07ec4923e39f40be27448549d",
+    "url": "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/79b02f4a79e233c07ec4923e39f40be27448549d/templates/video_minimax_h3_t2v.json",
+    "sha256": "8149b64db94375cd01a7d46da0b4a4c7349d83dedf6b5e1026b460e5e202626f"
+  },
+  "source_backend": {
+    "revision": "c5751c81abe131202eea9e4c66d000589013dd0b",
+    "sampling_py_sha256": "cfc4221ed0bc1f84a6f5689d3ec440cad3008c2541ab8f5e2599d1a73fac74ce"
+  },
+  "case": {
+    "id": "minimax-i2v-res-multistep-one-call-diagnosis",
+    "model": "minimax-h3",
+    "capability": "video.image_to_video",
+    "operation": "video",
+    "assets": [
+      "astronaut_first"
+    ],
+    "asset_identities": {
+      "astronaut_first": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+    },
+    "seed_sequence": [
+      314159,
+      271828,
+      161803,
+      141421
+    ],
+    "request": {
+      "prompt": "The astronaut in an orange spacesuit gently turns her head and smiles. Static camera, realistic live action video, natural subtle movement.",
+      "width": 384,
+      "height": 256,
+      "num_frames": 124,
+      "steps": 30,
+      "fps": 24,
+      "image": "@astronaut_first"
+    },
+    "expected": {
+      "positive_text": "a video frame of an astronaut in an orange spacesuit",
+      "negative_texts": [
+        "a photograph of a blue car",
+        "a photograph of a black dog",
+        "a photograph of a green tree"
+      ],
+      "minimum_mean_text_cosine": 0.25,
+      "minimum_frame_text_cosine": 0.22,
+      "minimum_text_margin": 0.03,
+      "minimum_distinct_frames": 5,
+      "minimum_mean_frame_change": 0.002,
+      "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+      "keyframe_anchors": [
+        {
+          "frame_index": 0,
+          "asset": "astronaut_first",
+          "maximum_mean_absolute_error": 0.12
+        }
+      ]
+    }
+  },
+  "exact_change": "Prepared native sample node sampler_name euler -> res_multistep only. Preserve original photo bytes/prompt/seed314159/384x256/124frames/30steps/cfg1/simple scheduler/sigma shifts/oracles/checkpoint/GPU0/budget/deadline/headroom. Explicit diagnostic FP16 VAE control as previous same-latent experiment.",
+  "reason": "Official workflow selects res_multistep; exact pinned backend implements it. Negative same-latent FP32 result retains material flares. This is a lower-cost numerical-integrator hypothesis before the larger spatial experiment, not proof that Euler is invalid or that sampler causes/fixes artifacts.",
+  "canonical_manifest_changed": false,
+  "core_changed": false,
+  "v3_certified": false,
+  "production_ready": false
+}

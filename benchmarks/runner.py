@@ -50,7 +50,6 @@ os.environ["RATE_LIMIT_ENABLED"] = "false"
 from factory.apps.control_api.src.main import app
 from factory.apps.control_api.src.queue.leasing import LeaseCoordinator
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
-from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
 from factory.apps.control_api.src.queue.repository import get_job_repository
 from factory.apps.control_api.src.queue.scheduler import InMemoryScheduler
 from factory.apps.control_api.src.queue.watchdog import (

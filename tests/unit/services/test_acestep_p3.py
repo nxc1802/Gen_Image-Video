@@ -77,13 +77,13 @@ def test_ace_01_text_to_music_mapping_and_execution():
         "duration_seconds": 30,
         "bpm": 124,
     }
-    params = ACEStepAdapter.map_inputs("text_to_music", inputs)
+    params = ACEStepAdapter.map_inputs('music.text_to_music', inputs)
     assert params["prompt"] == "Energetic synthwave with driving bass and 80s drums"
     assert params["duration_seconds"] == 30.0
     assert params["bpm"] == 124
     assert params["lyrics"] == "[inst]"
 
-    payload = ACEStepClient._release_payload("text_to_music", params)
+    payload = ACEStepClient._release_payload('music.text_to_music', params)
     assert payload["task_type"] == "text2music"
     assert payload["prompt"] == inputs["prompt"]
     assert payload["audio_duration"] == 30.0
@@ -107,18 +107,18 @@ def test_ace_02_lyrics_to_music_verse_chorus_structure():
         "bpm": 128,
         "key": "A minor",
     }
-    params = ACEStepAdapter.map_inputs("lyrics_to_music", inputs)
+    params = ACEStepAdapter.map_inputs('music.lyrics_to_music', inputs)
     assert params["lyrics"] == lyrics_text
     assert params["prompt"] == "Modern electropop anthem"
     assert params["key"] == "A minor"
 
-    payload = ACEStepClient._release_payload("lyrics_to_music", params)
+    payload = ACEStepClient._release_payload('music.lyrics_to_music', params)
     assert payload["task_type"] == "lyrics2music"
     assert payload["lyrics"] == lyrics_text
 
     # Missing lyrics must raise InvalidRequestError
     with pytest.raises(InvalidRequestError) as exc_info:
-        ACEStepAdapter.map_inputs("lyrics_to_music", {"prompt": "Pop song", "lyrics": ""})
+        ACEStepAdapter.map_inputs('music.lyrics_to_music', {"prompt": "Pop song", "lyrics": ""})
     assert "lyrics_to_music requires non-empty lyrics" in str(exc_info.value)
 
 
@@ -129,12 +129,12 @@ def test_ace_02_lyrics_to_music_verse_chorus_structure():
 def test_ace_03_instrumental_mode():
     """ACE-03: Output conforms to instrumental instruction via flag or tag."""
     # Via flag
-    params1 = ACEStepAdapter.map_inputs("text_to_music", {"prompt": "Cinematic strings", "instrumental": True})
+    params1 = ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "Cinematic strings", "instrumental": True})
     assert params1["lyrics"] == "[inst]"
     assert params1["instrumental"] is True
 
     # Via tag in prompt
-    params2 = ACEStepAdapter.map_inputs("text_to_music", {"prompt": "[inst] Lo-fi piano study beat"})
+    params2 = ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "[inst] Lo-fi piano study beat"})
     assert params2["lyrics"] == "[inst]"
 
 
@@ -145,12 +145,12 @@ def test_ace_03_instrumental_mode():
 def test_ace_04_prompt_expansion_mapping():
     """ACE-04: Prompt expansion parameter maps and enables enriched metadata."""
     params = ACEStepAdapter.map_inputs(
-        "text_to_music",
+        'music.text_to_music',
         {"prompt": "chill lofi", "prompt_expansion": True},
     )
     assert params["prompt_expansion"] is True
 
-    payload = ACEStepClient._release_payload("text_to_music", params)
+    payload = ACEStepClient._release_payload('music.text_to_music', params)
     assert payload["prompt_expansion"] is True
 
 
@@ -160,14 +160,14 @@ def test_ace_04_prompt_expansion_mapping():
 
 def test_ace_05_thinking_mode_mapping():
     """ACE-05: Thinking mode parameter maps correctly and affects native payload."""
-    params_think = ACEStepAdapter.map_inputs("text_to_music", {"prompt": "Complex jazz fugue", "thinking": True})
+    params_think = ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "Complex jazz fugue", "thinking": True})
     assert params_think["thinking"] is True
-    p1 = ACEStepClient._release_payload("text_to_music", params_think)
+    p1 = ACEStepClient._release_payload('music.text_to_music', params_think)
     assert p1["thinking"] is True
 
-    params_no_think = ACEStepAdapter.map_inputs("text_to_music", {"prompt": "Simple pop loop", "thinking": False})
+    params_no_think = ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "Simple pop loop", "thinking": False})
     assert params_no_think["thinking"] is False
-    p2 = ACEStepClient._release_payload("text_to_music", params_no_think)
+    p2 = ACEStepClient._release_payload('music.text_to_music', params_no_think)
     assert p2["thinking"] is False
 
 
@@ -184,13 +184,13 @@ def test_ace_06_musical_controls_validation():
         "time_signature": "3/4",
         "duration_seconds": 120.0,
     }
-    params = ACEStepAdapter.map_inputs("text_to_music", valid_inputs)
+    params = ACEStepAdapter.map_inputs('music.text_to_music', valid_inputs)
     assert params["bpm"] == 132
     assert params["key"] == "G major"
     assert params["time_signature"] == "3/4"
     assert params["duration_seconds"] == 120.0
 
-    payload = ACEStepClient._release_payload("text_to_music", params)
+    payload = ACEStepClient._release_payload('music.text_to_music', params)
     assert payload["bpm"] == 132
     assert payload["key"] == "G major"
     assert payload["time_signature"] == "3/4"
@@ -198,23 +198,23 @@ def test_ace_06_musical_controls_validation():
 
     # Invalid BPM (< 30 or > 300)
     with pytest.raises(InvalidRequestError):
-        ACEStepAdapter.map_inputs("text_to_music", {"prompt": "Beat", "bpm": 15})
+        ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "Beat", "bpm": 15})
     with pytest.raises(InvalidRequestError):
-        ACEStepAdapter.map_inputs("text_to_music", {"prompt": "Beat", "bpm": 450})
+        ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "Beat", "bpm": 450})
 
     # Invalid Key
     with pytest.raises(InvalidRequestError):
-        ACEStepAdapter.map_inputs("text_to_music", {"prompt": "Beat", "key": "H sharp invalid"})
+        ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "Beat", "key": "H sharp invalid"})
 
     # Invalid Time Signature
     with pytest.raises(InvalidRequestError):
-        ACEStepAdapter.map_inputs("text_to_music", {"prompt": "Beat", "time_signature": "13/7"})
+        ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "Beat", "time_signature": "13/7"})
 
     # Invalid Duration (<= 0 or > 300)
     with pytest.raises(InvalidRequestError):
-        ACEStepAdapter.map_inputs("text_to_music", {"prompt": "Beat", "duration_seconds": -10.0})
+        ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "Beat", "duration_seconds": -10.0})
     with pytest.raises(InvalidRequestError):
-        ACEStepAdapter.map_inputs("text_to_music", {"prompt": "Beat", "duration_seconds": 600.0})
+        ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "Beat", "duration_seconds": 600.0})
 
 
 # ==============================================================================
@@ -224,7 +224,7 @@ def test_ace_06_musical_controls_validation():
 def test_ace_07_reference_audio_conditioning():
     """ACE-07: Reference audio conditioning maps reference path to native backend."""
     params = ACEStepAdapter.map_inputs(
-        "reference_audio",
+        'music.reference_audio',
         {
             "prompt": "Funk guitar groove in the style of reference",
             "reference_audio_path": "/staged/groove_ref.wav",
@@ -232,13 +232,13 @@ def test_ace_07_reference_audio_conditioning():
     )
     assert params["reference_audio_path"] == "/staged/groove_ref.wav"
 
-    payload = ACEStepClient._release_payload("reference_audio", params)
+    payload = ACEStepClient._release_payload('music.reference_audio', params)
     assert payload["task_type"] == "reference"
     assert payload["reference_audio_path"] == "/staged/groove_ref.wav"
 
     # Missing reference audio raises error
     with pytest.raises(InvalidRequestError):
-        ACEStepAdapter.map_inputs("reference_audio", {"prompt": "Style transfer without ref"})
+        ACEStepAdapter.map_inputs('music.reference_audio', {"prompt": "Style transfer without ref"})
 
 
 # ==============================================================================
@@ -248,7 +248,7 @@ def test_ace_07_reference_audio_conditioning():
 def test_ace_08_cover_audio_mapping():
     """ACE-08: Cover task maps source audio and cover strength."""
     params = ACEStepAdapter.map_inputs(
-        "cover",
+        'music.cover',
         {
             "prompt": "Bossa nova arrangement",
             "source_audio_path": "/staged/melody.wav",
@@ -258,7 +258,7 @@ def test_ace_08_cover_audio_mapping():
     assert params["cover_strength"] == 0.75
     assert params["src_audio_path"] == "/staged/melody.wav"
 
-    payload = ACEStepClient._release_payload("cover", params)
+    payload = ACEStepClient._release_payload('music.cover', params)
     assert payload["task_type"] == "cover"
     assert payload["src_audio_path"] == "/staged/melody.wav"
     assert payload["audio_cover_strength"] == 0.75
@@ -266,7 +266,7 @@ def test_ace_08_cover_audio_mapping():
     # Cover strength out of bounds [0.0, 1.0]
     with pytest.raises(InvalidRequestError):
         ACEStepAdapter.map_inputs(
-            "cover",
+            'music.cover',
             {"prompt": "Cover", "source_audio_path": "/staged/m.wav", "cover_strength": 1.5},
         )
 
@@ -278,7 +278,7 @@ def test_ace_08_cover_audio_mapping():
 def test_ace_09_repaint_interval_validation():
     """ACE-09: Repaint interval [start, end] is validated and passed."""
     params = ACEStepAdapter.map_inputs(
-        "repaint",
+        'music.repaint',
         {
             "prompt": "Electric guitar solo replacement",
             "source_audio_path": "/staged/song.wav",
@@ -290,7 +290,7 @@ def test_ace_09_repaint_interval_validation():
     assert params["repainting_start"] == 15.0
     assert params["repainting_end"] == 35.0
 
-    payload = ACEStepClient._release_payload("repaint", params)
+    payload = ACEStepClient._release_payload('music.repaint', params)
     assert payload["task_type"] == "repaint"
     assert payload["repainting_start"] == 15.0
     assert payload["repainting_end"] == 35.0
@@ -298,7 +298,7 @@ def test_ace_09_repaint_interval_validation():
     # Inverted interval (start >= end)
     with pytest.raises(InvalidRequestError):
         ACEStepAdapter.map_inputs(
-            "repaint",
+            'music.repaint',
             {
                 "prompt": "Fix",
                 "source_audio_path": "/staged/s.wav",
@@ -310,7 +310,7 @@ def test_ace_09_repaint_interval_validation():
     # Exceeding duration
     with pytest.raises(InvalidRequestError):
         ACEStepAdapter.map_inputs(
-            "repaint",
+            'music.repaint',
             {
                 "prompt": "Fix",
                 "source_audio_path": "/staged/s.wav",
@@ -328,7 +328,7 @@ def test_ace_09_repaint_interval_validation():
 def test_ace_10_remix_style_transfer_composition():
     """ACE-10: Remix task binds source audio, reference conditioning, and cover strength."""
     params = ACEStepAdapter.map_inputs(
-        "cover",
+        'music.cover',
         {
             "prompt": "Cyberpunk synthwave remix",
             "source_audio_path": "/staged/original_track.wav",
@@ -336,7 +336,7 @@ def test_ace_10_remix_style_transfer_composition():
             "cover_strength": 0.65,
         },
     )
-    payload = ACEStepClient._release_payload("cover", params)
+    payload = ACEStepClient._release_payload('music.cover', params)
     assert payload["task_type"] == "cover"
     assert payload["src_audio_path"] == "/staged/original_track.wav"
     assert payload["reference_audio_path"] == "/staged/cyberpunk_reference.wav"
@@ -351,23 +351,23 @@ def test_ace_11_extract_stem_variant_matrix():
     """ACE-11: Extract supported on Base, strictly rejected on Turbo with UNSUPPORTED_CAPABILITY."""
     # 1. Base variant supports extract
     base_params = ACEStepAdapter.map_inputs(
-        "extract",
+        'music.extract',
         {
             "variant": "base",
             "source_audio_path": "/staged/full_mix.wav",
             "stem_name": "vocals",
         },
     )
-    assert base_params["task"] == "extract"
+    assert base_params["task"] == "music.extract"
     assert base_params["variant"] == "base"
-    p = ACEStepClient._release_payload("extract", base_params)
+    p = ACEStepClient._release_payload('music.extract', base_params)
     assert p["task_type"] == "extract"
     assert p["stem_name"] == "vocals"
 
     # 2. Turbo variant strictly rejected
     with pytest.raises(UnsupportedCapabilityError) as exc_info:
         ACEStepAdapter.map_inputs(
-            "extract",
+            'music.extract',
             {
                 "variant": "turbo",
                 "source_audio_path": "/staged/full_mix.wav",
@@ -386,7 +386,7 @@ def test_ace_12_lego_variant_matrix():
     """ACE-12: Lego supported on Base, strictly rejected on Turbo with UNSUPPORTED_CAPABILITY."""
     # 1. Base variant supports lego
     base_params = ACEStepAdapter.map_inputs(
-        "lego",
+        'music.lego',
         {
             "variant": "base",
             "prompt": "Add funky slap bass",
@@ -394,15 +394,15 @@ def test_ace_12_lego_variant_matrix():
             "add_instrument": "bass",
         },
     )
-    assert base_params["task"] == "lego"
-    p = ACEStepClient._release_payload("lego", base_params)
+    assert base_params["task"] == "music.lego"
+    p = ACEStepClient._release_payload('music.lego', base_params)
     assert p["task_type"] == "lego"
     assert p["add_instrument"] == "bass"
 
     # 2. Turbo variant strictly rejected
     with pytest.raises(UnsupportedCapabilityError) as exc_info:
         ACEStepAdapter.map_inputs(
-            "lego",
+            'music.lego',
             {
                 "variant": "turbo",
                 "prompt": "Add bass",
@@ -420,21 +420,21 @@ def test_ace_13_complete_variant_matrix():
     """ACE-13: Complete supported on Base, strictly rejected on Turbo with UNSUPPORTED_CAPABILITY."""
     # 1. Base variant supports complete
     base_params = ACEStepAdapter.map_inputs(
-        "complete",
+        'music.complete',
         {
             "variant": "base",
             "source_audio_path": "/staged/vocal_lead.wav",
             "prompt": "Generate full orchestral accompaniment",
         },
     )
-    assert base_params["task"] == "complete"
-    p = ACEStepClient._release_payload("complete", base_params)
+    assert base_params["task"] == "music.complete"
+    p = ACEStepClient._release_payload('music.complete', base_params)
     assert p["task_type"] == "complete"
 
     # 2. Turbo variant strictly rejected
     with pytest.raises(UnsupportedCapabilityError) as exc_info:
         ACEStepAdapter.map_inputs(
-            "complete",
+            'music.complete',
             {
                 "variant": "turbo",
                 "source_audio_path": "/staged/lead.wav",
@@ -450,7 +450,7 @@ def test_ace_13_complete_variant_matrix():
 def test_ace_14_music_extend():
     """ACE-14: Music extension maps continuation parameters on Base, rejected on Turbo."""
     base_params = ACEStepAdapter.map_inputs(
-        "music_extend",
+        'music.extend',
         {
             "variant": "base",
             "prompt": "Continue with soaring guitar outro",
@@ -458,14 +458,14 @@ def test_ace_14_music_extend():
             "extend_duration": 45.0,
         },
     )
-    p = ACEStepClient._release_payload("music_extend", base_params)
+    p = ACEStepClient._release_payload('music.extend', base_params)
     assert p["task_type"] == "extend"
     assert p["extend_duration"] == 45.0
 
     # Turbo rejected
     with pytest.raises(UnsupportedCapabilityError):
         ACEStepAdapter.map_inputs(
-            "music_extend",
+            'music.extend',
             {"variant": "turbo", "prompt": "Continue", "source_audio_path": "/staged/intro.wav"},
         )
 
@@ -479,10 +479,10 @@ def test_ace_15_multilingual_lyrics_preservation():
     vietnamese_lyrics = "[verse]\nĐêm nay thành phố lên đèn\nTiếng đàn ngân vang giữa trời sương"
     japanese_lyrics = "[chorus]\n桜舞い散る夜に夢を見て\n未来へと歩き出す"
 
-    p_vn = ACEStepAdapter.map_inputs("lyrics_to_music", {"prompt": "Vietnamese ballad", "lyrics": vietnamese_lyrics})
+    p_vn = ACEStepAdapter.map_inputs('music.lyrics_to_music', {"prompt": "Vietnamese ballad", "lyrics": vietnamese_lyrics})
     assert p_vn["lyrics"] == vietnamese_lyrics
 
-    p_jp = ACEStepAdapter.map_inputs("lyrics_to_music", {"prompt": "J-Pop upbeat", "lyrics": japanese_lyrics})
+    p_jp = ACEStepAdapter.map_inputs('music.lyrics_to_music', {"prompt": "J-Pop upbeat", "lyrics": japanese_lyrics})
     assert p_jp["lyrics"] == japanese_lyrics
 
 
@@ -531,7 +531,7 @@ async def test_ace_16_batch_generation_multi_artifact():
             ),
         ]
 
-        res = await client.generate_music("text_to_music", {"prompt": "Lo-fi guitar", "batch_size": 2})
+        res = await client.generate_music('music.text_to_music', {"prompt": "Lo-fi guitar", "batch_size": 2})
         assert res["task_id"] == "task-batch-99"
         assert len(res["artifacts"]) == 2
         assert res["artifacts"][0]["size_bytes"] == len(mock_audio_1)
@@ -551,22 +551,11 @@ def test_ace_17_variant_switching_manifest_verification():
     assert "ace-step-1.5" in models
     m = models["ace-step-1.5"]
 
-    # Manifest truth verification
-    assert m.is_variant_supported_for_task("text_to_music", "turbo") is True
-    assert m.is_variant_supported_for_task("text_to_music", "base") is True
-    assert m.is_variant_supported_for_task("cover", "turbo") is True
-    assert m.is_variant_supported_for_task("cover", "base") is True
-    assert m.is_variant_supported_for_task("extract", "base") is True
-    assert m.is_variant_supported_for_task("extract", "turbo") is False
-    assert m.is_variant_supported_for_task("lego", "turbo") is False
-    assert m.is_variant_supported_for_task("complete", "turbo") is False
-
-    # Check weights variants exist
-    assert hasattr(m.weights, "variants")
-    assert "turbo" in m.weights.variants
-    assert "base" in m.weights.variants
-    assert "sft" in m.weights.variants
-    assert "xl_base" in m.weights.variants
+    assert not m.weights.variants and not m.task_variant_matrix
+    assert not m.is_variant_supported_for_task("text_to_music", "turbo")
+    assert models["ace-step-1.5-turbo"].weights.sha256 != m.weights.sha256
+    assert m.capabilities["music.extract"] is True
+    assert models["ace-step-1.5-turbo"].capabilities["music.extract"] is False
 
 
 # ==============================================================================
@@ -576,12 +565,12 @@ def test_ace_17_variant_switching_manifest_verification():
 def test_ace_18_audio_format_export_validation():
     """ACE-18: Validates MP3, WAV, and FLAC export and rejects unsupported codecs."""
     for fmt in ["mp3", "wav", "flac"]:
-        p = ACEStepAdapter.map_inputs("text_to_music", {"prompt": "Test", "output_format": fmt})
+        p = ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "Test", "output_format": fmt})
         assert p["audio_format"] == fmt
 
     # Unsupported format (e.g. ogg, aac)
     with pytest.raises(InvalidRequestError):
-        ACEStepAdapter.map_inputs("text_to_music", {"prompt": "Test", "output_format": "ogg"})
+        ACEStepAdapter.map_inputs('music.text_to_music', {"prompt": "Test", "output_format": "ogg"})
 
 
 # ==============================================================================
@@ -651,7 +640,7 @@ async def test_ace_20_lyrics_timing_lrc_extraction():
             ),
         ]
 
-        res = await client.generate_music("lyrics_to_music", {"prompt": "Pop song", "lyrics": "First line\nSecond line"})
+        res = await client.generate_music('music.lyrics_to_music', {"prompt": "Pop song", "lyrics": "First line\nSecond line"})
         assert "metadata" in res
         assert res["metadata"]["lrc"] == lrc_content
 
@@ -689,7 +678,7 @@ async def test_ace_21_quality_scoring_with_provenance():
 def test_ace_22_lora_inference_mapping():
     """ACE-22: LoRA adapter path and weights passed to inference payload."""
     params = ACEStepAdapter.map_inputs(
-        "text_to_music",
+        'music.text_to_music',
         {
             "prompt": "Jazz trio",
             "lora_path": "/models/loras/jazz_piano.safetensors",
@@ -699,14 +688,14 @@ def test_ace_22_lora_inference_mapping():
     assert params["lora_path"] == "/models/loras/jazz_piano.safetensors"
     assert params["lora_weight"] == 0.85
 
-    payload = ACEStepClient._release_payload("text_to_music", params)
+    payload = ACEStepClient._release_payload('music.text_to_music', params)
     assert payload["lora_path"] == "/models/loras/jazz_piano.safetensors"
     assert payload["lora_weight"] == 0.85
 
     # Out of range lora_weight
     with pytest.raises(InvalidRequestError):
         ACEStepAdapter.map_inputs(
-            "text_to_music",
+            'music.text_to_music',
             {"prompt": "Jazz", "lora_path": "/m.safetensors", "lora_weight": 5.0},
         )
 
@@ -771,7 +760,7 @@ async def test_ace_24_cancellation_and_error_classification():
     # 2. Fail-closed when unconfigured
     unconfigured_client = ACEStepClient(api_base_url="")
     with pytest.raises(ModelUnavailableError) as exc_info:
-        await unconfigured_client.generate_music("text_to_music", {"prompt": "Beat"})
+        await unconfigured_client.generate_music('music.text_to_music', {"prompt": "Beat"})
     assert "unconfigured" in str(exc_info.value).lower()
 
     # 3. Error classification

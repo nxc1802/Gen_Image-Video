@@ -1,0 +1,335 @@
+{
+  "model": "qwen-embedding",
+  "engine": "EngineID.VECTOR",
+  "backend": "vllm",
+  "checkpoint": {
+    "file_0": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "path": "1_Pooling/config.json",
+      "sha256": "37bf193fa101f19101bfad9c31d3eb0f786e247b7b1e5cb7f007d730eed1ddbd",
+      "size_bytes": 313,
+      "destination": "model/1_Pooling/config.json"
+    },
+    "file_1": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "path": "config.json",
+      "sha256": "b5bf1f51fc45be473a54718cef92448d90a1be001bf9b9a44b8c7f10a19feaa9",
+      "size_bytes": 727,
+      "destination": "model/config.json"
+    },
+    "file_2": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "path": "config_sentence_transformers.json",
+      "sha256": "10667c72ddb772627bf1780cb7f86af8e2ae0032b8c243c731172064105c6961",
+      "size_bytes": 215,
+      "destination": "model/config_sentence_transformers.json"
+    },
+    "file_3": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "path": "generation_config.json",
+      "sha256": "28396d421a2108acce96383f6a7de78008f7f1b17f807958f3c14c51dbfb65fb",
+      "size_bytes": 117,
+      "destination": "model/generation_config.json"
+    },
+    "file_4": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "path": "merges.txt",
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "size_bytes": 1671853,
+      "destination": "model/merges.txt"
+    },
+    "primary": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "path": "model.safetensors",
+      "sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+      "size_bytes": 1191586416,
+      "destination": "model/model.safetensors"
+    },
+    "file_6": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "path": "modules.json",
+      "sha256": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+      "size_bytes": 349,
+      "destination": "model/modules.json"
+    },
+    "file_7": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "path": "tokenizer.json",
+      "sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+      "size_bytes": 11423705,
+      "destination": "model/tokenizer.json"
+    },
+    "file_8": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "path": "tokenizer_config.json",
+      "sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+      "size_bytes": 9706,
+      "destination": "model/tokenizer_config.json"
+    },
+    "file_9": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "path": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "destination": "model/vocab.json"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "embedding-france-retrieval",
+      "model": "qwen-embedding",
+      "capability": "vector.text_embedding",
+      "input_sha256": "6868945387d996400d716716f8b9fae4b25840393619c8f1ec59448382c238b9",
+      "fallback": false,
+      "weights_verified": true,
+      "status": "NOT_MET",
+      "runs": [],
+      "error": {
+        "type": "ModelUnavailableError",
+        "message": "Selected backend rejected inference.",
+        "details": {
+          "status_code": 400
+        },
+        "traceback": "Traceback (most recent call last):\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_a.py\", line 307, in model_run\n    actual = await execute_case(context, adapter, case)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_a.py\", line 188, in execute_case\n    raw = await asyncio.to_thread(adapter.infer, context, prepared)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/asyncio/threads.py\", line 26, in to_thread\n    return await loop.run_in_executor(None, func_call)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/concurrent/futures/thread.py\", line 59, in run\n    result = self.fn(*self.args, **self.kwargs)\n  File \"/tmp/factory_phase8_a/factory/adapters/qwen_embedding/__init__.py\", line 33, in infer\n    return context.post_json(\"/v1/embeddings\", prepared.payload)\n           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/factory_phase8_a/factory/core/model_adapter.py\", line 69, in post_json\n    raise ModelUnavailableError(\n    ...<2 lines>...\n    )\nfactory_contracts.errors.error_contract.ModelUnavailableError: Selected backend rejected inference.\n"
+      },
+      "native_inference_executed": false
+    }
+  ],
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "public_models": [],
+  "fallback": false,
+  "checkpoint_files": [
+    {
+      "key": "file_0",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "file": "1_Pooling/config.json",
+      "sha256": "37bf193fa101f19101bfad9c31d3eb0f786e247b7b1e5cb7f007d730eed1ddbd",
+      "size_bytes": 313,
+      "matched": true
+    },
+    {
+      "key": "file_1",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "file": "config.json",
+      "sha256": "b5bf1f51fc45be473a54718cef92448d90a1be001bf9b9a44b8c7f10a19feaa9",
+      "size_bytes": 727,
+      "matched": true
+    },
+    {
+      "key": "file_2",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "file": "config_sentence_transformers.json",
+      "sha256": "10667c72ddb772627bf1780cb7f86af8e2ae0032b8c243c731172064105c6961",
+      "size_bytes": 215,
+      "matched": true
+    },
+    {
+      "key": "file_3",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "file": "generation_config.json",
+      "sha256": "28396d421a2108acce96383f6a7de78008f7f1b17f807958f3c14c51dbfb65fb",
+      "size_bytes": 117,
+      "matched": true
+    },
+    {
+      "key": "file_4",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "file": "merges.txt",
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "size_bytes": 1671853,
+      "matched": true
+    },
+    {
+      "key": "primary",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "file": "model.safetensors",
+      "sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+      "size_bytes": 1191586416,
+      "matched": true
+    },
+    {
+      "key": "file_6",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "file": "modules.json",
+      "sha256": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+      "size_bytes": 349,
+      "matched": true
+    },
+    {
+      "key": "file_7",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "file": "tokenizer.json",
+      "sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+      "size_bytes": 11423705,
+      "matched": true
+    },
+    {
+      "key": "file_8",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "file": "tokenizer_config.json",
+      "sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+      "size_bytes": 9706,
+      "matched": true
+    },
+    {
+      "key": "file_9",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "file": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "matched": true
+    }
+  ],
+  "status": "NOT_MET",
+  "lifecycle": {
+    "healthy_backends": [
+      "qwen-embedding"
+    ],
+    "failures": {},
+    "backends": {
+      "qwen-embedding": {
+        "model": "qwen-embedding",
+        "backend": "vllm",
+        "adapter": "qwen_embedding",
+        "session_id": "bcc8c698-3011-4c2d-8e3e-9e75c2f14e25",
+        "checkpoint_graph_sha256": "dbb2ba99689d4bd92c3ef4b6fee4f295823b51df951083c1cd3578f4fb774148",
+        "devices": [
+          0
+        ],
+        "state": "HEALTHY",
+        "pid": 337,
+        "pid_started_at": 1794487741.07,
+        "port": 18990,
+        "weights_verified": true,
+        "model_loaded": true,
+        "gpu_processes": [
+          {
+            "pid": 374,
+            "device": 0,
+            "used_memory_mb": 4076.0
+          }
+        ],
+        "log_path": "/tmp/factory_phase8_a/runtime/bcc8c698-3011-4c2d-8e3e-9e75c2f14e25/qwen-embedding/backend.log",
+        "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+        "source_revision": null,
+        "sdk_runtime": null,
+        "adapter_assets": {},
+        "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+        "backend_package_version": "0.33.0",
+        "error": null,
+        "production_ready": false,
+        "inference_verified": false
+      }
+    },
+    "production_ready": false,
+    "native_inference_verified": false
+  },
+  "runtime_after_inference": {
+    "model": "qwen-embedding",
+    "backend": "vllm",
+    "adapter": "qwen_embedding",
+    "session_id": "bcc8c698-3011-4c2d-8e3e-9e75c2f14e25",
+    "checkpoint_graph_sha256": "dbb2ba99689d4bd92c3ef4b6fee4f295823b51df951083c1cd3578f4fb774148",
+    "devices": [
+      0
+    ],
+    "state": "HEALTHY",
+    "pid": 337,
+    "pid_started_at": 1794487741.07,
+    "port": 18990,
+    "weights_verified": true,
+    "model_loaded": true,
+    "gpu_processes": [
+      {
+        "pid": 374,
+        "device": 0,
+        "used_memory_mb": 4076.0
+      }
+    ],
+    "log_path": "/tmp/factory_phase8_a/runtime/bcc8c698-3011-4c2d-8e3e-9e75c2f14e25/qwen-embedding/backend.log",
+    "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+    "source_revision": null,
+    "sdk_runtime": null,
+    "adapter_assets": {},
+    "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+    "backend_package_version": "0.33.0",
+    "error": null,
+    "production_ready": false,
+    "inference_verified": false
+  },
+  "shutdown": {
+    "session_id": "bcc8c698-3011-4c2d-8e3e-9e75c2f14e25",
+    "config_sha256": "f843a4f688d4d19e3c58b85e1658b2e1c7afd819655d4fffb239b4027c12db29",
+    "stopped_at_utc": "2026-11-12T12:49:47.587902+00:00",
+    "stop_completed": true,
+    "errors": [],
+    "backends": {
+      "qwen-embedding": {
+        "model": "qwen-embedding",
+        "backend": "vllm",
+        "adapter": "qwen_embedding",
+        "session_id": "bcc8c698-3011-4c2d-8e3e-9e75c2f14e25",
+        "checkpoint_graph_sha256": "dbb2ba99689d4bd92c3ef4b6fee4f295823b51df951083c1cd3578f4fb774148",
+        "devices": [
+          0
+        ],
+        "state": "STOPPED",
+        "pid": 337,
+        "pid_started_at": 1794487741.07,
+        "port": 18990,
+        "weights_verified": true,
+        "model_loaded": false,
+        "gpu_processes": [
+          {
+            "pid": 374,
+            "device": 0,
+            "used_memory_mb": 4076.0
+          }
+        ],
+        "log_path": "/tmp/factory_phase8_a/runtime/bcc8c698-3011-4c2d-8e3e-9e75c2f14e25/qwen-embedding/backend.log",
+        "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+        "source_revision": null,
+        "sdk_runtime": null,
+        "adapter_assets": {},
+        "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+        "backend_package_version": "0.33.0",
+        "error": null,
+        "production_ready": false,
+        "inference_verified": false
+      }
+    },
+    "production_ready": false
+  },
+  "stop_verified": true
+}

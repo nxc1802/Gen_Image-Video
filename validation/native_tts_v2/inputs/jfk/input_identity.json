@@ -1,0 +1,13 @@
+{
+  "url": "https://raw.githubusercontent.com/openai/whisper/31243bad24cc746f07d4c8bfdd2d974872cb1803/tests/jfk.flac",
+  "source_revision": "31243bad24cc746f07d4c8bfdd2d974872cb1803",
+  "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+  "size_bytes": 1152693,
+  "decoded_wav_sha256": "b3cb1bb16d64cfa7f2f68fc2dfb99320a29d6325430da61c88332ed6ebc36489",
+  "decoded_wav_size_bytes": 1940444,
+  "sample_rate": 44100,
+  "channels": 2,
+  "duration_seconds": 11.0,
+  "conversion": "lossless FLAC decoding to little-endian PCM16 at original sample rate/channels; standard WAV header; no resampling",
+  "ground_truth_source": "https://github.com/openai/whisper/blob/31243bad24cc746f07d4c8bfdd2d974872cb1803/tests/test_transcribe.py"
+}

@@ -57,9 +57,8 @@ class TestCanonicalIdentifierParity:
             family = model_to_family(model_id)
             assert family is not None, f"Model '{model_id}' must map to a model family"
 
-            # Family name must also resolve to a canonical model
-            family_norm = normalize_model(family)
-            assert family_norm == model_id or family_norm in models
+            # A family is a grouping label, not an implicit checkpoint alias.
+            assert family == model_manifest.metadata.family
 
     def test_model_and_task_aliases_bidirectional(self):
         """Verify alias lookup helpers return valid non-empty lists."""
@@ -76,4 +75,4 @@ class TestCanonicalIdentifierParity:
         """Cross-model workflow fallback (e.g. attempting video_with_audio on Wan2.2) is strictly forbidden."""
         video_registry = VideoWorkflowRegistry()
         with pytest.raises(KeyError, match="not implemented for model 'wan-2.2'"):
-            video_registry.get_workflow_for_task(model="wan-2.2", task="video_with_audio")
+            video_registry.get_workflow_for_task(model="wan-2.2", task='video.video_with_audio')

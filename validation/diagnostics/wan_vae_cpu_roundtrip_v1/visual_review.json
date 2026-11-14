@@ -1,0 +1,13 @@
+{
+  "classification": "DIRECT_VISUAL_REVIEW_OF_LOCAL_CPU_COMPONENT_DIAGNOSIS_ONLY_NOT_NATIVE_T4_CERTIFICATION",
+  "execution_report_sha256": "d251cfe7706452f4d12d6d492ae9fbc4efcd518bcedc415efd1a993c8bce40ce",
+  "files": {
+    "input.png": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+    "reconstructed.png": "5c160b20c2382a0a2409c682882903d1692b29acb125eece4e80016b9eb281c0"
+  },
+  "all_recorded_input_and_reconstructed_frames_reviewed": true,
+  "observation": "The exact FP32 CPU VAE reconstructs the astronaut photograph coherently; person, suit, flag, objects and natural colors remain identifiable, without the severe color-block corruption seen in generated v5 videos.",
+  "v3_certified": false,
+  "production_ready": false,
+  "full_factory_e2e_executed": false
+}

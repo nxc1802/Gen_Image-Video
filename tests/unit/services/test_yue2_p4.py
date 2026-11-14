@@ -185,17 +185,12 @@ C D E F | G A B c |]"""
 # ============================================================================
 
 class TestYuE2Adapter:
-    def test_task_normalization(self):
-        assert YuE2Adapter.normalize_task("text_to_music") == "text_to_music"
-        assert YuE2Adapter.normalize_task("music.t2m") == "text_to_music"
-        assert YuE2Adapter.normalize_task("t2m") == "text_to_music"
-        assert YuE2Adapter.normalize_task("lyrics_to_music") == "lyrics_to_music"
-        assert YuE2Adapter.normalize_task("l2m") == "lyrics_to_music"
-        assert YuE2Adapter.normalize_task("symbolic_score") == "symbolic_score"
-        assert YuE2Adapter.normalize_task("score") == "symbolic_score"
-        assert YuE2Adapter.normalize_task("custom_score") == "custom_score"
-        assert YuE2Adapter.normalize_task("score_edit") == "score_edit"
-        assert YuE2Adapter.normalize_task("song_variation") == "song_variation"
+    def test_task_normalization_is_owned_by_request_boundary(self):
+        from factory_contracts.capabilities import normalize_capability
+        assert normalize_capability("score", engine="music") == "music.symbolic_score"
+        assert normalize_capability("music.t2m", engine="music") == "music.text_to_music"
+        assert not YuE2Adapter.is_task_supported("t2m")
+        assert YuE2Adapter.is_task_supported("music.text_to_music")
 
     def test_variant_normalization(self):
         assert YuE2Adapter.normalize_variant(None) == "standard"
@@ -252,41 +247,41 @@ class TestYuE2Adapter:
     def test_prompt_and_lyrics_validation(self):
         # text_to_music requires prompt
         with pytest.raises(InvalidRequestError, match="prompt is required"):
-            YuE2Adapter.map_inputs("text_to_music", {"prompt": ""})
+            YuE2Adapter.map_inputs('music.text_to_music', {"prompt": ""})
 
         # lyrics_to_music requires lyrics
         with pytest.raises(InvalidRequestError, match="lyrics are required"):
-            YuE2Adapter.map_inputs("lyrics_to_music", {"prompt": "pop style", "lyrics": ""})
+            YuE2Adapter.map_inputs('music.lyrics_to_music', {"prompt": "pop style", "lyrics": ""})
 
         # custom_score requires valid ABC score
         with pytest.raises(InvalidRequestError, match="custom_score"):
-            YuE2Adapter.map_inputs("custom_score", {"prompt": "render score"})
+            YuE2Adapter.map_inputs('music.custom_score', {"prompt": "render score"})
 
         # custom_score with malformed ABC
         with pytest.raises(InvalidRequestError):
-            YuE2Adapter.map_inputs("custom_score", {"custom_score": "malformed score without key"})
+            YuE2Adapter.map_inputs('music.custom_score', {"custom_score": "malformed score without key"})
 
         # valid custom_score
         valid_abc = generate_sample_abc()
-        mapped = YuE2Adapter.map_inputs("custom_score", {"custom_score": valid_abc})
+        mapped = YuE2Adapter.map_inputs('music.custom_score', {"custom_score": valid_abc})
         assert mapped["score_prompt"] == valid_abc
 
     def test_score_edit_validation(self):
         valid_abc = generate_sample_abc()
         # Missing base_score
         with pytest.raises(InvalidRequestError, match="score_edit requires base_score"):
-            YuE2Adapter.map_inputs("score_edit", {"modifications": {"tempo": 140}})
+            YuE2Adapter.map_inputs('music.score_edit', {"modifications": {"tempo": 140}})
 
         # Missing modifications
         with pytest.raises(InvalidRequestError, match="requires modifications dictionary"):
-            YuE2Adapter.map_inputs("score_edit", {"base_score": valid_abc})
+            YuE2Adapter.map_inputs('music.score_edit', {"base_score": valid_abc})
 
         # Valid score_edit
-        mapped = YuE2Adapter.map_inputs("score_edit", {
+        mapped = YuE2Adapter.map_inputs('music.score_edit', {
             "base_score": valid_abc,
             "modifications": {"tempo": 140},
         })
-        assert mapped["task"] == "score_edit"
+        assert mapped["task"] == "music.score_edit"
         assert mapped["modifications"]["tempo"] == 140
 
     def test_sampling_config_validation(self):
@@ -313,7 +308,7 @@ class TestYuE2Adapter:
             YuE2Adapter.map_inputs("unsupported_task", {"prompt": "song"})
 
         with pytest.raises(UnsupportedCapabilityError, match="variant 'unsupported_variant' is not recognized"):
-            YuE2Adapter.map_inputs("text_to_music", {"prompt": "song", "variant": "unsupported_variant"})
+            YuE2Adapter.map_inputs('music.text_to_music', {"prompt": "song", "variant": "unsupported_variant"})
 
 
 # ============================================================================
@@ -377,7 +372,7 @@ class TestYuE2Client:
                 "seed": 42,
                 "variant": "standard",
             }
-            res = await client.generate_song("text_to_music", params, progress_callback=on_prog)
+            res = await client.generate_song('music.text_to_music', params, progress_callback=on_prog)
 
             assert res["audio_bytes"] == fake_wav
             assert res["sha256"] == hashlib.sha256(fake_wav).hexdigest()
@@ -393,7 +388,7 @@ class TestYuE2Client:
         client = YuE2Client(api_base_url="http://mock-yue2")
         with patch("httpx.AsyncClient.post", side_effect=httpx.ReadTimeout("Read timed out")):
             with pytest.raises(ModelUnavailableError) as exc_info:
-                await client.generate_song("text_to_music", {"prompt": "synthwave"})
+                await client.generate_song('music.text_to_music', {"prompt": "synthwave"})
             assert exc_info.value.code == "BACKEND_UNAVAILABLE"
 
     @pytest.mark.asyncio
@@ -536,10 +531,10 @@ class TestMusicWorkerRoutingAndSecurity:
         worker = MusicWorker()
         assert "ace-step-1.5" in SUPPORTED_MODELS
         assert "yue2" in SUPPORTED_MODELS
-        assert "symbolic_score" in SUPPORTED_TASKS
-        assert "custom_score" in SUPPORTED_TASKS
-        assert "score_edit" in SUPPORTED_TASKS
-        assert "song_variation" in SUPPORTED_TASKS
+        assert "music.symbolic_score" in SUPPORTED_TASKS
+        assert "music.custom_score" in SUPPORTED_TASKS
+        assert "music.score_edit" in SUPPORTED_TASKS
+        assert "music.song_variation" in SUPPORTED_TASKS
         assert isinstance(worker.yue2_client, YuE2Client)
 
     @pytest.mark.asyncio
@@ -554,8 +549,8 @@ class TestMusicWorkerRoutingAndSecurity:
         call_json = mock_http.post.call_args[1]["json"]
         assert "ace-step-1.5" in call_json["supported_models"]
         assert "yue2" in call_json["supported_models"]
-        assert "text_to_music" in call_json["supported_tasks"]
-        assert "symbolic_score" in call_json["supported_tasks"]
+        assert "music.text_to_music" in call_json["supported_tasks"]
+        assert "music.symbolic_score" in call_json["supported_tasks"]
 
     @pytest.mark.asyncio
     async def test_worker_routes_yue2_job_to_completion(self):

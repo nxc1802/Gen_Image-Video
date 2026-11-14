@@ -6,6 +6,9 @@ HTTP 403 UnauthorizedError enforcement, and stale registry clearing.
 from datetime import datetime, timezone
 import pytest
 
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
+
 from factory_contracts.errors import ErrorDetail, UnauthorizedError
 from factory_contracts.jobs.job_contract import (
     ArtifactReference,

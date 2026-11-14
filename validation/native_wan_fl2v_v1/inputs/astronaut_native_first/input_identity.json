@@ -1,0 +1,10 @@
+{
+  "fixture_path": "tests/fixtures/native/astronaut_native_first.jpg",
+  "sha256": "06804d22a934c2ed88916036bf3f46050a74310d4e22b223ce2d14a3eb6dfbe3",
+  "size_bytes": 122957,
+  "mime_type": "image/jpeg",
+  "original_url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+  "original_sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+  "derived_from_sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+  "conversion": "Same recorded photograph/keyframe derivative resized to 1280x704 using Pillow Lanczos, JPEG quality 88/subsampling 2/optimize; no model-generated pixels."
+}

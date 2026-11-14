@@ -1,0 +1,494 @@
+{
+  "classification": "ISOLATED_DISABLED_MODEL_NATIVE_BACKEND_PROBE",
+  "source_bundle_sha256": "c0567e0fa02696318989abd8d81ca5457520b0c385e78df5ccd46a45c911168f",
+  "exit_gate": "PASS",
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "v3_certified": false,
+  "semantic_quality_certified": false,
+  "native_inference_executed": true,
+  "hardware": {
+    "0": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    },
+    "1": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    }
+  },
+  "checkpoint_files": [
+    {
+      "key": "primary",
+      "repository": "Comfy-Org/Real-ESRGAN_repackaged",
+      "revision": "5fd49b7b278836f48af63ecd314d0f98ab336105",
+      "sha256": "37f9a931c215f040aa6d50f711f2cb115f713c46df1d0d6469a8bd7bfe9a60bb",
+      "size_bytes": 66857836
+    }
+  ],
+  "input": {
+    "url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+    "sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+    "dimensions": [
+      512,
+      512
+    ]
+  },
+  "graph": {
+    "input": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "50c569615df140c19e399db88119b8b9.png"
+      }
+    },
+    "model": {
+      "class_type": "UpscaleModelLoader",
+      "inputs": {
+        "model_name": "RealESRGAN_x4plus.safetensors"
+      }
+    },
+    "upscale": {
+      "class_type": "ImageUpscaleWithModel",
+      "inputs": {
+        "upscale_model": [
+          "model",
+          0
+        ],
+        "image": [
+          "input",
+          0
+        ]
+      }
+    },
+    "save": {
+      "class_type": "SaveImage",
+      "inputs": {
+        "images": [
+          "upscale",
+          0
+        ],
+        "filename_prefix": "factory_upscale"
+      }
+    }
+  },
+  "graph_sha256": "54f700044c4eaef3fc013037321c7788de20271c7dbc9b5e6a784b9115f727e8",
+  "gpu_samples_during_inference": [
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 102.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 102.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 102.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 186.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 302.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1198.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 1454.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 4526.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 4526.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 206.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 206.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 206.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 206.0
+      }
+    ],
+    [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 206.0
+      }
+    ]
+  ],
+  "prompt_id": "da79fc44-20ff-4ccb-9e6a-2871f88db6b8",
+  "output": {
+    "sha256": "047bc14d8d2f0e966fc40ca06513d46320ceabef08a28c4d8e3e50a4fff146bd",
+    "size_bytes": 4193988,
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "runtime": {
+    "model": "enhancement-suite-v1",
+    "backend": "comfyui",
+    "adapter": "enhancement",
+    "session_id": "261bf4eb-2b9c-47b1-9bbe-473cf9f5808d",
+    "checkpoint_graph_sha256": "93319219ef9b473c55bdbe7e3cc7e9b6b6ee5bb5de7f88310f31826079891140",
+    "devices": [
+      0
+    ],
+    "state": "HEALTHY",
+    "pid": 176,
+    "pid_started_at": 1794495801.91,
+    "port": 18988,
+    "weights_verified": true,
+    "model_loaded": false,
+    "gpu_processes": [
+      {
+        "pid": 176,
+        "device": 0,
+        "used_memory_mb": 206.0
+      }
+    ],
+    "log_path": "/tmp/factory_p5_enhance/runtime/261bf4eb-2b9c-47b1-9bbe-473cf9f5808d/enhancement-suite-v1/backend.log",
+    "executable": "/usr/bin/python3.13",
+    "source_revision": "c5751c81abe131202eea9e4c66d000589013dd0b",
+    "sdk_runtime": null,
+    "adapter_assets": {},
+    "executable_sha256": "a35753ccb97941cce1467786cce892e608141f09d717188a3235d4f51a754446",
+    "backend_package_version": null,
+    "error": null,
+    "production_ready": false,
+    "inference_verified": false
+  },
+  "public_models": [],
+  "model_state": "DISABLED",
+  "stop_verified": true,
+  "comfy_revision": "c5751c81abe131202eea9e4c66d000589013dd0b"
+}

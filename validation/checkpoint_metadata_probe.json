@@ -1,0 +1,435 @@
+{
+  "observed_at_utc": "2026-11-11T18:09:01.435338+00:00",
+  "scope": "Anonymous metadata only; no weight integrity verification or inference. HTTP 401 does not distinguish private/gated/nonexistent repositories. Current-head candidates are unselected.",
+  "models": [
+    {
+      "model": "ace-step-1.5",
+      "manifest": "manifests/models/ace-step-1.5.yaml",
+      "repository": "ACE-Studio/ACE-Step-1.5",
+      "revision": "9d82e1c312781b0a70cf6bf79e2730ca7f918042",
+      "file": "model.safetensors",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/ACE-Studio/ACE-Step-1.5/revision/9d82e1c312781b0a70cf6bf79e2730ca7f918042?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 401,
+        "detail": "Invalid username or password.",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/ACE-Studio/ACE-Step-1.5?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 401,
+        "detail": "Invalid username or password.",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "enhancement-suite-v1",
+      "manifest": "manifests/models/enhancement-suite-v1.yaml",
+      "repository": "xinntao/Real-ESRGAN",
+      "revision": "4a8f9b2d861d848773950ef31355ca0d39e24807",
+      "file": "RealESRGAN_x4plus.pth",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/xinntao/Real-ESRGAN/revision/4a8f9b2d861d848773950ef31355ca0d39e24807?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 401,
+        "detail": "Invalid username or password.",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/xinntao/Real-ESRGAN?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 401,
+        "detail": "Invalid username or password.",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "minimax-h3",
+      "manifest": "manifests/models/minimax-h3.yaml",
+      "repository": "MiniMax/Hailuo-H3-Diffusers",
+      "revision": "e4b52c49c7198762d0577a8a8163f9ebfa9b7754",
+      "file": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/MiniMax/Hailuo-H3-Diffusers/revision/e4b52c49c7198762d0577a8a8163f9ebfa9b7754?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 401,
+        "detail": "Invalid username or password.",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/MiniMax/Hailuo-H3-Diffusers?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 401,
+        "detail": "Invalid username or password.",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-decision",
+      "manifest": "manifests/models/qwen-decision.yaml",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "47f5250ff5779796016e3c0d832e5399587bf2b1",
+      "file": "model.safetensors",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen2.5-3B-Instruct/revision/47f5250ff5779796016e3c0d832e5399587bf2b1?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 404,
+        "detail": "Invalid rev id: 47f5250ff5779796016e3c0d832e5399587bf2b1",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen2.5-3B-Instruct?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "exact_filename_matches": [],
+        "file_count": 12,
+        "weight_filename_examples": [
+          "model-00001-of-00002.safetensors",
+          "model-00002-of-00002.safetensors"
+        ]
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-embedding",
+      "manifest": "manifests/models/qwen-embedding.yaml",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "b63a921d7b32c69d80cf2821ae039833f272a806",
+      "file": "model.safetensors",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-Embedding-0.6B/revision/b63a921d7b32c69d80cf2821ae039833f272a806?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 404,
+        "detail": "Invalid rev id: b63a921d7b32c69d80cf2821ae039833f272a806",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-Embedding-0.6B?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "9116264a405846ebfe4e95556b63b1ca07c892a0",
+            "size": 1191586416,
+            "lfs": {
+              "sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+              "size": 1191586416,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 12
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-image-2.1-turbo",
+      "manifest": "manifests/models/qwen-image-2.1-turbo.yaml",
+      "repository": "unsloth/Qwen-Image-2.1-Turbo-GGUF",
+      "revision": "d1245e8964af54497e25e83ec9bb892bf32e5190",
+      "file": "qwen-image-2.1-turbo-Q4_K_M.gguf",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/unsloth/Qwen-Image-2.1-Turbo-GGUF/revision/d1245e8964af54497e25e83ec9bb892bf32e5190?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 404,
+        "detail": "Invalid rev id: d1245e8964af54497e25e83ec9bb892bf32e5190",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/unsloth/Qwen-Image-2.1-Turbo-GGUF?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "bd53e520a64472adaff780da0b2f2d7eb1605e30",
+        "exact_filename_matches": [
+          {
+            "rfilename": "qwen-image-2.1-turbo-Q4_K_M.gguf",
+            "blobId": "e8e206890b9315b6ef2c253a9dea731388835364",
+            "size": 4199565120,
+            "lfs": {
+              "sha256": "8940e8b522af886e0c0f5afddf720e82dd223cb9a43580b5f61c4d740452ac20",
+              "size": 4199565120,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 18
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-image-2.1",
+      "manifest": "manifests/models/qwen-image-2.1.yaml",
+      "repository": "abenzerps/Qwen-Image-2.1-GGUF",
+      "revision": "d1245e8964af54497e25e83ec9bb892bf32e5190",
+      "file": "qwen-image-2.1-Q4_K_M.gguf",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/abenzerps/Qwen-Image-2.1-GGUF/revision/d1245e8964af54497e25e83ec9bb892bf32e5190?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 404,
+        "detail": "Invalid rev id: d1245e8964af54497e25e83ec9bb892bf32e5190",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/abenzerps/Qwen-Image-2.1-GGUF?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "24d33ddeffd21374e8b04a84f93eb73a645fc74e",
+        "exact_filename_matches": [],
+        "file_count": 20,
+        "weight_filename_examples": [
+          "qwen-image-2.1-turbo-MLX-4bit.safetensors",
+          "qwen-image-2.1-turbo-MLX-6bit.safetensors",
+          "qwen-image-2.1-turbo-MLX-8bit.safetensors",
+          "qwen-image-2.1-turbo-NVFP4.safetensors",
+          "qwen-image-2.1-turbo-Q4_0.gguf",
+          "qwen-image-2.1-turbo-Q4_K_M.gguf",
+          "qwen-image-2.1-turbo-Q5_K_M.gguf",
+          "qwen-image-2.1-turbo-Q6_K.gguf",
+          "qwen-image-2.1-turbo-Q8_0.gguf",
+          "qwen-image-2.1-turbo-fp8.safetensors",
+          "qwen-image-2.1-turbo-int8_convrot.safetensors",
+          "text_encoders/qwen3vl_8b_bf16.safetensors"
+        ]
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-speech",
+      "manifest": "manifests/models/qwen-speech.yaml",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "8a7b931c8d76e43f07a61d1988e0b23acdf55610",
+      "file": "model.safetensors",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-ASR-1.7B/revision/8a7b931c8d76e43f07a61d1988e0b23acdf55610?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 404,
+        "detail": "Invalid rev id: 8a7b931c8d76e43f07a61d1988e0b23acdf55610",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-ASR-1.7B?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+        "exact_filename_matches": [],
+        "file_count": 12,
+        "weight_filename_examples": [
+          "model-00001-of-00002.safetensors",
+          "model-00002-of-00002.safetensors"
+        ]
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-text",
+      "manifest": "manifests/models/qwen-text.yaml",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "revision": "c4e519289299478f79fba50d757d54b4f5358043",
+      "file": "Qwen3.8-27B-UD-Q4_K_M.gguf",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/unsloth/Qwen3.8-27B-GGUF/revision/c4e519289299478f79fba50d757d54b4f5358043?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 404,
+        "detail": "Invalid rev id: c4e519289299478f79fba50d757d54b4f5358043",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/unsloth/Qwen3.8-27B-GGUF?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "ce331efc48d5722b4b8041f72793e530eae18d9b",
+        "exact_filename_matches": [
+          {
+            "rfilename": "Qwen3.8-27B-UD-Q4_K_M.gguf",
+            "blobId": "8fda9aaafb572d2d12ede317ea4da19a6afcdad6",
+            "size": 16564259744,
+            "lfs": {
+              "sha256": "1bce504dfecd84153666928a41d8a66706f0158d3a317bc5196b72819d7dc529",
+              "size": 16564259744,
+              "pointerSize": 136
+            }
+          }
+        ],
+        "file_count": 34
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-vlm",
+      "manifest": "manifests/models/qwen-vlm.yaml",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "7b5394541cbde26227c262198ecfb2e63ef29583",
+      "file": "model-00001-of-00003.safetensors",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen2-VL-7B-Instruct-AWQ/revision/7b5394541cbde26227c262198ecfb2e63ef29583?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 404,
+        "detail": "Invalid rev id: 7b5394541cbde26227c262198ecfb2e63ef29583",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen2-VL-7B-Instruct-AWQ?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+        "exact_filename_matches": [],
+        "file_count": 16,
+        "weight_filename_examples": [
+          "model-00001-of-00002.safetensors",
+          "model-00002-of-00002.safetensors"
+        ]
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "wan-2.2",
+      "manifest": "manifests/models/wan-2.2.yaml",
+      "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+      "revision": "f2c81a5e18641957de9a31a7f05eb1b702758bf8",
+      "file": "diffusion_pytorch_model.safetensors",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Wan-AI/Wan2.2-TI2V-5B-Diffusers/revision/f2c81a5e18641957de9a31a7f05eb1b702758bf8?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 404,
+        "detail": "Invalid rev id: f2c81a5e18641957de9a31a7f05eb1b702758bf8",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Wan-AI/Wan2.2-TI2V-5B-Diffusers?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "b8fff7315c768468a5333511427288870b2e9635",
+        "exact_filename_matches": [],
+        "file_count": 29,
+        "weight_filename_examples": [
+          "text_encoder/model-00001-of-00003.safetensors",
+          "text_encoder/model-00002-of-00003.safetensors",
+          "text_encoder/model-00003-of-00003.safetensors",
+          "transformer/diffusion_pytorch_model-00001-of-00005.safetensors",
+          "transformer/diffusion_pytorch_model-00002-of-00005.safetensors",
+          "transformer/diffusion_pytorch_model-00003-of-00005.safetensors",
+          "transformer/diffusion_pytorch_model-00004-of-00005.safetensors",
+          "transformer/diffusion_pytorch_model-00005-of-00005.safetensors",
+          "vae/diffusion_pytorch_model.safetensors"
+        ]
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "yue2",
+      "manifest": "manifests/models/yue2.yaml",
+      "repository": "m-a-p/YuE-s1-7B-anneal-en-cot",
+      "revision": "672e8bb24802521c7a40b97cfc47c4cb033230a1",
+      "file": "model-00001-of-00004.safetensors",
+      "pinned": {
+        "url": "https://huggingface.co/api/models/m-a-p/YuE-s1-7B-anneal-en-cot/revision/672e8bb24802521c7a40b97cfc47c4cb033230a1?blobs=true",
+        "authentication": "anonymous",
+        "status": "HTTP_ERROR",
+        "http_status": 404,
+        "detail": "Invalid rev id: 672e8bb24802521c7a40b97cfc47c4cb033230a1",
+        "exact_filename_matches": [],
+        "file_count": 0,
+        "weight_filename_examples": []
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/m-a-p/YuE-s1-7B-anneal-en-cot?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "454c20e1748888800f8e4b3da45125f55482d967",
+        "exact_filename_matches": [],
+        "file_count": 12,
+        "weight_filename_examples": [
+          "model-00001-of-00003.safetensors",
+          "model-00002-of-00003.safetensors",
+          "model-00003-of-00003.safetensors"
+        ]
+      },
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    }
+  ]
+}

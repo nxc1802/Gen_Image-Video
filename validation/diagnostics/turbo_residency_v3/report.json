@@ -1,0 +1,22 @@
+{
+  "classification": "SOURCE_AND_COLLECTED_WARMUP_DIAGNOSIS_ONLY_NOT_COMPLETE_NATIVE_CERTIFICATION",
+  "reviewed_at_utc": "2026-11-13T20:41:27.043469+00:00",
+  "receipt": "validation/native_minimax_turbo_receipt_v3.json",
+  "warmup_output_json_sha256": "f1a4c7093cdf8a6a69447fc256b87ce9bb813967a41518f0cc54930e4f6feb08",
+  "all_available_107_warmup_frames_directly_reviewed": true,
+  "visual_observation": "Coherent red ball rolls right across a white table; original 107-frame small golden preserved. Three measured calls and conditioned capabilities did not complete, so no Turbo native PASS.",
+  "contact_sheet": "validation/native_video_reviews/minimax_turbo_v3/minimax-turbo-t2v-red-ball-motion/all_frames_0.png",
+  "contact_sheet_sha256": "b1c02255f2a917fe4f058a46e45acf374f9b087229e8ccbc6414e4fd5bfa907e",
+  "upstream_tag_commit": "68088de9dce9f5e32231fccf230938769c5562da",
+  "upstream_source": "https://github.com/Comfy-Org/comfy-aimdo/tree/68088de9dce9f5e32231fccf230938769c5562da",
+  "source_files_sha256": {
+    "factory-aimdo-control.py": "53509b2ad209a6f927b42a9ffe076e2a9f822fbde28542f6834d2a42a0e51f84",
+    "factory-aimdo-src-model-vbar.c": "77ec9b68b6f741e1862e6c420e8265fd016d96f41ead8f9aaa4d021ba940f699",
+    "factory-aimdo-src-control.c": "1ce19a0eba0a842ffcd75b92bb233802cd0c8d081e035a92627a8af37c682683",
+    "factory-aimdo-budget.h": "9a5455ff842b7128ffef0859bbcc05ce2febea019f8b1379603006bc7da74310"
+  },
+  "original_extra_headroom_gb": 0.2,
+  "candidate_extra_headroom_gb": 0.75,
+  "unchanged_gpu_budget_gib": 14.2,
+  "production_ready": false
+}

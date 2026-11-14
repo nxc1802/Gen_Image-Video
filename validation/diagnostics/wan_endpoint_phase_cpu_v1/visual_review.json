@@ -1,0 +1,7 @@
+{
+  "classification": "DIRECT_REVIEW_OF_ALL_51_REAL_CPU_VAE_RECONSTRUCTED_FRAMES_NOT_FULL_WAN_OR_GPU_CERTIFICATION",
+  "report_sha256": "449b13cd1c8ccb3397081f49d70aab0554cba82592719d0e2a4201ce813e8a03",
+  "all_17_frames_in_each_of_3_contact_sheets_reviewed": true,
+  "observation": "Full photographed sequence roundtrip stays coherent through all frames, including the requested final zoom photo. Both independently encoded final-anchor substitutions introduce conspicuous double-image/ghosting corruption over frames 13-16. Single-frame end MAE .128718; repeated-five-frame end MAE .069991 does not make the latter visually acceptable. Neither independent-anchor method is accepted as an FL2V implementation.",
+  "production_ready": false
+}

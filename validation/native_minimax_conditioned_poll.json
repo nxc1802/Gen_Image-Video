@@ -1,0 +1,12 @@
+{
+  "observed_at_utc": "2026-11-13T21:58:59.339784+00:00",
+  "version": 2,
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-conditioned",
+  "run_record_sha256": "f6e8e78fbe7cd00dc90872dd87d1229546ce8cc0cc71dfc8f1f40a41aee61a72",
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "classification": "REMOTE_JOB_STATUS_ONLY_NOT_INFERENCE_EVIDENCE"
+}

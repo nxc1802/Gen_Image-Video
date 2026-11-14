@@ -1,0 +1,586 @@
+{
+  "as_of": "2026-11-14T23:12:19+07:00",
+  "classification": "HISTORICAL_RUN_INVENTORY_NOT_NEW_INFERENCE",
+  "gpu_submissions": 32,
+  "native_submissions": 26,
+  "diagnostic_submissions": 6,
+  "native_completed_outputs": 85,
+  "rows": [
+    {
+      "kind": "wan_t2v",
+      "version": 1,
+      "status": "error",
+      "runs": 0,
+      "diag": false,
+      "run": "validation/native_wan_t2v_run_v1.json",
+      "receipt": "validation/native_wan_t2v_receipt_v1.json",
+      "source": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+      "cases": []
+    },
+    {
+      "kind": "wan_t2v",
+      "version": 2,
+      "status": "error",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_wan_t2v_run_v2.json",
+      "receipt": "validation/native_wan_t2v_receipt_v2.json",
+      "source": "1f4cf4afc474384c046e8451362b6cbe3f042b20183d52721045e001176a2233",
+      "cases": [
+        {
+          "id": "wan-t2v-red-ball-motion",
+          "status": "NOT_MET",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "wan_t2v",
+      "version": 3,
+      "status": "error",
+      "runs": 0,
+      "diag": false,
+      "run": "validation/native_wan_t2v_run_v3.json",
+      "receipt": "validation/native_wan_t2v_receipt_v3.json",
+      "source": "eb845d5b8843b2244ea0d6c5190a46301127643f9d6f9b815eabeb77692e2fd6",
+      "cases": []
+    },
+    {
+      "kind": "wan_t2v",
+      "version": 4,
+      "status": "error",
+      "runs": 0,
+      "diag": false,
+      "run": "validation/native_wan_t2v_run_v4.json",
+      "receipt": "validation/native_wan_t2v_receipt_v4.json",
+      "source": "2d251df8f12003979519174b82427524ee435ddb717bd67bf04884c72ab0786a",
+      "cases": [
+        {
+          "id": "wan-t2v-red-ball-motion",
+          "status": "NOT_MET",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "wan_t2v",
+      "version": 5,
+      "status": "error",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_wan_t2v_run_v5.json",
+      "receipt": "validation/native_wan_t2v_receipt_v5.json",
+      "source": "8291f9aa8bb99043869cee21581123a0f66ff98f62054474345c8a76e43ffb69",
+      "cases": [
+        {
+          "id": "wan-t2v-red-ball-motion",
+          "status": "NOT_MET",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "wan_t2v",
+      "version": 6,
+      "status": "error",
+      "runs": 0,
+      "diag": false,
+      "run": "validation/native_wan_t2v_run_v6.json",
+      "receipt": "validation/native_wan_t2v_receipt_v6.json",
+      "source": "37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb",
+      "cases": [
+        {
+          "id": "wan-t2v-red-ball-native-grid-v2",
+          "status": "NOT_MET",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "wan_t2v",
+      "version": 7,
+      "status": "error",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_wan_t2v_run_v7.json",
+      "receipt": "validation/native_wan_t2v_receipt_v7.json",
+      "source": "2da7ad7773e50f27bf841590499ae65337c24210e87b9a1d27c5e366aa3766e0",
+      "cases": [
+        {
+          "id": "wan-t2v-red-ball-native-grid-v2",
+          "status": "NOT_MET",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "wan_t2v",
+      "version": 8,
+      "status": "error",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_wan_t2v_run.json",
+      "receipt": "validation/native_wan_t2v_receipt_v8.json",
+      "source": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "cases": [
+        {
+          "id": "wan-t2v-red-ball-screen-right-v3",
+          "status": "NOT_MET",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "wan_i2v",
+      "version": 1,
+      "status": "complete",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_wan_i2v_run.json",
+      "receipt": "validation/native_wan_i2v_receipt_v1.json",
+      "source": "08eefd3477ebf7b31900855c881f291a355b74ecfc83d2ca47b21c8fedee574a",
+      "cases": [
+        {
+          "id": "wan-i2v-astronaut-native-grid-v2",
+          "status": "PASS",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "wan_fl2v",
+      "version": 1,
+      "status": "complete",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_wan_fl2v_run_v1.json",
+      "receipt": "validation/native_wan_fl2v_receipt_v1.json",
+      "source": "08eefd3477ebf7b31900855c881f291a355b74ecfc83d2ca47b21c8fedee574a",
+      "cases": [
+        {
+          "id": "wan-fl2v-astronaut-zoom-native-grid-v2",
+          "status": "PASS",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "wan_fl2v",
+      "version": 2,
+      "status": "complete",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_wan_fl2v_run.json",
+      "receipt": "validation/native_wan_fl2v_receipt_v2.json",
+      "source": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "cases": [
+        {
+          "id": "wan-fl2v-astronaut-zoom-native-grid-v2",
+          "status": "PASS",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "wan_extension",
+      "version": 1,
+      "status": "complete",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_wan_extension_run.json",
+      "receipt": "validation/native_wan_extension_receipt_v1.json",
+      "source": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "cases": [
+        {
+          "id": "wan-extension-pedestrians-native-grid-v2",
+          "status": "PASS",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "minimax_t2v",
+      "version": 1,
+      "status": "error",
+      "runs": 0,
+      "diag": false,
+      "run": "validation/native_minimax_t2v_run_v1.json",
+      "receipt": "validation/native_minimax_t2v_receipt_v1.json",
+      "source": "86b195786f2a72bbb7efcfdc0da63535f2018cf5be80f8384a089ad2ced54332",
+      "cases": [
+        {
+          "id": "minimax-t2v-red-ball-motion",
+          "status": "NOT_MET",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "minimax_t2v",
+      "version": 2,
+      "status": "error",
+      "runs": 0,
+      "diag": false,
+      "run": "validation/native_minimax_t2v_run_v2.json",
+      "receipt": "validation/native_minimax_t2v_receipt_v2.json",
+      "source": "1f4cf4afc474384c046e8451362b6cbe3f042b20183d52721045e001176a2233",
+      "cases": [
+        {
+          "id": "minimax-t2v-red-ball-motion-v2",
+          "status": "NOT_MET",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "minimax_t2v",
+      "version": 3,
+      "status": "complete",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_minimax_t2v_run.json",
+      "receipt": "validation/native_minimax_t2v_receipt_v3.json",
+      "source": "eb845d5b8843b2244ea0d6c5190a46301127643f9d6f9b815eabeb77692e2fd6",
+      "cases": [
+        {
+          "id": "minimax-t2v-red-ball-motion-v2",
+          "status": "PASS",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "minimax_conditioned",
+      "version": 1,
+      "status": "complete",
+      "runs": 8,
+      "diag": false,
+      "run": "validation/native_minimax_conditioned_run_v1.json",
+      "receipt": "validation/native_minimax_conditioned_receipt_v1.json",
+      "source": "37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb",
+      "cases": [
+        {
+          "id": "minimax-i2v-astronaut",
+          "status": "PASS",
+          "runs": 4
+        },
+        {
+          "id": "minimax-fl2v-astronaut-zoom",
+          "status": "PASS",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "minimax_conditioned",
+      "version": 2,
+      "status": "complete",
+      "runs": 8,
+      "diag": false,
+      "run": "validation/native_minimax_conditioned_run.json",
+      "receipt": "validation/native_minimax_conditioned_receipt_v2.json",
+      "source": "9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f",
+      "cases": [
+        {
+          "id": "minimax-i2v-astronaut-native-temporal-v2",
+          "status": "PASS",
+          "runs": 4
+        },
+        {
+          "id": "minimax-fl2v-astronaut-zoom-native-temporal-v2",
+          "status": "PASS",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "minimax_turbo",
+      "version": 1,
+      "status": "error",
+      "runs": 0,
+      "diag": false,
+      "run": "validation/native_minimax_turbo_run_v1.json",
+      "receipt": "validation/native_minimax_turbo_receipt_v1.json",
+      "source": "37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb",
+      "cases": [
+        {
+          "id": "minimax-turbo-t2v-red-ball-motion",
+          "status": "NOT_MET",
+          "runs": 0
+        },
+        {
+          "id": "minimax-turbo-i2v-astronaut",
+          "status": "NOT_MET",
+          "runs": 0
+        },
+        {
+          "id": "minimax-turbo-fl2v-astronaut-zoom",
+          "status": "NOT_MET",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "minimax_turbo",
+      "version": 2,
+      "status": "error",
+      "runs": 0,
+      "diag": false,
+      "run": "validation/native_minimax_turbo_run_v2.json",
+      "receipt": "validation/native_minimax_turbo_receipt_v2.json",
+      "source": "2da7ad7773e50f27bf841590499ae65337c24210e87b9a1d27c5e366aa3766e0",
+      "cases": [
+        {
+          "id": "minimax-turbo-t2v-red-ball-motion",
+          "status": "NOT_MET",
+          "runs": 0
+        },
+        {
+          "id": "minimax-turbo-i2v-astronaut",
+          "status": "NOT_MET",
+          "runs": 0
+        },
+        {
+          "id": "minimax-turbo-fl2v-astronaut-zoom",
+          "status": "NOT_MET",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "minimax_turbo",
+      "version": 3,
+      "status": "error",
+      "runs": 1,
+      "diag": false,
+      "run": "validation/native_minimax_turbo_run_v3.json",
+      "receipt": "validation/native_minimax_turbo_receipt_v3.json",
+      "source": "9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f",
+      "cases": [
+        {
+          "id": "minimax-turbo-t2v-red-ball-motion",
+          "status": "NOT_MET",
+          "runs": 1
+        },
+        {
+          "id": "minimax-turbo-i2v-astronaut",
+          "status": "NOT_MET",
+          "runs": 0
+        },
+        {
+          "id": "minimax-turbo-fl2v-astronaut-zoom",
+          "status": "NOT_MET",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "minimax_turbo",
+      "version": 4,
+      "status": "error",
+      "runs": 12,
+      "diag": false,
+      "run": "validation/native_minimax_turbo_run.json",
+      "receipt": "validation/native_minimax_turbo_receipt_v4.json",
+      "source": "b91c61f6ebab9957cc8488f40178ffba818dbb2855893e67bbb7c60cdd17664c",
+      "cases": [
+        {
+          "id": "minimax-turbo-t2v-red-ball-motion",
+          "status": "NOT_MET",
+          "runs": 4
+        },
+        {
+          "id": "minimax-turbo-i2v-astronaut",
+          "status": "PASS",
+          "runs": 4
+        },
+        {
+          "id": "minimax-turbo-fl2v-astronaut-zoom",
+          "status": "PASS",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "minimax_reference",
+      "version": 1,
+      "status": "complete",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_minimax_reference_run.json",
+      "receipt": "validation/native_minimax_reference_receipt_v1.json",
+      "source": "2da7ad7773e50f27bf841590499ae65337c24210e87b9a1d27c5e366aa3766e0",
+      "cases": [
+        {
+          "id": "minimax-reference-astronaut",
+          "status": "PASS",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "minimax_audio",
+      "version": 1,
+      "status": "error",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_minimax_audio_run_v1.json",
+      "receipt": "validation/native_minimax_audio_receipt_v1.json",
+      "source": "2da7ad7773e50f27bf841590499ae65337c24210e87b9a1d27c5e366aa3766e0",
+      "cases": [
+        {
+          "id": "minimax-spoken-audio",
+          "status": "NOT_MET",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "minimax_audio",
+      "version": 2,
+      "status": "complete",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_minimax_audio_run.json",
+      "receipt": "validation/native_minimax_audio_receipt_v2.json",
+      "source": "08eefd3477ebf7b31900855c881f291a355b74ecfc83d2ca47b21c8fedee574a",
+      "cases": [
+        {
+          "id": "minimax-spoken-audio-native-dialogue-v2",
+          "status": "PASS",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "minimax_reference_audio",
+      "version": 1,
+      "status": "error",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_minimax_reference_audio_run_v1.json",
+      "receipt": "validation/native_minimax_reference_audio_receipt_v1.json",
+      "source": "9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f",
+      "cases": [
+        {
+          "id": "minimax-reference-spoken-audio",
+          "status": "NOT_MET",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "minimax_reference_audio",
+      "version": 2,
+      "status": "complete",
+      "runs": 4,
+      "diag": false,
+      "run": "validation/native_minimax_reference_audio_run.json",
+      "receipt": "validation/native_minimax_reference_audio_receipt_v2.json",
+      "source": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "cases": [
+        {
+          "id": "minimax-reference-spoken-audio-native-dialogue-v2",
+          "status": "PASS",
+          "runs": 4
+        }
+      ]
+    },
+    {
+      "kind": "minimax_vae_diag",
+      "version": 1,
+      "status": "complete",
+      "runs": 0,
+      "diag": true,
+      "run": "validation/native_minimax_vae_diag_run.json",
+      "receipt": "validation/native_minimax_vae_diag_receipt_v1.json",
+      "source": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "cases": [
+        {
+          "id": null,
+          "status": "DIAGNOSTIC_ONLY",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "minimax_sampler_diag",
+      "version": 1,
+      "status": "complete",
+      "runs": 0,
+      "diag": true,
+      "run": "validation/native_minimax_sampler_diag_run.json",
+      "receipt": "validation/native_minimax_sampler_diag_receipt_v1.json",
+      "source": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "cases": [
+        {
+          "id": null,
+          "status": "DIAGNOSTIC_ONLY",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "minimax_native_canvas_diag",
+      "version": 1,
+      "status": "error",
+      "runs": 0,
+      "diag": true,
+      "run": "validation/native_minimax_native_canvas_diag_run_v1.json",
+      "receipt": "validation/native_minimax_native_canvas_diag_receipt_v1.json",
+      "source": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "cases": [
+        {
+          "id": null,
+          "status": "DIAGNOSTIC_ONLY",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "minimax_native_canvas_diag",
+      "version": 2,
+      "status": "error",
+      "runs": 0,
+      "diag": true,
+      "run": "validation/native_minimax_native_canvas_diag_run_v2.json",
+      "receipt": "validation/native_minimax_native_canvas_diag_receipt_v2.json",
+      "source": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "cases": [
+        {
+          "id": null,
+          "status": "DIAGNOSTIC_ONLY",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "minimax_native_canvas_diag",
+      "version": 3,
+      "status": "error",
+      "runs": 0,
+      "diag": true,
+      "run": "validation/native_minimax_native_canvas_diag_run_v3.json",
+      "receipt": "validation/native_minimax_native_canvas_diag_receipt_v3.json",
+      "source": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "cases": [
+        {
+          "id": null,
+          "status": "DIAGNOSTIC_ONLY",
+          "runs": 0
+        }
+      ]
+    },
+    {
+      "kind": "minimax_native_canvas_diag",
+      "version": 4,
+      "status": "queued (last monitor)",
+      "runs": 0,
+      "diag": true,
+      "run": "validation/native_minimax_native_canvas_diag_run.json",
+      "receipt": "",
+      "source": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "cases": []
+    }
+  ]
+}

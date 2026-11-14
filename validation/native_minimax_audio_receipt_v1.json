@@ -1,0 +1,85 @@
+{
+  "kind": "minimax_audio",
+  "version": 1,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-audio",
+  "run_record_sha256": "c4fccf9aa67a1868cda03931e77747ea31d616699051c7400aff0605c2537510",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_audio_v1/wave_d.json",
+      "sha256": "630c7a2023d8ab7cb2d26567a7d02d85cf9231309dd3a6c9ccc74ea0a8eea228"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/setup.json",
+      "sha256": "62b7569a6c62f4dc9262dc7edf9de23a3fdd7a56bbc34c7a48f1b52410787c49"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/installation.log",
+      "sha256": "bb1ffca839b62ae15d4787c97689b19159924552fe64cfb3cecd2dd7a864b037"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/runtime_packages.json",
+      "sha256": "4430a840141ccfeaec26e97c4002e53c87f8ec43daa3436ced9eaad4c3c8ce03"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/driver.log",
+      "sha256": "ac4907743e7d02adbc52cb8d57bb4314ff4f2b51d2ce4c7e6803042a26118611"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/minimax-h3/backend.log",
+      "sha256": "0773bfe7c06a818c763d44470d6f0afc4907db962067bbde3fab8b6b1567f2ce"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/minimax-h3/minimax-spoken-audio-1.json",
+      "sha256": "8627e412076b003b9111dc480c36221cdfc43346cbee04285046f57099617cf2"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/minimax-h3/native_node_schemas.json",
+      "sha256": "bd63115549f7464afba66c39214ad3df90b69327d316b4f4c63381adbda975fe"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/minimax-h3/minimax-spoken-audio-3.json",
+      "sha256": "f086d2ee0c6cd79e5039e98c5dc1e9fc739354bbc98bdf4fd73b2f9ea9bb265b"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/minimax-h3/observation.json",
+      "sha256": "240f47fbf2fd86cd36297c64bc1e908805cfda887f432f2fbe10d1c741bcc4cc"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/minimax-h3/minimax-spoken-audio-0.json",
+      "sha256": "b810b82396330679612c77f43a4d357dc4ed4e0bc46d0cb958a98624926198d1"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/minimax-h3/minimax-spoken-audio-2.json",
+      "sha256": "938389cd51e318f4ad67a93a3467263e8b08d86b13efe46e8b41e44c774998e3"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/inputs/astronaut_first/source.bin",
+      "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/inputs/astronaut_first/input_identity.json",
+      "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+      "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/minimax-h3/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+      "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+      "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+    },
+    {
+      "file": "validation/native_minimax_audio_v1/minimax-h3/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+      "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+    }
+  ]
+}

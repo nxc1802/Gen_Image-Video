@@ -9,14 +9,14 @@ from starlette.testclient import TestClient
 
 from factory_auth.config import AuthConfig
 from services.text.src.app import app
-from services.text.src.engine import StreamingReasoningFilter, TextEngine, decouple_think_tokens
+from services.text.src.legacy_engine import StreamingReasoningFilter, LegacyTextEngine as TextEngine, decouple_think_tokens
 from services.text.src.models import (
     ChatCompletionRequest,
     ChatMessage,
     CompletionTokensDetails,
     UsageInfo,
 )
-from services.vlm.src.engine import VLMEngine
+from services.vlm.src.legacy_engine import LegacyVLMEngine as VLMEngine
 
 AUTH_TOKEN = "sk-factory-test-token-valid"
 AUTH_HEADERS = {"Authorization": f"Bearer {AUTH_TOKEN}", "Content-Type": "application/json"}
@@ -24,6 +24,10 @@ AUTH_HEADERS = {"Authorization": f"Bearer {AUTH_TOKEN}", "Content-Type": "applic
 
 @pytest.fixture
 def text_client():
+    from services.text.src.legacy_engine import LegacyTextEngine
+    from services.text.src.legacy_responses_handler import LegacyResponsesHandler
+    app.state.engine = LegacyTextEngine()
+    app.state.responses_handler = LegacyResponsesHandler()
     app.state.auth_config = AuthConfig(api_key=AUTH_TOKEN, jwt_secret=None, environment="test")
     return TestClient(app)
 
@@ -122,7 +126,7 @@ def test_think_tokens_isolated_non_streaming(text_client):
         },
     }
 
-    with patch("services.text.src.engine.httpx.Client") as mock_client_cls:
+    with patch("services.text.src.legacy_engine.httpx.Client") as mock_client_cls:
         mock_instance = MagicMock()
         mock_instance.__enter__.return_value = mock_instance
         mock_instance.post.return_value = MagicMock(status_code=200, json=lambda: mock_resp)
@@ -192,7 +196,7 @@ async def test_think_tokens_isolated_streaming():
         'data: [DONE]',
     ]
 
-    with patch("services.text.src.engine.httpx.AsyncClient", MockAsyncStreamClient(mock_lines)):
+    with patch("services.text.src.legacy_engine.httpx.AsyncClient", MockAsyncStreamClient(mock_lines)):
         chunks = [c async for c in engine.stream_generate(req)]
         assert len(chunks) == 5
 
@@ -259,7 +263,7 @@ def test_vlm_engine_reasoning_validation_and_decoupling():
             }
         ],
     }
-    with patch("services.vlm.src.engine.httpx.Client") as mock_client_cls:
+    with patch("services.vlm.src.legacy_engine.httpx.Client") as mock_client_cls:
         mock_instance = MagicMock()
         mock_instance.__enter__.return_value = mock_instance
         mock_instance.post.return_value = MagicMock(status_code=200, json=lambda: mock_resp)
@@ -270,3 +274,5 @@ def test_vlm_engine_reasoning_validation_and_decoupling():
         choice = res["choices"][0]["message"]
         assert choice["reasoning_content"] == "Analyzing image visual features"
         assert choice["content"] == "A cat resting in sunlight."
+
+pytestmark = pytest.mark.contract_mock

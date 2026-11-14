@@ -1,0 +1,41 @@
+{
+  "kind": "minimax_t2v",
+  "version": 1,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-t2v",
+  "run_record_sha256": "1d229b322453ddbbc08198ea5a5b11369afa15d941b84ad91c90e94b879eebc4",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_t2v_v1/wave_d.json",
+      "sha256": "843c047731577fcfc66f9b0671eb2229f8fd51c6d6e8826d4628dd1c1a5021b5"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v1/setup.json",
+      "sha256": "bf24e625d156e0212113f1b63d469ad5396a48f7113eda82d7bb9dc4a29164a4"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v1/runtime_packages.json",
+      "sha256": "c58137756206895ea21e86d8a086074882c4dda1e817b642f4ec162c29d8f465"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v1/installation.log",
+      "sha256": "fed5691f74293a4980cdcf3db4590c1bfb309a65fe3ca255635dac34610cca48"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v1/driver.log",
+      "sha256": "60215efec075614ffc277d38a6f45116599bb4835c8cab576c5da84d586e3c09"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v1/minimax-h3/observation.json",
+      "sha256": "f01a150ecab57352f7cce8df54d8a3c03c9a033a87f4e34c04725893bf19ce1c"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v1/minimax-h3/backend.log",
+      "sha256": "1e0ded7eb78954031b08f9c418c76a3b30b1047aef59dfa97c98ac14e357c508"
+    }
+  ]
+}

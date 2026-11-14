@@ -4,7 +4,7 @@ Capability Manifest Schema
 """
 from enum import Enum
 from typing import Any, List, Optional
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class ParameterDataType(str, Enum):
@@ -81,3 +81,13 @@ class CapabilityManifest(BaseModel):
     outputs: List[OutputSpec]
     validation: ValidationSpec
     supported_model_families: List[str] = Field(default_factory=list)
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_definition_identity(cls, data):
+        from factory_contracts.capabilities import normalize_capability, require_canonical
+        if isinstance(data, dict) and "id" in data:
+            cid = normalize_capability(data["id"], engine=data.get("subsystem"))
+            require_canonical(cid, engine=data.get("subsystem"))
+            return {**data, "id": cid}
+        return data

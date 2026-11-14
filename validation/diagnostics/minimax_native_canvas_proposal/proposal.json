@@ -1,0 +1,79 @@
+{
+  "classification": "PREDECLARED_ONE_CALL_NATIVE_CANVAS_DIAGNOSIS_NOT_V3",
+  "reason": "Same-latent FP32 decoding retains the same material flares. Official original card defaults short edge768, while current golden is384x256 and even canonical max_height720 blocks a768-high canvas. This is a spatial-distribution hypothesis, not a proven minimum or root cause.",
+  "source_document": {
+    "url": "https://huggingface.co/MiniMaxAI/MiniMax-H3/raw/0919fb684102ef115126612f3fbb84d1027e7317/README.md",
+    "revision": "0919fb684102ef115126612f3fbb84d1027e7317",
+    "sha256": "101ddef2112b07ff6e3bb1f45e6f1e9607a52dd88b7852ee9d924a87e406f1e5",
+    "observation": "Official card says the short side defaults to768; it also supports varied dimensions. This is not a claimed hard minimum."
+  },
+  "source_case": "minimax-i2v-astronaut-native-temporal-v2",
+  "case": {
+    "id": "minimax-i2v-native-768p-one-call-diagnosis",
+    "model": "minimax-h3",
+    "capability": "video.image_to_video",
+    "operation": "video",
+    "assets": [
+      "astronaut_first"
+    ],
+    "asset_identities": {
+      "astronaut_first": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+    },
+    "seed_sequence": [
+      314159,
+      271828,
+      161803,
+      141421
+    ],
+    "request": {
+      "prompt": "The astronaut in an orange spacesuit gently turns her head and smiles. Static camera, realistic live action video, natural subtle movement.",
+      "width": 1152,
+      "height": 768,
+      "num_frames": 124,
+      "steps": 30,
+      "fps": 24,
+      "image": "@astronaut_first"
+    },
+    "expected": {
+      "positive_text": "a video frame of an astronaut in an orange spacesuit",
+      "negative_texts": [
+        "a photograph of a blue car",
+        "a photograph of a black dog",
+        "a photograph of a green tree"
+      ],
+      "minimum_mean_text_cosine": 0.25,
+      "minimum_frame_text_cosine": 0.22,
+      "minimum_text_margin": 0.03,
+      "minimum_distinct_frames": 5,
+      "minimum_mean_frame_change": 0.002,
+      "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+      "keyframe_anchors": [
+        {
+          "frame_index": 0,
+          "asset": "astronaut_first",
+          "maximum_mean_absolute_error": 0.12
+        }
+      ]
+    }
+  },
+  "same_actual_input_bytes": true,
+  "unchanged_original_seed": 314159,
+  "unchanged_steps": 30,
+  "unchanged_frames": 124,
+  "unchanged_oracles": true,
+  "diagnostic_manifest_only": {
+    "max_height": 768,
+    "inference_timeout_seconds": 5400,
+    "extra_vram_headroom_gb": 2.0,
+    "component_precisions": {
+      "vae": "fp16"
+    }
+  },
+  "fixed_gpu": [
+    0
+  ],
+  "hardware": "kaggle-dual-t4",
+  "unchanged_gpu_budget_gib": 14.2,
+  "canonical_manifest_changed": false,
+  "policy": "One real original-checkpoint Transformer call at1152x768, capture actual latent, return actual native MP4, inspect all124 frames and unchanged numeric semantics. No output resizing/substitution, alternative checkpoint or native certification. Run after Wan FL2V collection/free slot. This does not prove full4-call production feasibility."
+}

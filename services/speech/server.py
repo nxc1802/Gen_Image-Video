@@ -36,6 +36,7 @@ from pydantic import BaseModel, Field
 from starlette.websockets import WebSocketDisconnect, WebSocketDisconnected
 
 from factory_auth import verify_bearer_token, load_auth_config
+from factory.core.legacy import forbid_legacy_production
 from factory_contracts.errors import InvalidRequestError, UnauthorizedError
 from factory.apps.control_api.src.api.errors import register_exception_handlers
 from factory.apps.control_api.src.api.middleware import RequestIDMiddleware
@@ -66,6 +67,7 @@ def validate_factory_asset_url(url: str) -> None:
         )
 
 app = FastAPI(
+    dependencies=[Depends(forbid_legacy_production)],
     title="Factory v4 Speech Service",
     version="1.0.0",
     description="Dedicated Speech Subsystem for ASR, Streaming ASR, Alignment, and TTS",

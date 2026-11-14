@@ -54,6 +54,10 @@ class AssetService:
         Validates target URL against SSRF, pins TCP connection to pre-verified IPs,
         streams content with byte limits, and verifies media integrity.
         """
+        return self.ingest_bytes(await self.fetch_bytes(target_url))
+
+    async def fetch_bytes(self, target_url: str) -> bytes:
+        """Fetch bounded, DNS-pinned bytes for canonical API media normalization."""
         # 1. SSRF Validation and DNS Resolution Pinning
         hostname, resolved_ips = validate_target_url(target_url)
         allowed_ips = [str(ip) for ip in resolved_ips]
@@ -66,6 +70,7 @@ class AssetService:
             transport=transport,
             timeout=30.0,
             follow_redirects=False,
+            trust_env=False,
         ) as client:
             try:
                 async with client.stream("GET", target_url) as response:
@@ -103,4 +108,4 @@ class AssetService:
             except (httpx.RequestError, httpcore.ConnectError, httpcore.ConnectTimeout) as e:
                 raise SSRFBlockedError(message=f"Failed to fetch remote asset: {e}")
 
-        return self.ingest_bytes(bytes(downloaded))
+        return bytes(downloaded)

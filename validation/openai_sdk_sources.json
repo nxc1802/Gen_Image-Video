@@ -1,0 +1,61 @@
+{
+  "observed_at_utc": "2026-11-12T11:32:20.404504+00:00",
+  "official_sdk_version": "3.49.0",
+  "distribution": "openai (PyPI; pinned dev dependency and uv.lock)",
+  "classification": "SCHEMA_AND_CLIENT_SOURCE_REVIEW_ONLY",
+  "files": [
+    {
+      "file": "openai/resources/chat/completions/completions.py",
+      "sha256": "2dbef784c86b1082cdb969f8a6fc3ba860bf805f8247afc6ca2edf52eb230710"
+    },
+    {
+      "file": "openai/resources/responses/responses.py",
+      "sha256": "7d07b28ee2c270b70b24778069d6fce511197f2a96c703309a22af5d7166e000"
+    },
+    {
+      "file": "openai/resources/embeddings.py",
+      "sha256": "06953746a84dcb6483442f18f69580686d616fd10ad26dacbe4fa9ac8b30f0fd"
+    },
+    {
+      "file": "openai/resources/audio/transcriptions.py",
+      "sha256": "14bcfdb8638f6b1aa5847441183cd53277ea32038112f7db90880e1daa456cab"
+    },
+    {
+      "file": "openai/resources/audio/speech.py",
+      "sha256": "2e871dd9db0b6c786350ae27228ee7ddf1344391be130f0e6e9e952f11535018"
+    },
+    {
+      "file": "openai/resources/images.py",
+      "sha256": "f7ca65d7cae85affbd64a5e3d2465e5e958601e537a7302d597b4d5bff332d77"
+    },
+    {
+      "file": "openai/resources/videos.py",
+      "sha256": "1703210555717144469ae1e5578625f4385ec8b2fa1140a7c7c1a7f521027d4c"
+    },
+    {
+      "file": "openai/resources/decisions.py",
+      "sha256": "611c66fb31858d0f37e61e7dbd7c9e5dd7140bdd23aceef70bf449b6658972d2"
+    },
+    {
+      "file": "openai/types/decision_create_params.py",
+      "sha256": "6803b3841127d2226aea298eab2c802c60040752fdfb2626e1a5ff1f43a010a4"
+    },
+    {
+      "file": "openai/types/video_extend_params.py",
+      "sha256": "6f46b1bc2959561d558b1eccfe968bbc53d705109089a905389891f5cc0e086b"
+    },
+    {
+      "file": "openai/_utils/_utils.py",
+      "sha256": "e878b2ffb25b60f4ec182213050bb76d2314339f8d0ffe1f38686307f2a6e0b3"
+    }
+  ],
+  "official_documentation": [
+    "https://developers.openai.com/api/reference/resources/responses/methods/create",
+    "https://developers.openai.com/api/reference/resources/decisions/methods/create",
+    "https://developers.openai.com/api/reference/resources/videos/methods/create",
+    "https://developers.openai.com/api/docs/deprecations"
+  ],
+  "findings": "docs/PLAN_FINDINGS.md",
+  "hosted_openai_requests_executed": false,
+  "native_inference_evidence": false
+}

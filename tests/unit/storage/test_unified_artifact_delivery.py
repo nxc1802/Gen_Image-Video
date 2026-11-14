@@ -11,9 +11,12 @@ import shutil
 import tempfile
 from pathlib import Path
 import pytest
+
+# Legacy compatibility contracts with simulated readiness; no inference evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from fastapi.testclient import TestClient
 
-from factory.apps.control_api.src.main import app
+from factory.apps.control_api.src.legacy import app
 from factory.apps.control_api.src.storage.config import StorageConfig, load_storage_config
 from factory.apps.control_api.src.storage.integrity import compute_file_sha256
 from services.image.artifact_collector import ImageArtifactCollector, _stream_file_chunks

@@ -1,34 +1,30 @@
 apiVersion: factory.ai/v1
 kind: CapabilityManifest
-id: video.t2v
+id: video.text_to_video
 subsystem: video
-display_name: "Text to Video Generation"
-description: "Generates high-definition video sequence from textual prompt"
-
+display_name: Text to Video Generation
+description: Generates high-definition video sequence from textual prompt
 inputs:
-  - name: prompt
-    type: string
-    description: "Detailed motion and scene description"
-    required: true
-  - name: num_frames
-    type: integer
-    description: "Number of frames to generate"
-    required: false
-    default: 49
-    constraints:
-      min_value: 17
-      max_value: 121
-      step: 4
-
+- name: prompt
+  type: string
+  description: Detailed motion and scene description
+  required: true
+- name: num_frames
+  type: integer
+  description: Number of frames to generate
+  required: false
+  default: 49
+  constraints:
+    min_value: 17
+    max_value: 121
+    step: 4
 outputs:
-  - name: video
-    type: video_url
-    format: "video/mp4"
-
+- name: video
+  type: video_url
+  format: video/mp4
 validation:
-  test_fixture: "fixtures/video_t2v.json"
-  verification_method: "schema_check"
-
+  test_fixture: fixtures/video_t2v.json
+  verification_method: schema_check
 supported_model_families:
-  - wan-video
-  - minimax-video
+- wan-video
+- minimax-video

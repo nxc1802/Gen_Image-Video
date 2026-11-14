@@ -10,6 +10,9 @@ import os
 import socket
 from unittest.mock import patch, MagicMock
 import pytest
+
+# Legacy lifecycle/runner contract coverage; never inference certification.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from starlette.testclient import TestClient
 
 from factory_contracts.errors import (
@@ -149,7 +152,7 @@ class TestPhase2AdversarialC1EngineProbe:
         and zero synthetic fallback / dummy outputs are produced.
         """
         os.environ["FACTORY_API_KEY"] = "test-phase2-challenger-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         with TestClient(app) as client:
             resp = client.post(
                 "/v1/jobs",
@@ -174,7 +177,7 @@ class TestPhase2AdversarialC1EngineProbe:
         and does not synthesize a dummy artifact.
         """
         os.environ["FACTORY_API_KEY"] = "test-phase2-challenger-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         from factory_contracts.jobs.job_contract import FactoryJob, JobState, JobProgress
         from factory_contracts.errors import ErrorDetail, ErrorCode
 
@@ -223,7 +226,7 @@ class TestPhase2AdversarialC2CapabilityAdmission:
         Must be strictly rejected with HTTP 400 UNSUPPORTED_CAPABILITY and NOT fall through to standard.
         """
         os.environ["FACTORY_API_KEY"] = "test-phase2-challenger-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         with TestClient(app) as client:
             resp = client.post(
                 "/v1/jobs",
@@ -246,7 +249,7 @@ class TestPhase2AdversarialC2CapabilityAdmission:
         Wan 2.2 does not support turbo variant. Must be strictly rejected with HTTP 400 UNSUPPORTED_CAPABILITY.
         """
         os.environ["FACTORY_API_KEY"] = "test-phase2-challenger-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         with TestClient(app) as client:
             resp = client.post(
                 "/v1/jobs",
@@ -267,7 +270,7 @@ class TestPhase2AdversarialC2CapabilityAdmission:
         MiniMax H3 only supports standard. Turbo must be strictly rejected with HTTP 400 UNSUPPORTED_CAPABILITY.
         """
         os.environ["FACTORY_API_KEY"] = "test-phase2-challenger-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         with TestClient(app) as client:
             resp = client.post(
                 "/v1/jobs",
@@ -289,7 +292,7 @@ class TestPhase2AdversarialC2CapabilityAdmission:
         Asking for turbo on inpaint must be strictly rejected with HTTP 400 UNSUPPORTED_CAPABILITY.
         """
         os.environ["FACTORY_API_KEY"] = "test-phase2-challenger-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         with TestClient(app) as client:
             resp = client.post(
                 "/v1/jobs",
@@ -324,7 +327,7 @@ class TestPhase2AdversarialC2CapabilityAdmission:
         - xl_base (HTTP 201)
         """
         os.environ["FACTORY_API_KEY"] = "test-phase2-challenger-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         with TestClient(app) as client:
             # 1. turbo -> 400
             r1 = client.post(
@@ -414,7 +417,7 @@ class TestPhase2AdversarialC2CapabilityAdmission:
         (e.g. video_extension in minimax-h3) is strictly rejected with HTTP 400.
         """
         os.environ["FACTORY_API_KEY"] = "test-phase2-challenger-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         with TestClient(app) as client:
             resp = client.post(
                 "/v1/jobs",
@@ -436,7 +439,7 @@ class TestPhase2AdversarialC2CapabilityAdmission:
         Any model or variant requiring > 14.2 GB VRAM must be rejected with HTTP 400 InvalidRequestError.
         """
         os.environ["FACTORY_API_KEY"] = "test-phase2-challenger-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         from model_registry.loader import ManifestLoader
 
         # Patch loader to return a model declaring 16.0 GB VRAM
@@ -467,7 +470,7 @@ class TestPhase2AdversarialC2CapabilityAdmission:
         If a variant requires > 14.2 GB VRAM, pre-admission validation rejects it with HTTP 400.
         """
         os.environ["FACTORY_API_KEY"] = "test-phase2-challenger-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         from model_registry.loader import ManifestLoader
 
         loader = ManifestLoader()

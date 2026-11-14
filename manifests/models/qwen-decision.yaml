@@ -1,83 +1,124 @@
-apiVersion: factory.ai/v1
+apiVersion: factory.ai/v2
 kind: ModelManifest
 metadata:
   id: qwen-decision
   family: qwen-decision
-  display_name: "Qwen 2.5 Decision Router"
+  display_name: Qwen 2.5 Decision Router
   service_id: decision-service
-  version: "1.0.0"
-  license: "Tongyi Qianwen License"
-  license_url: "https://huggingface.co/Qwen/Qwen2.5-3B-Instruct/blob/main/LICENSE"
-  commercial_use: true
-
+  version: 1.0.0
+  license: other
+  license_url: https://huggingface.co/Qwen/Qwen2.5-3B-Instruct/blob/aa8e72537993ba99e69dfaafa59ed015b17504d1/README.md
+  commercial_use: false
+aliases:
+- qwen_decision
+engine: decision
 weights:
-  primary_checkpoint: "Qwen/Qwen2.5-3B-Instruct"
-  repository: "Qwen/Qwen2.5-3B-Instruct"
-  checkpoint_revision: "47f5250ff5779796016e3c0d832e5399587bf2b1"
-  weights_file: "model.safetensors"
+  files:
+    file_0:
+      provider: huggingface
+      repository: Qwen/Qwen2.5-3B-Instruct
+      revision: aa8e72537993ba99e69dfaafa59ed015b17504d1
+      path: config.json
+      sha256: eed00b17e22553979d090fa492e587e92885e328914c8e0b0b78f0a0d3576b3b
+      size_bytes: 661
+      destination: model/config.json
+    file_1:
+      provider: huggingface
+      repository: Qwen/Qwen2.5-3B-Instruct
+      revision: aa8e72537993ba99e69dfaafa59ed015b17504d1
+      path: generation_config.json
+      sha256: ea35dfb6fc5051b01114f9b995820d55dab01ed33ee490f6378b442af82c09f9
+      size_bytes: 242
+      destination: model/generation_config.json
+    file_2:
+      provider: huggingface
+      repository: Qwen/Qwen2.5-3B-Instruct
+      revision: aa8e72537993ba99e69dfaafa59ed015b17504d1
+      path: merges.txt
+      sha256: 599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3
+      size_bytes: 1671839
+      destination: model/merges.txt
+    primary:
+      provider: huggingface
+      repository: Qwen/Qwen2.5-3B-Instruct
+      revision: aa8e72537993ba99e69dfaafa59ed015b17504d1
+      path: model-00001-of-00002.safetensors
+      sha256: 67347b23fb4165b652eb6611f5e1f2a06dfcddba8e909df1b2b0b1857bee06c2
+      size_bytes: 3968658944
+      destination: model/model-00001-of-00002.safetensors
+    file_4:
+      provider: huggingface
+      repository: Qwen/Qwen2.5-3B-Instruct
+      revision: aa8e72537993ba99e69dfaafa59ed015b17504d1
+      path: model-00002-of-00002.safetensors
+      sha256: a40d941d0e7e0b966ad8b62bb6d6b7c88cce1299197b599d9d0a4ce59aabfc1d
+      size_bytes: 2203268048
+      destination: model/model-00002-of-00002.safetensors
+    file_5:
+      provider: huggingface
+      repository: Qwen/Qwen2.5-3B-Instruct
+      revision: aa8e72537993ba99e69dfaafa59ed015b17504d1
+      path: model.safetensors.index.json
+      sha256: bc8aaa0c87d4335177e01c765f1de0db81661c67c1a72fbfb0d521b09f5ddc56
+      size_bytes: 35581
+      destination: model/model.safetensors.index.json
+    file_6:
+      provider: huggingface
+      repository: Qwen/Qwen2.5-3B-Instruct
+      revision: aa8e72537993ba99e69dfaafa59ed015b17504d1
+      path: tokenizer.json
+      sha256: c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539
+      size_bytes: 7031645
+      destination: model/tokenizer.json
+    file_7:
+      provider: huggingface
+      repository: Qwen/Qwen2.5-3B-Instruct
+      revision: aa8e72537993ba99e69dfaafa59ed015b17504d1
+      path: tokenizer_config.json
+      sha256: 5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583
+      size_bytes: 7305
+      destination: model/tokenizer_config.json
+    file_8:
+      provider: huggingface
+      repository: Qwen/Qwen2.5-3B-Instruct
+      revision: aa8e72537993ba99e69dfaafa59ed015b17504d1
+      path: vocab.json
+      sha256: ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910
+      size_bytes: 2776833
+      destination: model/vocab.json
   format: safetensors
   quantization: none
-  default_precision: bf16
-
-hardware:
-  min_vram_gb: 6.0
-  context_window: 8192
-  preferred_gpu: t4
-  preferred_gpu_index: 0
-  quantization_format: none
-  offload_ram_gb: 0.0
-  allocation_policy: single_gpu
-
-
+  default_precision: fp16
+backend:
+  adapter: qwen_decision
+  supported:
+  - vllm
 capabilities:
-  predicate_evaluation: true
-  choice_routing: true
-  score_ranking: true
-
-status: full
-coverage_percent: 100.0
-missing_capabilities: []
-validation_status: pending_live
-validation_notes: "Pre-flight contract simulation passed for all 5 gates (predicate and choice routing verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per BENCHMARK.md."
-
-limits:
-  max_context_tokens: 8192
-
-revision: "1.0.0"
-dependencies:
-  - "vllm>=0.6.0"
-  - "torch>=2.4.0"
-
-task_variant_matrix:
-  predicate_evaluation:
-    - standard
-  choice_routing:
-    - standard
-  score_ranking:
-    - standard
-
-validated_hardware_profiles:
-  - "kaggle-dual-t4"
-  - "colab-single-t4"
-
-installed: true
-checkpoint_valid: true
-backend_ready: true
-evidence_run_id: null
-
-capabilities_truth:
-  predicate_evaluation:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  choice_routing:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  score_ranking:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
+  decision.predicate_evaluation: true
+  decision.choice_routing: true
+  decision.score_ranking: true
+parameters:
+  max_context_tokens:
+    type: integer
+    default: 8192
+  max_output_tokens:
+    type: integer
+    default: 2048
+runtime_profiles:
+  kaggle-dual-t4:
+    gpu_count: 1
+    min_vram_gb: 8.0
+    preferred_backend: vllm
+    exclusive: false
+    cpu_offload: false
+    notes: Declared preflight requirements; not hardware certification. CLI assigns
+      devices explicitly. Runtime load and semantic validation remain required.
+validation:
+  state: EXPERIMENTAL
+  reasons:
+  - Checkpoint identity is pinned; real backend/GPU inference and V3/V4/semantic certification
+    remain unverified.
+  implemented_capabilities:
+  - decision.predicate_evaluation
+  - decision.choice_routing
+  - decision.score_ranking

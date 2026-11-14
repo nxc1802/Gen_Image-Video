@@ -29,6 +29,7 @@ for _subpath in [
         sys.path.insert(0, str(_subpath))
 
 import httpx
+from factory_contracts.capabilities import capability_ids
 from factory_contracts.errors.error_contract import ErrorCode, ErrorDetail, classify_worker_error
 from factory_contracts.jobs.job_contract import ArtifactReference, FactoryJob
 from factory_contracts.jobs.worker_contract import (
@@ -95,12 +96,7 @@ class EnhancementWorker:
             worker_id=self.worker_id,
             subsystem="enhancement",
             supported_models=["enhancement-suite-v1"],
-            supported_tasks=[
-                "image_super_resolution",
-                "video_super_resolution",
-                "frame_interpolation",
-                "audio_enhancement",
-            ],
+            supported_tasks=list(capability_ids("enhancement")),
             gpu_device=self.gpu_device,
             lease_duration_seconds=self.lease_duration,
         )
@@ -172,16 +168,16 @@ class EnhancementWorker:
             await self.report_progress(http_client, job.job_id, 2, 20.0, "loading_media")
 
             current_stage = "processing"
-            if job.task == "image_super_resolution":
+            if job.task == "enhancement.image_super_resolution":
                 res = self.image_sr.process(job.inputs)
                 ext = "png"
-            elif job.task == "video_super_resolution":
+            elif job.task == "enhancement.video_super_resolution":
                 res = self.video_sr.process(job.inputs)
                 ext = "mp4"
-            elif job.task == "frame_interpolation":
+            elif job.task == "enhancement.frame_interpolation":
                 res = self.interpolation.process(job.inputs)
                 ext = "mp4"
-            elif job.task == "audio_enhancement":
+            elif job.task == "enhancement.audio_enhancement":
                 res = self.audio_enhance.process(job.inputs)
                 ext = "wav"
             else:

@@ -1,0 +1,125 @@
+{
+  "kind": "minimax_turbo",
+  "version": 4,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-turbo",
+  "run_record_sha256": "d677381eb22d49991857ff12e217b3910489073c34327e8a49d22d3402f97bad",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_turbo_v4/installation.log",
+      "sha256": "28d9fcfc3f902f0201b7a6d66d348be0ffbfca0aff9a0286131c081b305c5aed"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/driver.log",
+      "sha256": "59e1919f43ad9a39c1bf3314cc52dd21da3d5fb5ffba716375f0d179dd2eafea"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/runtime_packages.json",
+      "sha256": "4430a840141ccfeaec26e97c4002e53c87f8ec43daa3436ced9eaad4c3c8ce03"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/wave_d.json",
+      "sha256": "5aa9e009213b66e46f714c2bb4f50df7c32f8b88dbe1184af37c7f16793fdeb3"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/setup.json",
+      "sha256": "600eff061e85434e5a9ae86695d026d6fa54ef0d0775a4caa80abd2261f1f0de"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-i2v-astronaut-2.json",
+      "sha256": "e415db4e024b5b0b823fd4e8b99425357964b471063c9aa10af1368fa65ff6f0"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/native_node_schemas.json",
+      "sha256": "562c71455ac3a72e0351101a10884c431451af68961fcb379428f55d96626704"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-t2v-red-ball-motion-3.json",
+      "sha256": "85586f73fc4cfc6bf3330f6281751e6ca659dc5665fdbbaf0101d833e30cfe05"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-fl2v-astronaut-zoom-3.json",
+      "sha256": "92c0534874455d7c011b8894a6cf4dbb2e523c6fcfae4ad2bfeba89e17f88572"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-fl2v-astronaut-zoom-1.json",
+      "sha256": "0e028af02049ce9259182026d607f26cf9b67602daee7f1dbfa3ec8c2e9495bf"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-fl2v-astronaut-zoom-2.json",
+      "sha256": "fa35b043924e0dad1151d784ea680c30700b0fb91d711ed66be52253e4eb1667"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-t2v-red-ball-motion-0.json",
+      "sha256": "dc26a6b13cb62913a2303be8dcec42336d47ae7a884143f5ff4efc243fc2c84f"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-i2v-astronaut-3.json",
+      "sha256": "5ec05aed226f25cdfe0de5bccca00de2d94b965e8d3061577cc79f152267a310"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-fl2v-astronaut-zoom-0.json",
+      "sha256": "6b59bc9d182e4043c8f8284fb0a8038157dd2ecba3a862f13c378582368361d1"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/observation.json",
+      "sha256": "0a33dacd11f214bd8c74b02f2c8322300f0f9c41a2da5ff95a65c97f6a2ea06b"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-t2v-red-ball-motion-2.json",
+      "sha256": "dc6ca3b10bcbaa8da45d6ebca5c8eadb78b1cbb9d7944f99164d8bfee82cc87a"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/backend.log",
+      "sha256": "680fa4e8e3cea881e0e6b7ed7248a5794c24f7b968687297d568485c1374d321"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-i2v-astronaut-0.json",
+      "sha256": "ea7206458b60a1564a18a80edb004055c5d738d108e3551b885240738c490bf9"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-i2v-astronaut-1.json",
+      "sha256": "8ba19534bce13bce66ab6fbb961a4eb0460912be1c9be6130db14cc954986be2"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/minimax-turbo-t2v-red-ball-motion-1.json",
+      "sha256": "e803d3005e2861c1b0b45de35186a4c9239fae47a4aac0173b17ea47dfc56183"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+      "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+      "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+      "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/minimax-h3-turbo/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+      "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/inputs/astronaut_first/input_identity.json",
+      "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/inputs/astronaut_first/source.bin",
+      "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/inputs/astronaut_last/input_identity.json",
+      "sha256": "f396c7e72b9fa8eec8a8bebb12078d7c75d44e85356a130d5a96592fcb0b6f06"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v4/inputs/astronaut_last/source.bin",
+      "sha256": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f"
+    }
+  ]
+}

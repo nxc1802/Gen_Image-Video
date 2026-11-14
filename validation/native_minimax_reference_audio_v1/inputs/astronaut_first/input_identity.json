@@ -1,0 +1,9 @@
+{
+  "fixture_path": "tests/fixtures/native/astronaut_first.png",
+  "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+  "size_bytes": 170704,
+  "mime_type": "image/png",
+  "original_url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+  "original_sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+  "conversion": "Full original recorded astronaut photograph resized to 384x256; no generated pixels."
+}

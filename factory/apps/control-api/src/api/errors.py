@@ -25,6 +25,8 @@ def register_exception_handlers(app: FastAPI) -> None:
                 "error": {
                     "code": exc.code,
                     "message": exc.message,
+                    "type": "server_error" if exc.status_code>=500 else "invalid_request_error",
+                    "param": exc.details.get("param"),
                     "request_id": req_id,
                     "details": exc.details,
                 }
@@ -49,6 +51,8 @@ def register_exception_handlers(app: FastAPI) -> None:
                 "error": {
                     "code": "VALIDATION_ERROR",
                     "message": "Input validation failed. Inspect details for field errors.",
+                    "type": "invalid_request_error",
+                    "param": sanitized_details[0]["field"] if sanitized_details else None,
                     "request_id": req_id,
                     "details": {"validation_errors": sanitized_details},
                 }
@@ -80,6 +84,8 @@ def register_exception_handlers(app: FastAPI) -> None:
                 "error": {
                     "code": code,
                     "message": str(exc.detail),
+                    "type": "server_error" if exc.status_code>=500 else "invalid_request_error",
+                    "param": None,
                     "request_id": req_id,
                     "details": {},
                 }
@@ -100,6 +106,8 @@ def register_exception_handlers(app: FastAPI) -> None:
                 "error": {
                     "code": "INTERNAL_SERVER_ERROR",
                     "message": "An unexpected internal server error occurred. Please contact system support with the request ID.",
+                    "type": "server_error",
+                    "param": None,
                     "request_id": req_id,
                     "details": {},
                 }

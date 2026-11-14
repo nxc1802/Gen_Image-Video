@@ -28,6 +28,7 @@ from factory_contracts.errors import (
 )
 from factory_contracts.manifests.model import AllocationPolicy, ModelManifest
 from factory.apps.control_api.src.queue.scheduler import InMemoryScheduler
+from model_registry.deployment import DeploymentRegistry
 
 
 class RuntimeState(str, Enum):
@@ -148,8 +149,10 @@ class ModelRuntimeManager:
         scheduler: Optional[InMemoryScheduler] = None,
         num_gpus: int = 2,
         max_allocatable_gb_per_gpu: float = 14.2,
+        deployment_registry: Optional[DeploymentRegistry] = None,
     ):
         self.scheduler = scheduler or InMemoryScheduler()
+        self.deployment_registry = deployment_registry if deployment_registry is not None else DeploymentRegistry.from_environment()
         self.num_gpus = num_gpus
         self.max_allocatable_gb = max_allocatable_gb_per_gpu
         self._lock = asyncio.Lock()
@@ -325,16 +328,18 @@ class ModelRuntimeManager:
             model_id = model.metadata.id
             variant = variant_id or "standard"
 
+            if model.apiVersion != "factory.ai/v2" and os.environ.get("ENVIRONMENT", os.environ.get("FACTORY_ENV", "development")).lower() == "production":
+                raise ModelNotLoadedError(message="Legacy load contracts cannot authorize production model readiness.")
+
+            if model.apiVersion == "factory.ai/v2":
+                binding = self.deployment_registry.assignment(model_id)
+                if gpu_ids is not None and tuple(gpu_ids) != binding.devices:
+                    raise InvalidRequestError("GPU IDs differ from the explicit deployment binding")
+                raise ModelNotLoadedError(message="Canonical backend lifecycle has not attested this deployment; legacy load probes cannot mark it READY.")
+
             # 1. Determine target GPUs
             if gpu_ids is None:
-                if model.hardware.allocation_policy == AllocationPolicy.DUAL_GPU_SPLIT:
-                    gpu_ids = [0, 1]
-                else:
-                    pref_gpu = getattr(model.hardware, "preferred_gpu_index", None)
-                    if pref_gpu is None:
-                        # Video & music prefer GPU 1; others prefer GPU 0
-                        pref_gpu = 1 if model.metadata.service_id in ("video-service", "music-service") else 0
-                    gpu_ids = [pref_gpu]
+                gpu_ids = list(self.deployment_registry.assignment(model_id).devices)
 
             if not gpu_ids:
                 err = InvalidRequestError(

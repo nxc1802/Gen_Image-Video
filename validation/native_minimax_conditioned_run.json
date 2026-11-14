@@ -1,0 +1,25 @@
+{
+  "observed_at_utc": "2026-11-13T20:17:02.569897+00:00",
+  "slug": "factory-phase-8-native-minimax-conditioned",
+  "response": {
+    "versionNumberNullable": 2,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-minimax-conditioned",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-conditioned",
+    "versionNumber": 2,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144799490
+  },
+  "kernel_code_sha256": "ec06d60c1c2c525e318061fc2773739a707d0a9f12dd9b5efc2f3d29784af1b8",
+  "source_bundle_sha256": "9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f",
+  "validation_bundle_sha256": "9e927a99c4d990b3354531580475ab4dbc24db71329af28de3b820f9e1556237",
+  "accelerator": "NvidiaTeslaT4",
+  "driver_timeout_seconds": 12000,
+  "session_timeout_seconds": 15600
+}

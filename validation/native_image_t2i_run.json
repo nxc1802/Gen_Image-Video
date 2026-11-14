@@ -1,0 +1,23 @@
+{
+  "observed_at_utc": "2026-11-13T06:20:26.277716+00:00",
+  "slug": "factory-phase-8-native-image-t2i",
+  "response": {
+    "versionNumberNullable": 1,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-image-t2i",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-image-t2i",
+    "versionNumber": 1,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144736305
+  },
+  "kernel_code_sha256": "c061f448c9bc09787490c2f94cb249379266feb4639b50038df019f839e5a98a",
+  "source_bundle_sha256": "0889d6cca4abb4d15499aa2c449ae2dc35c8b92905ed1cd8f838782fdb50b792",
+  "validation_bundle_sha256": "33207d043b38ef4d044efe65884fa8783fb2a0c7529ecea1be5b39910bf4551b",
+  "accelerator": "NvidiaTeslaT4"
+}

@@ -1,0 +1,133 @@
+{
+  "kind": "vllm",
+  "version": 3,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-vllm",
+  "run_record_sha256": "2acc5e33a8152d2d9865547610fc5dd0bb381fbf533810dba95435955b7e4c81",
+  "artifacts": [
+    {
+      "file": "validation/native_vllm_v3/installation.log",
+      "sha256": "44412cd575b279d7268d249eba8a9c5e0238ed2b2d70c51246cbf940fbd25ceb"
+    },
+    {
+      "file": "validation/native_vllm_v3/setup.json",
+      "sha256": "9ba258c816c37079058d4a65dddeb144d7e78511826a11e43450a3a23d1a2dfe"
+    },
+    {
+      "file": "validation/native_vllm_v3/wave_a.json",
+      "sha256": "1e09f12d729827bde46cb4339e04eb50b046fe04f5ca2312882824cfaa8c6cdc"
+    },
+    {
+      "file": "validation/native_vllm_v3/driver.log",
+      "sha256": "6994af3cd1847c74b2ae169951457a7e169dfaffa60f49f197268a64a981c446"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-choice-billing-2.json",
+      "sha256": "918c78523b7cb6e20a5f4553a23cb14f1e165d1279f4eb63c463b8539a7a516d"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-choice-billing-3.json",
+      "sha256": "918c78523b7cb6e20a5f4553a23cb14f1e165d1279f4eb63c463b8539a7a516d"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-choice-billing-1.json",
+      "sha256": "918c78523b7cb6e20a5f4553a23cb14f1e165d1279f4eb63c463b8539a7a516d"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-score-damage-0.json",
+      "sha256": "485c346d6701afe0a9dffabe06501548bc6de53c1a3cf4819310fc5bc252bcfa"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-predicate-facts-3.json",
+      "sha256": "8f415e45dec72a237950f8c72332d5f48e0534e131a3be3b220504c07e56105f"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-score-damage-1.json",
+      "sha256": "a8e69d74e94df113cd2acc0ca3d8e43647674a33ace4dfddfd51c33a8b066cee"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-predicate-facts-1.json",
+      "sha256": "8f415e45dec72a237950f8c72332d5f48e0534e131a3be3b220504c07e56105f"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-score-damage-3.json",
+      "sha256": "a8e69d74e94df113cd2acc0ca3d8e43647674a33ace4dfddfd51c33a8b066cee"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-choice-billing-0.json",
+      "sha256": "96f3aad133b79d751a45ebd049a78c4e8803e7e5f03d34447f786e9bad695e59"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-predicate-facts-0.json",
+      "sha256": "f45cffd56b9f402a767f23c0833db4931148b09f1e49dd02813281923dde92c0"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/observation.json",
+      "sha256": "540da6c89d37c08a5a0f8d7261d2755e71f58fe9d705e97522d74f3f3b9f36ce"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-predicate-facts-2.json",
+      "sha256": "8f415e45dec72a237950f8c72332d5f48e0534e131a3be3b220504c07e56105f"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/decision-score-damage-2.json",
+      "sha256": "a8e69d74e94df113cd2acc0ca3d8e43647674a33ace4dfddfd51c33a8b066cee"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-decision/backend.log",
+      "sha256": "f2df8f61c2ac0b0492de3cbe1ca374605bfb635a90ba4b3c7e2b8389b615df47"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-embedding/embedding-france-retrieval-0.json",
+      "sha256": "f469352fb46f050016b9d2ef6149869956e8199d7455008f04d2e9d1540b90a7"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-embedding/embedding-france-retrieval-1.json",
+      "sha256": "f469352fb46f050016b9d2ef6149869956e8199d7455008f04d2e9d1540b90a7"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-embedding/observation.json",
+      "sha256": "187bf33f8a743dfcc861dd34c8f3c43cf1a68a2ae496fe78410dfcc8fd7b2d14"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-embedding/embedding-france-retrieval-2.json",
+      "sha256": "f469352fb46f050016b9d2ef6149869956e8199d7455008f04d2e9d1540b90a7"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-embedding/embedding-france-retrieval-3.json",
+      "sha256": "f469352fb46f050016b9d2ef6149869956e8199d7455008f04d2e9d1540b90a7"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-embedding/backend.log",
+      "sha256": "d306ea36b6eb9656941275de79b1c8ad1b302443c42e09b709adff5ea10363db"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-reranker/rerank-france-capital-0.json",
+      "sha256": "02f386e5f0499c6677ad63b6a4e8b5cdd11e89816bb3be2f903754b80cdeec9e"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-reranker/rerank-france-capital-2.json",
+      "sha256": "9a866c2f9d2e9712dd61edc16b46f35349606b3fb0e647e9b48a8e49696f9a95"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-reranker/observation.json",
+      "sha256": "7ae97c42bfeef0274a35a418aeb8ccb5d2894973a8b9899e85e8cfe899466471"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-reranker/rerank-france-capital-3.json",
+      "sha256": "9a866c2f9d2e9712dd61edc16b46f35349606b3fb0e647e9b48a8e49696f9a95"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-reranker/rerank-france-capital-1.json",
+      "sha256": "9a866c2f9d2e9712dd61edc16b46f35349606b3fb0e647e9b48a8e49696f9a95"
+    },
+    {
+      "file": "validation/native_vllm_v3/qwen-reranker/backend.log",
+      "sha256": "f5921b91d2304d153bd84ab4d154f5dd05414e1e4e93a62f871b9198d413a459"
+    }
+  ]
+}

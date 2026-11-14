@@ -98,26 +98,26 @@ class TestAuthBypassAdversarialHarness:
     def test_auth_rejects_malformed_headers(self, auth_header, desc):
         client = TestClient(control_plane_app)
         headers = {"Authorization": auth_header} if auth_header is not None else {}
-        res = client.get("/v1/models", headers=headers)
+        res = client.get("/v1/registry/models", headers=headers)
         assert res.status_code == 401, f"Failed for {desc}: expected 401 got {res.status_code}"
         assert res.json()["error"]["code"] == "UNAUTHORIZED"
 
     def test_valid_token_variations_accepted(self):
         client = TestClient(control_plane_app)
         # 1. Exact token
-        res1 = client.get("/v1/models", headers={"Authorization": "Bearer prod-secret-alpha-99"})
+        res1 = client.get("/v1/registry/models", headers={"Authorization": "Bearer prod-secret-alpha-99"})
         assert res1.status_code == 200
 
         # 2. Lowercase bearer
-        res2 = client.get("/v1/models", headers={"Authorization": "bearer prod-secret-alpha-99"})
+        res2 = client.get("/v1/registry/models", headers={"Authorization": "bearer prod-secret-alpha-99"})
         assert res2.status_code == 200
 
         # 3. Uppercase BEARER
-        res3 = client.get("/v1/models", headers={"Authorization": "BEARER prod-secret-alpha-99"})
+        res3 = client.get("/v1/registry/models", headers={"Authorization": "BEARER prod-secret-alpha-99"})
         assert res3.status_code == 200
 
         # 4. Token with surrounding padding
-        res4 = client.get("/v1/models", headers={"Authorization": "Bearer   prod-secret-alpha-99   "})
+        res4 = client.get("/v1/registry/models", headers={"Authorization": "Bearer   prod-secret-alpha-99   "})
         assert res4.status_code == 200
 
     def test_adversarial_invalid_tokens(self):
@@ -132,17 +132,17 @@ class TestAuthBypassAdversarialHarness:
             "Bearer invalid-nested-bearer",
         ]
         for token in invalid_tokens:
-            res = client.get("/v1/models", headers={"Authorization": f"Bearer {token}"})
+            res = client.get("/v1/registry/models", headers={"Authorization": f"Bearer {token}"})
             assert res.status_code == 401, f"Expected 401 for token {token}, got {res.status_code}"
 
     @pytest.mark.parametrize(
         "path",
         [
-            "/health/../v1/models",
-            "/v1/models/..",
-            "/v1/models/../models",
-            "/health/..;/v1/models",
-            "/v1/%2e%2e/v1/models",
+            "/health/../v1/registry/models",
+            "/v1/registry/models/..",
+            "/v1/registry/models/../models",
+            "/health/..;/v1/registry/models",
+            "/v1/%2e%2e/v1/registry/models",
             "/health/..%2fv1%2fmodels",
             "/v1//models",
         ],

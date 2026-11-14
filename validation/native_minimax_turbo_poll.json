@@ -1,0 +1,12 @@
+{
+  "observed_at_utc": "2026-11-13T22:41:51.843906+00:00",
+  "version": 4,
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-turbo",
+  "run_record_sha256": "d677381eb22d49991857ff12e217b3910489073c34327e8a49d22d3402f97bad",
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "classification": "REMOTE_JOB_STATUS_ONLY_NOT_INFERENCE_EVIDENCE"
+}

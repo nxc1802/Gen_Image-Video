@@ -13,11 +13,10 @@ dependencies = [
     "httpx>=0.27.0",
     "python-multipart>=0.0.9",
     "pillow>=10.3.0",
-    "boto3>=1.34.0",
-    "alembic>=1.13.0",
-    "sqlalchemy>=2.0.0",
-    "aiosqlite>=0.20.0",
 ]
+
+[project.optional-dependencies]
+legacy = ["boto3>=1.34.0", "alembic>=1.13.0", "sqlalchemy>=2.0.0", "aiosqlite>=0.20.0", "factory-auth[jwt]"]
 
 [build-system]
 requires = ["hatchling"]

@@ -1,0 +1,42 @@
+{
+  "classification": "ISOLATED_DISABLED_MODEL_NATIVE_BACKEND_PROBE",
+  "source_bundle_sha256": "225543be1b90b814ffb50220cf375c848150547b4676bdf7a9f220ac074c3853",
+  "exit_gate": "NOT_MET",
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "v3_certified": false,
+  "semantic_quality_certified": false,
+  "native_inference_executed": false,
+  "hardware": {
+    "0": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    },
+    "1": {
+      "name": "Tesla T4",
+      "total_vram_gb": 15.0
+    }
+  },
+  "checkpoint_files": [
+    {
+      "key": "primary",
+      "repository": "Comfy-Org/Real-ESRGAN_repackaged",
+      "revision": "5fd49b7b278836f48af63ecd314d0f98ab336105",
+      "sha256": "37f9a931c215f040aa6d50f711f2cb115f713c46df1d0d6469a8bd7bfe9a60bb",
+      "size_bytes": 66857836
+    }
+  ],
+  "input": {
+    "url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+    "sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+    "dimensions": [
+      512,
+      512
+    ]
+  },
+  "error": {
+    "type": "AssertionError",
+    "message": "{'enhancement-suite-v1': {'type': 'BackendError', 'message': 'Selected backend exited or failed before health passed'}}",
+    "traceback": "Traceback (most recent call last):\n  File \"/kaggle/src/script.py\", line 70, in <module>\n    asyncio.run(run())\n    ~~~~~~~~~~~^^^^^^^\n  File \"/usr/lib/python3.13/asyncio/runners.py\", line 196, in run\n    return runner.run(main)\n           ~~~~~~~~~~^^^^^^\n  File \"/usr/lib/python3.13/asyncio/runners.py\", line 119, in run\n    return self._loop.run_until_complete(task)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"/usr/lib/python3.13/asyncio/base_events.py\", line 726, in run_until_complete\n    return future.result()\n           ~~~~~~~~~~~~~^^\n  File \"/kaggle/src/script.py\", line 52, in run\n    assert session.healthy_models()==(model.metadata.id,),session.failures\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: {'enhancement-suite-v1': {'type': 'BackendError', 'message': 'Selected backend exited or failed before health passed'}}\n"
+  }
+}

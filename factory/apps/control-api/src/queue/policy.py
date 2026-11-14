@@ -1,33 +1,13 @@
-"""
-factory/apps/control-api/src/queue/policy.py
-Authoritative Dual-T4 GPU subsystem placement policy for Factory v4 Lite.
-Single source of truth for Subsystem -> GPU partition mapping.
-"""
-from typing import Dict, Optional
-
-# GPU 0: Text, Decision, VLM, Image, Speech
-# GPU 1: Video, Music, Enhancement, Embedding, Rerank
-SUBSYSTEM_GPU_MAP: Dict[str, int] = {
-    "text": 0,
-    "vlm": 0,
-    "vision": 0,
-    "decision": 0,
-    "image": 0,
-    "speech": 0,
-    "video": 1,
-    "music": 1,
-    "enhancement": 1,
-    "embedding": 1,
-    "embed": 1,
-    "rerank": 1,
-}
+"""Deployment-bound placement. No subsystem placement or default device."""
+from factory_contracts.errors import ModelNotLoadedError
 
 
-def get_subsystem_gpu(service: Optional[str]) -> int:
-    """Returns the authoritative preferred GPU partition (0 or 1) for a given service."""
-    if not service:
-        return 0
-    return SUBSYSTEM_GPU_MAP.get(str(service).lower().strip(), 0)
-
-
-__all__ = ["SUBSYSTEM_GPU_MAP", "get_subsystem_gpu"]
+def binding_for_job(registry, job):
+    binding = registry.assignment(job.model)
+    if job.deployment_config_sha256 and job.deployment_config_sha256 != registry.config_sha256:
+        raise ModelNotLoadedError(message="Queued job belongs to a different deployment configuration")
+    if job.deployment_session_id and job.deployment_session_id != registry.session_id:
+        raise ModelNotLoadedError(message="Queued job belongs to an earlier runtime session")
+    if job.devices and tuple(job.devices) != binding.devices:
+        raise ModelNotLoadedError(message="Queued job GPU binding differs from the configured deployment")
+    return binding

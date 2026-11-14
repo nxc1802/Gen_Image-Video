@@ -150,16 +150,16 @@ class TestKernelCliAndParameterResolution:
         assert res.returncode == 0
         assert "show this help message and exit" in res.stdout
 
-    def test_certify_kernel_preflight_execution(self, tmp_path):
+    def test_certify_kernel_preflight_execution(self, tmp_path, legacy_catalog):
         out_file = tmp_path / "cert_test.json"
-        certifier = Tier1ModelCertifier(manifests_dir=REPO_ROOT / "manifests", mode="preflight")
+        certifier = Tier1ModelCertifier(manifests_dir=legacy_catalog, mode="preflight")
         results = certifier.execute_all(output_path=out_file)
         assert results["all_gates_passed"] is True
         assert out_file.exists()
 
-    def test_runner_local_mode_dispatch(self, tmp_path):
+    def test_runner_local_mode_dispatch(self, tmp_path, legacy_workspace):
         out_file = tmp_path / "runner_test.json"
-        runner = KaggleDualT4Runner(workspace_dir=REPO_ROOT, mode="preflight")
+        runner = KaggleDualT4Runner(workspace_dir=legacy_workspace, mode="preflight")
         results = runner.run(output_path=out_file)
         assert results["all_gates_passed"] is True
         assert out_file.exists()

@@ -1,0 +1,61 @@
+{
+  "kind": "asr",
+  "version": 2,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-asr",
+  "run_record_sha256": "ea145acd2d84e3f92f2b21a4a01d1770e1bdd3a0e8f626874a8bf92427fc14b1",
+  "artifacts": [
+    {
+      "file": "validation/native_asr_v2/installation.log",
+      "sha256": "819245640157b00baea48da94c0879447ed4dc31f0cce97bc34baaeed45dff15"
+    },
+    {
+      "file": "validation/native_asr_v2/wave_b.json",
+      "sha256": "3fe3e78b7526c72f74358b446aaa99ddf02ce240ccd1ac8aae73961500f7bbcd"
+    },
+    {
+      "file": "validation/native_asr_v2/setup.json",
+      "sha256": "58ae0bbab59df127154e421e15e4f674465745c8ded11450bdac9cb311ac2b09"
+    },
+    {
+      "file": "validation/native_asr_v2/driver.log",
+      "sha256": "bba76fde01d2a9ca768bd5c1ffe15c9b61091e459e3ccd31df413b7beea8edc0"
+    },
+    {
+      "file": "validation/native_asr_v2/qwen-asr/backend.log",
+      "sha256": "e81922323a8d88578f731f44be9ef69d208659d7309ac17df45fb7b1fd24da78"
+    },
+    {
+      "file": "validation/native_asr_v2/qwen-asr/asr-jfk-real-speech-3.json",
+      "sha256": "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153"
+    },
+    {
+      "file": "validation/native_asr_v2/qwen-asr/asr-jfk-real-speech-2.json",
+      "sha256": "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153"
+    },
+    {
+      "file": "validation/native_asr_v2/qwen-asr/observation.json",
+      "sha256": "81161a59bf7d674e818870d010065d32c9b98eef185000a24aaf7718a023ae2c"
+    },
+    {
+      "file": "validation/native_asr_v2/qwen-asr/asr-jfk-real-speech-0.json",
+      "sha256": "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153"
+    },
+    {
+      "file": "validation/native_asr_v2/qwen-asr/asr-jfk-real-speech-1.json",
+      "sha256": "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153"
+    },
+    {
+      "file": "validation/native_asr_v2/inputs/source.flac",
+      "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715"
+    },
+    {
+      "file": "validation/native_asr_v2/inputs/input_identity.json",
+      "sha256": "3dfcf475de5223a4ac24520a1ba195a74620ac50c591de8cb8faa78d8afabbb2"
+    }
+  ]
+}

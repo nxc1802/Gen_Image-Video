@@ -7,11 +7,12 @@ from unittest.mock import MagicMock, patch
 import pytest
 from factory_auth.config import AuthConfig
 from services.decision.src.app import app
-from services.decision.src.engine import DecisionEngine
+from services.decision.src.legacy_engine import LegacyDecisionEngine as DecisionEngine
 from starlette.testclient import TestClient
 
 AUTH_TOKEN = "sk-factory-test-token-valid"
 AUTH_HEADERS = {"Authorization": f"Bearer {AUTH_TOKEN}", "Content-Type": "application/json"}
+pytestmark = pytest.mark.contract_mock
 
 
 @pytest.fixture
@@ -136,7 +137,7 @@ def test_decision_configured_predicate_proxy(decision_client):
         res = decision_client.post("/v1/decisions", headers=AUTH_HEADERS, json=payload)
         assert res.status_code == 200
         data = res.json()
-        assert data["task"] == "predicate"
+        assert data["task"] == "decision.predicate_evaluation"
         assert data["answer"]["decision"] is True
         assert data["answer"]["confidence"] == 0.98
 
@@ -180,7 +181,7 @@ def test_decision_configured_choice_proxy(decision_client):
         res = decision_client.post("/v1/decisions", headers=AUTH_HEADERS, json=payload)
         assert res.status_code == 200
         data = res.json()
-        assert data["task"] == "choice"
+        assert data["task"] == "decision.choice_routing"
         assert data["answer"]["selected_choice"] == "networking"
 
 
@@ -218,5 +219,5 @@ def test_decision_configured_score_proxy(decision_client):
         res = decision_client.post("/v1/decisions", headers=AUTH_HEADERS, json=payload)
         assert res.status_code == 200
         data = res.json()
-        assert data["task"] == "score"
+        assert data["task"] == "decision.score_ranking"
         assert data["answer"]["score"] == 135.0

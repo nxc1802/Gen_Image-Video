@@ -1,0 +1,109 @@
+{
+  "kind": "minimax_conditioned",
+  "version": 1,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-conditioned",
+  "run_record_sha256": "c9af281935f4f18ef3c6c7d4e64c80a35d3f2b2793b2da86129eb8e11cbb8b23",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_conditioned_v1/setup.json",
+      "sha256": "6b6c5a8be5c7ce2838487af9edfb8add4b856aa54fb9bead0099b960c181a790"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/runtime_packages.json",
+      "sha256": "743e47a5c96a759f88f294fe86e0d9157a85396338c2ba23dd7518e000869620"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/wave_d.json",
+      "sha256": "42eec97516f953e16d5518f70674f62b931d23a5acbf465b2c1eeac2f2891865"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/installation.log",
+      "sha256": "52c4902df0d5e19b0e78e8903d9ee7a69d14b3b19bffaec7ec96811dacef6004"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/driver.log",
+      "sha256": "cdb50f2f2d631d1d613419ad4c110eb63a134b25438c4e8751498d47e9334115"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/minimax-i2v-astronaut-0.json",
+      "sha256": "821016a2529680bd0b38541738aa6ebc141a1d535ee91883e7cebe5982944724"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/minimax-fl2v-astronaut-zoom-1.json",
+      "sha256": "9ceeec42943cc85542bc799a7169277cbb4c709dcb8ae153ed3c143866aec1af"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/minimax-i2v-astronaut-1.json",
+      "sha256": "ad8b2c5545e49d32fa1eb031217c6508bf5071e51540c9f7c462217860f59e57"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/backend.log",
+      "sha256": "b770d213117775f0aa3886dc095e279a8f62cb5cf75c188fcfb9df7f61618439"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/minimax-fl2v-astronaut-zoom-2.json",
+      "sha256": "c2e50bf832160ddb35bf87374c36246772cef11ebb98d16a68db40e8fbaaa4f3"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/minimax-i2v-astronaut-2.json",
+      "sha256": "52589b75a7c25c44d54727dfe40b381fbab0821bdd82cb809426bb5113bd5ddb"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/minimax-fl2v-astronaut-zoom-3.json",
+      "sha256": "cb69940ffe222d0dbd833e71f6082eb97633c731391f106c818b5c2ce0234133"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/observation.json",
+      "sha256": "688fab589b7eabc0674d31aad197b5f00501ea87c4974c314a2318f21fc66729"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/native_node_schemas.json",
+      "sha256": "120167a9bd2b741f8c1578b31abd094b1768fdff5cccf69dc0b839ea339729de"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/minimax-fl2v-astronaut-zoom-0.json",
+      "sha256": "2a2e3393da3e0f922620388e3492689944cf19a3aae81e81b5017f212a15f46e"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/minimax-i2v-astronaut-3.json",
+      "sha256": "68db92422a75383429e19e6907aa73f050b82422199674f681ccfdff20fc0f37"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/inputs/astronaut_first/input_identity.json",
+      "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/inputs/astronaut_first/source.bin",
+      "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/inputs/astronaut_last/input_identity.json",
+      "sha256": "f396c7e72b9fa8eec8a8bebb12078d7c75d44e85356a130d5a96592fcb0b6f06"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/inputs/astronaut_last/source.bin",
+      "sha256": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+      "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+      "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+      "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+    },
+    {
+      "file": "validation/native_minimax_conditioned_v1/minimax-h3/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+      "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+    }
+  ]
+}

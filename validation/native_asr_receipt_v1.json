@@ -1,0 +1,45 @@
+{
+  "kind": "asr",
+  "version": 1,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-asr",
+  "run_record_sha256": "556d58607f2ed36341cbede3b68447317595e38c361e71852c4bb66dd4be996f",
+  "artifacts": [
+    {
+      "file": "validation/native_asr_v1/wave_b.json",
+      "sha256": "be2b90686c52e86604ef99060891b22ee71f2ecf2c226187dd2e0d4c7bc0711e"
+    },
+    {
+      "file": "validation/native_asr_v1/setup.json",
+      "sha256": "2f7e9e7f1f7e24f87e16dd2a829d5434e2b517e2e9bf4ad65a62fae2c24ab763"
+    },
+    {
+      "file": "validation/native_asr_v1/driver.log",
+      "sha256": "262f8cdeb4571c3a86e871545b133c6d433f572b2660738173c47ddfa988d1f5"
+    },
+    {
+      "file": "validation/native_asr_v1/installation.log",
+      "sha256": "36b7093b8fe0821f57b097d82ecae5e655ccf13005ff5da2069de4319c089cf2"
+    },
+    {
+      "file": "validation/native_asr_v1/qwen-asr/observation.json",
+      "sha256": "70fedbbe69d239ba7f3522acfea087dbd2da0d714011024af55258e5c293e9a1"
+    },
+    {
+      "file": "validation/native_asr_v1/qwen-asr/backend.log",
+      "sha256": "860cb8085b508e431f0830f402ac0b4981c447f8b2d20200b813da768dcbdb64"
+    },
+    {
+      "file": "validation/native_asr_v1/inputs/source.flac",
+      "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715"
+    },
+    {
+      "file": "validation/native_asr_v1/inputs/input_identity.json",
+      "sha256": "3dfcf475de5223a4ac24520a1ba195a74620ac50c591de8cb8faa78d8afabbb2"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "observed_at_utc": "2026-11-14T06:21:42.167102+00:00",
+  "slug": "factory-phase-8-native-wan-extension",
+  "response": {
+    "versionNumberNullable": 1,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-wan-extension",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-wan-extension",
+    "versionNumber": 1,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144942397
+  },
+  "kernel_code_sha256": "0ae42088dc3fafd2361142efe27f06b0b3d219937a1a829bf1d0d5195937f1fa",
+  "source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+  "validation_bundle_sha256": "46caabe7a918de9ed3fb5599eaf4e51bb4155990d259078166721d16d0c81557",
+  "accelerator": "NvidiaTeslaT4",
+  "driver_timeout_seconds": 9600,
+  "session_timeout_seconds": 13200
+}

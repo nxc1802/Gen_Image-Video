@@ -1,0 +1,22 @@
+{
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "run_record_sha256": "90996f8775f775229eb62474d30ef954ab5cd3a34c545a19670346304df84967",
+  "artifacts": [
+    {
+      "file": "validation/native_gate_audit_v2/native_wave_d_gate.json",
+      "sha256": "4c31be0ae8fe91438ce4118aa751ef9fdd9ec9c17c14560584fc56e4974380af"
+    },
+    {
+      "file": "validation/native_gate_audit_v2/gate.log",
+      "sha256": "c9d0d4f88e51f859df02488887836ae8fbfca62a7e5153a142fadd8c2955989d"
+    },
+    {
+      "file": "validation/native_gate_audit_v2/audit.json",
+      "sha256": "578703b3feb5b8b5214892ec08713f313980861c4e220a4ed6faf61739ef8124"
+    }
+  ]
+}

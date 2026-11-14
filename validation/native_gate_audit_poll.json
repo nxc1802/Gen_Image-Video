@@ -1,0 +1,11 @@
+{
+  "observed_at_utc": "2026-11-14T13:28:17.417062+00:00",
+  "version": 5,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "run_record_sha256": "9a3ffa9ea73487cd88d7615f21ca2adc69fa89391b162d82abe5c499bd381944",
+  "classification": "REMOTE_JOB_STATUS_ONLY_NOT_INFERENCE_EVIDENCE"
+}

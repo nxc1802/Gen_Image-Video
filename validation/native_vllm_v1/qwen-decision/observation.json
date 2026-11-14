@@ -1,0 +1,204 @@
+{
+  "model": "qwen-decision",
+  "engine": "EngineID.DECISION",
+  "backend": "vllm",
+  "checkpoint": {
+    "file_0": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "config.json",
+      "sha256": "eed00b17e22553979d090fa492e587e92885e328914c8e0b0b78f0a0d3576b3b",
+      "size_bytes": 661,
+      "destination": "model/config.json"
+    },
+    "file_1": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "generation_config.json",
+      "sha256": "ea35dfb6fc5051b01114f9b995820d55dab01ed33ee490f6378b442af82c09f9",
+      "size_bytes": 242,
+      "destination": "model/generation_config.json"
+    },
+    "file_2": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "merges.txt",
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "size_bytes": 1671839,
+      "destination": "model/merges.txt"
+    },
+    "primary": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "model-00001-of-00002.safetensors",
+      "sha256": "67347b23fb4165b652eb6611f5e1f2a06dfcddba8e909df1b2b0b1857bee06c2",
+      "size_bytes": 3968658944,
+      "destination": "model/model-00001-of-00002.safetensors"
+    },
+    "file_4": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "model-00002-of-00002.safetensors",
+      "sha256": "a40d941d0e7e0b966ad8b62bb6d6b7c88cce1299197b599d9d0a4ce59aabfc1d",
+      "size_bytes": 2203268048,
+      "destination": "model/model-00002-of-00002.safetensors"
+    },
+    "file_5": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "model.safetensors.index.json",
+      "sha256": "bc8aaa0c87d4335177e01c765f1de0db81661c67c1a72fbfb0d521b09f5ddc56",
+      "size_bytes": 35581,
+      "destination": "model/model.safetensors.index.json"
+    },
+    "file_6": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "tokenizer.json",
+      "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+      "size_bytes": 7031645,
+      "destination": "model/tokenizer.json"
+    },
+    "file_7": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "tokenizer_config.json",
+      "sha256": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+      "size_bytes": 7305,
+      "destination": "model/tokenizer_config.json"
+    },
+    "file_8": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "path": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "destination": "model/vocab.json"
+    }
+  },
+  "cases": [],
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "public_models": [],
+  "fallback": false,
+  "checkpoint_files": [
+    {
+      "key": "file_0",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "config.json",
+      "sha256": "eed00b17e22553979d090fa492e587e92885e328914c8e0b0b78f0a0d3576b3b",
+      "size_bytes": 661,
+      "matched": true
+    },
+    {
+      "key": "file_1",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "generation_config.json",
+      "sha256": "ea35dfb6fc5051b01114f9b995820d55dab01ed33ee490f6378b442af82c09f9",
+      "size_bytes": 242,
+      "matched": true
+    },
+    {
+      "key": "file_2",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "merges.txt",
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "size_bytes": 1671839,
+      "matched": true
+    },
+    {
+      "key": "primary",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "model-00001-of-00002.safetensors",
+      "sha256": "67347b23fb4165b652eb6611f5e1f2a06dfcddba8e909df1b2b0b1857bee06c2",
+      "size_bytes": 3968658944,
+      "matched": true
+    },
+    {
+      "key": "file_4",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "model-00002-of-00002.safetensors",
+      "sha256": "a40d941d0e7e0b966ad8b62bb6d6b7c88cce1299197b599d9d0a4ce59aabfc1d",
+      "size_bytes": 2203268048,
+      "matched": true
+    },
+    {
+      "key": "file_5",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "model.safetensors.index.json",
+      "sha256": "bc8aaa0c87d4335177e01c765f1de0db81661c67c1a72fbfb0d521b09f5ddc56",
+      "size_bytes": 35581,
+      "matched": true
+    },
+    {
+      "key": "file_6",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "tokenizer.json",
+      "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+      "size_bytes": 7031645,
+      "matched": true
+    },
+    {
+      "key": "file_7",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "tokenizer_config.json",
+      "sha256": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+      "size_bytes": 7305,
+      "matched": true
+    },
+    {
+      "key": "file_8",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "matched": true
+    }
+  ],
+  "status": "NOT_MET",
+  "lifecycle": {
+    "healthy_backends": [],
+    "failures": {
+      "qwen-decision": {
+        "type": "BackendError",
+        "message": "Selected provider 'vllm' is unavailable; fallback is forbidden"
+      }
+    },
+    "backends": {},
+    "production_ready": false,
+    "native_inference_verified": false
+  },
+  "error": {
+    "type": "RuntimeError",
+    "message": "Selected backend failed startup: {\"qwen-decision\": {\"type\": \"BackendError\", \"message\": \"Selected provider 'vllm' is unavailable; fallback is forbidden\"}}",
+    "traceback": "Traceback (most recent call last):\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_a.py\", line 266, in model_run\n    raise RuntimeError(\"Selected backend failed startup: \" + json.dumps(session.failures))\nRuntimeError: Selected backend failed startup: {\"qwen-decision\": {\"type\": \"BackendError\", \"message\": \"Selected provider 'vllm' is unavailable; fallback is forbidden\"}}\n"
+  },
+  "shutdown": {
+    "session_id": "26c62c8b-5d2f-46c4-9df5-89f275934c9e",
+    "config_sha256": "5f120393a56d82d0af695dd48d67c398fdbde5ffcd455234c4a27811022c1784",
+    "stopped_at_utc": "2026-11-12T12:40:22.015885+00:00",
+    "stop_completed": true,
+    "errors": [],
+    "backends": {},
+    "production_ready": false
+  },
+  "stop_verified": true
+}

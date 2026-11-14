@@ -1,0 +1,26 @@
+{
+  "classification": "SOURCE_SCOPED_GATE_SNAPSHOT_NOT_NEW_INFERENCE",
+  "source_bundle_sha256": "08eefd3477ebf7b31900855c881f291a355b74ecfc83d2ca47b21c8fedee574a",
+  "phase_4_observation": "validation/backend_lifecycle_observation_v23.json",
+  "phase_5_observation": "validation/enhancement_observation_v18.json",
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "reports": {
+    "4": {
+      "file": "validation/source_gate_snapshots/08eefd3477ebf7b31900855c881f291a355b74ecfc83d2ca47b21c8fedee574a/backend_lifecycle_gate.json",
+      "sha256": "806d1f48ed910133d89f2bf8c62b1389f818ed3fb91ef182f8b03dac3ec4ca73"
+    },
+    "5": {
+      "file": "validation/source_gate_snapshots/08eefd3477ebf7b31900855c881f291a355b74ecfc83d2ca47b21c8fedee574a/engine_refactor_gate.json",
+      "sha256": "f8d9c093aacb987d2986b5e7b16e0a2cb1664846379cfbc97513297fdc93e868"
+    },
+    "6": {
+      "file": "validation/source_gate_snapshots/08eefd3477ebf7b31900855c881f291a355b74ecfc83d2ca47b21c8fedee574a/openai_api_gate.json",
+      "sha256": "33935115b8b890fd3a3d4a13ad827dfd24ff56902cb5a36d6d80b0aeddf7c658"
+    },
+    "7": {
+      "file": "validation/source_gate_snapshots/08eefd3477ebf7b31900855c881f291a355b74ecfc83d2ca47b21c8fedee574a/control_plane_gate.json",
+      "sha256": "709d2b06c9366c5dfd5838ebbedaa831963c9ce2bfe77d1a63592ff45ca7cff8"
+    }
+  }
+}

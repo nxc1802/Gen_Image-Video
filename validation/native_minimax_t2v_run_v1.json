@@ -1,0 +1,23 @@
+{
+  "observed_at_utc": "2026-11-13T08:40:38.031295+00:00",
+  "slug": "factory-phase-8-native-minimax-t2v",
+  "response": {
+    "versionNumberNullable": 1,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-minimax-t2v",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-t2v",
+    "versionNumber": 1,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144758309
+  },
+  "kernel_code_sha256": "18b90bb73c600de23e6f12d64fc36f3507ca569d64015d6176a6c5d7940cba24",
+  "source_bundle_sha256": "86b195786f2a72bbb7efcfdc0da63535f2018cf5be80f8384a089ad2ced54332",
+  "validation_bundle_sha256": "885acd7d94045c351654fe1fd9a0a07830901049a96198aff9a54281d5e22109",
+  "accelerator": "NvidiaTeslaT4"
+}

@@ -13,6 +13,9 @@ from pathlib import Path
 import tempfile
 import pytest
 
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
+
 from factory_contracts.errors import ErrorCode, ErrorDetail
 from factory_contracts.jobs.job_contract import (
     ArtifactReference,
@@ -28,30 +31,26 @@ from factory_contracts.jobs.worker_contract import (
     ProgressUpdateRequest,
 )
 from factory.apps.control_api.src.queue.broker.memory_broker import MemoryQueueBroker
-from factory.apps.control_api.src.queue.leasing import SUBSYSTEM_GPU_MAP as LEASING_MAP
-from factory.apps.control_api.src.queue.manager import JobLifecycleManager, SUBSYSTEM_GPU_MAP as MANAGER_MAP
-from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
+from factory.apps.control_api.src.queue.manager import JobLifecycleManager
 from factory.apps.control_api.src.queue.repository.memory import InMemoryJobStore
-from factory.apps.control_api.src.queue.scheduler import InMemoryScheduler, SUBSYSTEM_GPU_MAP as SCHEDULER_MAP
+from factory.apps.control_api.src.queue.scheduler import InMemoryScheduler
 from factory.apps.control_api.src.queue.watchdog import (
     SERVICE_EXECUTION_TIMEOUTS,
-    SUBSYSTEM_GPU_MAP as WATCHDOG_MAP,
     check_active_jobs_watchdog,
 )
 from factory.apps.control_api.src.streaming.manager import StreamManager
 
 
 @pytest.mark.asyncio
-async def test_fix_04_consolidated_subsystem_gpu_map():
-    """FIX-04: Ensure all queue files use the identical authoritative SUBSYSTEM_GPU_MAP."""
-    assert MANAGER_MAP is SUBSYSTEM_GPU_MAP
-    assert LEASING_MAP is SUBSYSTEM_GPU_MAP
-    assert WATCHDOG_MAP is SUBSYSTEM_GPU_MAP
-    assert SCHEDULER_MAP is SUBSYSTEM_GPU_MAP
-    assert get_subsystem_gpu("text") == 0
-    assert get_subsystem_gpu("image") == 0
-    assert get_subsystem_gpu("video") == 1
-    assert get_subsystem_gpu("music") == 1
+async def test_fix_04_explicit_model_bindings_replace_subsystem_gpu_map():
+    from model_registry.deployment import DeploymentRegistry
+    registry = DeploymentRegistry.from_environment()
+    assert registry.assignment("qwen-image-2.1").devices == (0,)
+    assert registry.assignment("wan-2.2").devices == (1,)
+    for name in ["manager", "leasing", "scheduler", "watchdog", "policy"]:
+        source = Path(f"factory/apps/control-api/src/queue/{name}.py").read_text()
+        assert "SUBSYSTEM_GPU_MAP" not in source
+        assert "get_subsystem_gpu" not in source
 
 
 @pytest.mark.asyncio

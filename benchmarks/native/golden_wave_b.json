@@ -1,0 +1,272 @@
+{
+  "schema_version": 1,
+  "wave": "B",
+  "performance": {
+    "warmup": 1,
+    "measured": 3
+  },
+  "scope": "All eight Manifest-declared VLM/ASR/TTS/voice-cloning capabilities; TTS semantic thresholds fixed before native generation; alignment unsupported by selected Manifest.",
+  "assets": {
+    "jfk": {
+      "url": "https://raw.githubusercontent.com/openai/whisper/31243bad24cc746f07d4c8bfdd2d974872cb1803/tests/jfk.flac",
+      "source_revision": "31243bad24cc746f07d4c8bfdd2d974872cb1803",
+      "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+      "size_bytes": 1152693,
+      "decoded_wav_sha256": "b3cb1bb16d64cfa7f2f68fc2dfb99320a29d6325430da61c88332ed6ebc36489",
+      "decoded_wav_size_bytes": 1940444,
+      "sample_rate": 44100,
+      "channels": 2,
+      "duration_seconds": 11.0,
+      "conversion": "lossless FLAC decoding to little-endian PCM16 at original sample rate/channels; standard WAV header; no resampling",
+      "ground_truth_source": "https://github.com/openai/whisper/blob/31243bad24cc746f07d4c8bfdd2d974872cb1803/tests/test_transcribe.py"
+    },
+    "astronaut": {
+      "url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+      "sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+      "size_bytes": 791555,
+      "mime_type": "image/png"
+    },
+    "page": {
+      "url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/page.png",
+      "sha256": "341a6f0a61557662b02734a9b6e56ec33a915b2c41886b97509dedf2a43b47a3",
+      "size_bytes": 47679,
+      "mime_type": "image/png"
+    },
+    "pedestrians": {
+      "fixture_path": "tests/fixtures/native/vtest-first2s.mp4",
+      "sha256": "9579648ba27debc6e31a632fcb095edb4fa4b29f6403a6f0716415adc6eb5c99",
+      "size_bytes": 65911,
+      "mime_type": "video/mp4",
+      "original_url": "https://raw.githubusercontent.com/opencv/opencv/4.12.0/samples/data/vtest.avi",
+      "original_sha256": "45cddc9490be69345cbdab64ca583be65987e864ca408038e648db99e10516cf",
+      "original_size_bytes": 8131690,
+      "conversion": "ffmpeg -i vtest.avi -t 2 -vf fps=2,scale=384:-2 -an -c:v libx264 -pix_fmt yuv420p -crf 18 -map_metadata -1 -movflags +faststart vtest-first2s.mp4",
+      "duration_seconds": 2,
+      "frames": 4,
+      "ground_truth": "Visible outdoor pedestrians walking in original recorded surveillance footage; no generated frames"
+    }
+  },
+  "cases": [
+    {
+      "id": "asr-jfk-real-speech",
+      "model": "qwen-asr",
+      "capability": "speech.asr",
+      "operation": "transcription",
+      "asset": "jfk",
+      "request": {
+        "language": "English"
+      },
+      "expected": {
+        "transcript": "And so my fellow Americans ask not what your country can do for you ask what you can do for your country",
+        "max_word_error_rate": 0.15,
+        "required_phrases": [
+          "my fellow americans",
+          "your country",
+          "do for you"
+        ]
+      }
+    },
+    {
+      "id": "vlm-text-arithmetic",
+      "model": "qwen-vlm",
+      "capability": "responses.create",
+      "operation": "response",
+      "asset": null,
+      "request": {
+        "input": "Calculate 17 + 25. Reply with only the integer.",
+        "temperature": 0.0,
+        "max_output_tokens": 256,
+        "store": false
+      },
+      "expected": {
+        "exact_text": "42"
+      }
+    },
+    {
+      "id": "vlm-astronaut-suit",
+      "model": "qwen-vlm",
+      "capability": "responses.image_chat",
+      "operation": "chat",
+      "asset": "astronaut",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "image_url",
+                "image_url": {
+                  "url": "asset:astronaut"
+                }
+              },
+              {
+                "type": "text",
+                "text": "What color is the astronaut suit? Reply with only one English color word."
+              }
+            ]
+          }
+        ],
+        "temperature": 0.0,
+        "max_tokens": 256
+      },
+      "expected": {
+        "exact_text": "orange"
+      }
+    },
+    {
+      "id": "vlm-document-title",
+      "model": "qwen-vlm",
+      "capability": "responses.document_qa",
+      "operation": "chat",
+      "asset": "page",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "image_url",
+                "image_url": {
+                  "url": "asset:page"
+                }
+              },
+              {
+                "type": "text",
+                "text": "Read the title on the top line of this scanned page. Reply with only that title."
+              }
+            ]
+          }
+        ],
+        "temperature": 0.0,
+        "max_tokens": 256
+      },
+      "expected": {
+        "normalized_text": "region based segmentation"
+      }
+    },
+    {
+      "id": "vlm-head-grounding-v2",
+      "model": "qwen-vlm",
+      "capability": "responses.visual_grounding",
+      "operation": "chat",
+      "asset": "astronaut",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "image_url",
+                "image_url": {
+                  "url": "asset:astronaut"
+                }
+              },
+              {
+                "type": "text",
+                "text": "Locate the astronaut head, including hair and face, excluding the torso and helmet. Return a JSON object with bbox: [x1,y1,x2,y2], with coordinates normalized to the range 0 to 1000. A JSON Markdown code block is accepted; include no other prose."
+              }
+            ]
+          }
+        ],
+        "temperature": 0.0,
+        "max_tokens": 256
+      },
+      "expected": {
+        "bbox": [
+          285,
+          20,
+          600,
+          365
+        ],
+        "minimum_iou": 0.5,
+        "annotation": "Manual rectangle enclosing visible hair and face in the pinned 512x512 photograph; fixed before native inference",
+        "accepted_bbox_encodings": [
+          "json_object",
+          "markdown_json_code_block"
+        ]
+      }
+    },
+    {
+      "id": "vlm-pedestrian-video",
+      "model": "qwen-vlm",
+      "capability": "responses.video_chat",
+      "operation": "chat",
+      "asset": "pedestrians",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "video_url",
+                "video_url": {
+                  "url": "asset:pedestrians"
+                }
+              },
+              {
+                "type": "text",
+                "text": "Describe the main action of the people in this video in one short English sentence."
+              }
+            ]
+          }
+        ],
+        "temperature": 0.0,
+        "max_tokens": 256
+      },
+      "expected": {
+        "entity_any": [
+          "people",
+          "person",
+          "pedestrian",
+          "men",
+          "man"
+        ],
+        "action_any": [
+          "walk",
+          "walking"
+        ]
+      }
+    },
+    {
+      "id": "tts-base-intelligibility",
+      "model": "qwen-tts",
+      "capability": "speech.tts",
+      "operation": "speech",
+      "asset": "jfk",
+      "request": {
+        "text": "Please open the blue door and wait outside.",
+        "reference_text": "And so my fellow Americans ask not what your country can do for you ask what you can do for your country",
+        "response_format": "wav"
+      },
+      "expected": {
+        "transcript": "Please open the blue door and wait outside.",
+        "max_word_error_rate": 0.2,
+        "minimum_duration_seconds": 0.5,
+        "maximum_duration_seconds": 30,
+        "reference_audio_sha256": "b3cb1bb16d64cfa7f2f68fc2dfb99320a29d6325430da61c88332ed6ebc36489",
+        "verifier_pins_sha256": "85c2f1505cedc62caac48345913c92fc40c8f7f410a515a50044f3edb5627cf5"
+      }
+    },
+    {
+      "id": "tts-base-voice-cloning",
+      "model": "qwen-tts",
+      "capability": "speech.voice_cloning",
+      "operation": "speech",
+      "asset": "jfk",
+      "request": {
+        "text": "The blue bicycle is parked beside the garden gate.",
+        "reference_text": "And so my fellow Americans ask not what your country can do for you ask what you can do for your country",
+        "response_format": "wav"
+      },
+      "expected": {
+        "transcript": "The blue bicycle is parked beside the garden gate.",
+        "max_word_error_rate": 0.2,
+        "minimum_duration_seconds": 0.5,
+        "maximum_duration_seconds": 30,
+        "minimum_speaker_cosine": 0.65,
+        "reference_audio_sha256": "b3cb1bb16d64cfa7f2f68fc2dfb99320a29d6325430da61c88332ed6ebc36489",
+        "verifier_pins_sha256": "85c2f1505cedc62caac48345913c92fc40c8f7f410a515a50044f3edb5627cf5"
+      }
+    }
+  ]
+}

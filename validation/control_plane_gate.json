@@ -1,0 +1,162 @@
+{
+  "phase": 7,
+  "observed_at_utc": "2026-11-14T05:00:55.984272+00:00",
+  "exit_gate": "PASS",
+  "classification": "SINGLE_HOST_COMPOSITION_AND_SOFTWARE_ONLY",
+  "source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+  "checks": [
+    {
+      "check": "previous_phases_current_source",
+      "passed": true
+    },
+    {
+      "check": "single_production_gateway_no_worker_leases",
+      "passed": true
+    },
+    {
+      "check": "local_job_management_available",
+      "passed": true
+    },
+    {
+      "check": "core_startup_has_no_legacy_composition",
+      "passed": true
+    },
+    {
+      "check": "no_required_infrastructure_pyproject.toml",
+      "passed": true
+    },
+    {
+      "check": "no_required_infrastructure_factory/apps/control-api/pyproject.toml",
+      "passed": true
+    },
+    {
+      "check": "no_required_infrastructure_packages/auth/pyproject.toml",
+      "passed": true
+    },
+    {
+      "check": "fresh_core_environment_created",
+      "passed": true
+    },
+    {
+      "check": "core_only_dependencies_installed",
+      "passed": true
+    },
+    {
+      "check": "real_local_http_probe_without_infrastructure",
+      "passed": true
+    },
+    {
+      "check": "every_minimal_runtime_check_passed",
+      "passed": true
+    },
+    {
+      "check": "optional_infrastructure_not_installed",
+      "passed": true
+    },
+    {
+      "check": "cancellation_locks_shutdown_artifact_contracts",
+      "passed": true
+    },
+    {
+      "check": "real_kaggle_current_core_composition",
+      "passed": true
+    }
+  ],
+  "findings": [],
+  "prior_api_gate": "PASS",
+  "minimal_runtime": {
+    "classification": "SOFTWARE_ONLY_CORE_RUNTIME_AND_EXPLICIT_ADAPTER_DOUBLES",
+    "checks": {
+      "real_core_startup_without_optional_packages": true,
+      "legacy_worker_routes_not_mounted": true,
+      "public_discovery_stays_empty": true,
+      "unvalidated_inference_rejected": true,
+      "canonical_async_job_path_software_only": true,
+      "local_scratch_integrity": true,
+      "no_legacy_state_initialized": true,
+      "no_optional_imports": true,
+      "clean_shutdown": true
+    },
+    "installed_packages": {
+      "uvicorn": "0.54.0",
+      "watchfiles": "1.3.0",
+      "starlette": "1.10.0",
+      "uvloop": "0.23.0",
+      "websockets": "17.4",
+      "httptools": "0.9.0",
+      "certifi": "2026.10.23",
+      "pydantic": "2.14.3",
+      "click": "8.5.1",
+      "httpcore": "1.0.9",
+      "factory-model-registry": "0.1.0",
+      "annotated-doc": "0.0.6",
+      "pydantic-core": "2.50.4",
+      "pillow": "13.0.0",
+      "opentelemetry-api": "1.45.2",
+      "typing-inspection": "0.4.5",
+      "h11": "0.16.0",
+      "pyyaml": "6.0.3",
+      "factory-auth": "0.1.0",
+      "factory-control-api": "0.1.0",
+      "python-dotenv": "1.2.4",
+      "fastapi": "0.162.7",
+      "annotated-types": "0.8.0",
+      "anyio": "4.16.0",
+      "python-multipart": "0.0.33",
+      "httpx": "0.28.1",
+      "typing-extensions": "4.16.0",
+      "psutil": "7.2.2",
+      "factory-contracts": "0.1.0",
+      "idna": "3.20"
+    },
+    "runtime": {
+      "pid": 54716,
+      "mode": "single-host",
+      "job_storage": "memory",
+      "artifact_storage": "local_scratch",
+      "external_services_required": [],
+      "loaded_optional_infrastructure": [],
+      "legacy_components": [],
+      "jobs_accepting": true,
+      "production_ready": false
+    },
+    "native_inference_executed": false,
+    "semantic_validation_executed": false,
+    "full_factory_e2e_executed": false,
+    "production_ready": false,
+    "source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+    "probe_source_sha256": "7040340f4ffc57615ca6d72d81c9cb81c2d4b7187c7480050f8d5fcacd1c8ada",
+    "real_kaggle_core_observation": "validation/backend_lifecycle_observation_v24.json"
+  },
+  "contracts": {
+    "counts": {
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "cases": [
+      "test_waiting_cancel_never_reaches_native_backend",
+      "test_running_cancel_keeps_gpu_reserved_until_native_call_returns",
+      "test_repeated_task_cancellation_cannot_release_gpu_early",
+      "test_shutdown_stops_backend_before_draining_native_jobs",
+      "test_partial_dual_device_lock_is_released_on_cancel",
+      "test_artifact_expiration_integrity_owner_and_cancel_terminal",
+      "test_backend_failure_never_completes_job",
+      "test_unvalidated_registry_is_not_authorized_by_local_runtime",
+      "test_shutdown_during_admission_cannot_create_late_job",
+      "test_local_job_http_management_and_events",
+      "test_retained_legacy_host_refuses_production"
+    ],
+    "source_sha256": "c0b57659a564003bd8be06c761cc844a60b6243866d69285bfa5fe07a8a730e4",
+    "junit_sha256": "c5a932d9fd07b5e66c31c47c93829b5fb3d168d7348d36401751edb004f4aab3",
+    "diagnostics": null
+  },
+  "scope": "Core-only installation with no optional infrastructure packages; actual local HTTP/core Engine path uses explicit test authorization/Adapter doubles. Current-source Kaggle observes core startup plus ASR lifecycle, not ASR inference. Legacy code remains isolated for migration.",
+  "production_ready": false,
+  "native_inference_executed_by_this_gate": false,
+  "semantic_validation_executed": false,
+  "full_factory_e2e_executed": false,
+  "retained_legacy_host": "factory/apps/control-api/src/legacy.py (rejects production)",
+  "external_services_required": []
+}

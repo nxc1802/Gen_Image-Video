@@ -1,0 +1,22 @@
+{
+  "observed_at_utc": "2026-11-13T13:40:45.634114+00:00",
+  "response": {
+    "versionNumberNullable": 19,
+    "ref": "/code/cuongnguyen1802/factory-phase-4-backend-lifecycle",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-4-backend-lifecycle",
+    "versionNumber": 19,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144514514
+  },
+  "requested_slug": "factory-phase-4-backend-lifecycle",
+  "kernel_code_sha256": "b9b4b012ad0ec15fc34f34926687df7baf75df0c09ccac18aefbd5ff69d7fbb3",
+  "accelerator": "NvidiaTeslaT4",
+  "native_inference_executed": false
+}

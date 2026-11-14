@@ -1,0 +1,3850 @@
+{
+  "observed_at_utc": "2026-11-11T19:27:43.968672+00:00",
+  "scope": "Anonymous upstream identity checks: LFS hashes/sizes are metadata declarations, small support files are content-hashed. Neural weights are not downloaded or locally verified; no model inference. HTTP 401 does not distinguish private/gated/nonexistent repositories. Current-head candidates are unselected.",
+  "models": [
+    {
+      "model": "ace-step-1.5-sft",
+      "manifest": "manifests/models/ace-step-1.5-sft.yaml",
+      "manifest_sha256": "09ae95dec4a34ae6aee5359749bd76acc67ecc27b0695d7f9a285a2df6e60664",
+      "repository": "ACE-Step/acestep-v15-sft",
+      "revision": "c410d249e71ea9385a7b586865e65b1473e1098d",
+      "file": "model.safetensors",
+      "expected_sha256": "d4dd3a93870f06720027965b90771f529ab02094b3d29e2518f1d5e097e1af7e",
+      "expected_size_bytes": 4787825604,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/ACE-Step/acestep-v15-sft/revision/c410d249e71ea9385a7b586865e65b1473e1098d?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "c410d249e71ea9385a7b586865e65b1473e1098d",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "5847a8724ccfdd2163a92c7abfcbd1e19d097e99",
+            "size": 4787825604,
+            "lfs": {
+              "sha256": "d4dd3a93870f06720027965b90771f529ab02094b3d29e2518f1d5e097e1af7e",
+              "size": 4787825604,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 8,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/ACE-Step/acestep-v15-sft?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "c410d249e71ea9385a7b586865e65b1473e1098d",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "5847a8724ccfdd2163a92c7abfcbd1e19d097e99",
+            "size": 4787825604,
+            "lfs": {
+              "sha256": "d4dd3a93870f06720027965b90771f529ab02094b3d29e2518f1d5e097e1af7e",
+              "size": 4787825604,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 8
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-sft",
+          "revision": "c410d249e71ea9385a7b586865e65b1473e1098d",
+          "file": "apg_guidance.py",
+          "destination": "acestep-v15-sft/apg_guidance.py",
+          "expected_sha256": "0c0ce9755952c99307ecad2fac67863d43258e34541cd37ce2f2221f59e76b15",
+          "expected_size_bytes": 7956,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-sft",
+          "revision": "c410d249e71ea9385a7b586865e65b1473e1098d",
+          "file": "config.json",
+          "destination": "acestep-v15-sft/config.json",
+          "expected_sha256": "9bb4f832f2e5e6c8bf7bddab3c6a6da1b13c01d072efbf0ed3c830536c473359",
+          "expected_size_bytes": 1940,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_2",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-sft",
+          "revision": "c410d249e71ea9385a7b586865e65b1473e1098d",
+          "file": "configuration_acestep_v15.py",
+          "destination": "acestep-v15-sft/configuration_acestep_v15.py",
+          "expected_sha256": "b89870c5c7a7ce060eb0bcdbb5ffc86b0b1a324ca325a26be552ea1b42496dc5",
+          "expected_size_bytes": 13130,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-sft",
+          "revision": "c410d249e71ea9385a7b586865e65b1473e1098d",
+          "file": "model.safetensors",
+          "destination": "acestep-v15-sft/model.safetensors",
+          "expected_sha256": "d4dd3a93870f06720027965b90771f529ab02094b3d29e2518f1d5e097e1af7e",
+          "expected_size_bytes": 4787825604,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_4",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-sft",
+          "revision": "c410d249e71ea9385a7b586865e65b1473e1098d",
+          "file": "modeling_acestep_v15_base.py",
+          "destination": "acestep-v15-sft/modeling_acestep_v15_base.py",
+          "expected_sha256": "5e3b475d46965dcd5b0d037e53a9af359305a7dbd78e2ee08b39e94c4b02ca48",
+          "expected_size_bytes": 95910,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_5",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-sft",
+          "revision": "c410d249e71ea9385a7b586865e65b1473e1098d",
+          "file": "silence_latent.pt",
+          "destination": "acestep-v15-sft/silence_latent.pt",
+          "expected_sha256": "a778e9dd942f5e8b2c09c55370782d318834432b03dabbcdf70e6ed49ad6358b",
+          "expected_size_bytes": 3841215,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_6",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/added_tokens.json",
+          "destination": "Qwen3-Embedding-0.6B/added_tokens.json",
+          "expected_sha256": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680",
+          "expected_size_bytes": 707,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/chat_template.jinja",
+          "destination": "Qwen3-Embedding-0.6B/chat_template.jinja",
+          "expected_sha256": "87a2728cb8dc9fe424d624542f6060ec05a1d285ebbec578bb078900e33396b5",
+          "expected_size_bytes": 4116,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/config.json",
+          "destination": "Qwen3-Embedding-0.6B/config.json",
+          "expected_sha256": "bb23c1607cfe059a58d8f0196cf1cebb52082b1056b8e358a579da80a5759420",
+          "expected_size_bytes": 1359,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_9",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/merges.txt",
+          "destination": "Qwen3-Embedding-0.6B/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_10",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/model.safetensors",
+          "destination": "Qwen3-Embedding-0.6B/model.safetensors",
+          "expected_sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+          "expected_size_bytes": 1191586416,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_11",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/special_tokens_map.json",
+          "destination": "Qwen3-Embedding-0.6B/special_tokens_map.json",
+          "expected_sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+          "expected_size_bytes": 613,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_12",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/tokenizer.json",
+          "destination": "Qwen3-Embedding-0.6B/tokenizer.json",
+          "expected_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+          "expected_size_bytes": 11423705,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_13",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/tokenizer_config.json",
+          "destination": "Qwen3-Embedding-0.6B/tokenizer_config.json",
+          "expected_sha256": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0",
+          "expected_size_bytes": 5404,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_14",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/vocab.json",
+          "destination": "Qwen3-Embedding-0.6B/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_15",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/added_tokens.json",
+          "destination": "acestep-5Hz-lm-1.7B/added_tokens.json",
+          "expected_sha256": "db08b66a515fb5d6acca0b3492d25bb44e0deda6241fc1113ac0679d40558c48",
+          "expected_size_bytes": 2217787,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_16",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/chat_template.jinja",
+          "destination": "acestep-5Hz-lm-1.7B/chat_template.jinja",
+          "expected_sha256": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8",
+          "expected_size_bytes": 4168,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_17",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/config.json",
+          "destination": "acestep-5Hz-lm-1.7B/config.json",
+          "expected_sha256": "73515ca4bfd86a5b56f28bf680311d1911e159c85d7f7ceb2188e310007c9010",
+          "expected_size_bytes": 1385,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_18",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/merges.txt",
+          "destination": "acestep-5Hz-lm-1.7B/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_19",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/model.safetensors",
+          "destination": "acestep-5Hz-lm-1.7B/model.safetensors",
+          "expected_sha256": "f161689da73e5ecefa28ff780d51c2d92a00f056d021d7933c779ed5c6cd7db8",
+          "expected_size_bytes": 3708521528,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_20",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/special_tokens_map.json",
+          "destination": "acestep-5Hz-lm-1.7B/special_tokens_map.json",
+          "expected_sha256": "76e233bfc357b0b03d7b6e6ba8e799244f358552575a7cdadb78d3d19106b298",
+          "expected_size_bytes": 1824199,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_21",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/tokenizer.json",
+          "destination": "acestep-5Hz-lm-1.7B/tokenizer.json",
+          "expected_sha256": "35af56c3f5cb3ea2cc578aa28a8937770981d504f183ac5c8c38baf4bbd4af4d",
+          "expected_size_bytes": 24321939,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_22",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/tokenizer_config.json",
+          "destination": "acestep-5Hz-lm-1.7B/tokenizer_config.json",
+          "expected_sha256": "6cd70cdd89425971794f5235562edcc608b0629a6c4686ae51a8b8c8b8ba5e95",
+          "expected_size_bytes": 14072925,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_23",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/vocab.json",
+          "destination": "acestep-5Hz-lm-1.7B/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_24",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "vae/config.json",
+          "destination": "vae/config.json",
+          "expected_sha256": "14e019904df567f26df750317a70e2bd08f9f8f3c40ff4a24c97d1cd3f20ccd2",
+          "expected_size_bytes": 425,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_25",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "vae/diffusion_pytorch_model.safetensors",
+          "destination": "vae/diffusion_pytorch_model.safetensors",
+          "expected_sha256": "da17edb604c40deaf09e9b24974e590d1ca83a374070e5d0884cfa4bed9a99b0",
+          "expected_size_bytes": 337431388,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "ace-step-1.5-turbo",
+      "manifest": "manifests/models/ace-step-1.5-turbo.yaml",
+      "manifest_sha256": "708ff4fff8d6d97d0f2aee8d7ac4144a3e08df0dae390517dcf795359611167b",
+      "repository": "ACE-Step/Ace-Step1.5",
+      "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+      "file": "acestep-v15-turbo/model.safetensors",
+      "expected_sha256": "3f6e0797fad420a39bd33979eb6e840e30989e34a3794e843d23b60ec6e422d7",
+      "expected_size_bytes": 4787825604,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/ACE-Step/Ace-Step1.5/revision/19671f406d603126926c1b7e2adc169acbcade22?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "19671f406d603126926c1b7e2adc169acbcade22",
+        "exact_filename_matches": [
+          {
+            "rfilename": "acestep-v15-turbo/model.safetensors",
+            "blobId": "dd5858cb03b6587350e2c4abc4fd55c0ae7dc39b",
+            "size": 4787825604,
+            "lfs": {
+              "sha256": "3f6e0797fad420a39bd33979eb6e840e30989e34a3794e843d23b60ec6e422d7",
+              "size": 4787825604,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 28,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/ACE-Step/Ace-Step1.5?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "19671f406d603126926c1b7e2adc169acbcade22",
+        "exact_filename_matches": [
+          {
+            "rfilename": "acestep-v15-turbo/model.safetensors",
+            "blobId": "dd5858cb03b6587350e2c4abc4fd55c0ae7dc39b",
+            "size": 4787825604,
+            "lfs": {
+              "sha256": "3f6e0797fad420a39bd33979eb6e840e30989e34a3794e843d23b60ec6e422d7",
+              "size": 4787825604,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 28
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-v15-turbo/config.json",
+          "destination": "acestep-v15-turbo/config.json",
+          "expected_sha256": "74745ff704ea49164c3d2d1c99fc0670f3fc635a869f0aec2d1311e6a52d400a",
+          "expected_size_bytes": 1968,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-v15-turbo/configuration_acestep_v15.py",
+          "destination": "acestep-v15-turbo/configuration_acestep_v15.py",
+          "expected_sha256": "b89870c5c7a7ce060eb0bcdbb5ffc86b0b1a324ca325a26be552ea1b42496dc5",
+          "expected_size_bytes": 13130,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-v15-turbo/model.safetensors",
+          "destination": "acestep-v15-turbo/model.safetensors",
+          "expected_sha256": "3f6e0797fad420a39bd33979eb6e840e30989e34a3794e843d23b60ec6e422d7",
+          "expected_size_bytes": 4787825604,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_3",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-v15-turbo/modeling_acestep_v15_turbo.py",
+          "destination": "acestep-v15-turbo/modeling_acestep_v15_turbo.py",
+          "expected_sha256": "c1ab0dd547124fee7ada449b2b86eae8201dc7d15889932643bbb67e3c982444",
+          "expected_size_bytes": 96036,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_4",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-v15-turbo/silence_latent.pt",
+          "destination": "acestep-v15-turbo/silence_latent.pt",
+          "expected_sha256": "a778e9dd942f5e8b2c09c55370782d318834432b03dabbcdf70e6ed49ad6358b",
+          "expected_size_bytes": 3841215,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_5",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/added_tokens.json",
+          "destination": "Qwen3-Embedding-0.6B/added_tokens.json",
+          "expected_sha256": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680",
+          "expected_size_bytes": 707,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_6",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/chat_template.jinja",
+          "destination": "Qwen3-Embedding-0.6B/chat_template.jinja",
+          "expected_sha256": "87a2728cb8dc9fe424d624542f6060ec05a1d285ebbec578bb078900e33396b5",
+          "expected_size_bytes": 4116,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/config.json",
+          "destination": "Qwen3-Embedding-0.6B/config.json",
+          "expected_sha256": "bb23c1607cfe059a58d8f0196cf1cebb52082b1056b8e358a579da80a5759420",
+          "expected_size_bytes": 1359,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/merges.txt",
+          "destination": "Qwen3-Embedding-0.6B/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_9",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/model.safetensors",
+          "destination": "Qwen3-Embedding-0.6B/model.safetensors",
+          "expected_sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+          "expected_size_bytes": 1191586416,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_10",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/special_tokens_map.json",
+          "destination": "Qwen3-Embedding-0.6B/special_tokens_map.json",
+          "expected_sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+          "expected_size_bytes": 613,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_11",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/tokenizer.json",
+          "destination": "Qwen3-Embedding-0.6B/tokenizer.json",
+          "expected_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+          "expected_size_bytes": 11423705,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_12",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/tokenizer_config.json",
+          "destination": "Qwen3-Embedding-0.6B/tokenizer_config.json",
+          "expected_sha256": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0",
+          "expected_size_bytes": 5404,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_13",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/vocab.json",
+          "destination": "Qwen3-Embedding-0.6B/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_14",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/added_tokens.json",
+          "destination": "acestep-5Hz-lm-1.7B/added_tokens.json",
+          "expected_sha256": "db08b66a515fb5d6acca0b3492d25bb44e0deda6241fc1113ac0679d40558c48",
+          "expected_size_bytes": 2217787,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_15",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/chat_template.jinja",
+          "destination": "acestep-5Hz-lm-1.7B/chat_template.jinja",
+          "expected_sha256": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8",
+          "expected_size_bytes": 4168,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_16",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/config.json",
+          "destination": "acestep-5Hz-lm-1.7B/config.json",
+          "expected_sha256": "73515ca4bfd86a5b56f28bf680311d1911e159c85d7f7ceb2188e310007c9010",
+          "expected_size_bytes": 1385,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_17",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/merges.txt",
+          "destination": "acestep-5Hz-lm-1.7B/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_18",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/model.safetensors",
+          "destination": "acestep-5Hz-lm-1.7B/model.safetensors",
+          "expected_sha256": "f161689da73e5ecefa28ff780d51c2d92a00f056d021d7933c779ed5c6cd7db8",
+          "expected_size_bytes": 3708521528,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_19",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/special_tokens_map.json",
+          "destination": "acestep-5Hz-lm-1.7B/special_tokens_map.json",
+          "expected_sha256": "76e233bfc357b0b03d7b6e6ba8e799244f358552575a7cdadb78d3d19106b298",
+          "expected_size_bytes": 1824199,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_20",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/tokenizer.json",
+          "destination": "acestep-5Hz-lm-1.7B/tokenizer.json",
+          "expected_sha256": "35af56c3f5cb3ea2cc578aa28a8937770981d504f183ac5c8c38baf4bbd4af4d",
+          "expected_size_bytes": 24321939,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_21",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/tokenizer_config.json",
+          "destination": "acestep-5Hz-lm-1.7B/tokenizer_config.json",
+          "expected_sha256": "6cd70cdd89425971794f5235562edcc608b0629a6c4686ae51a8b8c8b8ba5e95",
+          "expected_size_bytes": 14072925,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_22",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/vocab.json",
+          "destination": "acestep-5Hz-lm-1.7B/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_23",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "vae/config.json",
+          "destination": "vae/config.json",
+          "expected_sha256": "14e019904df567f26df750317a70e2bd08f9f8f3c40ff4a24c97d1cd3f20ccd2",
+          "expected_size_bytes": 425,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_24",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "vae/diffusion_pytorch_model.safetensors",
+          "destination": "vae/diffusion_pytorch_model.safetensors",
+          "expected_sha256": "da17edb604c40deaf09e9b24974e590d1ca83a374070e5d0884cfa4bed9a99b0",
+          "expected_size_bytes": 337431388,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "ace-step-1.5-xl-base",
+      "manifest": "manifests/models/ace-step-1.5-xl-base.yaml",
+      "manifest_sha256": "d7c3b09c3bbd899f3d0bf19652004e56e5acbde9525a7aaae0243e5f00a409ca",
+      "repository": "ACE-Step/acestep-v15-xl-base",
+      "revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+      "file": "model-00001-of-00004.safetensors",
+      "expected_sha256": "da654de2a66ace691fb06fedca81f14d20451eecd534c04a69d2f0207303ef23",
+      "expected_size_bytes": 4986971456,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/ACE-Step/acestep-v15-xl-base/revision/220c1166efbdd9583eafcb12eb160594bbfcb241?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model-00001-of-00004.safetensors",
+            "blobId": "6890ccfc7c872392de11251f68afe32810e46ac4",
+            "size": 4986971456,
+            "lfs": {
+              "sha256": "da654de2a66ace691fb06fedca81f14d20451eecd534c04a69d2f0207303ef23",
+              "size": 4986971456,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 12,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/ACE-Step/acestep-v15-xl-base?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model-00001-of-00004.safetensors",
+            "blobId": "6890ccfc7c872392de11251f68afe32810e46ac4",
+            "size": 4986971456,
+            "lfs": {
+              "sha256": "da654de2a66ace691fb06fedca81f14d20451eecd534c04a69d2f0207303ef23",
+              "size": 4986971456,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 12
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-xl-base",
+          "revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+          "file": "apg_guidance.py",
+          "destination": "acestep-v15-xl-base/apg_guidance.py",
+          "expected_sha256": "89ecdc4686e174225d6e6d304939d75892297dc3c19fbb11e04345dc3d4685db",
+          "expected_size_bytes": 8340,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-xl-base",
+          "revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+          "file": "config.json",
+          "destination": "acestep-v15-xl-base/config.json",
+          "expected_sha256": "174cf8c4afc2c41212546b4dca9afb11e7958f8b1e1a770d7cd009a82d72a6f1",
+          "expected_size_bytes": 2525,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_2",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-xl-base",
+          "revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+          "file": "configuration_acestep_v15.py",
+          "destination": "acestep-v15-xl-base/configuration_acestep_v15.py",
+          "expected_sha256": "0d66f38eba6a3d1665c9449a1a52724d68354477bc88dcf02389640e3602a0c7",
+          "expected_size_bytes": 13225,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-xl-base",
+          "revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+          "file": "model-00001-of-00004.safetensors",
+          "destination": "acestep-v15-xl-base/model-00001-of-00004.safetensors",
+          "expected_sha256": "da654de2a66ace691fb06fedca81f14d20451eecd534c04a69d2f0207303ef23",
+          "expected_size_bytes": 4986971456,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_4",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-xl-base",
+          "revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+          "file": "model-00002-of-00004.safetensors",
+          "destination": "acestep-v15-xl-base/model-00002-of-00004.safetensors",
+          "expected_sha256": "ade70e18afcf9e3b656cda04e15b52d1a480f4d6a0e40141f3e614a4103a279a",
+          "expected_size_bytes": 4986942776,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_5",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-xl-base",
+          "revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+          "file": "model-00003-of-00004.safetensors",
+          "destination": "acestep-v15-xl-base/model-00003-of-00004.safetensors",
+          "expected_sha256": "e44b5ec5fa00bb5a0da423355772bfb3688d1330d70ba65cfd5611eebb20f9d5",
+          "expected_size_bytes": 4986942808,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_6",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-xl-base",
+          "revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+          "file": "model-00004-of-00004.safetensors",
+          "destination": "acestep-v15-xl-base/model-00004-of-00004.safetensors",
+          "expected_sha256": "3994ec426e1fb1cc92488b3fffa8bbbf86e8daa83ab23a4dc11eeb0ad12db52b",
+          "expected_size_bytes": 4988483464,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-xl-base",
+          "revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+          "file": "model.safetensors.index.json",
+          "destination": "acestep-v15-xl-base/model.safetensors.index.json",
+          "expected_sha256": "0a0c7e153a7bb6f6061b155739e9502cf83977bb959186d4df688595302a9474",
+          "expected_size_bytes": 71471,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-xl-base",
+          "revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+          "file": "modeling_acestep_v15_xl_base.py",
+          "destination": "acestep-v15-xl-base/modeling_acestep_v15_xl_base.py",
+          "expected_sha256": "e367811c6d8cd9162e630da86622dd6edc9d5c2b7f605eadd68e69a227c35e88",
+          "expected_size_bytes": 105981,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_9",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-xl-base",
+          "revision": "220c1166efbdd9583eafcb12eb160594bbfcb241",
+          "file": "silence_latent.pt",
+          "destination": "acestep-v15-xl-base/silence_latent.pt",
+          "expected_sha256": "a778e9dd942f5e8b2c09c55370782d318834432b03dabbcdf70e6ed49ad6358b",
+          "expected_size_bytes": 3841215,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_10",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/added_tokens.json",
+          "destination": "Qwen3-Embedding-0.6B/added_tokens.json",
+          "expected_sha256": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680",
+          "expected_size_bytes": 707,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_11",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/chat_template.jinja",
+          "destination": "Qwen3-Embedding-0.6B/chat_template.jinja",
+          "expected_sha256": "87a2728cb8dc9fe424d624542f6060ec05a1d285ebbec578bb078900e33396b5",
+          "expected_size_bytes": 4116,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_12",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/config.json",
+          "destination": "Qwen3-Embedding-0.6B/config.json",
+          "expected_sha256": "bb23c1607cfe059a58d8f0196cf1cebb52082b1056b8e358a579da80a5759420",
+          "expected_size_bytes": 1359,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_13",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/merges.txt",
+          "destination": "Qwen3-Embedding-0.6B/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_14",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/model.safetensors",
+          "destination": "Qwen3-Embedding-0.6B/model.safetensors",
+          "expected_sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+          "expected_size_bytes": 1191586416,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_15",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/special_tokens_map.json",
+          "destination": "Qwen3-Embedding-0.6B/special_tokens_map.json",
+          "expected_sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+          "expected_size_bytes": 613,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_16",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/tokenizer.json",
+          "destination": "Qwen3-Embedding-0.6B/tokenizer.json",
+          "expected_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+          "expected_size_bytes": 11423705,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_17",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/tokenizer_config.json",
+          "destination": "Qwen3-Embedding-0.6B/tokenizer_config.json",
+          "expected_sha256": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0",
+          "expected_size_bytes": 5404,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_18",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/vocab.json",
+          "destination": "Qwen3-Embedding-0.6B/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_19",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/added_tokens.json",
+          "destination": "acestep-5Hz-lm-1.7B/added_tokens.json",
+          "expected_sha256": "db08b66a515fb5d6acca0b3492d25bb44e0deda6241fc1113ac0679d40558c48",
+          "expected_size_bytes": 2217787,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_20",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/chat_template.jinja",
+          "destination": "acestep-5Hz-lm-1.7B/chat_template.jinja",
+          "expected_sha256": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8",
+          "expected_size_bytes": 4168,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_21",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/config.json",
+          "destination": "acestep-5Hz-lm-1.7B/config.json",
+          "expected_sha256": "73515ca4bfd86a5b56f28bf680311d1911e159c85d7f7ceb2188e310007c9010",
+          "expected_size_bytes": 1385,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_22",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/merges.txt",
+          "destination": "acestep-5Hz-lm-1.7B/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_23",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/model.safetensors",
+          "destination": "acestep-5Hz-lm-1.7B/model.safetensors",
+          "expected_sha256": "f161689da73e5ecefa28ff780d51c2d92a00f056d021d7933c779ed5c6cd7db8",
+          "expected_size_bytes": 3708521528,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_24",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/special_tokens_map.json",
+          "destination": "acestep-5Hz-lm-1.7B/special_tokens_map.json",
+          "expected_sha256": "76e233bfc357b0b03d7b6e6ba8e799244f358552575a7cdadb78d3d19106b298",
+          "expected_size_bytes": 1824199,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_25",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/tokenizer.json",
+          "destination": "acestep-5Hz-lm-1.7B/tokenizer.json",
+          "expected_sha256": "35af56c3f5cb3ea2cc578aa28a8937770981d504f183ac5c8c38baf4bbd4af4d",
+          "expected_size_bytes": 24321939,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_26",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/tokenizer_config.json",
+          "destination": "acestep-5Hz-lm-1.7B/tokenizer_config.json",
+          "expected_sha256": "6cd70cdd89425971794f5235562edcc608b0629a6c4686ae51a8b8c8b8ba5e95",
+          "expected_size_bytes": 14072925,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_27",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/vocab.json",
+          "destination": "acestep-5Hz-lm-1.7B/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_28",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "vae/config.json",
+          "destination": "vae/config.json",
+          "expected_sha256": "14e019904df567f26df750317a70e2bd08f9f8f3c40ff4a24c97d1cd3f20ccd2",
+          "expected_size_bytes": 425,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_29",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "vae/diffusion_pytorch_model.safetensors",
+          "destination": "vae/diffusion_pytorch_model.safetensors",
+          "expected_sha256": "da17edb604c40deaf09e9b24974e590d1ca83a374070e5d0884cfa4bed9a99b0",
+          "expected_size_bytes": 337431388,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "ace-step-1.5",
+      "manifest": "manifests/models/ace-step-1.5.yaml",
+      "manifest_sha256": "74972565cc674b81006b8b4dd6bcdc2138e154a9f24a06092a643766a770d81a",
+      "repository": "ACE-Step/acestep-v15-base",
+      "revision": "e432212fec32b8965a14ffa57ae653438d6abd14",
+      "file": "model.safetensors",
+      "expected_sha256": "4177f600501a6d4bd81cadaa0abac557ffd15c54e5c8cb52053cdb24a0844d6b",
+      "expected_size_bytes": 4787825604,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/ACE-Step/acestep-v15-base/revision/e432212fec32b8965a14ffa57ae653438d6abd14?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "e432212fec32b8965a14ffa57ae653438d6abd14",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "722b22c94f1d12cd7441a166a4e708cfa0291670",
+            "size": 4787825604,
+            "lfs": {
+              "sha256": "4177f600501a6d4bd81cadaa0abac557ffd15c54e5c8cb52053cdb24a0844d6b",
+              "size": 4787825604,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 8,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/ACE-Step/acestep-v15-base?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "e432212fec32b8965a14ffa57ae653438d6abd14",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "722b22c94f1d12cd7441a166a4e708cfa0291670",
+            "size": 4787825604,
+            "lfs": {
+              "sha256": "4177f600501a6d4bd81cadaa0abac557ffd15c54e5c8cb52053cdb24a0844d6b",
+              "size": 4787825604,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 8
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-base",
+          "revision": "e432212fec32b8965a14ffa57ae653438d6abd14",
+          "file": "apg_guidance.py",
+          "destination": "acestep-v15-base/apg_guidance.py",
+          "expected_sha256": "0c0ce9755952c99307ecad2fac67863d43258e34541cd37ce2f2221f59e76b15",
+          "expected_size_bytes": 7956,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-base",
+          "revision": "e432212fec32b8965a14ffa57ae653438d6abd14",
+          "file": "config.json",
+          "destination": "acestep-v15-base/config.json",
+          "expected_sha256": "9bb4f832f2e5e6c8bf7bddab3c6a6da1b13c01d072efbf0ed3c830536c473359",
+          "expected_size_bytes": 1940,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_2",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-base",
+          "revision": "e432212fec32b8965a14ffa57ae653438d6abd14",
+          "file": "configuration_acestep_v15.py",
+          "destination": "acestep-v15-base/configuration_acestep_v15.py",
+          "expected_sha256": "b89870c5c7a7ce060eb0bcdbb5ffc86b0b1a324ca325a26be552ea1b42496dc5",
+          "expected_size_bytes": 13130,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-base",
+          "revision": "e432212fec32b8965a14ffa57ae653438d6abd14",
+          "file": "model.safetensors",
+          "destination": "acestep-v15-base/model.safetensors",
+          "expected_sha256": "4177f600501a6d4bd81cadaa0abac557ffd15c54e5c8cb52053cdb24a0844d6b",
+          "expected_size_bytes": 4787825604,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_4",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-base",
+          "revision": "e432212fec32b8965a14ffa57ae653438d6abd14",
+          "file": "modeling_acestep_v15_base.py",
+          "destination": "acestep-v15-base/modeling_acestep_v15_base.py",
+          "expected_sha256": "d5f67ca269f8b854a86e203b843534ab62728193e45277115f667b00ab5aa2b6",
+          "expected_size_bytes": 95545,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_5",
+          "provider": "huggingface",
+          "repository": "ACE-Step/acestep-v15-base",
+          "revision": "e432212fec32b8965a14ffa57ae653438d6abd14",
+          "file": "silence_latent.pt",
+          "destination": "acestep-v15-base/silence_latent.pt",
+          "expected_sha256": "a778e9dd942f5e8b2c09c55370782d318834432b03dabbcdf70e6ed49ad6358b",
+          "expected_size_bytes": 3841215,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_6",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/added_tokens.json",
+          "destination": "Qwen3-Embedding-0.6B/added_tokens.json",
+          "expected_sha256": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680",
+          "expected_size_bytes": 707,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/chat_template.jinja",
+          "destination": "Qwen3-Embedding-0.6B/chat_template.jinja",
+          "expected_sha256": "87a2728cb8dc9fe424d624542f6060ec05a1d285ebbec578bb078900e33396b5",
+          "expected_size_bytes": 4116,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/config.json",
+          "destination": "Qwen3-Embedding-0.6B/config.json",
+          "expected_sha256": "bb23c1607cfe059a58d8f0196cf1cebb52082b1056b8e358a579da80a5759420",
+          "expected_size_bytes": 1359,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_9",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/merges.txt",
+          "destination": "Qwen3-Embedding-0.6B/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_10",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/model.safetensors",
+          "destination": "Qwen3-Embedding-0.6B/model.safetensors",
+          "expected_sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+          "expected_size_bytes": 1191586416,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_11",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/special_tokens_map.json",
+          "destination": "Qwen3-Embedding-0.6B/special_tokens_map.json",
+          "expected_sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+          "expected_size_bytes": 613,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_12",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/tokenizer.json",
+          "destination": "Qwen3-Embedding-0.6B/tokenizer.json",
+          "expected_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+          "expected_size_bytes": 11423705,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_13",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/tokenizer_config.json",
+          "destination": "Qwen3-Embedding-0.6B/tokenizer_config.json",
+          "expected_sha256": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0",
+          "expected_size_bytes": 5404,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_14",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "Qwen3-Embedding-0.6B/vocab.json",
+          "destination": "Qwen3-Embedding-0.6B/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_15",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/added_tokens.json",
+          "destination": "acestep-5Hz-lm-1.7B/added_tokens.json",
+          "expected_sha256": "db08b66a515fb5d6acca0b3492d25bb44e0deda6241fc1113ac0679d40558c48",
+          "expected_size_bytes": 2217787,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_16",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/chat_template.jinja",
+          "destination": "acestep-5Hz-lm-1.7B/chat_template.jinja",
+          "expected_sha256": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8",
+          "expected_size_bytes": 4168,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_17",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/config.json",
+          "destination": "acestep-5Hz-lm-1.7B/config.json",
+          "expected_sha256": "73515ca4bfd86a5b56f28bf680311d1911e159c85d7f7ceb2188e310007c9010",
+          "expected_size_bytes": 1385,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_18",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/merges.txt",
+          "destination": "acestep-5Hz-lm-1.7B/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_19",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/model.safetensors",
+          "destination": "acestep-5Hz-lm-1.7B/model.safetensors",
+          "expected_sha256": "f161689da73e5ecefa28ff780d51c2d92a00f056d021d7933c779ed5c6cd7db8",
+          "expected_size_bytes": 3708521528,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_20",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/special_tokens_map.json",
+          "destination": "acestep-5Hz-lm-1.7B/special_tokens_map.json",
+          "expected_sha256": "76e233bfc357b0b03d7b6e6ba8e799244f358552575a7cdadb78d3d19106b298",
+          "expected_size_bytes": 1824199,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_21",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/tokenizer.json",
+          "destination": "acestep-5Hz-lm-1.7B/tokenizer.json",
+          "expected_sha256": "35af56c3f5cb3ea2cc578aa28a8937770981d504f183ac5c8c38baf4bbd4af4d",
+          "expected_size_bytes": 24321939,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_22",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/tokenizer_config.json",
+          "destination": "acestep-5Hz-lm-1.7B/tokenizer_config.json",
+          "expected_sha256": "6cd70cdd89425971794f5235562edcc608b0629a6c4686ae51a8b8c8b8ba5e95",
+          "expected_size_bytes": 14072925,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_23",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "acestep-5Hz-lm-1.7B/vocab.json",
+          "destination": "acestep-5Hz-lm-1.7B/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_24",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "vae/config.json",
+          "destination": "vae/config.json",
+          "expected_sha256": "14e019904df567f26df750317a70e2bd08f9f8f3c40ff4a24c97d1cd3f20ccd2",
+          "expected_size_bytes": 425,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_25",
+          "provider": "huggingface",
+          "repository": "ACE-Step/Ace-Step1.5",
+          "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+          "file": "vae/diffusion_pytorch_model.safetensors",
+          "destination": "vae/diffusion_pytorch_model.safetensors",
+          "expected_sha256": "da17edb604c40deaf09e9b24974e590d1ca83a374070e5d0884cfa4bed9a99b0",
+          "expected_size_bytes": 337431388,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "enhancement-suite-v1",
+      "manifest": "manifests/models/enhancement-suite-v1.yaml",
+      "manifest_sha256": "64fb61bc3f8799c525b09761bafc75e56ec2e8e145474e9bed67c4d950db1acc",
+      "repository": "Comfy-Org/Real-ESRGAN_repackaged",
+      "revision": "5fd49b7b278836f48af63ecd314d0f98ab336105",
+      "file": "RealESRGAN_x4plus.safetensors",
+      "expected_sha256": "37f9a931c215f040aa6d50f711f2cb115f713c46df1d0d6469a8bd7bfe9a60bb",
+      "expected_size_bytes": 66857836,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Comfy-Org/Real-ESRGAN_repackaged/revision/5fd49b7b278836f48af63ecd314d0f98ab336105?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "5fd49b7b278836f48af63ecd314d0f98ab336105",
+        "exact_filename_matches": [
+          {
+            "rfilename": "RealESRGAN_x4plus.safetensors",
+            "blobId": "959e65300c473655ea19f6b723541d361f06d02a",
+            "size": 66857836,
+            "lfs": {
+              "sha256": "37f9a931c215f040aa6d50f711f2cb115f713c46df1d0d6469a8bd7bfe9a60bb",
+              "size": 66857836,
+              "pointerSize": 133
+            }
+          }
+        ],
+        "file_count": 3,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Comfy-Org/Real-ESRGAN_repackaged?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "5fd49b7b278836f48af63ecd314d0f98ab336105",
+        "exact_filename_matches": [
+          {
+            "rfilename": "RealESRGAN_x4plus.safetensors",
+            "blobId": "959e65300c473655ea19f6b723541d361f06d02a",
+            "size": 66857836,
+            "lfs": {
+              "sha256": "37f9a931c215f040aa6d50f711f2cb115f713c46df1d0d6469a8bd7bfe9a60bb",
+              "size": 66857836,
+              "pointerSize": 133
+            }
+          }
+        ],
+        "file_count": 3
+      },
+      "file_identities": [
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/Real-ESRGAN_repackaged",
+          "revision": "5fd49b7b278836f48af63ecd314d0f98ab336105",
+          "file": "RealESRGAN_x4plus.safetensors",
+          "destination": "model/RealESRGAN_x4plus.safetensors",
+          "expected_sha256": "37f9a931c215f040aa6d50f711f2cb115f713c46df1d0d6469a8bd7bfe9a60bb",
+          "expected_size_bytes": 66857836,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "minimax-h3-reference",
+      "manifest": "manifests/models/minimax-h3-reference.yaml",
+      "manifest_sha256": "16a5b50a7bf8add45c5001a2d705554152fcdf571bc346cc469ced42b7e78fc1",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+      "file": "diffusion_models/minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+      "expected_sha256": "9255f52b6677845ad238f20dfaafa94727053694127ab7f255c048f0f9365779",
+      "expected_size_bytes": 20970379616,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Comfy-Org/MiniMax-H3/revision/54472221d27c695fca9621b0c3ed52f06c4af707?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+        "exact_filename_matches": [
+          {
+            "rfilename": "diffusion_models/minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+            "blobId": "7d456c7b17fc9ba27722ddc4971bfb6e46bf831a",
+            "size": 20970379616,
+            "lfs": {
+              "sha256": "9255f52b6677845ad238f20dfaafa94727053694127ab7f255c048f0f9365779",
+              "size": 20970379616,
+              "pointerSize": 136
+            }
+          }
+        ],
+        "file_count": 41,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Comfy-Org/MiniMax-H3?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+        "exact_filename_matches": [
+          {
+            "rfilename": "diffusion_models/minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+            "blobId": "7d456c7b17fc9ba27722ddc4971bfb6e46bf831a",
+            "size": 20970379616,
+            "lfs": {
+              "sha256": "9255f52b6677845ad238f20dfaafa94727053694127ab7f255c048f0f9365779",
+              "size": 20970379616,
+              "pointerSize": 136
+            }
+          }
+        ],
+        "file_count": 41
+      },
+      "file_identities": [
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "diffusion_models/minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+          "destination": "model/diffusion_models/minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+          "expected_sha256": "9255f52b6677845ad238f20dfaafa94727053694127ab7f255c048f0f9365779",
+          "expected_size_bytes": 20970379616,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "clip",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+          "destination": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+          "expected_sha256": "35a88d51044231fe332301d7a62aa81e3f2cba62febeb446e2c1e3e0ef76f2c6",
+          "expected_size_bytes": 15687142551,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "video_vae",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "vae/minimax_h3_video_vae_fp16.safetensors",
+          "destination": "vae/minimax_h3_video_vae_fp16.safetensors",
+          "expected_sha256": "7c1f131492e7eddacaac9069a61b81bdd39de5cc96561e677c5eab1cdce5e522",
+          "expected_size_bytes": 5207808496,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "audio_vae",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "vae/minimax_h3_audio_vae_fp32.safetensors",
+          "destination": "vae/minimax_h3_audio_vae_fp32.safetensors",
+          "expected_sha256": "8e505d95dd1561d47abd43d4238fd40d9bb1ae9e147ed0a4cba778d76ae4db48",
+          "expected_size_bytes": 605254808,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "minimax-h3-turbo",
+      "manifest": "manifests/models/minimax-h3-turbo.yaml",
+      "manifest_sha256": "a48ae7914a76eab12071d26a39d6657725aad658358df382d646cc1223b56fa2",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+      "file": "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+      "expected_sha256": "e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a",
+      "expected_size_bytes": 20970379616,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Comfy-Org/MiniMax-H3/revision/54472221d27c695fca9621b0c3ed52f06c4af707?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+        "exact_filename_matches": [
+          {
+            "rfilename": "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+            "blobId": "552dd33920a833fa613c73f0ca2335bb6ff0e4d1",
+            "size": 20970379616,
+            "lfs": {
+              "sha256": "e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a",
+              "size": 20970379616,
+              "pointerSize": 136
+            }
+          }
+        ],
+        "file_count": 41,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Comfy-Org/MiniMax-H3?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+        "exact_filename_matches": [
+          {
+            "rfilename": "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+            "blobId": "552dd33920a833fa613c73f0ca2335bb6ff0e4d1",
+            "size": 20970379616,
+            "lfs": {
+              "sha256": "e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a",
+              "size": 20970379616,
+              "pointerSize": 136
+            }
+          }
+        ],
+        "file_count": 41
+      },
+      "file_identities": [
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+          "destination": "model/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+          "expected_sha256": "e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a",
+          "expected_size_bytes": 20970379616,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "clip",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+          "destination": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+          "expected_sha256": "35a88d51044231fe332301d7a62aa81e3f2cba62febeb446e2c1e3e0ef76f2c6",
+          "expected_size_bytes": 15687142551,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "video_vae",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "vae/minimax_h3_video_vae_fp16.safetensors",
+          "destination": "vae/minimax_h3_video_vae_fp16.safetensors",
+          "expected_sha256": "7c1f131492e7eddacaac9069a61b81bdd39de5cc96561e677c5eab1cdce5e522",
+          "expected_size_bytes": 5207808496,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "audio_vae",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "vae/minimax_h3_audio_vae_fp32.safetensors",
+          "destination": "vae/minimax_h3_audio_vae_fp32.safetensors",
+          "expected_sha256": "8e505d95dd1561d47abd43d4238fd40d9bb1ae9e147ed0a4cba778d76ae4db48",
+          "expected_size_bytes": 605254808,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "turbo_lora",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "loras/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors",
+          "destination": "loras/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors",
+          "expected_sha256": "2339acdf19bfe123f46b971ea35d367a84adb85de43627e1eceafa5a5b2b111e",
+          "expected_size_bytes": 1956193000,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "minimax-h3",
+      "manifest": "manifests/models/minimax-h3.yaml",
+      "manifest_sha256": "eae8fef1a148a5175d0bd4b6ef927ab8418b46bf8056ffc2c7e87fbacc6848ce",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+      "file": "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+      "expected_sha256": "e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a",
+      "expected_size_bytes": 20970379616,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Comfy-Org/MiniMax-H3/revision/54472221d27c695fca9621b0c3ed52f06c4af707?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+        "exact_filename_matches": [
+          {
+            "rfilename": "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+            "blobId": "552dd33920a833fa613c73f0ca2335bb6ff0e4d1",
+            "size": 20970379616,
+            "lfs": {
+              "sha256": "e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a",
+              "size": 20970379616,
+              "pointerSize": 136
+            }
+          }
+        ],
+        "file_count": 41,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Comfy-Org/MiniMax-H3?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+        "exact_filename_matches": [
+          {
+            "rfilename": "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+            "blobId": "552dd33920a833fa613c73f0ca2335bb6ff0e4d1",
+            "size": 20970379616,
+            "lfs": {
+              "sha256": "e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a",
+              "size": 20970379616,
+              "pointerSize": 136
+            }
+          }
+        ],
+        "file_count": 41
+      },
+      "file_identities": [
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+          "destination": "model/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+          "expected_sha256": "e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a",
+          "expected_size_bytes": 20970379616,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "clip",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+          "destination": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+          "expected_sha256": "35a88d51044231fe332301d7a62aa81e3f2cba62febeb446e2c1e3e0ef76f2c6",
+          "expected_size_bytes": 15687142551,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "video_vae",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "vae/minimax_h3_video_vae_fp16.safetensors",
+          "destination": "vae/minimax_h3_video_vae_fp16.safetensors",
+          "expected_sha256": "7c1f131492e7eddacaac9069a61b81bdd39de5cc96561e677c5eab1cdce5e522",
+          "expected_size_bytes": 5207808496,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "audio_vae",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/MiniMax-H3",
+          "revision": "54472221d27c695fca9621b0c3ed52f06c4af707",
+          "file": "vae/minimax_h3_audio_vae_fp32.safetensors",
+          "destination": "vae/minimax_h3_audio_vae_fp32.safetensors",
+          "expected_sha256": "8e505d95dd1561d47abd43d4238fd40d9bb1ae9e147ed0a4cba778d76ae4db48",
+          "expected_size_bytes": 605254808,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-asr",
+      "manifest": "manifests/models/qwen-asr.yaml",
+      "manifest_sha256": "c60de7c6161fb5cb8983ff2f41bd9138189fb0e94082e134066a31d2c55377af",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "file": "model-00001-of-00002.safetensors",
+      "expected_sha256": "a4cd1f1a04d90b757dc7f7dd26254e69a013b19e80efe590a83c6a3bde8608d6",
+      "expected_size_bytes": 4220320824,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-ASR-1.7B/revision/7278e1e70fe206f11671096ffdd38061171dd6e5?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model-00001-of-00002.safetensors",
+            "blobId": "1522f6592ff361cdc8b95692bbd8c513d68fc40a",
+            "size": 4220320824,
+            "lfs": {
+              "sha256": "a4cd1f1a04d90b757dc7f7dd26254e69a013b19e80efe590a83c6a3bde8608d6",
+              "size": 4220320824,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 12,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-ASR-1.7B?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model-00001-of-00002.safetensors",
+            "blobId": "1522f6592ff361cdc8b95692bbd8c513d68fc40a",
+            "size": 4220320824,
+            "lfs": {
+              "sha256": "a4cd1f1a04d90b757dc7f7dd26254e69a013b19e80efe590a83c6a3bde8608d6",
+              "size": 4220320824,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 12
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-ASR-1.7B",
+          "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+          "file": "chat_template.json",
+          "destination": "model/chat_template.json",
+          "expected_sha256": "75a8cfca24f00de72d796fbfed6858fc9614ef3dabd8696684cc3bc03a9c58ff",
+          "expected_size_bytes": 1161,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-ASR-1.7B",
+          "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+          "file": "config.json",
+          "destination": "model/config.json",
+          "expected_sha256": "2e74a751548b8ad7d7526d29365ad8144c345d8b412b1152d25dc6698452712f",
+          "expected_size_bytes": 6194,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_2",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-ASR-1.7B",
+          "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+          "file": "generation_config.json",
+          "destination": "model/generation_config.json",
+          "expected_sha256": "1da527824d81e07118facff437e03f2e24a23311e3bdeb2368973fe77e5f275c",
+          "expected_size_bytes": 142,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_3",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-ASR-1.7B",
+          "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+          "file": "merges.txt",
+          "destination": "model/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-ASR-1.7B",
+          "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+          "file": "model-00001-of-00002.safetensors",
+          "destination": "model/model-00001-of-00002.safetensors",
+          "expected_sha256": "a4cd1f1a04d90b757dc7f7dd26254e69a013b19e80efe590a83c6a3bde8608d6",
+          "expected_size_bytes": 4220320824,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_5",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-ASR-1.7B",
+          "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+          "file": "model-00002-of-00002.safetensors",
+          "destination": "model/model-00002-of-00002.safetensors",
+          "expected_sha256": "6e0b9d9e09e2e0238e7ef3cc8a484ab387e91b90f1900bedf88bc92d7929ccfc",
+          "expected_size_bytes": 478200688,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_6",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-ASR-1.7B",
+          "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+          "file": "model.safetensors.index.json",
+          "destination": "model/model.safetensors.index.json",
+          "expected_sha256": "f994739fe38e5210b9e3e8ce6c6307315e2ceac3cb630e7b7414d69dce520f60",
+          "expected_size_bytes": 64821,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-ASR-1.7B",
+          "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+          "file": "preprocessor_config.json",
+          "destination": "model/preprocessor_config.json",
+          "expected_sha256": "45e120a4eda2c20c5d7f2ea9354e63536bf35e27aa573fb7cdf78017b378770d",
+          "expected_size_bytes": 330,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-ASR-1.7B",
+          "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+          "file": "tokenizer_config.json",
+          "destination": "model/tokenizer_config.json",
+          "expected_sha256": "4942d005604266809309cabc9f4e9cb89ce855d59b14681fdc0e1cc62ea26c4c",
+          "expected_size_bytes": 12487,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_9",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-ASR-1.7B",
+          "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+          "file": "vocab.json",
+          "destination": "model/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-decision",
+      "manifest": "manifests/models/qwen-decision.yaml",
+      "manifest_sha256": "8bde4c0d5e6389fb14091f4b830d90aeb09e2e56643de20fa8f5ecc153722617",
+      "repository": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "file": "model-00001-of-00002.safetensors",
+      "expected_sha256": "67347b23fb4165b652eb6611f5e1f2a06dfcddba8e909df1b2b0b1857bee06c2",
+      "expected_size_bytes": 3968658944,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen2.5-3B-Instruct/revision/aa8e72537993ba99e69dfaafa59ed015b17504d1?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model-00001-of-00002.safetensors",
+            "blobId": "023b91070b9cfb1f9ab22fe215519bd786db6906",
+            "size": 3968658944,
+            "lfs": {
+              "sha256": "67347b23fb4165b652eb6611f5e1f2a06dfcddba8e909df1b2b0b1857bee06c2",
+              "size": 3968658944,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 12,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen2.5-3B-Instruct?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model-00001-of-00002.safetensors",
+            "blobId": "023b91070b9cfb1f9ab22fe215519bd786db6906",
+            "size": 3968658944,
+            "lfs": {
+              "sha256": "67347b23fb4165b652eb6611f5e1f2a06dfcddba8e909df1b2b0b1857bee06c2",
+              "size": 3968658944,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 12
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2.5-3B-Instruct",
+          "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+          "file": "config.json",
+          "destination": "model/config.json",
+          "expected_sha256": "eed00b17e22553979d090fa492e587e92885e328914c8e0b0b78f0a0d3576b3b",
+          "expected_size_bytes": 661,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2.5-3B-Instruct",
+          "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+          "file": "generation_config.json",
+          "destination": "model/generation_config.json",
+          "expected_sha256": "ea35dfb6fc5051b01114f9b995820d55dab01ed33ee490f6378b442af82c09f9",
+          "expected_size_bytes": 242,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_2",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2.5-3B-Instruct",
+          "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+          "file": "merges.txt",
+          "destination": "model/merges.txt",
+          "expected_sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+          "expected_size_bytes": 1671839,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2.5-3B-Instruct",
+          "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+          "file": "model-00001-of-00002.safetensors",
+          "destination": "model/model-00001-of-00002.safetensors",
+          "expected_sha256": "67347b23fb4165b652eb6611f5e1f2a06dfcddba8e909df1b2b0b1857bee06c2",
+          "expected_size_bytes": 3968658944,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_4",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2.5-3B-Instruct",
+          "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+          "file": "model-00002-of-00002.safetensors",
+          "destination": "model/model-00002-of-00002.safetensors",
+          "expected_sha256": "a40d941d0e7e0b966ad8b62bb6d6b7c88cce1299197b599d9d0a4ce59aabfc1d",
+          "expected_size_bytes": 2203268048,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_5",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2.5-3B-Instruct",
+          "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+          "file": "model.safetensors.index.json",
+          "destination": "model/model.safetensors.index.json",
+          "expected_sha256": "bc8aaa0c87d4335177e01c765f1de0db81661c67c1a72fbfb0d521b09f5ddc56",
+          "expected_size_bytes": 35581,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_6",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2.5-3B-Instruct",
+          "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+          "file": "tokenizer.json",
+          "destination": "model/tokenizer.json",
+          "expected_sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+          "expected_size_bytes": 7031645,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2.5-3B-Instruct",
+          "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+          "file": "tokenizer_config.json",
+          "destination": "model/tokenizer_config.json",
+          "expected_sha256": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+          "expected_size_bytes": 7305,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2.5-3B-Instruct",
+          "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+          "file": "vocab.json",
+          "destination": "model/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-embedding",
+      "manifest": "manifests/models/qwen-embedding.yaml",
+      "manifest_sha256": "8b466f580629909a3709264173eee1f459c3254508ce5457298f8d7d32f9384b",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "file": "model.safetensors",
+      "expected_sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+      "expected_size_bytes": 1191586416,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-Embedding-0.6B/revision/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "9116264a405846ebfe4e95556b63b1ca07c892a0",
+            "size": 1191586416,
+            "lfs": {
+              "sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+              "size": 1191586416,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 12,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-Embedding-0.6B?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "9116264a405846ebfe4e95556b63b1ca07c892a0",
+            "size": 1191586416,
+            "lfs": {
+              "sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+              "size": 1191586416,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 12
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "file": "1_Pooling/config.json",
+          "destination": "model/1_Pooling/config.json",
+          "expected_sha256": "37bf193fa101f19101bfad9c31d3eb0f786e247b7b1e5cb7f007d730eed1ddbd",
+          "expected_size_bytes": 313,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "file": "config.json",
+          "destination": "model/config.json",
+          "expected_sha256": "b5bf1f51fc45be473a54718cef92448d90a1be001bf9b9a44b8c7f10a19feaa9",
+          "expected_size_bytes": 727,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_2",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "file": "config_sentence_transformers.json",
+          "destination": "model/config_sentence_transformers.json",
+          "expected_sha256": "10667c72ddb772627bf1780cb7f86af8e2ae0032b8c243c731172064105c6961",
+          "expected_size_bytes": 215,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_3",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "file": "generation_config.json",
+          "destination": "model/generation_config.json",
+          "expected_sha256": "28396d421a2108acce96383f6a7de78008f7f1b17f807958f3c14c51dbfb65fb",
+          "expected_size_bytes": 117,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_4",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "file": "merges.txt",
+          "destination": "model/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "file": "model.safetensors",
+          "destination": "model/model.safetensors",
+          "expected_sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+          "expected_size_bytes": 1191586416,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_6",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "file": "modules.json",
+          "destination": "model/modules.json",
+          "expected_sha256": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+          "expected_size_bytes": 349,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "file": "tokenizer.json",
+          "destination": "model/tokenizer.json",
+          "expected_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+          "expected_size_bytes": 11423705,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "file": "tokenizer_config.json",
+          "destination": "model/tokenizer_config.json",
+          "expected_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+          "expected_size_bytes": 9706,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_9",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "file": "vocab.json",
+          "destination": "model/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-image-2.1-turbo",
+      "manifest": "manifests/models/qwen-image-2.1-turbo.yaml",
+      "manifest_sha256": "d5fe7cdf07b24073b4cf63c9db45c808067783ea4800bbd7da761414935111c3",
+      "repository": "unsloth/Qwen-Image-2.1-Turbo-GGUF",
+      "revision": "bd53e520a64472adaff780da0b2f2d7eb1605e30",
+      "file": "qwen-image-2.1-turbo-Q4_K_M.gguf",
+      "expected_sha256": "8940e8b522af886e0c0f5afddf720e82dd223cb9a43580b5f61c4d740452ac20",
+      "expected_size_bytes": 4199565120,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/unsloth/Qwen-Image-2.1-Turbo-GGUF/revision/bd53e520a64472adaff780da0b2f2d7eb1605e30?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "bd53e520a64472adaff780da0b2f2d7eb1605e30",
+        "exact_filename_matches": [
+          {
+            "rfilename": "qwen-image-2.1-turbo-Q4_K_M.gguf",
+            "blobId": "e8e206890b9315b6ef2c253a9dea731388835364",
+            "size": 4199565120,
+            "lfs": {
+              "sha256": "8940e8b522af886e0c0f5afddf720e82dd223cb9a43580b5f61c4d740452ac20",
+              "size": 4199565120,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 18,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/unsloth/Qwen-Image-2.1-Turbo-GGUF?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "bd53e520a64472adaff780da0b2f2d7eb1605e30",
+        "exact_filename_matches": [
+          {
+            "rfilename": "qwen-image-2.1-turbo-Q4_K_M.gguf",
+            "blobId": "e8e206890b9315b6ef2c253a9dea731388835364",
+            "size": 4199565120,
+            "lfs": {
+              "sha256": "8940e8b522af886e0c0f5afddf720e82dd223cb9a43580b5f61c4d740452ac20",
+              "size": 4199565120,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 18
+      },
+      "file_identities": [
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "unsloth/Qwen-Image-2.1-Turbo-GGUF",
+          "revision": "bd53e520a64472adaff780da0b2f2d7eb1605e30",
+          "file": "qwen-image-2.1-turbo-Q4_K_M.gguf",
+          "destination": "model/qwen-image-2.1-turbo-Q4_K_M.gguf",
+          "expected_sha256": "8940e8b522af886e0c0f5afddf720e82dd223cb9a43580b5f61c4d740452ac20",
+          "expected_size_bytes": 4199565120,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "clip",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/Qwen3-VL",
+          "revision": "02f0d3eefb59528799653d16735818801177ef1f",
+          "file": "text_encoders/qwen3vl_8b_fp8_scaled.safetensors",
+          "destination": "text_encoders/qwen3vl_8b_fp8_scaled.safetensors",
+          "expected_sha256": "4ba424cf62e51392e4d1a39933e803706f4e823c1065f36aaf149c6453f66bcd",
+          "expected_size_bytes": 10588637512,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "vae",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/Qwen-Image-2.1",
+          "revision": "aacf31a6d48e707f352ecba714cee0680da3479b",
+          "file": "vae/qwen_image_2.1_vae_bf16.safetensors",
+          "destination": "vae/qwen_image_2.1_vae_bf16.safetensors",
+          "expected_sha256": "bb21f7473051e1ac368515dd3f2e15cd44d7a11748ee8823e1ddca3e4876b7c9",
+          "expected_size_bytes": 675509688,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-image-2.1-uncensored",
+      "manifest": "manifests/models/qwen-image-2.1-uncensored.yaml",
+      "manifest_sha256": "50a0e77377493c667a2f54c379be15c0441a9661fc784cb03cb250c2a7aec3ba",
+      "repository": "0xSojalSec/Qwen-Image-2.1-Uncensored-GGUF",
+      "revision": "242be4d1f70cc26fa45773c452f81980ed656e2e",
+      "file": "qwen-image-2.1-Q4_K_M.gguf",
+      "expected_sha256": "833439e91bc1152d28f37aa198c7f6f4218b7de95754c2f7a318a2422ab4b2f8",
+      "expected_size_bytes": 4604557984,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/0xSojalSec/Qwen-Image-2.1-Uncensored-GGUF/revision/242be4d1f70cc26fa45773c452f81980ed656e2e?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "242be4d1f70cc26fa45773c452f81980ed656e2e",
+        "exact_filename_matches": [
+          {
+            "rfilename": "qwen-image-2.1-Q4_K_M.gguf",
+            "blobId": "1608a93d82d74f15671f9d093b4bafbfa45b2705",
+            "size": 4604557984,
+            "lfs": {
+              "sha256": "833439e91bc1152d28f37aa198c7f6f4218b7de95754c2f7a318a2422ab4b2f8",
+              "size": 4604557984,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 9,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/0xSojalSec/Qwen-Image-2.1-Uncensored-GGUF?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "242be4d1f70cc26fa45773c452f81980ed656e2e",
+        "exact_filename_matches": [
+          {
+            "rfilename": "qwen-image-2.1-Q4_K_M.gguf",
+            "blobId": "1608a93d82d74f15671f9d093b4bafbfa45b2705",
+            "size": 4604557984,
+            "lfs": {
+              "sha256": "833439e91bc1152d28f37aa198c7f6f4218b7de95754c2f7a318a2422ab4b2f8",
+              "size": 4604557984,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 9
+      },
+      "file_identities": [
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "0xSojalSec/Qwen-Image-2.1-Uncensored-GGUF",
+          "revision": "242be4d1f70cc26fa45773c452f81980ed656e2e",
+          "file": "qwen-image-2.1-Q4_K_M.gguf",
+          "destination": "model/qwen-image-2.1-Q4_K_M.gguf",
+          "expected_sha256": "833439e91bc1152d28f37aa198c7f6f4218b7de95754c2f7a318a2422ab4b2f8",
+          "expected_size_bytes": 4604557984,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "clip",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/Qwen3-VL",
+          "revision": "02f0d3eefb59528799653d16735818801177ef1f",
+          "file": "text_encoders/qwen3vl_8b_fp8_scaled.safetensors",
+          "destination": "text_encoders/qwen3vl_8b_fp8_scaled.safetensors",
+          "expected_sha256": "4ba424cf62e51392e4d1a39933e803706f4e823c1065f36aaf149c6453f66bcd",
+          "expected_size_bytes": 10588637512,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "vae",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/Qwen-Image-2.1",
+          "revision": "aacf31a6d48e707f352ecba714cee0680da3479b",
+          "file": "vae/qwen_image_2.1_vae_bf16.safetensors",
+          "destination": "vae/qwen_image_2.1_vae_bf16.safetensors",
+          "expected_sha256": "bb21f7473051e1ac368515dd3f2e15cd44d7a11748ee8823e1ddca3e4876b7c9",
+          "expected_size_bytes": 675509688,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-image-2.1",
+      "manifest": "manifests/models/qwen-image-2.1.yaml",
+      "manifest_sha256": "b6468710de7774e051596f687097ef96226372071429772ede9405aabf58b4c7",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "revision": "2c31ccd392b367a6637841a143813320a02dff55",
+      "file": "qwen-image-2.1-Q4_K_M.gguf",
+      "expected_sha256": "631d532e7ca71e8d90a87c71d3699761a812039d22e3370e87498d87754660fe",
+      "expected_size_bytes": 4199565024,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/unsloth/Qwen-Image-2.1-GGUF/revision/2c31ccd392b367a6637841a143813320a02dff55?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "2c31ccd392b367a6637841a143813320a02dff55",
+        "exact_filename_matches": [
+          {
+            "rfilename": "qwen-image-2.1-Q4_K_M.gguf",
+            "blobId": "cfc9bb3f45d5146a92b79af60bea5939fe733b22",
+            "size": 4199565024,
+            "lfs": {
+              "sha256": "631d532e7ca71e8d90a87c71d3699761a812039d22e3370e87498d87754660fe",
+              "size": 4199565024,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 19,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/unsloth/Qwen-Image-2.1-GGUF?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "2c31ccd392b367a6637841a143813320a02dff55",
+        "exact_filename_matches": [
+          {
+            "rfilename": "qwen-image-2.1-Q4_K_M.gguf",
+            "blobId": "cfc9bb3f45d5146a92b79af60bea5939fe733b22",
+            "size": 4199565024,
+            "lfs": {
+              "sha256": "631d532e7ca71e8d90a87c71d3699761a812039d22e3370e87498d87754660fe",
+              "size": 4199565024,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 19
+      },
+      "file_identities": [
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "unsloth/Qwen-Image-2.1-GGUF",
+          "revision": "2c31ccd392b367a6637841a143813320a02dff55",
+          "file": "qwen-image-2.1-Q4_K_M.gguf",
+          "destination": "model/qwen-image-2.1-Q4_K_M.gguf",
+          "expected_sha256": "631d532e7ca71e8d90a87c71d3699761a812039d22e3370e87498d87754660fe",
+          "expected_size_bytes": 4199565024,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "clip",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/Qwen3-VL",
+          "revision": "02f0d3eefb59528799653d16735818801177ef1f",
+          "file": "text_encoders/qwen3vl_8b_fp8_scaled.safetensors",
+          "destination": "text_encoders/qwen3vl_8b_fp8_scaled.safetensors",
+          "expected_sha256": "4ba424cf62e51392e4d1a39933e803706f4e823c1065f36aaf149c6453f66bcd",
+          "expected_size_bytes": 10588637512,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "vae",
+          "provider": "huggingface",
+          "repository": "Comfy-Org/Qwen-Image-2.1",
+          "revision": "aacf31a6d48e707f352ecba714cee0680da3479b",
+          "file": "vae/qwen_image_2.1_vae_bf16.safetensors",
+          "destination": "vae/qwen_image_2.1_vae_bf16.safetensors",
+          "expected_sha256": "bb21f7473051e1ac368515dd3f2e15cd44d7a11748ee8823e1ddca3e4876b7c9",
+          "expected_size_bytes": 675509688,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-reranker",
+      "manifest": "manifests/models/qwen-reranker.yaml",
+      "manifest_sha256": "2a2bd8181bff089b8b66670dbfeae22ac962d4a88d5d2650b46777c0e6ae9246",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "model.safetensors",
+      "expected_sha256": "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b",
+      "expected_size_bytes": 1191588280,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-Reranker-0.6B/revision/e61197ed45024b0ed8a2d74b80b4d909f1255473?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "c2009afdaf622dc596bec224a625daa46a2b4cc9",
+            "size": 1191588280,
+            "lfs": {
+              "sha256": "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b",
+              "size": 1191588280,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 14,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-Reranker-0.6B?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "c2009afdaf622dc596bec224a625daa46a2b4cc9",
+            "size": 1191588280,
+            "lfs": {
+              "sha256": "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b",
+              "size": 1191588280,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 14
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "1_LogitScore/config.json",
+          "destination": "model/1_LogitScore/config.json",
+          "expected_sha256": "73e3156450564d8a98b7e47bcf5aace0f29600828b51937da545571e84db3ff3",
+          "expected_size_bytes": 57,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "chat_template.jinja",
+          "destination": "model/chat_template.jinja",
+          "expected_sha256": "6f682162495ec5b39fd9005c01b6aa2a74669379fe967039f1e2cbbe8752369d",
+          "expected_size_bytes": 741,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_2",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "config.json",
+          "destination": "model/config.json",
+          "expected_sha256": "d479c427a9ca5295218063d4f9aca4f297ab4ac27487cca7af42c84643d51ef0",
+          "expected_size_bytes": 727,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_3",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "config_sentence_transformers.json",
+          "destination": "model/config_sentence_transformers.json",
+          "expected_sha256": "6a153d6696f78fd588c1c728967f0b773ea869d3c6028f151ce71ebe49140762",
+          "expected_size_bytes": 325,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_4",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "generation_config.json",
+          "destination": "model/generation_config.json",
+          "expected_sha256": "81051cd3f6e77013827148d0b8a6ead93f8ac390d5ab805f849199f0af6a08db",
+          "expected_size_bytes": 214,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_5",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "merges.txt",
+          "destination": "model/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "model.safetensors",
+          "destination": "model/model.safetensors",
+          "expected_sha256": "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b",
+          "expected_size_bytes": 1191588280,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "modules.json",
+          "destination": "model/modules.json",
+          "expected_sha256": "6f13b6b4a89e577b591b2077bca40c67c26541a6740a8809267cb474f90806a9",
+          "expected_size_bytes": 280,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "sentence_bert_config.json",
+          "destination": "model/sentence_bert_config.json",
+          "expected_sha256": "3234ebd224d492cbe8d55d5ec80a3f408451c4db3005bafb64fe1c51c763e01e",
+          "expected_size_bytes": 362,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_9",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "tokenizer.json",
+          "destination": "model/tokenizer.json",
+          "expected_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+          "expected_size_bytes": 11422654,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_10",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "tokenizer_config.json",
+          "destination": "model/tokenizer_config.json",
+          "expected_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+          "expected_size_bytes": 9706,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_11",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "file": "vocab.json",
+          "destination": "model/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-text",
+      "manifest": "manifests/models/qwen-text.yaml",
+      "manifest_sha256": "a517025afa11c26dd3c175d2199f8b3a35d772fa158650b2252b79c24e349e93",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "revision": "ce331efc48d5722b4b8041f72793e530eae18d9b",
+      "file": "Qwen3.8-27B-UD-Q4_K_M.gguf",
+      "expected_sha256": "1bce504dfecd84153666928a41d8a66706f0158d3a317bc5196b72819d7dc529",
+      "expected_size_bytes": 16564259744,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/unsloth/Qwen3.8-27B-GGUF/revision/ce331efc48d5722b4b8041f72793e530eae18d9b?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "ce331efc48d5722b4b8041f72793e530eae18d9b",
+        "exact_filename_matches": [
+          {
+            "rfilename": "Qwen3.8-27B-UD-Q4_K_M.gguf",
+            "blobId": "8fda9aaafb572d2d12ede317ea4da19a6afcdad6",
+            "size": 16564259744,
+            "lfs": {
+              "sha256": "1bce504dfecd84153666928a41d8a66706f0158d3a317bc5196b72819d7dc529",
+              "size": 16564259744,
+              "pointerSize": 136
+            }
+          }
+        ],
+        "file_count": 34,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/unsloth/Qwen3.8-27B-GGUF?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "ce331efc48d5722b4b8041f72793e530eae18d9b",
+        "exact_filename_matches": [
+          {
+            "rfilename": "Qwen3.8-27B-UD-Q4_K_M.gguf",
+            "blobId": "8fda9aaafb572d2d12ede317ea4da19a6afcdad6",
+            "size": 16564259744,
+            "lfs": {
+              "sha256": "1bce504dfecd84153666928a41d8a66706f0158d3a317bc5196b72819d7dc529",
+              "size": 16564259744,
+              "pointerSize": 136
+            }
+          }
+        ],
+        "file_count": 34
+      },
+      "file_identities": [
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "unsloth/Qwen3.8-27B-GGUF",
+          "revision": "ce331efc48d5722b4b8041f72793e530eae18d9b",
+          "file": "Qwen3.8-27B-UD-Q4_K_M.gguf",
+          "destination": "model/Qwen3.8-27B-UD-Q4_K_M.gguf",
+          "expected_sha256": "1bce504dfecd84153666928a41d8a66706f0158d3a317bc5196b72819d7dc529",
+          "expected_size_bytes": 16564259744,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-tts",
+      "manifest": "manifests/models/qwen-tts.yaml",
+      "manifest_sha256": "69c4d9fda1c9ecf3643ec0bce5c6b37eea8c9b19e11a93cda8a681c26f0fd6e4",
+      "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "file": "model.safetensors",
+      "expected_sha256": "38fc7fc51c5e776e840414b6fd443962e9411b9654888fd7913e4da643cb857c",
+      "expected_size_bytes": 3857413744,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-TTS-12Hz-1.7B-Base/revision/fd4b254389122332181a7c3db7f27e918eec64e3?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "ddd8a08fb25fddc128a33dd3f7352c778acce927",
+            "size": 3857413744,
+            "lfs": {
+              "sha256": "38fc7fc51c5e776e840414b6fd443962e9411b9654888fd7913e4da643cb857c",
+              "size": 3857413744,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 13,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen3-TTS-12Hz-1.7B-Base?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "ddd8a08fb25fddc128a33dd3f7352c778acce927",
+            "size": 3857413744,
+            "lfs": {
+              "sha256": "38fc7fc51c5e776e840414b6fd443962e9411b9654888fd7913e4da643cb857c",
+              "size": 3857413744,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 13
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+          "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+          "file": "config.json",
+          "destination": "model/config.json",
+          "expected_sha256": "b4f01752d15a488abde3e1ab44723ae4f4b9e68a4037257b098b3737893cc1f9",
+          "expected_size_bytes": 4494,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+          "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+          "file": "generation_config.json",
+          "destination": "model/generation_config.json",
+          "expected_sha256": "f1b90b4513f3b34c62851049e2492d7b4c5940daf1276f89c82b8ef04127f3aa",
+          "expected_size_bytes": 245,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_2",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+          "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+          "file": "merges.txt",
+          "destination": "model/merges.txt",
+          "expected_sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+          "expected_size_bytes": 1671839,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+          "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+          "file": "model.safetensors",
+          "destination": "model/model.safetensors",
+          "expected_sha256": "38fc7fc51c5e776e840414b6fd443962e9411b9654888fd7913e4da643cb857c",
+          "expected_size_bytes": 3857413744,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_4",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+          "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+          "file": "preprocessor_config.json",
+          "destination": "model/preprocessor_config.json",
+          "expected_sha256": "efdde1022ea9d76928bf7a9cd53139138f5ba2e466e837f08f6105ab1af1c119",
+          "expected_size_bytes": 127,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_5",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+          "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+          "file": "speech_tokenizer/config.json",
+          "destination": "model/speech_tokenizer/config.json",
+          "expected_sha256": "ee65bb901c876664ab8707c487157aa1a6ee57c65969b28fb5ec9dc211e68167",
+          "expected_size_bytes": 2336,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_6",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+          "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+          "file": "speech_tokenizer/configuration.json",
+          "destination": "model/speech_tokenizer/configuration.json",
+          "expected_sha256": "6bc26d64eb5024b4d1dab5a52371958b429256d6c9d59787f1f5294a54e0cebd",
+          "expected_size_bytes": 76,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+          "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+          "file": "speech_tokenizer/model.safetensors",
+          "destination": "model/speech_tokenizer/model.safetensors",
+          "expected_sha256": "836b7b357f5ea43e889936a3709af68dfe3751881acefe4ecf0dbd30ba571258",
+          "expected_size_bytes": 682293092,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+          "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+          "file": "speech_tokenizer/preprocessor_config.json",
+          "destination": "model/speech_tokenizer/preprocessor_config.json",
+          "expected_sha256": "fcb3805e597e786d4067706e602f6688524640f8d3396790e2e09b5942fcbdfb",
+          "expected_size_bytes": 234,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_9",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+          "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+          "file": "tokenizer_config.json",
+          "destination": "model/tokenizer_config.json",
+          "expected_sha256": "dc3c31c3bdaedd5016382bb3cbe07323026775ad51f5a4fb564505992ae4a670",
+          "expected_size_bytes": 7344,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_10",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+          "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+          "file": "vocab.json",
+          "destination": "model/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "qwen-vlm",
+      "manifest": "manifests/models/qwen-vlm.yaml",
+      "manifest_sha256": "d6b40d568eb1cd14383430b430ebd5e303f5d81576759c8ec089e9f3af91eb14",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "model-00001-of-00002.safetensors",
+      "expected_sha256": "c379a074979237b5c45e5baefe42707908643d99ee013e1f23da82049a210068",
+      "expected_size_bytes": 3980580168,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen2-VL-7B-Instruct-AWQ/revision/6ec2560b0afc3a618d4acc9b8e2967d1642f463d?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model-00001-of-00002.safetensors",
+            "blobId": "7b6deef6d68652c78ba07a204a032c62333960db",
+            "size": 3980580168,
+            "lfs": {
+              "sha256": "c379a074979237b5c45e5baefe42707908643d99ee013e1f23da82049a210068",
+              "size": 3980580168,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 16,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Qwen/Qwen2-VL-7B-Instruct-AWQ?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model-00001-of-00002.safetensors",
+            "blobId": "7b6deef6d68652c78ba07a204a032c62333960db",
+            "size": 3980580168,
+            "lfs": {
+              "sha256": "c379a074979237b5c45e5baefe42707908643d99ee013e1f23da82049a210068",
+              "size": 3980580168,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 16
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "added_tokens.json",
+          "destination": "model/added_tokens.json",
+          "expected_sha256": "7fa54985b58718a8fdb4f4d97484c4bd908db114847675e4bf3afe3e1d5d7bd4",
+          "expected_size_bytes": 392,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "chat_template.json",
+          "destination": "model/chat_template.json",
+          "expected_sha256": "94174d7176c52a7192f96fc34eb2cf23c7c2059d63cdbfadca1586ba89731fb7",
+          "expected_size_bytes": 1049,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_2",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "config.json",
+          "destination": "model/config.json",
+          "expected_sha256": "07e68f688788a24df16752c4eefd604005907059f53e89cccf8f2478779258f1",
+          "expected_size_bytes": 1451,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_3",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "generation_config.json",
+          "destination": "model/generation_config.json",
+          "expected_sha256": "095745817a9d52e518c275687967564474a1f7719aa90982f268e47bfd70841f",
+          "expected_size_bytes": 249,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_4",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "merges.txt",
+          "destination": "model/merges.txt",
+          "expected_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "expected_size_bytes": 1671853,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "model-00001-of-00002.safetensors",
+          "destination": "model/model-00001-of-00002.safetensors",
+          "expected_sha256": "c379a074979237b5c45e5baefe42707908643d99ee013e1f23da82049a210068",
+          "expected_size_bytes": 3980580168,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_6",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "model-00002-of-00002.safetensors",
+          "destination": "model/model-00002-of-00002.safetensors",
+          "expected_sha256": "ee5d4f33d96c1d69a3935f54551a9166bb6080a23c142e0bdcb6f27b02e57546",
+          "expected_size_bytes": 2941808400,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "model.safetensors.index.json",
+          "destination": "model/model.safetensors.index.json",
+          "expected_sha256": "b3339cf7625b0dc009899cc99742ac8ebe7c12abc7b654fcaa159603221b5efc",
+          "expected_size_bytes": 92944,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "preprocessor_config.json",
+          "destination": "model/preprocessor_config.json",
+          "expected_sha256": "8885ee26f126992101959631b5bc8cd2767da5cdae05a89f2989426e5dab0069",
+          "expected_size_bytes": 567,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_9",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "special_tokens_map.json",
+          "destination": "model/special_tokens_map.json",
+          "expected_sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+          "expected_size_bytes": 613,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_10",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "tokenizer.json",
+          "destination": "model/tokenizer.json",
+          "expected_sha256": "bfb053cacf2735b3a5bebbc40e4a853183efec30da0bc8f6304aef14ec0083bc",
+          "expected_size_bytes": 7030315,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_11",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "tokenizer_config.json",
+          "destination": "model/tokenizer_config.json",
+          "expected_sha256": "eb3c5a310899d7d65feec0dee4dff9067d7bc4ad2a17e2005bc9163f1ace0531",
+          "expected_size_bytes": 4297,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_12",
+          "provider": "huggingface",
+          "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+          "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+          "file": "vocab.json",
+          "destination": "model/vocab.json",
+          "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "expected_size_bytes": 2776833,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "wan-2.2",
+      "manifest": "manifests/models/wan-2.2.yaml",
+      "manifest_sha256": "dac96fc4e5ad5444ba938f6827f7effabab6bef34d5a58dc3e27a61466eb3a2e",
+      "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+      "revision": "b8fff7315c768468a5333511427288870b2e9635",
+      "file": "transformer/diffusion_pytorch_model-00001-of-00005.safetensors",
+      "expected_sha256": "511bec832a201caa410d09c5ce7dbbf8ad2708c345d82038f684fc74cce982be",
+      "expected_size_bytes": 4978254344,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/Wan-AI/Wan2.2-TI2V-5B-Diffusers/revision/b8fff7315c768468a5333511427288870b2e9635?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "b8fff7315c768468a5333511427288870b2e9635",
+        "exact_filename_matches": [
+          {
+            "rfilename": "transformer/diffusion_pytorch_model-00001-of-00005.safetensors",
+            "blobId": "5f2663afa6a380303681b8d56fb5420dc94a02a4",
+            "size": 4978254344,
+            "lfs": {
+              "sha256": "511bec832a201caa410d09c5ce7dbbf8ad2708c345d82038f684fc74cce982be",
+              "size": 4978254344,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 29,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/Wan-AI/Wan2.2-TI2V-5B-Diffusers?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "b8fff7315c768468a5333511427288870b2e9635",
+        "exact_filename_matches": [
+          {
+            "rfilename": "transformer/diffusion_pytorch_model-00001-of-00005.safetensors",
+            "blobId": "5f2663afa6a380303681b8d56fb5420dc94a02a4",
+            "size": 4978254344,
+            "lfs": {
+              "sha256": "511bec832a201caa410d09c5ce7dbbf8ad2708c345d82038f684fc74cce982be",
+              "size": 4978254344,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 29
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "model_index.json",
+          "destination": "model/model_index.json",
+          "expected_sha256": "6a72faeb564b0e894aea8fc4ef27241106eb739e8584e869b61589a65473add7",
+          "expected_size_bytes": 499,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "scheduler/scheduler_config.json",
+          "destination": "model/scheduler/scheduler_config.json",
+          "expected_sha256": "571a3eed68bcd943a61b9fea8efa9e141472216ada59f928c8b5128ce24b32e0",
+          "expected_size_bytes": 820,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_2",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "text_encoder/config.json",
+          "destination": "model/text_encoder/config.json",
+          "expected_sha256": "a2bcb24699f6c009a2427432bdd483ef8b2b42a712abc9503759cdc77d171f07",
+          "expected_size_bytes": 855,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_3",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "text_encoder/model-00001-of-00003.safetensors",
+          "destination": "model/text_encoder/model-00001-of-00003.safetensors",
+          "expected_sha256": "a8e861969c7433e707cc5a74065d795d36cca07ec96eb6763eb4083df7248f58",
+          "expected_size_bytes": 4935812536,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_4",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "text_encoder/model-00002-of-00003.safetensors",
+          "destination": "model/text_encoder/model-00002-of-00003.safetensors",
+          "expected_sha256": "d57d948ece4837d850b7a859a4415121d57cacf8b9ee1d4db200c67f592902d7",
+          "expected_size_bytes": 4983103192,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_5",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "text_encoder/model-00003-of-00003.safetensors",
+          "destination": "model/text_encoder/model-00003-of-00003.safetensors",
+          "expected_sha256": "0da9ee284e21d1406df708788db1d502d95d75f69faa25cd26151bf8829b7c5f",
+          "expected_size_bytes": 1442935480,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_6",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "text_encoder/model.safetensors.index.json",
+          "destination": "model/text_encoder/model.safetensors.index.json",
+          "expected_sha256": "31c4c7bcce679eaa0dd4667462394ddb013dc2f748e0bffc893dc9146a320dab",
+          "expected_size_bytes": 22476,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "tokenizer/special_tokens_map.json",
+          "destination": "model/tokenizer/special_tokens_map.json",
+          "expected_sha256": "456b58fd240a06c743a7c2cf8008bec501240d68ebd1fc4018ea569505fea270",
+          "expected_size_bytes": 7079,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "tokenizer/spiece.model",
+          "destination": "model/tokenizer/spiece.model",
+          "expected_sha256": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458",
+          "expected_size_bytes": 4548313,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_9",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "tokenizer/tokenizer.json",
+          "destination": "model/tokenizer/tokenizer.json",
+          "expected_sha256": "20a46ac256746594ed7e1e3ef733b83fbc5a6f0922aa7480eda961743de080ef",
+          "expected_size_bytes": 16837459,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_10",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "tokenizer/tokenizer_config.json",
+          "destination": "model/tokenizer/tokenizer_config.json",
+          "expected_sha256": "1d8d2a216bf8e70ac15b7ddcea566c4dd0433c024b39a58ca5e4c66bd78defbd",
+          "expected_size_bytes": 61758,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_11",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/config.json",
+          "destination": "model/transformer/config.json",
+          "expected_sha256": "dc00d9866e72cf77db6b531aaa33be4dc7148fef9338442bd0ae9181f7075e9b",
+          "expected_size_bytes": 495,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model-00001-of-00005.safetensors",
+          "destination": "model/transformer/diffusion_pytorch_model-00001-of-00005.safetensors",
+          "expected_sha256": "511bec832a201caa410d09c5ce7dbbf8ad2708c345d82038f684fc74cce982be",
+          "expected_size_bytes": 4978254344,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_13",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model-00002-of-00005.safetensors",
+          "destination": "model/transformer/diffusion_pytorch_model-00002-of-00005.safetensors",
+          "expected_sha256": "7c42724912b1911429125dc50c0e9a49ccbada5a601b657d4ed2e15e7597c193",
+          "expected_size_bytes": 4846784976,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_14",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model-00003-of-00005.safetensors",
+          "destination": "model/transformer/diffusion_pytorch_model-00003-of-00005.safetensors",
+          "expected_sha256": "e9c3d0c76de786566382f8258101fea973ae37681c6e9fe0e5fe1fb93b806424",
+          "expected_size_bytes": 4972658392,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_15",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model-00004-of-00005.safetensors",
+          "destination": "model/transformer/diffusion_pytorch_model-00004-of-00005.safetensors",
+          "expected_sha256": "a331121771790939678db6f585553fd5184609f7d02593c699a4d241b0d834c5",
+          "expected_size_bytes": 4846785080,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_16",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model-00005-of-00005.safetensors",
+          "destination": "model/transformer/diffusion_pytorch_model-00005-of-00005.safetensors",
+          "expected_sha256": "78b655685c47efdb2349f36826bb101264e9f212a16325d584aeb5f53c88e719",
+          "expected_size_bytes": 354751840,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_17",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "transformer/diffusion_pytorch_model.safetensors.index.json",
+          "destination": "model/transformer/diffusion_pytorch_model.safetensors.index.json",
+          "expected_sha256": "d6c1f72d86fbddef8fb5ef1c03f5b56b2bfdb6ae58032db98c6019fd1dae9021",
+          "expected_size_bytes": 73297,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_18",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "vae/config.json",
+          "destination": "model/vae/config.json",
+          "expected_sha256": "d996c340fe9a7df5d7371f76a7d8d6956f6c98256080074d8434fa5eeac11360",
+          "expected_size_bytes": 1701,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_19",
+          "provider": "huggingface",
+          "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+          "revision": "b8fff7315c768468a5333511427288870b2e9635",
+          "file": "vae/diffusion_pytorch_model.safetensors",
+          "destination": "model/vae/diffusion_pytorch_model.safetensors",
+          "expected_sha256": "62cd18f19438e35b32ac63020e2852f566e9b02f46b6cdbd87972a356e3c6f4b",
+          "expected_size_bytes": 2818777808,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    },
+    {
+      "model": "yue2",
+      "manifest": "manifests/models/yue2.yaml",
+      "manifest_sha256": "0a27dc9105a3468679f3ffe7e01003b35337df7f36fe8bd12d356bd88618c9db",
+      "repository": "m-a-p/YuE2-3B",
+      "revision": "8f24312f187763b9854adeec87e437e2b03bbff1",
+      "file": "model.safetensors",
+      "expected_sha256": "1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9",
+      "expected_size_bytes": 7261441640,
+      "pinned": {
+        "url": "https://huggingface.co/api/models/m-a-p/YuE2-3B/revision/8f24312f187763b9854adeec87e437e2b03bbff1?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "8f24312f187763b9854adeec87e437e2b03bbff1",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "3314789dffff7318458e58ea9c615157ac59774a",
+            "size": 7261441640,
+            "lfs": {
+              "sha256": "1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9",
+              "size": 7261441640,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 28,
+        "identity_matches": true
+      },
+      "current_head_candidate": {
+        "url": "https://huggingface.co/api/models/m-a-p/YuE2-3B?blobs=true",
+        "authentication": "anonymous",
+        "status": "METADATA_AVAILABLE",
+        "resolved_revision": "8f24312f187763b9854adeec87e437e2b03bbff1",
+        "exact_filename_matches": [
+          {
+            "rfilename": "model.safetensors",
+            "blobId": "3314789dffff7318458e58ea9c615157ac59774a",
+            "size": 7261441640,
+            "lfs": {
+              "sha256": "1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9",
+              "size": 7261441640,
+              "pointerSize": 135
+            }
+          }
+        ],
+        "file_count": 28
+      },
+      "file_identities": [
+        {
+          "key": "file_0",
+          "provider": "huggingface",
+          "repository": "m-a-p/YuE2-3B",
+          "revision": "8f24312f187763b9854adeec87e437e2b03bbff1",
+          "file": "config.json",
+          "destination": "model/config.json",
+          "expected_sha256": "ad3477bbef890bf98ae196c1e4b44779494a6231c4ab66f32708eabadf265329",
+          "expected_size_bytes": 959,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_1",
+          "provider": "huggingface",
+          "repository": "m-a-p/YuE2-3B",
+          "revision": "8f24312f187763b9854adeec87e437e2b03bbff1",
+          "file": "generation_config.json",
+          "destination": "model/generation_config.json",
+          "expected_sha256": "ccc842772f029049fadf9b288393bcdd9f79271b361c0f1875ec1218e4ba5170",
+          "expected_size_bytes": 204,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "primary",
+          "provider": "huggingface",
+          "repository": "m-a-p/YuE2-3B",
+          "revision": "8f24312f187763b9854adeec87e437e2b03bbff1",
+          "file": "model.safetensors",
+          "destination": "model/model.safetensors",
+          "expected_sha256": "1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9",
+          "expected_size_bytes": 7261441640,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_3",
+          "provider": "huggingface",
+          "repository": "m-a-p/YuE2-3B",
+          "revision": "8f24312f187763b9854adeec87e437e2b03bbff1",
+          "file": "modeling_yue2.py",
+          "destination": "model/modeling_yue2.py",
+          "expected_sha256": "62d2bd758c8fff1a0d64584a699343076fca9a7880db5d8e19263bc30ae79d7c",
+          "expected_size_bytes": 32983,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_4",
+          "provider": "huggingface",
+          "repository": "m-a-p/YuE2-3B",
+          "revision": "8f24312f187763b9854adeec87e437e2b03bbff1",
+          "file": "qwen.tiktoken",
+          "destination": "model/qwen.tiktoken",
+          "expected_sha256": "b2b1b8dfb5cc5f024bafc373121c6aba3f66f9a5a0269e243470a1de16a33186",
+          "expected_size_bytes": 2561218,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_5",
+          "provider": "huggingface",
+          "repository": "m-a-p/YuE2-3B",
+          "revision": "8f24312f187763b9854adeec87e437e2b03bbff1",
+          "file": "weights_manifest.json",
+          "destination": "model/weights_manifest.json",
+          "expected_sha256": "2296f82c29dcb11aeefde07e216403a32fc86c8f6da2ec15a70102abfd936a93",
+          "expected_size_bytes": 179,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_6",
+          "provider": "huggingface",
+          "repository": "m-a-p/YuE2-3B",
+          "revision": "8f24312f187763b9854adeec87e437e2b03bbff1",
+          "file": "yue2_generation_config.json",
+          "destination": "model/yue2_generation_config.json",
+          "expected_sha256": "203830cebde6e3644eb291925362990d198e66c3b6006cd11f1aaa21904bcc61",
+          "expected_size_bytes": 466,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_7",
+          "provider": "huggingface",
+          "repository": "m-a-p/YuE2-Vae",
+          "revision": "152733a19ad43aa67e367f9b5503ef8075bb5126",
+          "file": "config.json",
+          "destination": "vae/config.json",
+          "expected_sha256": "f0191bb9694009956de44e0c361a6f1334760be4c8f848e599bde242a54a0970",
+          "expected_size_bytes": 1378,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_8",
+          "provider": "huggingface",
+          "repository": "m-a-p/YuE2-Vae",
+          "revision": "152733a19ad43aa67e367f9b5503ef8075bb5126",
+          "file": "model.safetensors",
+          "destination": "vae/model.safetensors",
+          "expected_sha256": "807ce9d5149fa27c5ad3e6582058469852e908f6c5acc8c8aa338e7ab7751346",
+          "expected_size_bytes": 530512720,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "UPSTREAM_LFS_METADATA_ONLY"
+        },
+        {
+          "key": "file_9",
+          "provider": "huggingface",
+          "repository": "m-a-p/YuE2-Vae",
+          "revision": "152733a19ad43aa67e367f9b5503ef8075bb5126",
+          "file": "modeling_vae.py",
+          "destination": "vae/modeling_vae.py",
+          "expected_sha256": "b6578ff461e6be9fd079ca5ddf12893940f3b3338ff3435fceae89c466486f5a",
+          "expected_size_bytes": 25265,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        },
+        {
+          "key": "file_10",
+          "provider": "huggingface",
+          "repository": "m-a-p/YuE2-Vae",
+          "revision": "152733a19ad43aa67e367f9b5503ef8075bb5126",
+          "file": "weights_manifest.json",
+          "destination": "vae/weights_manifest.json",
+          "expected_sha256": "017d64a4d288217a43fcac3866a0e1d55f796fa891d4dfb6de0bd170ab750026",
+          "expected_size_bytes": 178,
+          "status": "IDENTITY_MATCH",
+          "check_kind": "SMALL_SUPPORT_FILE_CONTENT_HASH"
+        }
+      ],
+      "all_file_identities_match": true,
+      "weights_downloaded": false,
+      "weights_verified": false,
+      "inference_executed": false,
+      "model_changed": false
+    }
+  ]
+}

@@ -4,7 +4,7 @@ Factory v4 Lite: Consolidated Minimal Preflight Test Suite (PRE-01 through PRE-1
 
 Authoritative Coverage (FILE_INVENTORY.md §3.1 & Simplification Plan §4.3):
 - PRE-01 (Startup): Health check GET /health unauthenticated returns 200 OK.
-- PRE-02 (Manifest Discovery): GET /v1/models loads and validates all 11 model manifests dynamically.
+- PRE-02 (Manifest Discovery): GET /v1/registry/models loads and validates all 11 model manifests dynamically.
 - PRE-03 (Auth Enforcement): Authorization: Bearer <FACTORY_API_KEY> strictly enforced (401 on missing/bad).
 - PRE-04 (Job Submission): POST /v1/jobs accepts valid generative payloads and normalizes task contracts.
 - PRE-05 (Fail-Closed Rejection): Rejects unknown models and unsupported capabilities with non-success status.
@@ -36,6 +36,9 @@ from typing import Any, Dict, Generator, Optional
 import uuid
 
 import pytest
+
+# Legacy lifecycle/runner contract coverage; never inference certification.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from fastapi.testclient import TestClient
 
 from factory_auth import verify_bearer_token
@@ -64,10 +67,10 @@ from model_registry import ManifestLoader
 
 from factory.apps.control_api.src.assets.service import MAX_PAYLOAD_SIZE, AssetService
 from factory.apps.control_api.src.assets.ssrf import validate_target_url
-from factory.apps.control_api.src.main import app
+from factory.apps.control_api.src.legacy import app
 from factory.apps.control_api.src.queue.leasing import LeaseCoordinator
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
-from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP
+from model_registry.deployment import DeploymentRegistry
 from factory.apps.control_api.src.queue.repository import get_job_repository
 from factory.apps.control_api.src.queue.scheduler import InMemoryScheduler
 from factory.apps.control_api.src.queue.watchdog import check_active_jobs_watchdog
@@ -166,8 +169,8 @@ def test_pre_01_startup_health_check(client: TestClient):
 
 
 def test_pre_02_manifest_discovery(client: TestClient, auth_headers: Dict[str, str]):
-    """PRE-02 (Manifest Discovery): GET /v1/models loads and validates all 11 model manifests dynamically."""
-    resp = client.get("/v1/models", headers=auth_headers)
+    """PRE-02 (Manifest Discovery): GET /v1/registry/models loads and validates all 11 model manifests dynamically."""
+    resp = client.get("/v1/registry/models", headers=auth_headers)
     assert resp.status_code == 200
     body = resp.json()
     assert "data" in body
@@ -196,7 +199,7 @@ def test_pre_02_manifest_discovery(client: TestClient, auth_headers: Dict[str, s
     )
 
     # Validate schema registry loads cleanly from disk
-    manifests_dir = Path("manifests")
+    manifests_dir = Path(os.environ["FACTORY_MANIFESTS_DIR"])
     if manifests_dir.exists():
         loader = ManifestLoader(manifests_dir)
         models_dict = loader.load_models()
@@ -212,22 +215,22 @@ def test_pre_02_manifest_discovery(client: TestClient, auth_headers: Dict[str, s
 def test_pre_03_auth_enforcement(client: TestClient):
     """PRE-03 (Auth Enforcement): Authorization: Bearer <FACTORY_API_KEY> strictly enforced (401 on bad/missing)."""
     # 1. Missing header
-    r_missing = client.get("/v1/models")
+    r_missing = client.get("/v1/registry/models")
     assert r_missing.status_code == 401
     assert_sanitized_error(r_missing, 401, "UNAUTHORIZED")
 
     # 2. Empty Bearer
-    r_empty = client.get("/v1/models", headers={"Authorization": "Bearer "})
+    r_empty = client.get("/v1/registry/models", headers={"Authorization": "Bearer "})
     assert r_empty.status_code == 401
     assert_sanitized_error(r_empty, 401, "UNAUTHORIZED")
 
     # 3. Invalid token
-    r_invalid = client.get("/v1/models", headers={"Authorization": f"Bearer {INVALID_API_KEY}"})
+    r_invalid = client.get("/v1/registry/models", headers={"Authorization": f"Bearer {INVALID_API_KEY}"})
     assert r_invalid.status_code == 401
     assert_sanitized_error(r_invalid, 401, "UNAUTHORIZED")
 
     # 4. Valid token succeeds
-    r_valid = client.get("/v1/models", headers={"Authorization": f"Bearer {VALID_API_KEY}"})
+    r_valid = client.get("/v1/registry/models", headers={"Authorization": f"Bearer {VALID_API_KEY}"})
     assert r_valid.status_code == 200
 
 
@@ -248,7 +251,7 @@ def test_pre_04_job_submission_and_normalization(client: TestClient, auth_header
     assert job["service"] == "image"
     assert job["model"] == "qwen-image-2.1"
     # Canonical normalized task contract
-    assert job["task"] == "text_to_image"
+    assert job["task"] == 'image.text_to_image'
     assert job["state"] == "QUEUED"
 
 
@@ -385,7 +388,7 @@ async def test_pre_09_worker_lease_and_watchdog(client: TestClient, auth_headers
     scheduler = InMemoryScheduler()
     stream_manager = getattr(client.app.state, "stream_manager", None)
     manager = JobLifecycleManager(repository=repo, broker=scheduler, stream_manager=stream_manager)
-    coordinator = LeaseCoordinator(repository=repo, broker=scheduler)
+    coordinator = LeaseCoordinator(repository=repo, broker=scheduler, deployment_registry=app.state.deployment_registry)
 
     # Worker leases the job
     worker_id = f"worker-test-{uuid.uuid4()}"
@@ -424,12 +427,13 @@ def test_pre_10_gpu_allocation_and_bounds():
     scheduler = InMemoryScheduler()
 
     # 1. Verify subsystem partition affinity mapping
-    assert SUBSYSTEM_GPU_MAP["image"] == 0
-    assert SUBSYSTEM_GPU_MAP["text"] == 0
-    assert SUBSYSTEM_GPU_MAP["decision"] == 0
-    assert SUBSYSTEM_GPU_MAP["video"] == 1
-    assert SUBSYSTEM_GPU_MAP["music"] == 1
-    assert SUBSYSTEM_GPU_MAP["embedding"] == 1
+    registry = DeploymentRegistry.from_environment()
+    assert registry.assignment("qwen-image-2.1").devices == (0,)
+    assert registry.assignment("qwen-text").devices == (0, 1)
+    assert registry.assignment("qwen-decision").devices == (0,)
+    assert registry.assignment("wan-2.2").devices == (1,)
+    assert registry.assignment("ace-step-1.5").devices == (1,)
+    assert registry.assignment("qwen-embedding").devices == (1,)
 
     # 2. Acquire GPU 0 for job A
     job_a = f"job-a-{uuid.uuid4()}"
@@ -645,7 +649,7 @@ def test_pre_14_error_sanitization(client: TestClient, auth_headers: Dict[str, s
     assert_sanitized_error(r_404, 404, ["JOB_NOT_FOUND", "NOT_FOUND"])
 
     # Trigger 401 Unauthorized
-    r_401 = client.get("/v1/models")
+    r_401 = client.get("/v1/registry/models")
     assert r_401.status_code == 401
     assert_sanitized_error(r_401, 401, "UNAUTHORIZED")
 

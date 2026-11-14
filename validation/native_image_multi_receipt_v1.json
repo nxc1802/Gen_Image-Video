@@ -1,0 +1,153 @@
+{
+  "kind": "image_multi",
+  "version": 1,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-image-multi",
+  "run_record_sha256": "7cc43f3f221af69fe41be20b4d8b5c88565c1ef872f5ca5f7faf442f866f3ad4",
+  "artifacts": [
+    {
+      "file": "validation/native_image_multi_v1/setup.json",
+      "sha256": "5230cf2861aee89736e9249ecce0acd4bdbab124de19f9234707d5e8c4444495"
+    },
+    {
+      "file": "validation/native_image_multi_v1/driver.log",
+      "sha256": "06fb992db813b2c33cff6c656cc5a96e23cd8c3f9c0b797f139ce4c621d92787"
+    },
+    {
+      "file": "validation/native_image_multi_v1/wave_c.json",
+      "sha256": "a14a9b42cfb5c5e6550c18e3b6228b99ff7389cf3296519934a03b77cd3d3c0f"
+    },
+    {
+      "file": "validation/native_image_multi_v1/installation.log",
+      "sha256": "c1b10fccd1f12aa4f39387ed996040f7e133df718e3f792fdaa9bf3aa71c243d"
+    },
+    {
+      "file": "validation/native_image_multi_v1/runtime_packages.json",
+      "sha256": "c58137756206895ea21e86d8a086074882c4dda1e817b642f4ec162c29d8f465"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/image-multi-cat-coffee-3.json",
+      "sha256": "f3a36d23d647ca9e74d5cc989dd83862df85b2160adce3d735c204c411ffa6bd"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/observation.json",
+      "sha256": "564588107737a96154404a646c25c17d953e6b3fca045a0b0bf222578f2c03e8"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/image-multi-cat-coffee-1.json",
+      "sha256": "c775a9a7602a1d02d5785351d756358f6c5b9834f22ec5b1509a6e08c0b1cb37"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/image-multi-cat-coffee-0.json",
+      "sha256": "5bf29c5433228ec638625f715c20ca519fc17c06ca8026b4730fb41cc63d917f"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/image-multi-cat-coffee-2.json",
+      "sha256": "fff10152b449e0924e36d250b7d7bc90e29e73f0c931bde876d155faafecc146"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/backend.log",
+      "sha256": "0fcdd06b50ce6c4c6648def77147885c65f1842228fd52d03798671b9840d8d0"
+    },
+    {
+      "file": "validation/native_image_multi_v1/inputs/coffee/input_identity.json",
+      "sha256": "0a8cfa024f85bd38b2c2b33434344bbe1c1e8a59d305c03660f3dfdd0b4785f8"
+    },
+    {
+      "file": "validation/native_image_multi_v1/inputs/coffee/source.bin",
+      "sha256": "cc02f8ca188b167c775a7101b5d767d1e71792cf762c33d6fa15a4599b5a8de7"
+    },
+    {
+      "file": "validation/native_image_multi_v1/inputs/chelsea/input_identity.json",
+      "sha256": "6ce24e74ca4bf00b35bd8e056594308cafa354190fd2b926ae05cde8cd55ebc2"
+    },
+    {
+      "file": "validation/native_image_multi_v1/inputs/chelsea/source.bin",
+      "sha256": "596aa1e7cb875eb79f437e310381d26b338a81c2da23439704a73c4651e8c4bb"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/qwen_image_gguf_loader_upstream.py",
+      "sha256": "ffff39d209ce22654e67378b80c6a3ca3d349cf8f00ec267085bd16e194730c2"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/qwen_image_native_dependencies.json",
+      "sha256": "8deabe3b38b647c68fb68e6efe7b340ec890e8a70c13b465ff3407ecfd9c60c9"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/qwen_image_gguf_nodes_upstream.py",
+      "sha256": "16be3b08b13de6279fc432addc628320019fcb24963cbc6b52b248de8f06316e"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/factory_qwen_latent/__init__.py",
+      "sha256": "f240567347d90b3bc17fa931508950e6b952795c68779609ceca4de6b4bec313"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/dequant.py",
+      "sha256": "215369438d96c372c09eb8701eec3c3b0348084c96dd3ea83872601ebed42017"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/pyproject.toml",
+      "sha256": "05df17550e375d558e28f099f8ebf7b833835a97d47bf1a071b49a37a7a5b3fa"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/ops.py",
+      "sha256": "b927e24a7b00c181e9511900fb5afde45464793cf460e1d39a5e736ba093ce64"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/.gitignore",
+      "sha256": "7094032e0194e23b5b2755e295303417c4299072b700e244aee0bd4fcd43347f"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/requirements.txt",
+      "sha256": "7f044de2d008cd7a4db54c27efc206327517bca4eb3e0f0835cf769b98d9de6c"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/__init__.py",
+      "sha256": "7ba473d8254a2867534565bb0b2ae194f1c55d5c2c00e30b6dbaf76be7d7a6b7"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/nodes.py",
+      "sha256": "1ffde231abd1da460290cfd8266af101250ff3e7a518dbfbe22d029b6505ab2a"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/loader.py",
+      "sha256": "a607c9acf3bcea3dccab4c9d72bf908ca6f41903ab4705694c689f8321c13ffc"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/README.md",
+      "sha256": "db22b62785c762a128bf2207fc33937254e4fe4164bbabaf5e56c99eab0ff07a"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/convert.py",
+      "sha256": "a55249b9eadd1f92ff32583784e31d52eafbdf059410a8abe0495e5e8cf6140d"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/fix_lines_ending.py",
+      "sha256": "67bce5c00f119694835b5feb4931ccb90eba972590aca77206752fcd6e2a397b"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/lcpp.patch",
+      "sha256": "3f486d5be5a359061daa3ff208acae5afe6233262894b44103843914d7b986fa"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/read_tensors.py",
+      "sha256": "8edead4f867f3573518b9620157129f086a824c9a941f26adcf52db9b589098a"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/fix_5d_tensors.py",
+      "sha256": "a9368a0a5695903e48c53ed7f817384a86493347d602daa62a773483396a8d49"
+    },
+    {
+      "file": "validation/native_image_multi_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/README.md",
+      "sha256": "bb973b16eb55c6ac09f796839e28359c1825b4dd341ea8be22c7480e30827497"
+    }
+  ]
+}

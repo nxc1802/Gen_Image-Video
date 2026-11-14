@@ -7,11 +7,12 @@ from unittest.mock import MagicMock, patch
 import pytest
 from factory_auth.config import AuthConfig
 from services.embedding.src.app import app
-from services.embedding.src.engine import EmbeddingEngine
+from services.embedding.src.legacy_engine import LegacyEmbeddingEngine as EmbeddingEngine
 from starlette.testclient import TestClient
 
 AUTH_TOKEN = "sk-factory-test-token-valid"
 AUTH_HEADERS = {"Authorization": f"Bearer {AUTH_TOKEN}", "Content-Type": "application/json"}
+pytestmark = pytest.mark.contract_mock
 
 
 @pytest.fixture

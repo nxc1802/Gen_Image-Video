@@ -1,0 +1,10 @@
+{
+  "asset": "qwen3_reranker.jinja",
+  "repository": "vllm-project/vllm",
+  "revision": "70c00163ffa80f5821bc8f87f80bde632bc29015",
+  "path": "examples/pooling/score/template/qwen3_reranker.jinja",
+  "license": "Apache-2.0",
+  "upstream_sha256": "e1ee98e69aab7b2da366edf1c50efcef37e34b4a0c50fb816336213e68d9047a",
+  "bundled_sha256": "1f00a0e0a36679a27f32abe465493ab6aa3d4c09aed6e9116dd7a5968e88bfc6",
+  "native_inference_executed": false
+}

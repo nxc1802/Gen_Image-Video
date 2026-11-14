@@ -3,6 +3,7 @@ workflows/image/parameter_mappings.py
 Translates FactoryJob input parameters into ComfyUI node inputs for Qwen-Image 2.1 workflows.
 """
 import random
+from factory_contracts.capabilities import require_canonical
 from typing import Any, Dict, List, Optional
 
 CONTROLNET_MODELS = {
@@ -29,6 +30,7 @@ class ImageParameterMapper:
         Applies input parameters to the workflow in-place and returns it.
         staged_files: maps input field/URL to local staged filename in ComfyUI input/ directory.
         """
+        require_canonical(task, engine="image")
         staged = staged_files or {}
 
         prompt = inputs.get("prompt", "")
@@ -41,7 +43,7 @@ class ImageParameterMapper:
         is_turbo = variant == "turbo" or "turbo" in str(inputs.get("model", "")).lower()
 
         # Reject incompatible variant/task combinations (§5.2)
-        if variant == "turbo" and task in ("inpaint", "outpaint", "instruction_edit", "controlnet"):
+        if variant == "turbo" and task in ("image.inpaint", "image.outpaint", "image.instruction_edit", "image.control_pose", "image.control_depth"):
             raise ValueError(f"Task '{task}' does not support turbo variant weights.")
 
         default_steps = 8 if is_turbo else 20
@@ -78,7 +80,7 @@ class ImageParameterMapper:
         # Standard TextEncode update if node "471" exists
         if "471" in workflow:
             text_node = workflow["471"]["inputs"]
-            if task == "instruction_edit":
+            if task == "image.instruction_edit":
                 text_node["prompt"] = inputs.get("instruction", prompt)
             else:
                 text_node["prompt"] = prompt
@@ -91,11 +93,11 @@ class ImageParameterMapper:
             workflow["474"]["inputs"]["height"] = height
 
         # Task-specific bindings
-        if task == "text_to_image":
+        if task == "image.text_to_image":
             if "476" in workflow:
                 workflow["476"]["inputs"]["denoise"] = 1.0
 
-        elif task == "image_to_image":
+        elif task == "image.image_to_image":
             denoise = float(inputs.get("denoise_strength", 0.65))
             if "476" in workflow:
                 workflow["476"]["inputs"]["denoise"] = denoise
@@ -103,7 +105,7 @@ class ImageParameterMapper:
             if "474_img" in workflow:
                 workflow["474_img"]["inputs"]["image"] = img_val
 
-        elif task == "inpaint":
+        elif task == "image.inpaint":
             if "476" in workflow:
                 workflow["476"]["inputs"]["denoise"] = 1.0
             img_val = staged.get("image_url") or staged.get("image") or inputs.get("image_filename") or inputs.get("image_url", "input.png")
@@ -115,7 +117,7 @@ class ImageParameterMapper:
             if "474" in workflow and "grow_mask_by" in workflow["474"]["inputs"]:
                 workflow["474"]["inputs"]["grow_mask_by"] = int(inputs.get("mask_blur", 6))
 
-        elif task == "outpaint":
+        elif task == "image.outpaint":
             denoise = float(inputs.get("denoise_strength", 0.85))
             if "476" in workflow:
                 workflow["476"]["inputs"]["denoise"] = denoise
@@ -129,14 +131,14 @@ class ImageParameterMapper:
                 workflow["474_pad"]["inputs"]["right"] = int(expand.get("right", 0))
                 workflow["474_pad"]["inputs"]["bottom"] = int(expand.get("bottom", 0))
 
-        elif task == "instruction_edit":
+        elif task == "image.instruction_edit":
             if "476" in workflow:
                 workflow["476"]["inputs"]["denoise"] = 1.0
             img_val = staged.get("image_url") or staged.get("image") or inputs.get("image_filename") or inputs.get("image_url", "input.png")
             if "ref_img" in workflow:
                 workflow["ref_img"]["inputs"]["image"] = img_val
 
-        elif task == "reference_conditioning":
+        elif task in {"image.reference_image", "image.multi_reference"}:
             if "476" in workflow:
                 workflow["476"]["inputs"]["denoise"] = 1.0
             ref_urls = inputs.get("reference_image_urls", [])
@@ -150,11 +152,11 @@ class ImageParameterMapper:
                 if "471" in workflow:
                     workflow["471"]["inputs"][f"image_{idx+1}"] = [node_id, 0]
 
-        elif task == "controlnet":
+        elif task in {"image.control_pose", "image.control_depth"}:
             if "476" in workflow:
                 workflow["476"]["inputs"]["denoise"] = 1.0
-            ctrl_type = str(inputs.get("control_type", "openpose")).lower()
-            ctrl_model = CONTROLNET_MODELS.get(ctrl_type, "qwen_image_control_pose.safetensors")
+            ctrl_type = task.removeprefix("image.control_")
+            ctrl_model = CONTROLNET_MODELS[ctrl_type]
             if "ctrl_loader" in workflow:
                 workflow["ctrl_loader"]["inputs"]["control_net_name"] = ctrl_model
             ctrl_img_val = (

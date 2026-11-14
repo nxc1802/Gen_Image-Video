@@ -1,0 +1,94 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: enhancement-suite-v1
+  family: media-enhancement
+  display_name: Media Post-Processing & Enhancement Suite
+  service_id: enhancement-service
+  version: 1.0.0
+  license: Composite Non-Commercial (RIFE / BSD-3 / Apache-2.0)
+  license_url: https://github.com/hzwer/ECCV2022-RIFE
+  commercial_use: false
+weights:
+  primary_checkpoint: xinntao/Real-ESRGAN
+  repository: xinntao/Real-ESRGAN
+  checkpoint_revision: 4a8f9b2d861d848773950ef31355ca0d39e24807
+  weights_file: RealESRGAN_x4plus.pth
+  components:
+    rife: hzwer/RIFE
+    bsrgan: cszn/BSRGAN
+    audio_denoise: Rikorose/DeepFilterNet
+  format: safetensors
+  quantization: none
+  default_precision: fp16
+hardware:
+  min_vram_gb: 6.0
+  preferred_gpu: t4
+  preferred_gpu_index: 1
+  quantization_format: none
+  offload_ram_gb: 0.0
+  allocation_policy: single_gpu
+capabilities:
+  image_super_resolution: false
+  video_super_resolution: false
+  frame_interpolation: false
+  audio_enhancement: false
+status: partial
+coverage_percent: 0.0
+missing_capabilities:
+- image_super_resolution
+- video_super_resolution
+- frame_interpolation
+- audio_enhancement
+limits:
+  max_duration_seconds: 300.0
+validation_status: pending_live
+validation_notes: 'Phase 0 audit: no admissible per-capability V3/V4 evidence on Kaggle
+  Dual Tesla T4 with exact verified weights and semantic validation. Historical claims
+  are frozen in validation/baseline.json; full/partial and coverage describe implementation
+  claims only, not production readiness. Static installed/checkpoint_valid/backend_ready
+  flags are legacy configuration claims, not session attestation; replacement is deferred
+  to Phases 1 and 3.'
+revision: 1.0.0
+dependencies:
+- torch>=2.4.0
+- torchvision
+task_variant_matrix:
+  image_super_resolution:
+  - standard
+  video_super_resolution:
+  - standard
+  frame_interpolation:
+  - standard
+  audio_enhancement:
+  - standard
+validated_hardware_profiles: []
+installed: false
+checkpoint_valid: false
+backend_ready: false
+evidence_run_id: null
+capabilities_truth:
+  image_super_resolution:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null
+  video_super_resolution:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null
+  frame_interpolation:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null
+  audio_enhancement:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null
+aliases:
+- enhancement-suite
+- enhancement_suite
+- enhancement_suite_v1

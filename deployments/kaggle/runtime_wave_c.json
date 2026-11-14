@@ -1,0 +1,15 @@
+{
+  "comfyui": {
+    "repository": "https://github.com/Comfy-Org/ComfyUI.git",
+    "source_revision": "c5751c81abe131202eea9e4c66d000589013dd0b",
+    "gguf_repository": "https://github.com/city96/ComfyUI-GGUF.git",
+    "gguf_revision": "6ea2651e7df66d7585f6ffee804b20e92fb38b8a",
+    "gguf": "0.19.0",
+    "torch": "2.11.0+cu130",
+    "torchvision": "0.26.0+cu130",
+    "torchaudio": "2.11.0+cu130",
+    "transformers": "5.19.0",
+    "comfy-aimdo": "0.6.0",
+    "comfy-kitchen": "0.2.41"
+  }
+}

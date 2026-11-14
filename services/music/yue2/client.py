@@ -28,6 +28,16 @@ logger = logging.getLogger("services.music.yue2.client")
 class YuE2Client:
     """Client for YuE2 HTTP inference and score manipulation backend."""
 
+    # Adapter binding to the legacy native protocol, not a request-alias table.
+    NATIVE_TASKS = {
+        "music.text_to_music": "text_to_music",
+        "music.lyrics_to_music": "lyrics_to_music",
+        "music.symbolic_score": "symbolic_score",
+        "music.custom_score": "custom_score",
+        "music.score_edit": "score_edit",
+        "music.song_variation": "song_variation",
+    }
+
     def __init__(
         self,
         api_base_url: Optional[str] = None,
@@ -75,9 +85,11 @@ class YuE2Client:
         """
         Dispatches song generation task to YuE2 backend and collects audio & score artifacts.
         """
+        if task not in self.NATIVE_TASKS:
+            raise InvalidRequestError(f"Unsupported canonical YuE2 capability: {task}")
         url = f"{self.api_base_url}/v1/generate"
         payload = {
-            "task": task,
+            "task": self.NATIVE_TASKS[task],
             "variant": params.get("variant", "standard"),
             "prompt": params.get("prompt", ""),
             "lyrics": params.get("lyrics", ""),
@@ -254,7 +266,7 @@ class YuE2Client:
             "artifacts": [score_art],
             "metadata": {
                 "model": "yue2",
-                "task": "symbolic_score",
+                "task": "music.symbolic_score",
                 "seed": params.get("seed"),
             },
         }

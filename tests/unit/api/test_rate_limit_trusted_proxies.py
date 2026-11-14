@@ -7,6 +7,9 @@ Unit tests verifying proxy-aware rate limiting (Requirement R3, P1.6):
 - Custom TRUSTED_PROXIES env var parsing and defaults
 """
 import pytest
+
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from fastapi import FastAPI, Request
 from starlette.testclient import TestClient
 

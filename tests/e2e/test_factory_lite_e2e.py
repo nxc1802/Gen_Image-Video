@@ -25,6 +25,9 @@ import uuid
 from typing import Any, Dict, Generator, List, Optional
 
 import pytest
+
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from fastapi.testclient import TestClient
 
 # Authoritative Test Token for Factory v4 Lite
@@ -54,7 +57,7 @@ def configure_lite_environment():
 @pytest.fixture
 def client() -> Generator[TestClient, None, None]:
     """Provides a TestClient connected directly to the in-memory Factory Lite app."""
-    from factory.apps.control_api.src.main import app
+    from factory.apps.control_api.src.legacy import app
 
     with TestClient(app, base_url="http://testserver") as test_client:
         yield test_client
@@ -148,8 +151,8 @@ class TestTier1CoreFeatureCoverage:
         assert "version" in body
 
     def test_t1_model_discovery(self, client: TestClient, auth_headers: Dict[str, str]):
-        """R2 / AC: GET /v1/models dynamically lists all registered model manifests."""
-        resp = client.get("/v1/models", headers=auth_headers)
+        """R2 / AC: GET /v1/registry/models dynamically lists all registered model manifests."""
+        resp = client.get("/v1/registry/models", headers=auth_headers)
         assert resp.status_code == 200
         body = resp.json()
         assert "data" in body
@@ -169,22 +172,22 @@ class TestTier1CoreFeatureCoverage:
     def test_t1_single_api_key_auth_enforcement(self, client: TestClient):
         """R1 / R2: Single API key authentication required for all protected endpoints."""
         # 1. Missing Authorization header
-        resp_missing = client.get("/v1/models")
+        resp_missing = client.get("/v1/registry/models")
         assert resp_missing.status_code == 401
         assert_sanitized_error(resp_missing, 401, "UNAUTHORIZED")
 
         # 2. Empty Bearer token
-        resp_empty = client.get("/v1/models", headers={"Authorization": "Bearer "})
+        resp_empty = client.get("/v1/registry/models", headers={"Authorization": "Bearer "})
         assert resp_empty.status_code == 401
         assert_sanitized_error(resp_empty, 401, "UNAUTHORIZED")
 
         # 3. Invalid API key
-        resp_invalid = client.get("/v1/models", headers={"Authorization": f"Bearer {INVALID_TEST_API_KEY}"})
+        resp_invalid = client.get("/v1/registry/models", headers={"Authorization": f"Bearer {INVALID_TEST_API_KEY}"})
         assert resp_invalid.status_code == 401
         assert_sanitized_error(resp_invalid, 401, "UNAUTHORIZED")
 
         # 4. Valid API key succeeds
-        resp_valid = client.get("/v1/models", headers={"Authorization": f"Bearer {VALID_TEST_API_KEY}"})
+        resp_valid = client.get("/v1/registry/models", headers={"Authorization": f"Bearer {VALID_TEST_API_KEY}"})
         assert resp_valid.status_code == 200
 
     def test_t1_job_submission(self, client: TestClient, auth_headers: Dict[str, str]):
@@ -203,7 +206,7 @@ class TestTier1CoreFeatureCoverage:
         resp = client.post("/v1/jobs", json=payload, headers=auth_headers)
         assert resp.status_code == 201
         job = resp.json()
-        assert_valid_job_envelope(job, "image", "qwen-image-2.1", "text_to_image")
+        assert_valid_job_envelope(job, "image", "qwen-image-2.1", "image.text_to_image")
         assert job["state"] in ["QUEUED", "ADMITTED", "RUNNING"]
 
     def test_t1_job_status_lookup(self, client: TestClient, auth_headers: Dict[str, str]):
@@ -224,7 +227,7 @@ class TestTier1CoreFeatureCoverage:
         assert job["job_id"] == job_id
         assert job["service"] == "image"
         assert job["model"] == "qwen-image-2.1"
-        assert job["task"] == "text_to_image"
+        assert job["task"] == 'image.text_to_image'
         assert "progress" in job
 
     def test_t1_job_events_stream(self, client: TestClient, auth_headers: Dict[str, str]):
@@ -502,7 +505,7 @@ class TestTier2BoundaryCornerCases:
             {"Authorization": "Bearer \x00nullbyte"},
         ]
         for headers in malformed_headers:
-            resp = client.get("/v1/models", headers=headers)
+            resp = client.get("/v1/registry/models", headers=headers)
             assert resp.status_code == 401, f"Failed on headers: {headers}"
             assert_sanitized_error(resp, 401, "UNAUTHORIZED")
 

@@ -1,0 +1,605 @@
+{
+  "phase": 3,
+  "exit_gate": "PASS",
+  "observed_at_utc": "2026-11-13T20:52:35.791303+00:00",
+  "classification": "CONFIGURATION_AND_SOFTWARE_ONLY",
+  "examples": [
+    {
+      "file": "deployments/examples/dual-t4-shared.yaml",
+      "sha256": "698dd50aa2c25d6a1c36e7f5efdc5d4d2f05e118806d6e2c61e5022b6d297d59",
+      "validation": {
+        "mode": "configuration_only",
+        "configuration_valid": true,
+        "observed_at_utc": "2026-11-13T20:52:35.395734+00:00",
+        "classification": "PREFLIGHT_ONLY",
+        "preflight_passed": false,
+        "config_sha256": "26805fc1efb1965aa3093785cc7f9fac188890ffb3cf09a03e3fe041be07d663",
+        "resolved": {
+          "hardware": "kaggle-dual-t4",
+          "api_host": "127.0.0.1",
+          "api_port": 8000,
+          "runtime_dir": ".factory_storage/runtime",
+          "deployments": [
+            {
+              "model": "qwen-decision",
+              "backend": "vllm",
+              "adapter": "qwen_decision",
+              "devices": [
+                0
+              ],
+              "exclusive": false,
+              "port": 9000,
+              "weights_dir": "/Volumes/WorkSpace/Factory/Gen_Image:Video/models/qwen-decision",
+              "checkpoint_graph_sha256": "0dd2c68d96eb875de961cbea1067743d47b190f579bcd789b50f5539fc2c7826",
+              "backend_options": {
+                "executable": null,
+                "source_dir": null,
+                "source_revision": null,
+                "startup_timeout_seconds": 600.0,
+                "stop_timeout_seconds": 10.0
+              }
+            },
+            {
+              "model": "qwen-embedding",
+              "backend": "vllm",
+              "adapter": "qwen_embedding",
+              "devices": [
+                0
+              ],
+              "exclusive": false,
+              "port": 9001,
+              "weights_dir": "/Volumes/WorkSpace/Factory/Gen_Image:Video/models/qwen-embedding",
+              "checkpoint_graph_sha256": "dbb2ba99689d4bd92c3ef4b6fee4f295823b51df951083c1cd3578f4fb774148",
+              "backend_options": {
+                "executable": null,
+                "source_dir": null,
+                "source_revision": null,
+                "startup_timeout_seconds": 600.0,
+                "stop_timeout_seconds": 10.0
+              }
+            },
+            {
+              "model": "qwen-reranker",
+              "backend": "vllm",
+              "adapter": "qwen_reranker",
+              "devices": [
+                1
+              ],
+              "exclusive": false,
+              "port": 9002,
+              "weights_dir": "/Volumes/WorkSpace/Factory/Gen_Image:Video/models/qwen-reranker",
+              "checkpoint_graph_sha256": "c5445e0db271ca4b931998fb10b0168c04de074ab461aa6b58bd10ee28d87c21",
+              "backend_options": {
+                "executable": null,
+                "source_dir": null,
+                "source_revision": null,
+                "startup_timeout_seconds": 600.0,
+                "stop_timeout_seconds": 10.0
+              }
+            }
+          ]
+        },
+        "checks": [
+          {
+            "check": "hardware_profile",
+            "passed": true,
+            "message": "Selected hardware topology must exist",
+            "stage": "configuration"
+          },
+          {
+            "check": "canonical_model",
+            "passed": true,
+            "message": "Deployment requires a canonical v2 model",
+            "stage": "configuration",
+            "model": "qwen-decision"
+          },
+          {
+            "check": "runtime_profile",
+            "passed": true,
+            "message": "Model must declare requirements for selected hardware",
+            "stage": "configuration",
+            "model": "qwen-decision"
+          },
+          {
+            "check": "model_disposition",
+            "passed": true,
+            "message": "Blocked/disabled/deprecated models cannot be served",
+            "stage": "configuration",
+            "model": "qwen-decision"
+          },
+          {
+            "check": "backend_selection",
+            "passed": true,
+            "message": "Select one manifest-supported backend before serving",
+            "stage": "configuration",
+            "model": "qwen-decision"
+          },
+          {
+            "check": "gpu_count",
+            "passed": true,
+            "message": "GPU count must match the selected runtime profile",
+            "stage": "configuration",
+            "model": "qwen-decision"
+          },
+          {
+            "check": "exclusive_requirement",
+            "passed": true,
+            "message": "Runtime exclusivity must be preserved",
+            "stage": "configuration",
+            "model": "qwen-decision"
+          },
+          {
+            "check": "gpu_ids",
+            "passed": true,
+            "message": "GPU IDs must belong to selected hardware",
+            "stage": "configuration",
+            "model": "qwen-decision"
+          },
+          {
+            "check": "backend_port",
+            "passed": true,
+            "message": "Backend port 9000 must not conflict with another backend/API",
+            "stage": "configuration",
+            "model": "qwen-decision"
+          },
+          {
+            "check": "canonical_model",
+            "passed": true,
+            "message": "Deployment requires a canonical v2 model",
+            "stage": "configuration",
+            "model": "qwen-embedding"
+          },
+          {
+            "check": "runtime_profile",
+            "passed": true,
+            "message": "Model must declare requirements for selected hardware",
+            "stage": "configuration",
+            "model": "qwen-embedding"
+          },
+          {
+            "check": "model_disposition",
+            "passed": true,
+            "message": "Blocked/disabled/deprecated models cannot be served",
+            "stage": "configuration",
+            "model": "qwen-embedding"
+          },
+          {
+            "check": "backend_selection",
+            "passed": true,
+            "message": "Select one manifest-supported backend before serving",
+            "stage": "configuration",
+            "model": "qwen-embedding"
+          },
+          {
+            "check": "gpu_count",
+            "passed": true,
+            "message": "GPU count must match the selected runtime profile",
+            "stage": "configuration",
+            "model": "qwen-embedding"
+          },
+          {
+            "check": "exclusive_requirement",
+            "passed": true,
+            "message": "Runtime exclusivity must be preserved",
+            "stage": "configuration",
+            "model": "qwen-embedding"
+          },
+          {
+            "check": "gpu_ids",
+            "passed": true,
+            "message": "GPU IDs must belong to selected hardware",
+            "stage": "configuration",
+            "model": "qwen-embedding"
+          },
+          {
+            "check": "backend_port",
+            "passed": true,
+            "message": "Backend port 9001 must not conflict with another backend/API",
+            "stage": "configuration",
+            "model": "qwen-embedding"
+          },
+          {
+            "check": "canonical_model",
+            "passed": true,
+            "message": "Deployment requires a canonical v2 model",
+            "stage": "configuration",
+            "model": "qwen-reranker"
+          },
+          {
+            "check": "runtime_profile",
+            "passed": true,
+            "message": "Model must declare requirements for selected hardware",
+            "stage": "configuration",
+            "model": "qwen-reranker"
+          },
+          {
+            "check": "model_disposition",
+            "passed": true,
+            "message": "Blocked/disabled/deprecated models cannot be served",
+            "stage": "configuration",
+            "model": "qwen-reranker"
+          },
+          {
+            "check": "backend_selection",
+            "passed": true,
+            "message": "Select one manifest-supported backend before serving",
+            "stage": "configuration",
+            "model": "qwen-reranker"
+          },
+          {
+            "check": "gpu_count",
+            "passed": true,
+            "message": "GPU count must match the selected runtime profile",
+            "stage": "configuration",
+            "model": "qwen-reranker"
+          },
+          {
+            "check": "exclusive_requirement",
+            "passed": true,
+            "message": "Runtime exclusivity must be preserved",
+            "stage": "configuration",
+            "model": "qwen-reranker"
+          },
+          {
+            "check": "gpu_ids",
+            "passed": true,
+            "message": "GPU IDs must belong to selected hardware",
+            "stage": "configuration",
+            "model": "qwen-reranker"
+          },
+          {
+            "check": "backend_port",
+            "passed": true,
+            "message": "Backend port 9002 must not conflict with another backend/API",
+            "stage": "configuration",
+            "model": "qwen-reranker"
+          },
+          {
+            "check": "exclusive_conflict",
+            "passed": true,
+            "message": "GPU 0 cannot share a resident exclusive deployment",
+            "stage": "configuration"
+          },
+          {
+            "check": "vram_budget",
+            "passed": true,
+            "message": "GPU 0: sum of declared per-device requirements 12 GB; limit 14.2 GB. Metadata plausibility only.",
+            "stage": "configuration"
+          },
+          {
+            "check": "exclusive_conflict",
+            "passed": true,
+            "message": "GPU 1 cannot share a resident exclusive deployment",
+            "stage": "configuration"
+          },
+          {
+            "check": "vram_budget",
+            "passed": true,
+            "message": "GPU 1: sum of declared per-device requirements 4 GB; limit 14.2 GB. Metadata plausibility only.",
+            "stage": "configuration"
+          }
+        ],
+        "errors": [],
+        "weight_verification": [],
+        "runtime_load_validated": false,
+        "production_ready": false,
+        "active_models": [],
+        "native_inference_executed": false
+      }
+    },
+    {
+      "file": "deployments/examples/dual-t4-exclusive.yaml",
+      "sha256": "3369a9a7a58c3b4ae4bac1a0291de0771c26be69b1dc741552d70df2fad1ac32",
+      "validation": {
+        "mode": "configuration_only",
+        "configuration_valid": true,
+        "observed_at_utc": "2026-11-13T20:52:35.397918+00:00",
+        "classification": "PREFLIGHT_ONLY",
+        "preflight_passed": false,
+        "config_sha256": "9ca9b43e58d1866177a4ec80981e7996c004838ea139e10b42fa96db9ce1dedb",
+        "resolved": {
+          "hardware": "kaggle-dual-t4",
+          "api_host": "127.0.0.1",
+          "api_port": 8000,
+          "runtime_dir": ".factory_storage/runtime",
+          "deployments": [
+            {
+              "model": "qwen-text",
+              "backend": "llama_cpp",
+              "adapter": "qwen_text",
+              "devices": [
+                0,
+                1
+              ],
+              "exclusive": true,
+              "port": 9000,
+              "weights_dir": "/Volumes/WorkSpace/Factory/Gen_Image:Video/models/qwen-text",
+              "checkpoint_graph_sha256": "24b837d0cc52ddaffcf3ecaccbdaf2a8aee0d4f8f8b60b215fdf7a98db7195f1",
+              "backend_options": {
+                "executable": null,
+                "source_dir": null,
+                "source_revision": null,
+                "startup_timeout_seconds": 600.0,
+                "stop_timeout_seconds": 10.0
+              }
+            }
+          ]
+        },
+        "checks": [
+          {
+            "check": "hardware_profile",
+            "passed": true,
+            "message": "Selected hardware topology must exist",
+            "stage": "configuration"
+          },
+          {
+            "check": "canonical_model",
+            "passed": true,
+            "message": "Deployment requires a canonical v2 model",
+            "stage": "configuration",
+            "model": "qwen-text"
+          },
+          {
+            "check": "runtime_profile",
+            "passed": true,
+            "message": "Model must declare requirements for selected hardware",
+            "stage": "configuration",
+            "model": "qwen-text"
+          },
+          {
+            "check": "model_disposition",
+            "passed": true,
+            "message": "Blocked/disabled/deprecated models cannot be served",
+            "stage": "configuration",
+            "model": "qwen-text"
+          },
+          {
+            "check": "backend_selection",
+            "passed": true,
+            "message": "Select one manifest-supported backend before serving",
+            "stage": "configuration",
+            "model": "qwen-text"
+          },
+          {
+            "check": "gpu_count",
+            "passed": true,
+            "message": "GPU count must match the selected runtime profile",
+            "stage": "configuration",
+            "model": "qwen-text"
+          },
+          {
+            "check": "exclusive_requirement",
+            "passed": true,
+            "message": "Runtime exclusivity must be preserved",
+            "stage": "configuration",
+            "model": "qwen-text"
+          },
+          {
+            "check": "gpu_ids",
+            "passed": true,
+            "message": "GPU IDs must belong to selected hardware",
+            "stage": "configuration",
+            "model": "qwen-text"
+          },
+          {
+            "check": "backend_port",
+            "passed": true,
+            "message": "Backend port 9000 must not conflict with another backend/API",
+            "stage": "configuration",
+            "model": "qwen-text"
+          },
+          {
+            "check": "exclusive_conflict",
+            "passed": true,
+            "message": "GPU 0 cannot share a resident exclusive deployment",
+            "stage": "configuration"
+          },
+          {
+            "check": "vram_budget",
+            "passed": true,
+            "message": "GPU 0: sum of declared per-device requirements 11 GB; limit 14.2 GB. Metadata plausibility only.",
+            "stage": "configuration"
+          },
+          {
+            "check": "exclusive_conflict",
+            "passed": true,
+            "message": "GPU 1 cannot share a resident exclusive deployment",
+            "stage": "configuration"
+          },
+          {
+            "check": "vram_budget",
+            "passed": true,
+            "message": "GPU 1: sum of declared per-device requirements 11 GB; limit 14.2 GB. Metadata plausibility only.",
+            "stage": "configuration"
+          }
+        ],
+        "errors": [],
+        "weight_verification": [],
+        "runtime_load_validated": false,
+        "production_ready": false,
+        "active_models": [],
+        "native_inference_executed": false
+      }
+    }
+  ],
+  "cli_checks": [
+    {
+      "arguments": [
+        "deployment",
+        "init"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "arguments": [
+        "deployment",
+        "add",
+        "qwen-decision",
+        "--gpu",
+        "0"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "arguments": [
+        "deployment",
+        "add",
+        "qwen-embedding",
+        "--gpu",
+        "0"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "arguments": [
+        "deployment",
+        "add",
+        "qwen-reranker",
+        "--gpu",
+        "1"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "arguments": [
+        "deployment",
+        "validate",
+        "--config-only"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "arguments": [
+        "deployment",
+        "add",
+        "qwen-image-2.1",
+        "--gpu",
+        "0"
+      ],
+      "expected_exit": 2,
+      "actual_exit": 2
+    },
+    {
+      "arguments": [
+        "deployment",
+        "show"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "arguments": [
+        "status"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "arguments": [
+        "deployment",
+        "remove",
+        "qwen-decision"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "arguments": [
+        "deployment",
+        "remove",
+        "qwen-embedding"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "arguments": [
+        "deployment",
+        "remove",
+        "qwen-reranker"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "arguments": [
+        "deployment",
+        "add",
+        "qwen-text",
+        "--gpu",
+        "0,1",
+        "--exclusive"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "arguments": [
+        "deployment",
+        "validate",
+        "--config-only"
+      ],
+      "expected_exit": 0,
+      "actual_exit": 0
+    }
+  ],
+  "scheduling_sources": [
+    {
+      "file": "factory/apps/control-api/src/queue/policy.py",
+      "sha256": "c5aad3be4ab1da94f83334d03fb871d0e8f0488d08b5a4ef80d217db66032877"
+    },
+    {
+      "file": "factory/apps/control-api/src/queue/manager.py",
+      "sha256": "a11a6bf797a769989ca7c616361f868a03032b7f1d61e9b1e4c058eca4c7c997"
+    },
+    {
+      "file": "factory/apps/control-api/src/queue/leasing.py",
+      "sha256": "c392c541b8b5f9e102328cf2c573565a7732ae26167c1d31ca9bfcca7e4f05b6"
+    },
+    {
+      "file": "factory/apps/control-api/src/queue/scheduler.py",
+      "sha256": "ff813d57f6f475013e0e61f8fdb703682789c84013225667a414e474d1f60aeb"
+    },
+    {
+      "file": "factory/apps/control-api/src/queue/watchdog.py",
+      "sha256": "02800abd580d734739c1f88e84b54feb400497bc78aca034f59012359240f27c"
+    },
+    {
+      "file": "factory/apps/control-api/src/queue/model_runtime.py",
+      "sha256": "3589ce7b3aa1907d91b46b62fafb8ad3b56b168b9ca100c5cfba49c56b560c34"
+    }
+  ],
+  "findings": [],
+  "prior_model_truth_and_capability_gates": "PASS",
+  "local_host_observation": {
+    "gpus": {},
+    "error": "nvidia-smi is unavailable; no GPU hardware attested",
+    "installed_backend_providers": [],
+    "installed_adapter_providers": [
+      "acestep",
+      "enhancement",
+      "minimax",
+      "qwen_asr",
+      "qwen_decision",
+      "qwen_embedding",
+      "qwen_image",
+      "qwen_reranker",
+      "qwen_text",
+      "qwen_tts",
+      "qwen_vlm",
+      "wan",
+      "yue2"
+    ]
+  },
+  "backend_lifecycle": "NOT_EXECUTED_BY_THIS_CONFIGURATION_GATE",
+  "active_models": [],
+  "production_ready": false,
+  "native_inference_executed": false,
+  "full_factory_e2e_executed": false,
+  "reproduce": ".venv/bin/python benchmarks/deployment_gate.py"
+}

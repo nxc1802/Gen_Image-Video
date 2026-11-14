@@ -14,6 +14,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from typing import Any, Dict, List, Optional
 import httpx
+from workflows.image.registry import ImageWorkflowRegistry
 
 from factory_contracts.errors.error_contract import ErrorDetail, classify_worker_error
 from factory.apps.control_api.src.assets.ssrf import validate_target_url
@@ -131,27 +132,7 @@ class ImageWorkerDaemon:
             worker_id=self.config.worker_id,
             subsystem="image",
             supported_models=["qwen-image-2.1"],
-            supported_tasks=[
-                "text_to_image",
-                "image.t2i",
-                "t2i",
-                "image_to_image",
-                "image.i2i",
-                "i2i",
-                "inpaint",
-                "image.inpaint",
-                "outpaint",
-                "image.outpaint",
-                "instruction_edit",
-                "image.instruction_edit",
-                "edit",
-                "reference_conditioning",
-                "image.reference_conditioning",
-                "image.reference",
-                "reference",
-                "controlnet",
-                "image.controlnet",
-            ],
+            supported_tasks=ImageWorkflowRegistry().list_tasks(),
             gpu_device=self.config.gpu_device,
             lease_duration_seconds=self.config.lease_duration_seconds,
         )

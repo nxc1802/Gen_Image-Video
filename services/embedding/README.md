@@ -1,5 +1,7 @@
 # Factory v4 Vector Embedding & Rerank Daemon (`services/embedding/`)
 
+> Migration status: the service now delegates to the canonical `VectorEngine` in `factory/engines/vector`. ModelManifest selects separate embedding/reranker adapters and deployment binds the backend/GPU before requests. No vector model is currently production-authorized. Legacy environment-driven proxy classes are retained only for explicit historical tests; the sections below describe the pre-refactor service. Software proxy tests are not inference evidence.
+
 ## Overview
 The Embedding & Rerank Subsystem provides dense semantic embeddings and cross-encoder document reranking powered by Qwen-Embedding and Qwen-Rerank. It operates on port 8083 behind the static domain `embed.ai.example.com`.
 

@@ -1,0 +1,12 @@
+{
+  "observed_at_utc": "2026-11-14T09:01:38.490606+00:00",
+  "version": 1,
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-sampler-diag",
+  "run_record_sha256": "0c828ac8c7260bd2774ac9c479b7445b78baac04daced5a6ca7e9c7f98ae63e6",
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "classification": "REMOTE_JOB_STATUS_ONLY_NOT_INFERENCE_EVIDENCE"
+}

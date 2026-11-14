@@ -1,0 +1,25 @@
+{
+  "observed_at_utc": "2026-11-14T13:14:51.752731+00:00",
+  "slug": "factory-phase-8-native-minimax-native-canvas-diag",
+  "response": {
+    "versionNumberNullable": 3,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-minimax-native-canvas-diag",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-native-canvas-diag",
+    "versionNumber": 3,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144971530
+  },
+  "kernel_code_sha256": "7223c35fa7da5cc76a53e71ff181cff778ca9d6fe5745c9a43e770eb184024f9",
+  "source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+  "validation_bundle_sha256": "cfbbc1724e1f9c380cb1abce609aadae65cf00275d85620aa1fd9a515c9539e9",
+  "accelerator": "NvidiaTeslaT4",
+  "driver_timeout_seconds": 7200,
+  "session_timeout_seconds": 10800
+}

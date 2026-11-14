@@ -1,0 +1,65 @@
+{
+  "kind": "wan_extension",
+  "version": 1,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-wan-extension",
+  "run_record_sha256": "3fd6bdc07646dbdb74b90fe3e599d03f2b9f8bed6a41691145235bf7cfbebd73",
+  "artifacts": [
+    {
+      "file": "validation/native_wan_extension_v1/driver.log",
+      "sha256": "6c688c16ff588bde102c28e81d44904af38a84b7395caa54e71506b627ea5e6f"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/wave_d.json",
+      "sha256": "2651d2f09a8e53a5793bcdce1dd319dd3eb7d2866ae4a303431fedbc449996c8"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/runtime_packages.json",
+      "sha256": "f1e4e5afcfc86af29d67f24e013544b80fe7f532ff32a81fd2d8a2e045831358"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/setup.json",
+      "sha256": "904749aad8e4f3d8c89764cd8a63bbb24c840e9b9a301926960406af769c415c"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/installation.log",
+      "sha256": "a01f1bba88733cd7084e3b0c2c1087387a0fccf52a1d7c2b53bd05f207713bc8"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/wan-2.2/wan-extension-pedestrians-native-grid-v2-3.json",
+      "sha256": "317ce327ce31661a44a755c88bc9e0287d6edd93178873a73a81385235676003"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/wan-2.2/wan-extension-pedestrians-native-grid-v2-2.json",
+      "sha256": "d4ab8dcf6902da90cc767ac404c1877d02c5b272a129ede57ecf5e50753fef51"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/wan-2.2/observation.json",
+      "sha256": "39756821975090fac4e917d6e9b866f8c9408e032fac9c0edf5f122c2d3d6f1c"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/wan-2.2/wan-extension-pedestrians-native-grid-v2-1.json",
+      "sha256": "63b58b658d398630e4eb0510de6d62eda432b2f98c56ba86f070af9593412096"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/wan-2.2/wan-extension-pedestrians-native-grid-v2-0.json",
+      "sha256": "2a9cc2cef111ac9f6216d1b4416dff804099aa93bf604805beaa4b4336d52a65"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/wan-2.2/backend.log",
+      "sha256": "3613a334d1da50f13f81fbc9a72602915ad392570227302bf231de4264f91c61"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/inputs/pedestrians_native/source.bin",
+      "sha256": "8aa087381164f32114bf2ceb01622fa0ea45d6fde4115a1e844e56e8d713d29c"
+    },
+    {
+      "file": "validation/native_wan_extension_v1/inputs/pedestrians_native/input_identity.json",
+      "sha256": "c1c21662ac0383017514f6d2d9608e0af8833426926036540121205b99a8907c"
+    }
+  ]
+}

@@ -21,9 +21,12 @@ from typing import Dict
 import uuid
 
 import pytest
+
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from fastapi.testclient import TestClient
 
-from factory_control_api import app
+from factory.apps.control_api.src.legacy import app
 from factory_contracts.jobs.job_contract import (
     ArtifactReference,
     JobSubmissionRequest,

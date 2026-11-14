@@ -1,0 +1,113 @@
+{
+  "kind": "tts",
+  "version": 2,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-tts",
+  "run_record_sha256": "c0488af34a8231a2828e6c24bbc788dbe0b97e8d282e246a76df48f620c2c1e9",
+  "artifacts": [
+    {
+      "file": "validation/native_tts_v2/installation.log",
+      "sha256": "7d62c84b1d54d41ef2b33e13c0daecdef1c8539aff0a83a204866876d0150ff6"
+    },
+    {
+      "file": "validation/native_tts_v2/wave_b.json",
+      "sha256": "3be3cfbe7b937af98b2bcbaf8ec7e88638048780a32de7754d987d188b2e649e"
+    },
+    {
+      "file": "validation/native_tts_v2/driver.log",
+      "sha256": "85d4e4af1c21d87a00ed588f3a0bbe5bd0bcac4b9a1d03cbce1cbf1bc1fc48b0"
+    },
+    {
+      "file": "validation/native_tts_v2/setup.json",
+      "sha256": "ae3b9e9cb3645137a26a47e37f70d10ddd25cfff27d87fbd994e3052b664cee0"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/tts-base-intelligibility-1.json",
+      "sha256": "c2170985d1f1733094b07cea900508732dbbf952d277b13ac3159b49b598acf6"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/tts-base-intelligibility-0.json",
+      "sha256": "665b8b961f717fdf1c7f153cc01d21f252cb191267837cffeed03e4a24837021"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/observation.json",
+      "sha256": "84d008c0c09131401acd6ad1ab55f453f882d2731e2e71e6eb29bdc764f3df93"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/tts-base-voice-cloning-3.json",
+      "sha256": "a1762d3d444baf0e68e3d579f12b21d449801534ce542e002c79877c697c0dc8"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/backend.log",
+      "sha256": "9e1471ca5ad84a256f000bb88d35d4d7badaa2016a386e619603ba01c8b254e0"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/tts-base-voice-cloning-1.json",
+      "sha256": "3f04c6799425c473e9937aa914a8fadbd4e609c2b1393e30d4041af0a3dd0080"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/tts-base-voice-cloning-0.json",
+      "sha256": "f5547ebc8933faa0d79b85a7862f2e335833d832e91343031a28d79aaa73480d"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/tts-base-intelligibility-3.json",
+      "sha256": "e18f8131f36abd33a725d24b7bf25c434a5ebc7fb3b61cd76291a8db6a468f93"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/tts-base-intelligibility-2.json",
+      "sha256": "41faf717560d2a699d18a5bdab498fe5577e04667b9eb7da3cfc9729731f9740"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/tts-base-voice-cloning-2.json",
+      "sha256": "6aada4c6b031e6416957312dbb55a1de5acb7bfe03abe706384d1d7aa52fce3b"
+    },
+    {
+      "file": "validation/native_tts_v2/inputs/jfk/source.flac",
+      "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715"
+    },
+    {
+      "file": "validation/native_tts_v2/inputs/jfk/input_identity.json",
+      "sha256": "3dfcf475de5223a4ac24520a1ba195a74620ac50c591de8cb8faa78d8afabbb2"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/adapter_assets/qwen3_tts_deploy.yaml",
+      "sha256": "aabc5c68f550b606e8a3fcc3732b3b1e65eebd87fe16a6e4ec575984d96f0845"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/adapter_assets/qwen3_tts_upstream.yaml",
+      "sha256": "5a70f815a743f9814b55ebfa98094da1ffed58ef4eb73a3f8dbbf84879332649"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/adapter_assets/native_plugins/factory_qwen_tts_fp16.py",
+      "sha256": "3ca6a5eb28010e01a1c4c8a31aac60e2aaa67cde9e67fc722ab1325ef47a82a3"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/adapter_assets/native_plugins/upstream/prompt_embeds_builder.py",
+      "sha256": "b462c400bd9a2244e73faed2f756e891008e431ccc2a9790fc4dc8ba51310eb6"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/adapter_assets/native_plugins/upstream/qwen3_tts_talker.py",
+      "sha256": "b6b0dbdd790643657af022843d37266b437068a18667239468640dde9072657c"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/adapter_assets/native_plugins/overlays/prompt_embeds_builder.py",
+      "sha256": "a00ecdc85c4200e0a4bf20fd7b1b85042107b079a56a74b3fff166da465434c6"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/adapter_assets/native_plugins/overlays/qwen3_tts_talker.py",
+      "sha256": "d29e9c0760bffe2e1dfd6e1751d565afcbd3090a9bd5473fa63717e9986c06ee"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/adapter_assets/native_plugins/factory_qwen_tts_fp16-1.0.dist-info/entry_points.txt",
+      "sha256": "743bc0d8991008ea3ee5ba1805486bf4b18c9d5c68eb0a4ff796d65c3bfedd32"
+    },
+    {
+      "file": "validation/native_tts_v2/qwen-tts/adapter_assets/native_plugins/factory_qwen_tts_fp16-1.0.dist-info/METADATA",
+      "sha256": "094df6e6921898589353e3df54ee683e58b5f47bcd187c00332b964ead82afd1"
+    }
+  ]
+}

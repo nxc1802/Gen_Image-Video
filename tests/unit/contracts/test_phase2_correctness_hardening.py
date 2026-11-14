@@ -4,6 +4,9 @@ Verification suite for Phase 2 End-to-End Correctness Hardening (C1 through C10)
 """
 import os
 import pytest
+
+# Legacy lifecycle/runner contract coverage; never inference certification.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from unittest.mock import AsyncMock, MagicMock, patch
 from starlette.testclient import TestClient
 
@@ -85,7 +88,7 @@ class TestPhase2CorrectnessHardening:
     def test_c2_offline_backend_fails_closed_503(self):
         """C2: Submitting a job to an offline backend (enhancement-suite-v1) fails with 503 BACKEND_UNAVAILABLE."""
         os.environ["FACTORY_API_KEY"] = "test-phase2-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         with TestClient(app) as client:
             resp = client.post(
                 "/v1/jobs",
@@ -105,7 +108,7 @@ class TestPhase2CorrectnessHardening:
     def test_c2_unsupported_variant_fails_closed_400(self):
         """C2: Submitting an unsupported variant fails closed with 400 UNSUPPORTED_CAPABILITY."""
         os.environ["FACTORY_API_KEY"] = "test-phase2-key"
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         with TestClient(app) as client:
             # ace-step-1.5 task 'extract' does not support 'turbo' or default 'standard'
             resp = client.post(

@@ -1,0 +1,1788 @@
+{
+  "source_commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+  "audit_date": "2026-11-14",
+  "phase_0": {
+    "exit_gate": "PASS",
+    "report": "validation/baseline.json",
+    "regression_checks": [
+      {
+        "suite": "default",
+        "command": ".venv/bin/python -m pytest -q -o addopts=''",
+        "counts": {
+          "tests": 1001,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "e09feb478f37aeb21cad298f7b1e105c86f99dfe7d1a5f59bf0fa493de0b5e70"
+      },
+      {
+        "suite": "services_workflows",
+        "command": ".venv/bin/python -m pytest services workflows -q -o addopts=''",
+        "counts": {
+          "tests": 65,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "9c0811508fff9d1fbbf2e765b255f28d72b6ee0c0f357a5c9162bd4f52575026"
+      }
+    ],
+    "supplemental_evidence_audit": "validation/local_evidence_audit.json"
+  },
+  "phase_1": {
+    "status": "COMPLETE",
+    "exit_gate": "PASS",
+    "checkpoint_probe": "validation/checkpoint_metadata_current.json",
+    "details": "docs/UPGRADE_STATUS.md",
+    "source_recovery": "validation/checkpoint_sources.json",
+    "weight_probe_run": "validation/weight_probe_run.json",
+    "initial_metadata_probe": "validation/checkpoint_metadata_probe.json",
+    "canonical_files_schema": "COMPLETE_V2",
+    "primary_pins_migrated": [
+      "ace-step-1.5-sft",
+      "ace-step-1.5-turbo",
+      "ace-step-1.5-xl-base",
+      "ace-step-1.5",
+      "enhancement-suite-v1",
+      "minimax-h3-reference",
+      "minimax-h3-turbo",
+      "minimax-h3",
+      "qwen-asr",
+      "qwen-decision",
+      "qwen-embedding",
+      "qwen-image-2.1-turbo",
+      "qwen-image-2.1-uncensored",
+      "qwen-image-2.1",
+      "qwen-reranker",
+      "qwen-text",
+      "qwen-tts",
+      "qwen-vlm",
+      "wan-2.2",
+      "yue2"
+    ],
+    "read_only_models_cli": "COMPLETE_STATIC_TRUTH",
+    "minimax_file_hashes_matched": 5,
+    "standard_image_identity": "STANDARD_PINNED_SEPARATELY_FROM_DISABLED_UNCENSORED",
+    "remaining_work": [],
+    "regression_checks": [
+      {
+        "suite": "default",
+        "command": ".venv/bin/python -m pytest -q -o addopts=''",
+        "counts": {
+          "tests": 1025,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "0ef1ce0e4de7b157131354fe0696723255a2c8a100516b8b2214eb6a67c583be"
+      },
+      {
+        "suite": "services_workflows",
+        "command": ".venv/bin/python -m pytest services workflows -q -o addopts=''",
+        "counts": {
+          "tests": 65,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "f4b84ccdfbeecf95c558db33592ead8d7fbccfbed9291df6fd55c1606010b243"
+      }
+    ],
+    "exit_gate_report": "validation/model_truth_gate.json",
+    "canonical_models": 20,
+    "checkpoint_file_identities": 227,
+    "model_states": {
+      "EXPERIMENTAL": 17,
+      "DISABLED": 2,
+      "BLOCKED": 1
+    },
+    "later_phase_constraints": [
+      "Legacy capability maps await Phase 2 canonicalization",
+      "Active deployments and GPU assignment await Phase 3",
+      "Legacy Text/Speech/Music launchers reject incompatible v2 selections until Phase 4 lifecycle",
+      "Canonical bootstrap cannot promote file integrity and health to readiness",
+      "YuE2 native BF16 is blocked on T4; no checkpoint/backend fallback applied",
+      "No model native inference, semantic acceptance or Full Factory E2E certified"
+    ]
+  },
+  "production_ready": false,
+  "native_inference_executed": true,
+  "full_factory_e2e_executed": false,
+  "software_checks": {
+    "manifest_validation": "PASS (11 services, 20 models, 12 canonical capability parameter specifications, 3 hardware topologies)",
+    "frozen_baseline_reproduction": "PASS",
+    "git_diff_check": "PASS",
+    "music_launcher_shell_syntax": "PASS",
+    "phase_1_static_truth_gate": "PASS",
+    "capability_canonicalization_gate": "PASS (55 capabilities, 20 models, 210 current runtime Python sources)",
+    "deployment_configuration_gate": "PASS (shared and dual-exclusive layouts through YAML/CLI, no Python edits)",
+    "production_gpu_placement_source": "EXPLICIT_DEPLOYMENT_BINDINGS",
+    "backend_lifecycle_contracts": "PASS (CPU contract processes, mocked GPU metadata, no model inference)",
+    "backend_lifecycle_live_gate": "PASS (real pinned ASR load/health/residency/shutdown on Dual-T4, no inference)",
+    "dependency_compatibility": "PASS (uv pip check, 60 installed local packages; official SDK pinned in dev group and uv.lock)",
+    "phase_5_vector_contracts": "PASS (21 software contracts, no GPU inference)",
+    "phase_5_decision_contracts": "PASS (52 software contracts, no GPU inference)",
+    "phase_5_structural_progress": "PASS: all eight engines and all 20 Manifest-selected adapters",
+    "phase_5_extensibility_contracts": "PASS: 8 explicit software-only new-model/plugin contracts without Engine core edits",
+    "phase_5_enhancement_backend": "PASS: real exact-checkpoint RealESRGAN x4 inference on assigned physical T4 GPU0; isolated DISABLED model, no V3/V4 certification",
+    "phase_5_response_media_contracts": "PASS: 25 software contracts",
+    "openai_api_sdk_gate": "PASS: official openai 3.49.0 over actual localhost HTTP with explicit test-only authorization/adapter doubles; 54 contracts",
+    "phase_6_regression": "PASS: 1288 default + 65 services/workflows; no GPU inference claim from tests",
+    "phase_7_control_plane_gate": "PASS: core-only fresh environment with 30 packages; 11 cancellation/lifecycle/HTTP contracts; zero Redis/Postgres/S3/legacy worker requirements",
+    "phase_7_regression": "PASS: 1299 default + 65 services/workflows; no inference certification from software checks"
+  },
+  "phase_2": {
+    "status": "COMPLETE",
+    "exit_gate": "PASS",
+    "exit_gate_report": "validation/capability_gate.json",
+    "details": "docs/UPGRADE_STATUS.md",
+    "registry_owner": "packages/contracts/src/factory_contracts/capabilities.py",
+    "canonical_capabilities": 55,
+    "models_migrated": 20,
+    "runtime_sources_audited": 186,
+    "independent_alias_maps_found": 0,
+    "checkpoint_graphs_match_phase_1": "PASS",
+    "regression_checks": [
+      {
+        "suite": "default",
+        "command": ".venv/bin/python -m pytest -q -o addopts=''",
+        "counts": {
+          "tests": 1089,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "f5470fdfe3b154f21404edad61b1689f275cbd9d70d1327b12f4167c45ff5357"
+      },
+      {
+        "suite": "services_workflows",
+        "command": ".venv/bin/python -m pytest services workflows -q -o addopts=''",
+        "counts": {
+          "tests": 65,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "aaa1abc9b3367b8f9b6d57aadbe97d09484c4ccd450e7e780ac21d79c715a001"
+      }
+    ],
+    "remaining_work": [],
+    "later_phase_constraints": [
+      "Explicit active deployment and GPU assignment remain Phase 3",
+      "Model-specific backend/native workflow reconciliation remains Phases 4/5",
+      "Public OpenAI API and SDK acceptance remain Phase 6",
+      "Native V3, semantic validation and Factory V4 evidence remain Phases 8/9",
+      "Studio and cleanup remain Phases 10/11"
+    ],
+    "production_ready": false,
+    "native_inference_executed": false,
+    "full_factory_e2e_executed": false
+  },
+  "phase_3": {
+    "status": "COMPLETE",
+    "exit_gate": "PASS",
+    "exit_gate_scope": "CONFIGURATION_AND_SOFTWARE_ONLY",
+    "exit_gate_report": "validation/deployment_gate.json",
+    "details": "docs/UPGRADE_STATUS.md",
+    "implemented": [
+      "ModelCatalog",
+      "DeploymentConfig",
+      "DeploymentRegistry",
+      "DeploymentValidator"
+    ],
+    "cli_commands": [
+      "models list",
+      "models inspect",
+      "deployment init",
+      "deployment add",
+      "deployment remove",
+      "deployment show",
+      "deployment validate",
+      "serve --check",
+      "serve (fail-closed lifecycle boundary)",
+      "status",
+      "status --live"
+    ],
+    "configuration_examples": [
+      "deployments/examples/dual-t4-shared.yaml",
+      "deployments/examples/dual-t4-exclusive.yaml"
+    ],
+    "production_subsystem_gpu_mapping": "REMOVED",
+    "public_model_discovery": "ACTIVE_SESSION_ONLY",
+    "admin_model_catalog": "/v1/registry/models",
+    "serve_pipeline_status": "LIFECYCLE_STAGE_PENDING_PHASE_4",
+    "local_environment_report": "validation/deployment_environment.json",
+    "local_environment_preflight_passed": false,
+    "local_environment_cli_exit_code": 2,
+    "regression_checks": [
+      {
+        "suite": "default",
+        "command": ".venv/bin/python -m pytest -q -o addopts=''",
+        "counts": {
+          "tests": 1114,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "5e96487e847bfef10bfd954962f9e0e1d5efe978cf4457605c7d2a19b77eea7e"
+      },
+      {
+        "suite": "services_workflows",
+        "command": ".venv/bin/python -m pytest services workflows -q -o addopts=''",
+        "counts": {
+          "tests": 65,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "19a85cb336818d25aec1db95a54b12d91b2ea90378e32b9fe8dba3f00ea091da"
+      }
+    ],
+    "remaining_work": [],
+    "later_phase_constraints": [
+      "Implement selected backend prepare/launch/health/stop/runtime_info in Phase 4",
+      "Register and reconcile canonical adapters in Phase 5",
+      "Complete OpenAI API/SDK compatibility in Phase 6",
+      "Authorize production capabilities only after Native V3 + semantic + Factory V4 gates"
+    ],
+    "production_ready": false,
+    "native_inference_executed": false,
+    "full_factory_e2e_executed": false
+  },
+  "phase_4": {
+    "status": "COMPLETE",
+    "exit_gate": "PASS",
+    "exit_gate_report": "validation/backend_lifecycle_gate.json",
+    "details": "docs/UPGRADE_STATUS.md",
+    "interface": [
+      "prepare",
+      "launch",
+      "health",
+      "stop",
+      "runtime_info"
+    ],
+    "registered_backend_providers": 8,
+    "registered_launch_adapters": 13,
+    "selected_live_model": "qwen-asr",
+    "selected_live_backend": "qwen_asr",
+    "selected_devices": [
+      0
+    ],
+    "latest_run_record": "validation/backend_lifecycle_run.json",
+    "runtime_witness_scope": "EXACT_WEIGHTS_BACKEND_LOAD_HEALTH_GPU_RESIDENCY_SHUTDOWN_ONLY",
+    "regression_checks": [
+      {
+        "suite": "default",
+        "command": ".venv/bin/python -m pytest -q -o addopts=''",
+        "counts": {
+          "tests": 1128,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "837e1a892ca506aaa8acc285976ec1ea30b4d0e0dd734921387aa53f7f37685e"
+      },
+      {
+        "suite": "services_workflows",
+        "command": ".venv/bin/python -m pytest services workflows -q -o addopts=''",
+        "counts": {
+          "tests": 65,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "20ecf804442b621b32233118954418374d2f5cc8a17390bdcc8b4ead1b862031"
+      }
+    ],
+    "remaining_work": [],
+    "production_ready": false,
+    "native_inference_executed": false,
+    "semantic_validation_executed": false,
+    "full_factory_e2e_executed": false,
+    "exit_gate_scope": "REAL_BACKEND_LIFECYCLE_ONLY",
+    "live_observation": "validation/backend_lifecycle_observation_v10.json",
+    "artifact_receipt": "validation/backend_lifecycle_receipt_v10.json",
+    "source_bundle_sha256": "999fe19b7bd9e3f51160a19ee8dfbd05f230b3487060543fba6b0df7d4070fe4",
+    "gpu_memory_mb": 4638.0,
+    "shutdown_verified": true,
+    "public_models": [],
+    "current_source_regression": "PASS",
+    "earlier_successful_observations": [
+      "validation/backend_lifecycle_observation_v5.json",
+      "validation/backend_lifecycle_observation_v6.json",
+      "validation/backend_lifecycle_observation_v7.json",
+      "validation/backend_lifecycle_observation_v8.json",
+      "validation/backend_lifecycle_observation_v9.json"
+    ],
+    "current_source_regression_after_phase_8_runtime_fixes": {
+      "exit_gate": "PASS",
+      "source_bundle_sha256": "9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f",
+      "phase_4_observation": "validation/backend_lifecycle_observation_v21.json",
+      "phase_5_observation": "validation/enhancement_observation_v16.json",
+      "immutable_gate_snapshot": {
+        "file": "validation/source_gate_snapshots/9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f/backend_lifecycle_gate.json",
+        "sha256": "c196446dbdfe955c4bbbdb3205bb7cdcdb435221c2a260de32ed1c29c8b77e9b"
+      }
+    },
+    "historical_phase_8_source_regressions": [
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v16.json",
+        "phase_5_observation": "validation/enhancement_observation_v12.json",
+        "report": "validation/backend_lifecycle_gate.json"
+      },
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v18.json",
+        "phase_5_observation": "validation/enhancement_observation_v13.json",
+        "report": "validation/backend_lifecycle_gate.json",
+        "immutable_gate_snapshot": {
+          "file": "validation/source_gate_snapshots/37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb/backend_lifecycle_gate.json",
+          "sha256": "ed772809d1d3e563b907ef1e62b62631351b43c0a5e6c7c7e14eae44c1907136"
+        }
+      },
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "2c67802690ecd91a8c6c5e67ab213b56cc8ea6283d073ac945d9804689c890f1",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v19.json",
+        "phase_5_observation": "validation/enhancement_observation_v14.json",
+        "immutable_gate_snapshot": {
+          "file": "validation/source_gate_snapshots/2c67802690ecd91a8c6c5e67ab213b56cc8ea6283d073ac945d9804689c890f1/backend_lifecycle_gate.json",
+          "sha256": "accf161945c05edfb2a0e91f16811f5a7d1f70a319de1c119a17f85e811a3a5c"
+        }
+      }
+    ]
+  },
+  "phase_5": {
+    "status": "COMPLETE",
+    "exit_gate": "PASS",
+    "exit_gate_report": "validation/engine_refactor_gate.json",
+    "details": "docs/UPGRADE_STATUS.md",
+    "vector": {
+      "status": "IMPLEMENTED_SOFTWARE_ONLY",
+      "contract_tests_passed": 21,
+      "generic_engine": "factory/engines/vector/__init__.py",
+      "adapter_contract": "factory/core/model_adapter.py",
+      "inference_adapters": [
+        "factory/adapters/qwen_embedding/__init__.py",
+        "factory/adapters/qwen_reranker/__init__.py"
+      ],
+      "new_model_without_engine_changes": "PASS (explicit mock contract, not inference)",
+      "canonical_service_entry": "services/embedding/src/engine.py",
+      "legacy_tests": "explicit LegacyEmbeddingEngine, contract_mock"
+    },
+    "remaining_in_order": [],
+    "regression_checks": [
+      {
+        "suite": "default",
+        "command": ".venv/bin/python -m pytest -q -o addopts=''",
+        "counts": {
+          "tests": 1234,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "eb7cea1dff55b2c4a41a2bd8bbba1afe8d354057bb19ba9e45084b50e3bf0da4"
+      },
+      {
+        "suite": "services_workflows",
+        "command": ".venv/bin/python -m pytest services workflows -q -o addopts='' ",
+        "counts": {
+          "tests": 65,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "a7e780feac97b31ddc42728e00badcbaf05f4787e24fb0e88e39cef6a4749b34"
+      }
+    ],
+    "production_ready": false,
+    "native_inference_executed": true,
+    "semantic_validation_executed": false,
+    "full_factory_e2e_executed": false,
+    "decision": {
+      "status": "IMPLEMENTED_SOFTWARE_ONLY",
+      "contract_tests_passed": 52,
+      "generic_engine": "factory/engines/decision/__init__.py",
+      "canonical_contracts": "factory/engines/decision/contracts.py",
+      "inference_adapter": "factory/adapters/qwen_decision/__init__.py",
+      "canonical_service_entry": "services/decision/src/engine.py",
+      "new_model_without_engine_changes": "PASS (explicit mock contract, not inference)",
+      "native_protocol_source_review": "validation/decision_protocol_sources.json",
+      "contract_source_sha256": "0dbcb542ccba64c99d4d55f4ea493589249128991e0549502238013e5fffe1a8",
+      "junit_sha256": "47cf6dc7631dba50a976104cb859de220dee4bf31a316839a5115cab1c1ef1ed",
+      "score_semantics": "Native expected zero-based level preserved; numeric range mapping returned separately",
+      "legacy_tests": "Explicit LegacyDecisionEngine, contract_mock",
+      "public_openai_contract": "PENDING_PHASE_6",
+      "native_inference_executed": false,
+      "production_ready": false
+    },
+    "exit_gate_scope": "ARCHITECTURE_AND_SOFTWARE_WITH_SCOPED_ENHANCEMENT_NATIVE_PROBE",
+    "remaining_work": [],
+    "engines": [
+      "vector",
+      "decision",
+      "responses",
+      "speech",
+      "image",
+      "video",
+      "music",
+      "enhancement"
+    ],
+    "model_addition_contracts": {
+      "passed": 8,
+      "classification": "SOFTWARE_ONLY_EXPLICIT_MOCKS",
+      "test": "tests/contract/test_engine_extensibility.py",
+      "source_sha256": "6788d3a78ae58e28f7b777383ce1d9b3b5e2b8444892972b2cce9a18f000e7a3",
+      "junit_sha256": "2992ed624de932e7a448fb1dfd4a5f8b0b24e6c568cfa154559216bd115da083"
+    },
+    "inference_adapters": [
+      "acestep",
+      "enhancement",
+      "minimax",
+      "qwen_asr",
+      "qwen_decision",
+      "qwen_embedding",
+      "qwen_image",
+      "qwen_reranker",
+      "qwen_text",
+      "qwen_tts",
+      "qwen_vlm",
+      "wan",
+      "yue2"
+    ],
+    "enhancement_native_probe": {
+      "observation": "validation/enhancement_observation_v6.json",
+      "receipt": "validation/enhancement_receipt_v6.json",
+      "run_record": "validation/enhancement_probe_run.json",
+      "classification": "ISOLATED_DISABLED_MODEL_NATIVE_BACKEND_PROBE",
+      "model": "enhancement-suite-v1",
+      "model_state": "DISABLED",
+      "capability": "enhancement.image_super_resolution",
+      "backend": "comfyui",
+      "assigned_devices": [
+        0
+      ],
+      "hardware_target": "kaggle-dual-t4",
+      "input_dimensions": [
+        512,
+        512
+      ],
+      "output_dimensions": [
+        2048,
+        2048
+      ],
+      "input_sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+      "output_sha256": "f93b95f3c0e83342fdb43e976bdec7cc61cd1d2f7ad7fb412577a1987ad05feb",
+      "peak_gpu_memory_mb": 4526.0,
+      "source_bundle_sha256": "999fe19b7bd9e3f51160a19ee8dfbd05f230b3487060543fba6b0df7d4070fe4",
+      "v3_certified": false,
+      "semantic_quality_certified": false,
+      "full_factory_e2e_executed": false,
+      "production_ready": false,
+      "stop_verified": true
+    },
+    "constraints": [
+      "All 20 checkpoint graphs / 227 identities unchanged; implementation metadata cannot grant live verification or READY",
+      "YuE2 selected BF16 runtime remains BLOCKED on T4",
+      "Enhancement has only pinned RealESRGAN x4plus; RIFE/audio/video super-resolution remain unsupported and DISABLED",
+      "Public OpenAI SDK/API acceptance awaits Phase 6",
+      "Native V3 + semantic validation and Full Factory E2E await Phases 8/9",
+      "Legacy workers, templates and explicit mock fixtures retained for ordered migration"
+    ],
+    "evidence_validator_adversarial_checks": {
+      "report": "validation/engine_gate_adversarial.json",
+      "unmodified_current_evidence": "PASS",
+      "tamper_cases_rejected": 5,
+      "classification": "SOFTWARE_ONLY"
+    },
+    "source_regression_after_phase_6": "PASS (ASR lifecycle v9 + isolated Enhancement inference v5)",
+    "source_regression_after_phase_7": "PASS (ASR lifecycle v10 + isolated Enhancement inference v6)",
+    "current_source_regression_after_phase_8_runtime_fixes": {
+      "exit_gate": "PASS",
+      "source_bundle_sha256": "9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f",
+      "phase_4_observation": "validation/backend_lifecycle_observation_v21.json",
+      "phase_5_observation": "validation/enhancement_observation_v16.json",
+      "immutable_gate_snapshot": {
+        "file": "validation/source_gate_snapshots/9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f/engine_refactor_gate.json",
+        "sha256": "7ecd665369655c60006d4d1f9fcec40a008dbde3f9a97b6278c9295346749bd4"
+      }
+    },
+    "historical_phase_8_source_regressions": [
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v16.json",
+        "phase_5_observation": "validation/enhancement_observation_v12.json",
+        "report": "validation/engine_refactor_gate.json"
+      },
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v18.json",
+        "phase_5_observation": "validation/enhancement_observation_v13.json",
+        "report": "validation/engine_refactor_gate.json",
+        "immutable_gate_snapshot": {
+          "file": "validation/source_gate_snapshots/37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb/engine_refactor_gate.json",
+          "sha256": "3c6cc0d7dba6015d3543159909c90ad1650851ee59dc8d7bf3d1f33cef8efaef"
+        }
+      },
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "2c67802690ecd91a8c6c5e67ab213b56cc8ea6283d073ac945d9804689c890f1",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v19.json",
+        "phase_5_observation": "validation/enhancement_observation_v14.json",
+        "immutable_gate_snapshot": {
+          "file": "validation/source_gate_snapshots/2c67802690ecd91a8c6c5e67ab213b56cc8ea6283d073ac945d9804689c890f1/engine_refactor_gate.json",
+          "sha256": "0442c4601335ca3ae85d523bfedd04f9f75b3c8567811f8aa7304dfdeea6657e"
+        }
+      }
+    ]
+  },
+  "plan_findings": {
+    "report": "docs/PLAN_FINDINGS.md",
+    "decisions_api_classification": "Official OpenAI Decisions now exists; public contract migration proposed for Phase 6 under existing OpenAI-first rule; no phase order change"
+  },
+  "native_inference_scope": "Wave A 10 + Wave B 8 native V3 semantic passes across seven models, plus isolated disabled RealESRGAN x4 implementation probe. No Full Factory E2E.",
+  "semantic_validation_executed": true,
+  "production_ready_model_capability_pairs": 0,
+  "phase_6": {
+    "status": "COMPLETE",
+    "exit_gate": "PASS",
+    "exit_gate_report": "validation/openai_api_gate.json",
+    "exit_gate_scope": "OFFICIAL_PYTHON_SDK_SOFTWARE_COMPATIBILITY_ONLY",
+    "details": "docs/UPGRADE_STATUS.md",
+    "api_guide": "docs/OPENAI_API.md",
+    "sdk_version": "3.49.0",
+    "sdk_sources": "validation/openai_sdk_sources.json",
+    "official_sdk_acceptance": {
+      "classification": "SOFTWARE_ONLY_EXPLICIT_MOCK_AUTHORIZATION_AND_ADAPTER_OUTPUTS",
+      "command": [
+        "/Volumes/WorkSpace/Factory/Gen_Image:Video/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/contract/test_openai_sdk_api.py",
+        "tests/contract/test_phase6_native_contracts.py",
+        "-q",
+        "-o",
+        "addopts=",
+        "--junitxml=/var/folders/4l/l8mn16sj5kg9sylmsyyz6_200000gn/T/factory-sdk-gate-9upeyry4/sdk.xml"
+      ],
+      "exit_code": 0,
+      "counts": {
+        "tests": 54,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "test_sdk_chat_and_responses",
+        "test_sdk_chat_and_responses_streams",
+        "test_sdk_failed_stream_never_emits_completion",
+        "test_sdk_embeddings_float_and_default_base64",
+        "test_sdk_audio_upload_and_waveform",
+        "test_sdk_image_generate_and_multipart_edits",
+        "test_sdk_video_create_retrieve_content_extension",
+        "test_sdk_decisions_and_models",
+        "test_async_sdk",
+        "test_unvalidated_session_fails_closed_through_sdk[responses-kwargs0]",
+        "test_unvalidated_session_fails_closed_through_sdk[embeddings-kwargs1]",
+        "test_unvalidated_session_fails_closed_through_sdk[speech-kwargs2]",
+        "test_unvalidated_session_fails_closed_through_sdk[images-kwargs3]",
+        "test_unvalidated_session_fails_closed_through_sdk[videos-kwargs4]",
+        "test_unvalidated_session_fails_closed_through_sdk[decisions-kwargs5]",
+        "test_public_rejects_deployment_overrides[service]",
+        "test_public_rejects_deployment_overrides[backend]",
+        "test_public_rejects_deployment_overrides[devices]",
+        "test_public_rejects_deployment_overrides[checkpoint]",
+        "test_public_rejects_deployment_overrides[variant]",
+        "test_auth_and_error_objects",
+        "test_remote_media_ssrf_rejected_before_adapter",
+        "test_video_unknown_and_not_completed_content",
+        "test_custom_music_jobs_and_disabled_enhancement",
+        "test_job_failure_has_no_content_or_false_completion",
+        "test_video_content_is_bound_to_owner_and_kind",
+        "test_unsupported_or_malformed_image_parameters_fail_closed[body0]",
+        "test_unsupported_or_malformed_image_parameters_fail_closed[body1]",
+        "test_unsupported_or_malformed_image_parameters_fail_closed[body2]",
+        "test_unsupported_or_malformed_image_parameters_fail_closed[body3]",
+        "test_unsupported_or_malformed_image_parameters_fail_closed[body4]",
+        "test_unsupported_or_malformed_image_parameters_fail_closed[body5]",
+        "test_unsupported_or_malformed_image_parameters_fail_closed[body6]",
+        "test_unsupported_or_malformed_image_parameters_fail_closed[body7]",
+        "test_main_application_mounts_all_required_routes",
+        "test_body_limit_measures_actual_bytes",
+        "test_custom_rerank_uses_canonical_engine",
+        "test_public_decision_batch_preserves_question_semantics_and_one_usage",
+        "test_decision_rejects_unsupported_native_subset[question0]",
+        "test_decision_rejects_unsupported_native_subset[question1]",
+        "test_decision_rejects_unsupported_native_subset[question2]",
+        "test_decision_rejects_unsupported_native_subset[question3]",
+        "test_native_adapter_checks_max_completion_tokens[0]",
+        "test_native_adapter_checks_max_completion_tokens[-1]",
+        "test_native_adapter_checks_max_completion_tokens[999999]",
+        "test_native_adapter_maps_max_completion_tokens_exactly",
+        "test_text_response_media_never_reaches_native_text_backend",
+        "test_native_response_sse_is_verified_not_fabricated[none]",
+        "test_native_response_sse_is_verified_not_fabricated[truncated]",
+        "test_native_response_sse_is_verified_not_fabricated[wrong_model]",
+        "test_native_response_sse_is_verified_not_fabricated[wrong_id]",
+        "test_native_response_sse_is_verified_not_fabricated[sequence]",
+        "test_native_response_sse_is_verified_not_fabricated[missing_usage]",
+        "test_native_response_sse_is_verified_not_fabricated[empty_text]"
+      ],
+      "junit_sha256": "43e597fb6aff30e6fcb6b7244c565303f7694902b522842fb067b4391f76a1cb",
+      "sources": [
+        {
+          "file": "tests/contract/test_openai_sdk_api.py",
+          "sha256": "1367f742432166a15abfcea5545d36cc0b6cf1f721c6ad3303d2b09bf8dcb8ae"
+        },
+        {
+          "file": "tests/contract/test_phase6_native_contracts.py",
+          "sha256": "f53bc2f4634345c66946d987aa17934c299fb52a06cbdb4922a66286cb093ecd"
+        }
+      ],
+      "diagnostics": null
+    },
+    "source_bundle_sha256": "b7de7106cf54d5c047d8c82501e082d2bb4243f5de6559e1836f3436c3992b4e",
+    "route_inventory": [
+      {
+        "path": "/v1/responses",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/chat/completions",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/embeddings",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/audio/transcriptions",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/audio/speech",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/images/generations",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/images/edits",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/videos",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/videos/edits",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/videos/extensions",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/videos/{identifier}",
+        "methods": [
+          "get"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/videos/{identifier}/content",
+        "methods": [
+          "get"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/models",
+        "methods": [
+          "get"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/decisions",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/rerank",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/music",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/music/{identifier}",
+        "methods": [
+          "get"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/music/{identifier}/content",
+        "methods": [
+          "get"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/enhancements",
+        "methods": [
+          "post"
+        ],
+        "registered": true
+      },
+      {
+        "path": "/v1/enhancements/{identifier}",
+        "methods": [
+          "get"
+        ],
+        "registered": true
+      }
+    ],
+    "public_request_selection": "EXPLICIT_MODEL_ONLY; backend/device/checkpoint bound by CLI deployment",
+    "public_models": [],
+    "supported_subset_limitations": [
+      "Supported API subset only; unsupported options return explicit errors",
+      "Hosted Videos API is shut down; compatibility targets retained historical SDK wire contract",
+      "All public model capabilities remain evidence-locked pending Native V3 + semantic + Full Factory E2E authorization",
+      "No OpenAI-hosted inference/API-key use; SDK uses Factory local credentials"
+    ],
+    "plan_findings": "docs/PLAN_FINDINGS.md",
+    "video_edit": "UNSUPPORTED_BY_CURRENT_MANIFESTS; explicit error, no reinterpretation",
+    "video_reference_sdk_3_49_0": "Named SDK video dictionary extraction fails client-side; multipart upload accepted; owned ID reference tested through HTTP",
+    "regression_checks": [
+      {
+        "suite": "default",
+        "command": ".venv/bin/python -m pytest -q -o addopts=''",
+        "counts": {
+          "tests": 1288,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "db8ee0c898bfa9680f293aadaeba2e7d9392ee3b8ed25a7e7430dcff2b6c33c2"
+      },
+      {
+        "suite": "services_workflows",
+        "command": ".venv/bin/python -m pytest services workflows -q -o addopts=''",
+        "counts": {
+          "tests": 65,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "62ed4958c6cef5770e47acc57c2da1a81d89b3ae7366b874cf05ce70367ca3b0"
+      }
+    ],
+    "prior_phase_current_source_regressions": {
+      "phase_4_observation": "validation/backend_lifecycle_observation_v9.json",
+      "phase_4_receipt": "validation/backend_lifecycle_receipt_v9.json",
+      "phase_5_observation": "validation/enhancement_observation_v5.json",
+      "phase_5_receipt": "validation/enhancement_receipt_v5.json"
+    },
+    "remaining_work": [],
+    "production_ready": false,
+    "native_inference_executed_by_sdk_gate": false,
+    "semantic_validation_executed": false,
+    "full_factory_e2e_executed": false,
+    "later_phase_constraints": [
+      "Phase 7 simplifies retained control-plane/worker assumptions; no broad cleanup yet",
+      "Phase 8 authorizes capabilities only with exact-checkpoint Native V3 and semantic evidence",
+      "Phase 9 Full Factory E2E remains required for production readiness",
+      "Phase 10 Studio and Phase 11 cleanup have not started"
+    ],
+    "current_source_regression_after_phase_7": {
+      "exit_gate": "PASS",
+      "report": "validation/openai_api_gate.json",
+      "source_bundle_sha256": "999fe19b7bd9e3f51160a19ee8dfbd05f230b3487060543fba6b0df7d4070fe4"
+    },
+    "current_source_regression_after_phase_8_runtime_fixes": {
+      "exit_gate": "PASS",
+      "source_bundle_sha256": "9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f",
+      "phase_4_observation": "validation/backend_lifecycle_observation_v21.json",
+      "phase_5_observation": "validation/enhancement_observation_v16.json",
+      "immutable_gate_snapshot": {
+        "file": "validation/source_gate_snapshots/9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f/openai_api_gate.json",
+        "sha256": "1ba0f7aaa88591b200c7a2ed4797709c70dd83e91fd9dcd02ca3909699491449"
+      }
+    },
+    "historical_phase_8_source_regressions": [
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v16.json",
+        "phase_5_observation": "validation/enhancement_observation_v12.json",
+        "report": "validation/openai_api_gate.json"
+      },
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v18.json",
+        "phase_5_observation": "validation/enhancement_observation_v13.json",
+        "report": "validation/openai_api_gate.json",
+        "immutable_gate_snapshot": {
+          "file": "validation/source_gate_snapshots/37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb/openai_api_gate.json",
+          "sha256": "8fad7705313867d8ae281fda47fd0c28742e4cbdae06d4037ccde2b68f29f4f7"
+        }
+      },
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "2c67802690ecd91a8c6c5e67ab213b56cc8ea6283d073ac945d9804689c890f1",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v19.json",
+        "phase_5_observation": "validation/enhancement_observation_v14.json",
+        "immutable_gate_snapshot": {
+          "file": "validation/source_gate_snapshots/2c67802690ecd91a8c6c5e67ab213b56cc8ea6283d073ac945d9804689c890f1/openai_api_gate.json",
+          "sha256": "93a9955b538864a2e598a9cd752eaebd54fe5cf723bb17403d3c758763c0861b"
+        }
+      }
+    ]
+  },
+  "phase_7": {
+    "status": "COMPLETE",
+    "exit_gate": "PASS",
+    "exit_gate_report": "validation/control_plane_gate.json",
+    "exit_gate_scope": "SINGLE_HOST_COMPOSITION_AND_SOFTWARE_ONLY",
+    "details": "docs/UPGRADE_STATUS.md",
+    "architecture_guide": "docs/CONTROL_PLANE.md",
+    "source_bundle_sha256": "999fe19b7bd9e3f51160a19ee8dfbd05f230b3487060543fba6b0df7d4070fe4",
+    "core_runtime_probe": "validation/core_runtime_probe.json",
+    "minimal_core_installed_packages": 30,
+    "external_services_required": [],
+    "default_job_storage": "IN_PROCESS_MEMORY",
+    "default_artifact_storage": "LOCAL_SCRATCH_WITH_TTL_QUOTA_AND_INTEGRITY",
+    "removed_from_default_startup": [
+      "distributed worker gateways",
+      "queue broker/scheduler",
+      "lease coordinator",
+      "worker watchdog",
+      "legacy JobLifecycleManager",
+      "legacy ModelRuntimeManager",
+      "repository/migrations",
+      "storage/S3 gateway",
+      "Studio legacy gateway"
+    ],
+    "job_management": [
+      "status",
+      "owner-scoped list",
+      "idempotent cancellation",
+      "actual state events",
+      "owned completed content"
+    ],
+    "gpu_exclusion": "Shared sync/async/stream locks; cancellable asynchronous acquisition; reservations held until actual native calls finish even under repeated cancellation",
+    "cancellation": "Queued jobs never call native inference. Running native work drains, discards output and keeps GPU reservation. Shutdown stops owned backends before draining.",
+    "contract_checks": {
+      "counts": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "test_waiting_cancel_never_reaches_native_backend",
+        "test_running_cancel_keeps_gpu_reserved_until_native_call_returns",
+        "test_repeated_task_cancellation_cannot_release_gpu_early",
+        "test_shutdown_stops_backend_before_draining_native_jobs",
+        "test_partial_dual_device_lock_is_released_on_cancel",
+        "test_artifact_expiration_integrity_owner_and_cancel_terminal",
+        "test_backend_failure_never_completes_job",
+        "test_unvalidated_registry_is_not_authorized_by_local_runtime",
+        "test_shutdown_during_admission_cannot_create_late_job",
+        "test_local_job_http_management_and_events",
+        "test_retained_legacy_host_refuses_production"
+      ],
+      "source_sha256": "c0b57659a564003bd8be06c761cc844a60b6243866d69285bfa5fe07a8a730e4",
+      "junit_sha256": "0105a8886c53e4675666ac292e04e115f96be4b81f2e062eac05583a69d3e530",
+      "diagnostics": null
+    },
+    "minimal_runtime_checks": {
+      "real_core_startup_without_optional_packages": true,
+      "legacy_worker_routes_not_mounted": true,
+      "public_discovery_stays_empty": true,
+      "unvalidated_inference_rejected": true,
+      "canonical_async_job_path_software_only": true,
+      "local_scratch_integrity": true,
+      "no_legacy_state_initialized": true,
+      "no_optional_imports": true,
+      "clean_shutdown": true
+    },
+    "optional_compatibility_extras": [
+      "factory-control-api[legacy]",
+      "factory-auth[jwt]"
+    ],
+    "retained_migration_host": "factory/apps/control-api/src/legacy.py; explicit contract/Studio migration only; production startup rejected",
+    "real_kaggle_core_process": {
+      "pid": 324,
+      "mode": "single-host",
+      "job_storage": "memory",
+      "artifact_storage": "local_scratch",
+      "external_services_required": [],
+      "loaded_optional_infrastructure": [],
+      "legacy_components": [],
+      "jobs_accepting": true,
+      "production_ready": false
+    },
+    "prior_phase_regressions": {
+      "phase_4": "validation/backend_lifecycle_observation_v10.json",
+      "phase_5": "validation/enhancement_observation_v6.json",
+      "phase_6": "validation/openai_api_gate.json"
+    },
+    "regression_checks": [
+      {
+        "suite": "default",
+        "command": ".venv/bin/python -m pytest -q -o addopts=''",
+        "counts": {
+          "tests": 1299,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "da30ca9cd559bb8f30f7f50a312afca6ca06508957045933d41dc2e34b59b6cc"
+      },
+      {
+        "suite": "services_workflows",
+        "command": ".venv/bin/python -m pytest services workflows -q -o addopts=''",
+        "counts": {
+          "tests": 65,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "8fb5fb186a24295b9057c0c899eea06339777b73b10e7c23a31d3dfbf9c554a1"
+      }
+    ],
+    "remaining_work": [],
+    "production_ready": false,
+    "native_inference_executed_by_this_gate": false,
+    "semantic_validation_executed": false,
+    "full_factory_e2e_executed": false,
+    "later_phase_constraints": [
+      "Phase 8 exact-checkpoint Native V3 + semantic certification required",
+      "Phase 9 Full Factory E2E remains required before production readiness",
+      "Studio migration is Phase 10; retained Studio parity tests refer only to the legacy migration host",
+      "Historical code/evidence retained until Phase 11 cleanup"
+    ],
+    "current_source_regression_after_phase_8_runtime_fixes": {
+      "exit_gate": "PASS",
+      "source_bundle_sha256": "9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f",
+      "phase_4_observation": "validation/backend_lifecycle_observation_v21.json",
+      "phase_5_observation": "validation/enhancement_observation_v16.json",
+      "immutable_gate_snapshot": {
+        "file": "validation/source_gate_snapshots/9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f/control_plane_gate.json",
+        "sha256": "f695702354cc11d929c9b8b6c277f8782bb5655a81d4d0ea8538c42bdc36e98d"
+      }
+    },
+    "historical_phase_8_source_regressions": [
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v16.json",
+        "phase_5_observation": "validation/enhancement_observation_v12.json",
+        "report": "validation/control_plane_gate.json"
+      },
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v18.json",
+        "phase_5_observation": "validation/enhancement_observation_v13.json",
+        "report": "validation/control_plane_gate.json",
+        "immutable_gate_snapshot": {
+          "file": "validation/source_gate_snapshots/37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb/control_plane_gate.json",
+          "sha256": "44db8abfeae54b4fcaf8fe79c57445706bedb0d69dc9fe147d7f41a1d1e0ef01"
+        }
+      },
+      {
+        "exit_gate": "PASS",
+        "source_bundle_sha256": "2c67802690ecd91a8c6c5e67ab213b56cc8ea6283d073ac945d9804689c890f1",
+        "phase_4_observation": "validation/backend_lifecycle_observation_v19.json",
+        "phase_5_observation": "validation/enhancement_observation_v14.json",
+        "immutable_gate_snapshot": {
+          "file": "validation/source_gate_snapshots/2c67802690ecd91a8c6c5e67ab213b56cc8ea6283d073ac945d9804689c890f1/control_plane_gate.json",
+          "sha256": "812dabcd37812ad1bcbef82cfb27b2f77fe136f740213c08338e1c38fd200ff6"
+        }
+      }
+    ]
+  },
+  "phase_8": {
+    "status": "IN_PROGRESS",
+    "exit_gate": "NOT_MET",
+    "native_wave_a_gate": "validation/native_wave_a_gate.json",
+    "golden_cases": "benchmarks/native/golden_wave_a.json",
+    "runtime_pins": "deployments/kaggle/runtime_wave_a.json",
+    "performance": {
+      "warmup": 1,
+      "measured": 3
+    },
+    "waves": {
+      "A": "PASS",
+      "B": "PASS",
+      "C": "PASS",
+      "D": "IN_PROGRESS",
+      "E": "NOT_STARTED",
+      "F": "NOT_STARTED"
+    },
+    "native_run_records": [
+      "validation/native_asr_run.json",
+      "validation/native_image_edit_run.json",
+      "validation/native_image_fp32_run.json",
+      "validation/native_image_i2i_run.json",
+      "validation/native_image_masked_run.json",
+      "validation/native_image_multi_run.json",
+      "validation/native_image_run.json",
+      "validation/native_image_t2i_run.json",
+      "validation/native_minimax_audio_run.json",
+      "validation/native_minimax_conditioned_run.json",
+      "validation/native_minimax_reference_audio_run.json",
+      "validation/native_minimax_reference_run.json",
+      "validation/native_minimax_t2v_run.json",
+      "validation/native_minimax_turbo_run.json",
+      "validation/native_text_run.json",
+      "validation/native_tts_run.json",
+      "validation/native_vllm_run.json",
+      "validation/native_vlm_run.json",
+      "validation/native_wan_extension_run.json",
+      "validation/native_wan_fl2v_run.json",
+      "validation/native_wan_i2v_run.json",
+      "validation/native_wan_t2v_run.json"
+    ],
+    "retained_failed_attempts": [
+      "validation/native_vllm_receipt_v1.json",
+      "validation/native_vllm_receipt_v2.json",
+      "validation/native_text_receipt_v1.json",
+      "validation/native_text_receipt_v2.json",
+      "validation/native_asr_receipt_v1.json",
+      "validation/native_vlm_receipt_v1.json",
+      "validation/native_tts_receipt_v1.json"
+    ],
+    "production_ready": false,
+    "full_factory_e2e_executed": false,
+    "current_source_prior_phase_regression": "PASS: ASR lifecycle v21, isolated disabled Enhancement v16 and Phase 4\u20137 gates bound to 9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f",
+    "findings": "docs/PLAN_FINDINGS.md",
+    "native_pass_pairs": 32,
+    "native_matrix": "validation/native_matrix.json",
+    "native_inference_executed": true,
+    "semantic_validation_executed": true,
+    "evidence_scope": "Wave A 10/10, B 8/8, C 8/8, D 2/13 exact-checkpoint native semantic golden pairs PASS. Direct all-frame review is hash-bound for video. No public Full Factory E2E authorization.",
+    "pending_native_runs": [],
+    "regression_checks": [
+      {
+        "suite": "default",
+        "command": ".venv/bin/python -m pytest -q -o addopts=''",
+        "counts": {
+          "tests": 1439,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "653026441d27314fbfd2cb23f7b051b9638c4085cf28eb2eaf3f1643460f8b92"
+      },
+      {
+        "suite": "services_workflows",
+        "command": ".venv/bin/python -m pytest services workflows -q -o addopts=''",
+        "counts": {
+          "tests": 65,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exit_code": 0,
+        "classification": "SOFTWARE_ONLY",
+        "gpu_inference_evidence": false,
+        "junit_sha256": "7ec1d58815fabc46285b3d2e80b1327bf7f1ed4f4fe489b1c5c0ddb6624e05e8"
+      }
+    ],
+    "source_bundle_sha256": "9b036f991f926c0099704b65070a98856ec4b6c31528efa01aa80023f4e7997f",
+    "evidence_validator_adversarial_checks": {
+      "report": "validation/native_gate_adversarial.json",
+      "command": ".venv/bin/python -m benchmarks.native.adversarial",
+      "tamper_cases_rejected": 9,
+      "classification": "SOFTWARE_ONLY_REPLAY"
+    },
+    "native_harness_contracts": {
+      "passed": 128,
+      "classification": "SOFTWARE_ONLY",
+      "sources": [
+        "tests/contract/test_native_wave_a_validation.py",
+        "tests/contract/test_native_wave_b_validation.py",
+        "tests/contract/test_native_wave_c_validation.py",
+        "tests/contract/test_native_wave_d_validation.py"
+      ]
+    },
+    "wave_a_completed_at_utc": "2026-11-12T13:50:40.941634+00:00",
+    "wave_a_receipts": [
+      "validation/native_vllm_receipt_v3.json",
+      "validation/native_text_receipt_v3.json"
+    ],
+    "latest_native_job_status": "validation/native_wan_t2v_poll.json",
+    "native_models_with_all_declared_wave_a_capabilities_passed": [
+      "qwen-decision",
+      "qwen-embedding",
+      "qwen-reranker",
+      "qwen-text"
+    ],
+    "remaining_work": [
+      "Wave D: Video declared subsets",
+      "Wave E: Music declared subsets; retain explicit hardware blocks",
+      "Wave F: Enhancement declared subsets; retain unsupported/disabled boundaries"
+    ],
+    "native_wave_b_gate": "validation/native_wave_b_gate.json",
+    "golden_wave_b": "benchmarks/native/golden_wave_b.json",
+    "runtime_wave_b": "deployments/kaggle/runtime_wave_b.json",
+    "asr_native_receipt": "validation/native_asr_receipt_v2.json",
+    "semantic_verifiers": "benchmarks/native/semantic_pins.json",
+    "vlm_native_receipt": "validation/native_vlm_receipt_v2.json",
+    "native_verified_pairs": [
+      {
+        "model": "minimax-h3-reference",
+        "capability": "video.reference_conditioning",
+        "run_id": "kaggle:factory-phase-8-native-minimax-reference:v1:minimax-reference-astronaut"
+      },
+      {
+        "model": "minimax-h3-reference",
+        "capability": "video.video_with_audio",
+        "run_id": "kaggle:factory-phase-8-native-minimax-reference-audio:v2:minimax-reference-spoken-audio-native-dialogue-v2"
+      },
+      {
+        "model": "minimax-h3",
+        "capability": "video.text_to_video",
+        "run_id": "kaggle:factory-phase-8-native-minimax-t2v:v3:minimax-t2v-red-ball-motion-v2"
+      },
+      {
+        "model": "qwen-asr",
+        "capability": "speech.asr",
+        "run_id": "kaggle:factory-phase-8-native-asr:v2:asr-jfk-real-speech"
+      },
+      {
+        "model": "qwen-decision",
+        "capability": "decision.predicate_evaluation",
+        "run_id": "kaggle:factory-phase-8-native-vllm:v3:decision-predicate-facts"
+      },
+      {
+        "model": "qwen-decision",
+        "capability": "decision.choice_routing",
+        "run_id": "kaggle:factory-phase-8-native-vllm:v3:decision-choice-billing"
+      },
+      {
+        "model": "qwen-decision",
+        "capability": "decision.score_ranking",
+        "run_id": "kaggle:factory-phase-8-native-vllm:v3:decision-score-damage"
+      },
+      {
+        "model": "qwen-embedding",
+        "capability": "vector.text_embedding",
+        "run_id": "kaggle:factory-phase-8-native-vllm:v3:embedding-france-retrieval"
+      },
+      {
+        "model": "qwen-image-2.1-turbo",
+        "capability": "image.text_to_image",
+        "run_id": "kaggle:factory-phase-8-native-image-t2i:v1:image-turbo-red-apple"
+      },
+      {
+        "model": "qwen-image-2.1",
+        "capability": "image.text_to_image",
+        "run_id": "kaggle:factory-phase-8-native-image-t2i:v1:image-standard-red-apple"
+      },
+      {
+        "model": "qwen-image-2.1",
+        "capability": "image.image_to_image",
+        "run_id": "kaggle:factory-phase-8-native-image-i2i:v2:image-i2i-pencil-v2"
+      },
+      {
+        "model": "qwen-image-2.1",
+        "capability": "image.inpaint",
+        "run_id": "kaggle:factory-phase-8-native-image-masked:v1:image-inpaint-blue-patch"
+      },
+      {
+        "model": "qwen-image-2.1",
+        "capability": "image.outpaint",
+        "run_id": "kaggle:factory-phase-8-native-image-masked:v1:image-outpaint-background"
+      },
+      {
+        "model": "qwen-image-2.1",
+        "capability": "image.instruction_edit",
+        "run_id": "kaggle:factory-phase-8-native-image-edit:v1:image-edit-blue-suit"
+      },
+      {
+        "model": "qwen-image-2.1",
+        "capability": "image.reference_image",
+        "run_id": "kaggle:factory-phase-8-native-image-edit:v1:image-reference-cat"
+      },
+      {
+        "model": "qwen-image-2.1",
+        "capability": "image.multi_reference",
+        "run_id": "kaggle:factory-phase-8-native-image-multi:v1:image-multi-cat-coffee"
+      },
+      {
+        "model": "qwen-reranker",
+        "capability": "vector.reranking",
+        "run_id": "kaggle:factory-phase-8-native-vllm:v3:rerank-france-capital"
+      },
+      {
+        "model": "qwen-text",
+        "capability": "responses.chat_completion",
+        "run_id": "kaggle:factory-phase-8-native-text:v3:text-arithmetic"
+      },
+      {
+        "model": "qwen-text",
+        "capability": "responses.create",
+        "run_id": "kaggle:factory-phase-8-native-text:v3:text-responses"
+      },
+      {
+        "model": "qwen-text",
+        "capability": "responses.structured_output",
+        "run_id": "kaggle:factory-phase-8-native-text:v3:text-structured-city"
+      },
+      {
+        "model": "qwen-text",
+        "capability": "responses.tool_calling",
+        "run_id": "kaggle:factory-phase-8-native-text:v3:text-tool-weather"
+      },
+      {
+        "model": "qwen-text",
+        "capability": "responses.streaming",
+        "run_id": "kaggle:factory-phase-8-native-text:v3:text-streaming"
+      },
+      {
+        "model": "qwen-tts",
+        "capability": "speech.tts",
+        "run_id": "kaggle:factory-phase-8-native-tts:v2:tts-base-intelligibility"
+      },
+      {
+        "model": "qwen-tts",
+        "capability": "speech.voice_cloning",
+        "run_id": "kaggle:factory-phase-8-native-tts:v2:tts-base-voice-cloning"
+      },
+      {
+        "model": "qwen-vlm",
+        "capability": "responses.image_chat",
+        "run_id": "kaggle:factory-phase-8-native-vlm:v2:vlm-astronaut-suit"
+      },
+      {
+        "model": "qwen-vlm",
+        "capability": "responses.create",
+        "run_id": "kaggle:factory-phase-8-native-vlm:v2:vlm-text-arithmetic"
+      },
+      {
+        "model": "qwen-vlm",
+        "capability": "responses.video_chat",
+        "run_id": "kaggle:factory-phase-8-native-vlm:v2:vlm-pedestrian-video"
+      },
+      {
+        "model": "qwen-vlm",
+        "capability": "responses.visual_grounding",
+        "run_id": "kaggle:factory-phase-8-native-vlm:v2:vlm-head-grounding-v2"
+      },
+      {
+        "model": "qwen-vlm",
+        "capability": "responses.document_qa",
+        "run_id": "kaggle:factory-phase-8-native-vlm:v2:vlm-document-title"
+      },
+      {
+        "model": "wan-2.2",
+        "capability": "video.image_to_video",
+        "run_id": "kaggle:factory-phase-8-native-wan-i2v:v1:wan-i2v-astronaut-native-grid-v2"
+      },
+      {
+        "model": "wan-2.2",
+        "capability": "video.first_last_frame_to_video",
+        "run_id": "kaggle:factory-phase-8-native-wan-fl2v:v2:wan-fl2v-astronaut-zoom-native-grid-v2"
+      },
+      {
+        "model": "wan-2.2",
+        "capability": "video.video_extension",
+        "run_id": "kaggle:factory-phase-8-native-wan-extension:v1:wan-extension-pedestrians-native-grid-v2"
+      }
+    ],
+    "tts_native_receipt": "validation/native_tts_receipt_v2.json",
+    "native_wave_c_gate": "validation/native_wave_c_gate.json",
+    "golden_wave_c": "benchmarks/native/golden_wave_c.json",
+    "runtime_wave_c": "deployments/kaggle/runtime_wave_c.json",
+    "wave_c_runtime_constraint": "Kaggle maximum two concurrent batch GPU sessions; third regression launch rejected before scheduling, original Enhancement v9 evidence retained.",
+    "wave_c_precision_disposition": "Initial image v1 retains successful T2I examples but has no exact precision contract; full image_fp32 v1 retains the subsequent explicit-FP32 attempt. Current candidate graph additionally disables optional prefix KV caching losslessly; explicit capability batches require fresh collected evidence.",
+    "wave_c_explicit_precision_run": "validation/native_image_fp32_run.json",
+    "wave_c_diagnostic_run": "validation/native_image_run.json",
+    "wave_c_diagnostic_receipts": [
+      "validation/native_image_receipt_v1.json",
+      "validation/native_image_fp32_receipt_v1.json",
+      "validation/native_image_i2i_receipt_v1.json"
+    ],
+    "wave_c_candidate_runs": [
+      "validation/native_image_t2i_run.json",
+      "validation/native_image_i2i_run.json",
+      "validation/native_image_masked_run.json",
+      "validation/native_image_edit_run.json",
+      "validation/native_image_multi_run.json"
+    ],
+    "wave_c_golden_history": "validation/native_golden_wave_c_v1.json",
+    "wave_c_gate_verified_pairs": 8,
+    "wave_c_t2i_receipt": "validation/native_image_t2i_receipt_v1.json",
+    "wave_c_i2i_receipt": "validation/native_image_i2i_receipt_v2.json",
+    "submitted_source_archives": {
+      "classification": "SOURCE_PROVENANCE_ONLY_NOT_NEW_INFERENCE_EVIDENCE",
+      "command": ".venv/bin/python -m benchmarks.native.source_archives --kinds vllm text asr vlm tts image image_fp32 image_i2i image_t2i image_masked image_edit",
+      "identities": [
+        "validation/native_sources/asr_v2/source_identity.json",
+        "validation/native_sources/image_edit_v1/source_identity.json",
+        "validation/native_sources/image_fp32_v1/source_identity.json",
+        "validation/native_sources/image_i2i_v2/source_identity.json",
+        "validation/native_sources/image_masked_v1/source_identity.json",
+        "validation/native_sources/image_multi_v1/source_identity.json",
+        "validation/native_sources/image_t2i_v1/source_identity.json",
+        "validation/native_sources/image_v1/source_identity.json",
+        "validation/native_sources/minimax_audio_v1/source_identity.json",
+        "validation/native_sources/minimax_audio_v2/source_identity.json",
+        "validation/native_sources/minimax_conditioned_v1/source_identity.json",
+        "validation/native_sources/minimax_conditioned_v2/source_identity.json",
+        "validation/native_sources/minimax_reference_audio_v1/source_identity.json",
+        "validation/native_sources/minimax_reference_v1/source_identity.json",
+        "validation/native_sources/minimax_t2v_v1/source_identity.json",
+        "validation/native_sources/minimax_t2v_v2/source_identity.json",
+        "validation/native_sources/minimax_t2v_v3/source_identity.json",
+        "validation/native_sources/minimax_turbo_v1/source_identity.json",
+        "validation/native_sources/minimax_turbo_v2/source_identity.json",
+        "validation/native_sources/minimax_turbo_v3/source_identity.json",
+        "validation/native_sources/minimax_turbo_v4/source_identity.json",
+        "validation/native_sources/text_v3/source_identity.json",
+        "validation/native_sources/tts_v2/source_identity.json",
+        "validation/native_sources/vllm_v3/source_identity.json",
+        "validation/native_sources/vlm_v2/source_identity.json",
+        "validation/native_sources/wan_fl2v_v1/source_identity.json",
+        "validation/native_sources/wan_i2v_v1/source_identity.json",
+        "validation/native_sources/wan_t2v_v1/source_identity.json",
+        "validation/native_sources/wan_t2v_v2/source_identity.json",
+        "validation/native_sources/wan_t2v_v3/source_identity.json",
+        "validation/native_sources/wan_t2v_v4/source_identity.json",
+        "validation/native_sources/wan_t2v_v5/source_identity.json",
+        "validation/native_sources/wan_t2v_v6/source_identity.json",
+        "validation/native_sources/wan_t2v_v7/source_identity.json"
+      ]
+    },
+    "wave_c_edit_reference_receipt": "validation/native_image_edit_receipt_v1.json",
+    "wave_c_masked_receipt": "validation/native_image_masked_receipt_v1.json",
+    "wave_c_completed_at_utc": "2026-11-13T08:19:27.279528+00:00",
+    "wave_c_multi_receipt": "validation/native_image_multi_receipt_v1.json",
+    "wave_c_receipts": [
+      "validation/native_image_t2i_receipt_v1.json",
+      "validation/native_image_i2i_receipt_v2.json",
+      "validation/native_image_masked_receipt_v1.json",
+      "validation/native_image_edit_receipt_v1.json",
+      "validation/native_image_multi_receipt_v1.json"
+    ],
+    "native_wave_d_gate": "validation/native_wave_d_gate.json",
+    "golden_wave_d": "benchmarks/native/golden_wave_d.json",
+    "runtime_wave_d": "deployments/kaggle/runtime_wave_d.json",
+    "wave_d_initial_scope": "Thirteen exact pairs. Only Base T2V/Reference have current accepted native PASS(D2/13,total28,READY0). Base conditioned124v2 and Turbo4 complete real videos but fail complete semantics/content. Experimental5B FL2V1 completes four semantically/visually correct real videos but strict gate rejects missing per-call telemetry. Stdout fix awaits source regressions/repeat. Native-dialogue Audio2 and Wan native-grid I2V1 are running on validated08eefd source.",
+    "wave_d_candidate_runs": [
+      "validation/native_minimax_audio_run.json",
+      "validation/native_minimax_conditioned_run.json",
+      "validation/native_minimax_reference_audio_run.json",
+      "validation/native_minimax_reference_run.json",
+      "validation/native_minimax_t2v_run.json",
+      "validation/native_minimax_turbo_run.json",
+      "validation/native_wan_t2v_run.json"
+    ],
+    "current_source_lifecycle_regression": "PASS: ASR lifecycle v24, isolated disabled Enhancement v19 and Phase 4-7 gates bound to 7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+    "wave_d_diagnostic_receipts": [
+      "validation/native_minimax_audio_receipt_v1.json",
+      "validation/native_minimax_conditioned_receipt_v1.json",
+      "validation/native_minimax_conditioned_receipt_v2.json",
+      "validation/native_minimax_reference_audio_receipt_v1.json",
+      "validation/native_minimax_t2v_receipt_v1.json",
+      "validation/native_minimax_t2v_receipt_v2.json",
+      "validation/native_minimax_turbo_receipt_v1.json",
+      "validation/native_minimax_turbo_receipt_v2.json",
+      "validation/native_minimax_turbo_receipt_v3.json",
+      "validation/native_minimax_turbo_receipt_v4.json",
+      "validation/native_wan_fl2v_receipt_v1.json",
+      "validation/native_wan_t2v_receipt_v1.json",
+      "validation/native_wan_t2v_receipt_v2.json",
+      "validation/native_wan_t2v_receipt_v3.json",
+      "validation/native_wan_t2v_receipt_v4.json",
+      "validation/native_wan_t2v_receipt_v5.json",
+      "validation/native_wan_t2v_receipt_v6.json",
+      "validation/native_wan_t2v_receipt_v7.json"
+    ],
+    "wave_d_golden_history": [
+      "validation/native_golden_wave_d_v1.json",
+      "validation/native_golden_wave_d_v2.json",
+      "validation/native_golden_wave_d_v3.json",
+      "validation/native_golden_wave_d_v4.json",
+      "validation/native_golden_wave_d_v5.json",
+      "validation/native_golden_wave_d_v6.json",
+      "validation/native_golden_wave_d_v7.json",
+      "validation/native_golden_wave_d_v8.json"
+    ],
+    "video_audio_semantic_verifiers": "benchmarks/native/video_audio_semantic_pins.json",
+    "wave_d_precision_disposition": "Original exact checkpoint bytes retained. Wan uses declared FP16 diffusion/text with exact 95+24 protected FP32 overrides, FP32 VAE, sequential CPU offload and 1800-s deadline. MiniMax uses declared FP32 diffusion and 1200-s deadline. No automatic precision/backend/model fallback. Wan native content still NOT_MET.",
+    "wave_d_meta_parameter_schema": {
+      "report": "validation/native_wan_precision_schema.json",
+      "command": "uv run --no-project --isolated --with torch==2.11.0 --with transformers==5.19.0 --with diffusers==0.43.0 --with accelerate==1.15.0 python -m benchmarks.native.wan_precision_schema",
+      "classification": "CONFIGURATION_ONLY_NOT_INFERENCE",
+      "transformer_fp32_parameter_overrides": 95,
+      "text_encoder_fp32_parameter_overrides": 24
+    },
+    "wave_d_visual_content_review": "validation/native_video_content_review.json",
+    "wave_d_gate_verified_pairs": 2,
+    "wave_d_receipts": [
+      "validation/native_minimax_reference_receipt_v1.json",
+      "validation/native_minimax_t2v_receipt_v3.json"
+    ],
+    "current_asr_lifecycle_receipt": "validation/backend_lifecycle_receipt_v24.json",
+    "current_enhancement_regression_receipt": "validation/enhancement_receipt_v19.json",
+    "wan_component_diagnostics": {
+      "classification": "LOCAL_CPU_COMPONENT_DIAGNOSIS_ONLY_NOT_NATIVE_T4_OR_FULL_MODEL_CERTIFICATION",
+      "reports": [
+        "validation/diagnostics/wan_vae_cpu_roundtrip_v1/report.json",
+        "validation/diagnostics/wan_vae_cpu_temporal_roundtrip_v1/report.json",
+        "validation/diagnostics/wan_vae_cpu_tiled_roundtrip_v1/report.json"
+      ],
+      "result": "Exact FP32 VAE reconstructs actual photo and five recorded video frames coherently on CPU. No missing/mismatched/unexpected keys; finite outputs; photo MAE 0.014584 and video per-frame MAE 0.015249\u20130.017212. CUDA/offload and denoising remain unproven. No native PASS/production authorization added.",
+      "tiled_high_resolution_photo_result": "1280x704 FP32 CPU VAE photo roundtrip with native 512x512/384x384 tiling completes in 78.582 s; finite output, MAE 0.003847. Actual reconstructed photo directly reviewed with no severe color blocks/seams. Component diagnosis only, not GPU/T2V/V3 proof.",
+      "endpoint_reports": [
+        "validation/diagnostics/wan_final_anchor_ignored_cpu_v1/report.json",
+        "validation/diagnostics/wan_endpoint_phase_cpu_v1/report.json",
+        "validation/diagnostics/wan_joint_endpoint_context_cpu_v1/report.json",
+        "validation/diagnostics/wan_experimental_preparation_cpu_v1/report.json"
+      ],
+      "endpoint_result": "Original VAE CPU reproduces ignored last-image input in native TI2V branch. Independent or held-context final latent substitutions show visible ghosting and are rejected. Joint linear context is an experimental codec candidate with mild transient double contours; actual source-verified prototype preparation consumes both real endpoint photos with correct free-middle mask. None is full Transformer/GPU/V3/V4 evidence."
+    },
+    "last_passed_source_gate_snapshot": "validation/source_gate_snapshots/7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94/index.json",
+    "queued_current_source_regressions": {
+      "source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "state": "PASS",
+      "expected_asr_version": 24,
+      "expected_enhancement_version": 19,
+      "after_pass": "Repeat exact complete Wan FL2V golden as v2; preserve v1 positive content and missing per-call evidence, keep strict binding requirements.",
+      "classification": "ACTUAL_SOURCE_SCOPED_REGRESSION"
+    },
+    "video_review_exporter": {
+      "command": ".venv/bin/python -m benchmarks.native.video_review --kind minimax_t2v --version 3 --output /tmp/factory-native-video/review-export-check",
+      "classification": "SOFTWARE_REPLAY_OF_428_REAL_COLLECTED_FRAMES_NOT_NEW_INFERENCE_OR_ACCEPTANCE",
+      "verified_output_jsons": 4,
+      "decoded_frames": 428,
+      "automatic_acceptance": false,
+      "source": "benchmarks/native/video_review.py"
+    },
+    "wave_d_conditioned_receipt": "validation/native_minimax_conditioned_receipt_v2.json",
+    "wave_d_conditioned_result": "Eight exact native MP4s complete with all numeric checks PASS, median I2V 524.576 s / FL2V 565.010 s, peak GPU0 14282 MiB, clean shutdown. Direct all-frame review rejects both four-output goldens for extraneous colored/luminous discs and flashes. No V3 PASS added.",
+    "wave_d_wan_v7_result": "Four real native-grid MP4s, median 1529.292 s, peak GPU0 7050 MiB, zero OOM/session failures, clean shutdown; numeric iterations 1/3 fail scene/visibility/direction. All 164 frames reviewed: coherent balls/tables but cropping and wrong direction keep complete golden NOT_MET.",
+    "wave_d_turbo_v2_result": "Actual owned argv confirms --reserve-vram 1.000. Sampler initialization still exceeds unchanged 14.2-GiB acceptance budget, sampled peak 14612 MiB; supervisor stops daemon, zero videos, zero host OOM. Extra reservation did not resolve observed residency failure; root cause remains under investigation.",
+    "wave_d_temporal_diagnostic": "Base conditioned124 v2 completed and numeric PASS; direct all-frame review FAIL for both cases. Original107-frame failures and current124-frame failures remain immutable.",
+    "wave_d_reference_result": "Four exact native Reference videos PASS numeric and all-frame direct review; median 494.219 s, peak GPU0 14282 MiB, clean shutdown. Meaningful reference identity/scene/head motion preserved. Illumination flicker/glare is an explicit quality limitation; no artifact-free/general-quality or V4 claim.",
+    "wave_d_audio_result": "Four actual joint-AV videos with real audio, clean shutdown, median 502.084 s and peak GPU0 14186 MiB. Three iterations fail predeclared spoken-word checks due extra/missing words in pinned CPU Whisper transcripts; no V3 PASS.",
+    "current_source_gate_snapshot": "validation/source_gate_snapshots/7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94/index.json",
+    "wan_conditioned_native_grid": "Predeclared unsubmitted native-grid v2 I2V/FL2V; split into wan_i2v and wan_fl2v bounded batches; both still required by complete D gate.",
+    "wave_d_turbo_v3_result": "One actual warmup MP4 with numeric PASS, all 107 frames directly reviewed coherent; 303.274 s, peak GPU0 14420 MiB. The next model initialization reaches 14770 MiB, trips unchanged 14.2-GiB guard; fail-closed stop, zero host OOM. Incomplete case, zero Turbo V3 PASS.",
+    "monitoring": {
+      "interval_seconds": 300,
+      "active_kinds": [
+        "wan_fl2v",
+        "wan_extension"
+      ],
+      "policy": "Collect terminal actual artifacts; status-only polls never grant inference or V3 PASS."
+    },
+    "wan_extension_native_grid": "Predeclared unsubmitted native-grid v2; original four recorded source frames derived at 1280x704, 41 generated suffix frames, 50 steps, 24 fps. Prefix validation separate from generated semantics. Offline decoded resource bound 512 MiB; semantic thresholds unchanged.",
+    "native_harness_software_contracts": 138,
+    "native_harness_software_contracts_scope": "A29+B25+C21+D63; 1438 default +65 services/workflows PASS. No native inference proof from software tests.",
+    "wan_t2v_prompt_diagnostic": "Predeclared screen-right-v3 prompt-only correction: explicit screen positions, full-ball visibility and locked camera; original seeds/settings and all numeric/direct-review criteria unchanged. Original v7 remains failed. Not yet executed.",
+    "wave_d_audio_prompt_diagnostic": {
+      "case_id": "minimax-spoken-audio-native-dialogue-v2",
+      "classification": "REAL_GPU_ATTEMPT_COMPLETE_NOT_V3",
+      "change": "Explicit upstream dialogue tags/image alignment/multimodal fields, same original words/photo/seeds/107 frames/settings/strict oracles. Caller prompts still pass verbatim; no automatic prompt expansion.",
+      "documentation": "validation/diagnostics/minimax_native_dialogue_prompt/source_identity.json",
+      "result": "All four independent native transcripts exactly match the predeclared sentence and numeric semantics pass, but all428-frame direct review fails measured2 colored luminous patches/face occlusion; local independent audio recheck additionally detects unpinned FFmpeg decoder drift. Preserve unchanged strict identity check."
+    },
+    "wan_fl2v_native_conditioning_blocker": {
+      "status": "TECHNICAL_BLOCKER_NOT_V3",
+      "model": "wan-2.2",
+      "exact_checkpoint": "Wan-AI/Wan2.2-TI2V-5B-Diffusers@b8fff7315c768468a5333511427288870b2e9635",
+      "finding": "Pinned expand_timesteps branch ignores mandatory last_image. Exact CPU VAE latent preparation returns identical noise/condition/mask despite distinct real photographed last-image inputs. Adapter now rejects rather than silently generating first-frame-only video.",
+      "diagnostic": "validation/diagnostics/wan_final_anchor_ignored_cpu_v1/report.json",
+      "native_gpu_inference_evidence": false,
+      "declared_capability_removed": false,
+      "gate_requirement_removed": false,
+      "decision": "User explicitly selects: retain exact 5B checkpoint and research experimental Adapter. No alternate checkpoint. Current fail-closed guard retained; isolate causal VAE/mask prototype before production integration or full native claims.",
+      "prototype_status": "Source-verified experimental joint-linear-context pipeline wired into Wan Adapter. Real original CPU VAE demonstrates changed last photo changes final condition while noise/first anchor stay identical and exactly one interior latent remains free in the 9-frame component check. Ordinary ignoring pipeline remains rejected. Await actual source regressions and full GPU/semantic/all-frame validation.",
+      "prototype_cpu_diagnostic": "validation/diagnostics/wan_experimental_preparation_cpu_v1/report.json"
+    },
+    "wave_d_reference_audio_v1_result": "Four actual joint-AV MP4s complete, median 498.221 s, clean stop, no lifecycle failures; all four fail strict speech oracle due additional unrelated words. No V3 PASS. Native-dialogue-v2 predeclared with exact original words/photo/seeds/settings/oracles; unsubmitted.",
+    "wave_d_conditioned_v2_result": "Eight real 124-frame MP4s complete; all numeric checks PASS, medians 622.179/670.159 s, GPU0 peak14282 MiB, clean stop, no host OOM/kills. Direct review of all992 frames rejects both four-output goldens for extraneous colored/luminous patches, including face occlusion. Temporal range alone does not fix artifacts. No V3 PASS.",
+    "wave_d_wan_fl2v_v1_result": "Four real exact5B videos complete with numeric PASS, direct all164-frame content PASS, median1454.215s, GPU0peak7086MiB, cleanstop. Strict gate NOT_MET because root WARNING logging suppresses per-call endpoint/MP4 bindings. No historical records fabricated or criteria removed; stdout fix and complete rerun required.",
+    "wave_d_turbo_v4_result": "12 actual native MP4s complete with no lifecycle failures, cleanstop and peak13844MiB, confirming observed residency fix. T2V iteration2 fails redvisibility; direct all856-frame I2V/FL2V reviews reject extraneous colored/luminous elements in measured2. No full Turbo case PASS.",
+    "minimax_same_latent_vae_diagnostic": {
+      "state": "PREPARED_QUEUED_AFTER_CURRENT_SOURCE_GATES_AND_AVAILABLE_GPU_SLOT",
+      "classification": "REAL_ONE_CALL_COMPONENT_DIAGNOSIS_PLANNED_NOT_EXECUTED",
+      "source": "benchmarks/native/minimax_vae_diagnostic.py",
+      "custom_nodes": "benchmarks/native/minimax_vae_diagnostic_nodes.py",
+      "submission": "deployments/kaggle/minimax_vae_diagnostic.py",
+      "controlled_change": "One actual original I2V sampled video latent is decoded by original VAE in explicit FP16 then FP32, with clean backend shutdown between stages; same tensor/hash, weights, GPU0 and input. Candidate Manifest copies are explicit and canonical manifests remain unchanged.",
+      "v3_certified": false,
+      "production_ready": false,
+      "packaging_check": "Real script compiles below1MB; diagnostic-only source included for its own batch and omitted from ordinary certification batches. Software control only; not executed yet."
+    },
+    "wave_d_audio_v2_result": {
+      "receipt": "validation/native_minimax_audio_receipt_v2.json",
+      "median_seconds": 519.573274319,
+      "peak_gpu0_mib": 14250,
+      "native_numeric_semantic_passes": 4,
+      "direct_visual_content_review": "FAIL",
+      "local_audio_identity_recheck": "NOT_MET_DECODER_DRIFT",
+      "v3": "NOT_MET",
+      "production_ready": false
+    },
+    "audio_decoder_diagnosis": {
+      "classification": "CPU_REDECODE_OF_EXISTING_REAL_MP4_NOT_NEW_MODEL_INFERENCE",
+      "run": "validation/diagnostics/audio_decoder_replay_v1/run.json",
+      "state": "CPU_REPLAY_EXACT_DIGEST_PASS_ALL_FOUR_NOT_CERTIFICATION",
+      "production_ready": false,
+      "actual_decoder": "FFmpeg6.1.1-3ubuntu5 Linux x86_64"
+    },
+    "latest_default_software_regression": {
+      "classification": "SOFTWARE_ONLY_NOT_NATIVE_INFERENCE",
+      "tests": 1447,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "junit_sha256": "941e5fde047dfeca00dba333c22506856cbb31f0732a16e6ed6f385fd3dbcd94",
+      "junit_path": "/tmp/p8-d-sampler-full.xml",
+      "core_source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94"
+    },
+    "compatible_decoder_gate_audit": {
+      "state": "PARTIAL_REVALIDATION_COMPLETE_NOT_ADOPTABLE",
+      "receipt": "validation/native_gate_audit_receipt_v3.json",
+      "gate": "validation/native_gate_audit_v3/native_wave_d_gate.json",
+      "classification": "CPU_NATIVE_EVIDENCE_REVALIDATION_NOT_NEW_MODEL_INFERENCE",
+      "verified_native_attempts": 4,
+      "unavailable_failed_attempts": 3,
+      "result": "Original unchanged gate independently passes all4 AV2 numeric/audio identities on compatible Linux decoder, then correctly rejects its negative all-frame content review. Partial audit is not adopted because3 failed jobs are unavailable through notebook mounts; their actual REST artifacts remain preserved. Missing Wan runs retained. D2/13, READY0.",
+      "production_ready": false
+    },
+    "queued_wan_extension": {
+      "state": "SUBMITTED_AND_SOURCE_ARCHIVED",
+      "kind": "wan_extension",
+      "case_id": "wan-extension-pedestrians-native-grid-v2",
+      "source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "classification": "PLANNED_NOT_EXECUTED_EVIDENCE",
+      "policy": "Independent already-predeclared Wan capability follows the controlled MiniMax codec diagnosis, before any source mutation; retain exact 5B/seeds/oracles and static GPU0. No Phase advance.",
+      "run": "validation/native_wan_extension_run.json"
+    },
+    "wave_d_wan_i2v_result": {
+      "receipt": "validation/native_wan_i2v_receipt_v1.json",
+      "classification": "REAL_EXACT_5B_NATIVE_GPU_V3_WITH_SEMANTIC_AND_ALL_FRAME_REVIEW",
+      "native_runs": 4,
+      "median_seconds": 1466.316501166,
+      "peak_gpu0_mib": 7104,
+      "all_frames_reviewed": 164,
+      "v3": "PASS",
+      "production_ready": false,
+      "full_factory_e2e_executed": false
+    },
+    "controlled_minimax_vae_diagnostic_run": "validation/native_minimax_vae_diag_run.json",
+    "controlled_minimax_vae_diagnostic_state": "COMPLETE_NEGATIVE_PRECISION_ONLY_HYPOTHESIS_NOT_V3",
+    "controlled_minimax_vae_diagnostic_result": {
+      "receipt": "validation/native_minimax_vae_diag_receipt_v1.json",
+      "direct_review": "validation/native_minimax_vae_diag_v1/direct_content_review.json",
+      "actual_latent_sha256": "7bc1305d917e77eec7fe78e0eafa4b35e3d15d94b81ca7844afc0e34665b76c7",
+      "fp16_stage_seconds": 659.490136555,
+      "fp32_decode_seconds": 41.644129737,
+      "all_decoded_frames_reviewed": 248,
+      "result": "Material colored face/suit/helmet artifacts persist at same locations in both decoders; do not change canonical precision. Exact cause remains under investigation.",
+      "production_ready": false
+    },
+    "queued_native_canvas_diagnosis": {
+      "state": "V4_SUBMITTED_WITH_UNMODIFIED_HEALTH_CHECK_OBSERVATION",
+      "classification": "PREDECLARED_ONE_CALL_GPU_DIAGNOSIS_NOT_V3",
+      "kind": "minimax_native_canvas_diag",
+      "proposal": "validation/diagnostics/minimax_native_canvas_proposal/proposal.json",
+      "source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "canonical_manifest_changed": false,
+      "production_ready": false,
+      "run": "validation/native_minimax_native_canvas_diag_run.json"
+    },
+    "queued_sampler_diagnosis": {
+      "state": "COMPLETE_NEGATIVE_SAMPLER_ONLY_HYPOTHESIS_NOT_V3",
+      "kind": "minimax_sampler_diag",
+      "classification": "PREDECLARED_ONE_CALL_GPU_DIAGNOSIS_NOT_V3",
+      "proposal": "validation/diagnostics/minimax_sampler_proposal/proposal.json",
+      "source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+      "canonical_manifest_changed": false,
+      "production_ready": false,
+      "direct_review": "validation/native_minimax_sampler_diag_v1/direct_content_review.json"
+    },
+    "active_native_monitor_kinds": [
+      "minimax_native_canvas_diag"
+    ],
+    "wave_d_recent_collected_results": {
+      "wan_fl2v_v2": {
+        "v3": "PASS",
+        "receipt": "validation/native_wan_fl2v_receipt_v2.json",
+        "frames_reviewed": 164
+      },
+      "wan_extension_v1": {
+        "v3": "PASS",
+        "receipt": "validation/native_wan_extension_receipt_v1.json",
+        "frames_reviewed": 356
+      }
+    },
+    "wave_f_scope": "Native Enhancement V3; current Manifest declares zero enabled enhancement capabilities. Full Factory E2E V4 belongs to Phase 9, not Wave F.",
+    "queued_reference_audio": {
+      "state": "COMPLETE_V3_PASS",
+      "kind": "minimax_reference_audio",
+      "golden": "minimax-reference-spoken-audio-native-dialogue-v2",
+      "policy": "Original four seeds and semantic criteria; source 7266e824 gate snapshots verified before submission; poll every 300 seconds.",
+      "run": "validation/native_minimax_reference_audio_run.json"
+    },
+    "wave_d_wan_t2v_v8_result": {
+      "state": "NOT_MET",
+      "receipt": "validation/native_wan_t2v_receipt_v8.json",
+      "actual_runs": 4,
+      "all_frames_reviewed": 164,
+      "semantic_pass_runs": 3,
+      "failed_iteration": 3,
+      "failed_metric": "sampled final-frame text margin 0.022844279758530345 below unchanged 0.03",
+      "rightward_motion_pass_runs": 4,
+      "visible_red_object_pass_runs": 4,
+      "production_ready": false
+    },
+    "native_canvas_v1_result": {
+      "status": "NOT_MET",
+      "receipt": "validation/native_minimax_native_canvas_diag_receipt_v1.json",
+      "output_produced": false,
+      "error": "HTTP connection reset at sampler initialization; final backend termination cause not captured",
+      "peak_gpu0_mib": 10294,
+      "production_ready": false
+    },
+    "wave_d_reference_audio_v2_result": {
+      "receipt": "validation/native_minimax_reference_audio_receipt_v2.json",
+      "native_runs": 4,
+      "native_numeric_pass": 4,
+      "exact_asr_transcripts": 4,
+      "all_frames_reviewed": 428,
+      "direct_visual_review": "PASS",
+      "median_seconds": 505.733019444,
+      "peak_gpu0_mib": 14282,
+      "canonical_v3_promotion": "PASS_FROM_ADOPTED_COMPATIBLE_LINUX_GATE_V5",
+      "production_ready": false,
+      "compatible_linux_gate": "PASS"
+    },
+    "compatible_gate_audit_state": "V5_FULL_10_OF_10_RECEIPTS_VERIFIED_ADOPTED",
+    "native_canvas_v2_result": {
+      "status": "NOT_MET",
+      "receipt": "validation/native_minimax_native_canvas_diag_receipt_v2.json",
+      "output_produced": false,
+      "backend_exit_code_before_stop": null,
+      "oom_events_before_stop": 0,
+      "classification": "CAUSE_UNRESOLVED_NO_INFERENCE_CREDIT"
+    },
+    "native_canvas_v3_result": {
+      "status": "NOT_MET",
+      "receipt": "validation/native_minimax_native_canvas_diag_receipt_v3.json",
+      "backend_exit_code": -15,
+      "oom_counters": 0,
+      "output_produced": false,
+      "classification": "SIGTERM_AFTER_GENERIC_HEALTH_FAILURE_EXACT_CHECK_PENDING"
+    }
+  },
+  "phases_9_through_11": "NOT_STARTED"
+}

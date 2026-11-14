@@ -10,7 +10,11 @@ from pathlib import Path
 import struct
 from unittest.mock import MagicMock, patch
 import urllib.error
+import os
 import pytest
+
+# Legacy compatibility contracts with simulated readiness; no inference evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 
 from deployments.kaggle.runner import (
     resolve_kaggle_username,
@@ -271,7 +275,7 @@ class TestDualT4HardwareTopology:
             for s in gpu["assigned_services"]:
                 service_to_gpu[s] = gpu_idx
 
-        models_dir = Path("manifests/models")
+        models_dir = Path(os.environ["FACTORY_MANIFESTS_DIR"]) / "models"
         model_files = sorted(models_dir.glob("*.yaml"))
         assert len(model_files) in (10, 11, 12), f"Expected 10 to 12 model manifests, found {len(model_files)}"
 
@@ -598,8 +602,8 @@ capabilities:
 class TestTier1ModelCertification:
     """Verifies end-to-end certification across all 6 Tier 1 core models."""
 
-    def test_certifier_executes_all_tier1_models(self, tmp_path):
-        manifests_dir = Path(__file__).resolve().parent.parent.parent.parent / "manifests"
+    def test_certifier_executes_all_tier1_models(self, tmp_path, legacy_catalog):
+        manifests_dir = legacy_catalog
         certifier = Tier1ModelCertifier(manifests_dir=manifests_dir)
         results_file = tmp_path / "cert_test.json"
 
@@ -653,9 +657,10 @@ class TestTier1ModelCertification:
             m = models[k]
             assert m.validation_status.value == "pending_live", f"Model {k} validation_status is {m.validation_status}"
             assert m.validation_notes is not None
-            assert "Tesla T4" in m.validation_notes
-            assert "pre-flight" in m.validation_notes.lower()
-            assert "pending" in m.validation_notes.lower()
+            assert "kaggle-dual-t4" in m.runtime_profiles
+            assert not m.validated_hardware_profiles
+            assert m.evidence_run_id is None
+            assert all(not truth.live_verified for truth in m.capabilities_truth.values())
 
 
 class TestHardwareMemoryProfilerAndSeparatedEngines:
@@ -697,9 +702,9 @@ class TestHardwareMemoryProfilerAndSeparatedEngines:
         assert snapshot.source == "live_nvml"
         assert snapshot.live_vram_used_mb == 5120.0
 
-    def test_preflight_contract_simulator_execution(self, tmp_path):
+    def test_preflight_contract_simulator_execution(self, tmp_path, legacy_catalog):
         """Verifies PreflightContractSimulator marks environment as simulation-local and telemetry UNAVAILABLE."""
-        manifests_dir = Path(__file__).resolve().parent.parent.parent.parent / "manifests"
+        manifests_dir = legacy_catalog
         sim = PreflightContractSimulator(manifests_dir=manifests_dir)
         out_file = tmp_path / "sim_results.json"
         res = sim.execute_all(output_path=out_file)
@@ -1132,8 +1137,8 @@ capabilities:
         assert res.passed is False
         assert "Memory leak detected" in res.error_message
 
-    def test_four_stage_pipeline_in_preflight_certification_results(self, tmp_path):
-        manifests_dir = Path(__file__).resolve().parent.parent.parent.parent / "manifests"
+    def test_four_stage_pipeline_in_preflight_certification_results(self, tmp_path, legacy_catalog):
+        manifests_dir = legacy_catalog
         sim = PreflightContractSimulator(manifests_dir=manifests_dir)
         results = sim.execute_all(output_path=tmp_path / "res.json")
 
@@ -1214,18 +1219,18 @@ class TestKaggleDualT4RunnerLifecycleAndContract:
         assert runner.kwargs.get("tag") == "regression-gate-check"
         assert runner.extra_options.get("tag") == "regression-gate-check"
 
-    def test_run_local_certification_preflight_without_credentials(self, tmp_path):
+    def test_run_local_certification_preflight_without_credentials(self, tmp_path, legacy_workspace):
         """Direct local certification run completes cleanly without requiring Kaggle credentials."""
-        runner = KaggleDualT4Runner(mode="preflight")
+        runner = KaggleDualT4Runner(workspace_dir=legacy_workspace, mode="preflight")
         out_file = tmp_path / "cert_results.json"
         res = runner.run_local_certification(output_path=out_file)
         assert res["all_gates_passed"] is True
         assert res["environment"] == "simulation-local"
         assert runner._client is None  # KaggleAPIClient was never accessed or initialized
 
-    def test_run_dispatcher_preflight(self, tmp_path):
+    def test_run_dispatcher_preflight(self, tmp_path, legacy_workspace):
         """Unified runner.run() dispatcher routes to local certification in preflight mode."""
-        runner = KaggleDualT4Runner(mode="preflight")
+        runner = KaggleDualT4Runner(workspace_dir=legacy_workspace, mode="preflight")
         out_file = tmp_path / "cert_run_dispatch.json"
         res = runner.run(output_path=out_file)
         assert res["all_gates_passed"] is True

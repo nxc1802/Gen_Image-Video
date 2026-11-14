@@ -17,10 +17,10 @@ import pytest
 
 from factory_contracts.errors import InvalidRequestError, ModelUnavailableError
 from services.text.src.models import ChatCompletionRequest, ChatMessage
-from services.text.src.engine import decouple_think_tokens, StreamingReasoningFilter, TextEngine
+from services.text.src.legacy_engine import decouple_think_tokens, StreamingReasoningFilter, LegacyTextEngine as TextEngine
 from services.text.src.multimodal import extract_content_text_and_media
 from services.decision.src.schemas import DecisionRequest
-from services.decision.src.engine import DecisionEngine
+from services.decision.src.legacy_engine import LegacyDecisionEngine as DecisionEngine
 from services.embedding.src.schemas import EmbeddingRequest, RerankRequest
 from services.embedding.src.engine import EmbeddingEngine
 from services.embedding.src.multimodal_embed import MultimodalEmbedder
@@ -222,7 +222,7 @@ class TestImageSubsystem:
         # Standard
         wf_std = ImageParameterMapper.apply(
             dict(base_workflow),
-            task="text_to_image",
+            task='image.text_to_image',
             inputs={"variant": "standard", "prompt": "a mountain lake", "steps": 20},
         )
         assert wf_std["478"]["inputs"]["unet_name"] == "qwen-image-2.1-Q4_K_M.gguf"
@@ -231,7 +231,7 @@ class TestImageSubsystem:
         # Turbo
         wf_turbo = ImageParameterMapper.apply(
             dict(base_workflow),
-            task="text_to_image",
+            task='image.text_to_image',
             inputs={"variant": "turbo", "prompt": "a mountain lake", "steps": 8},
         )
         assert wf_turbo["478"]["inputs"]["unet_name"] == "qwen-image-2.1-turbo-Q4_K_M.gguf"
@@ -242,7 +242,7 @@ class TestImageSubsystem:
         with pytest.raises(ValueError) as exc:
             ImageParameterMapper.apply(
                 base_workflow,
-                task="text_to_image",
+                task='image.text_to_image',
                 inputs={"variant": "turbo", "steps": 30},
             )
         assert "Incompatible steps" in str(exc.value)
@@ -251,7 +251,7 @@ class TestImageSubsystem:
         wf = {"476": {"inputs": {}}, "474_img": {"inputs": {}}}
         res = ImageParameterMapper.apply(
             wf,
-            task="image_to_image",
+            task='image.image_to_image',
             inputs={"image_url": "input.png", "denoise_strength": 0.55},
         )
         assert res["476"]["inputs"]["denoise"] == 0.55
@@ -261,7 +261,7 @@ class TestImageSubsystem:
         wf = {"476": {"inputs": {}}, "474": {"inputs": {"grow_mask_by": 0}}, "474_img": {"inputs": {}}, "474_mask": {"inputs": {}}}
         res = ImageParameterMapper.apply(
             wf,
-            task="inpaint",
+            task='image.inpaint',
             inputs={"image_url": "input.png", "mask_url": "mask.png", "mask_blur": 8},
         )
         assert res["474"]["inputs"]["grow_mask_by"] == 8
@@ -273,7 +273,7 @@ class TestImageSubsystem:
         # Pose
         res_pose = ImageParameterMapper.apply(
             dict(wf),
-            task="controlnet",
+            task='image.control_pose',
             inputs={"control_type": "openpose", "control_image_url": "pose.png", "strength": 0.9},
         )
         assert res_pose["ctrl_loader"]["inputs"]["control_net_name"] == "qwen_image_control_pose.safetensors"
@@ -283,7 +283,7 @@ class TestImageSubsystem:
         # Depth
         res_depth = ImageParameterMapper.apply(
             dict(wf),
-            task="controlnet",
+            task='image.control_depth',
             inputs={"control_type": "depth", "control_image_url": "depth.png", "strength": 0.75},
         )
         assert res_depth["ctrl_loader"]["inputs"]["control_net_name"] == "qwen_image_control_depth.safetensors"
@@ -306,7 +306,7 @@ class TestVideoSubsystem:
         res = VideoParameterMapper.apply(
             wf,
             model="wan-2.2",
-            task="first_last_frame_to_video",
+            task='video.first_last_frame_to_video',
             inputs={
                 "prompt": "smooth camera pan",
                 "fps": 30,
@@ -326,7 +326,7 @@ class TestVideoSubsystem:
         res = VideoParameterMapper.apply(
             wf,
             model="minimax-h3",
-            task="text_to_video",
+            task='video.text_to_video',
             inputs={"width": 770, "height": 450},  # Not multiples of 32
         )
         w = res["MiniMaxH3EmptyLatent"]["inputs"]["width"]
@@ -339,7 +339,7 @@ class TestVideoSubsystem:
         res = VideoParameterMapper.apply(
             wf,
             model="minimax-h3",
-            task="reference_conditioning",
+            task='video.reference_conditioning',
             inputs={"reference_image_url": "https://s3.ai.example.com/character.png"},
             staged_files={"reference_image_url": "staged_character.png"},
         )

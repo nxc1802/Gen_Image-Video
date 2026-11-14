@@ -24,6 +24,9 @@ import wave
 from PIL import Image
 import pytest
 
+# Legacy lifecycle/runner contract coverage; never inference certification.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
+
 from benchmarks.report import BenchmarkReportGenerator, CaseExecutionRecord
 from benchmarks.validators import validate_artifact
 from deployments.kaggle.bootstrap import DATASET_SPECS, KaggleBootstrap

@@ -1,0 +1,283 @@
+{
+  "phase": 6,
+  "observed_at_utc": "2026-11-13T13:48:55.379244+00:00",
+  "exit_gate": "PASS",
+  "classification": "OFFICIAL_PYTHON_SDK_SOFTWARE_COMPATIBILITY_ONLY",
+  "sdk_version": "3.49.0",
+  "source_bundle_sha256": "2c67802690ecd91a8c6c5e67ab213b56cc8ea6283d073ac945d9804689c890f1",
+  "checks": [
+    {
+      "check": "prior_phases_current_source",
+      "passed": true
+    },
+    {
+      "check": "pinned_official_sdk",
+      "passed": true
+    },
+    {
+      "check": "all_master_plan_routes_mounted",
+      "passed": true
+    },
+    {
+      "check": "zero_static_ready_and_zero_public_activation",
+      "passed": true
+    },
+    {
+      "check": "official_sdk_and_native_contracts_executed",
+      "passed": true
+    },
+    {
+      "check": "all_supported_families_exercised",
+      "passed": true
+    },
+    {
+      "check": "unvalidated_sessions_exercised",
+      "passed": true
+    }
+  ],
+  "routes": [
+    {
+      "path": "/v1/responses",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/chat/completions",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/embeddings",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/audio/transcriptions",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/audio/speech",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/images/generations",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/images/edits",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/videos",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/videos/edits",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/videos/extensions",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/videos/{identifier}",
+      "methods": [
+        "get"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/videos/{identifier}/content",
+      "methods": [
+        "get"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/models",
+      "methods": [
+        "get"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/decisions",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/rerank",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/music",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/music/{identifier}",
+      "methods": [
+        "get"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/music/{identifier}/content",
+      "methods": [
+        "get"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/enhancements",
+      "methods": [
+        "post"
+      ],
+      "registered": true
+    },
+    {
+      "path": "/v1/enhancements/{identifier}",
+      "methods": [
+        "get"
+      ],
+      "registered": true
+    }
+  ],
+  "acceptance": {
+    "classification": "SOFTWARE_ONLY_EXPLICIT_MOCK_AUTHORIZATION_AND_ADAPTER_OUTPUTS",
+    "command": [
+      "/Volumes/WorkSpace/Factory/Gen_Image:Video/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/contract/test_openai_sdk_api.py",
+      "tests/contract/test_phase6_native_contracts.py",
+      "-q",
+      "-o",
+      "addopts=",
+      "--junitxml=/var/folders/4l/l8mn16sj5kg9sylmsyyz6_200000gn/T/factory-sdk-gate-ymnhdm04/sdk.xml"
+    ],
+    "exit_code": 0,
+    "counts": {
+      "tests": 54,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "cases": [
+      "test_sdk_chat_and_responses",
+      "test_sdk_chat_and_responses_streams",
+      "test_sdk_failed_stream_never_emits_completion",
+      "test_sdk_embeddings_float_and_default_base64",
+      "test_sdk_audio_upload_and_waveform",
+      "test_sdk_image_generate_and_multipart_edits",
+      "test_sdk_video_create_retrieve_content_extension",
+      "test_sdk_decisions_and_models",
+      "test_async_sdk",
+      "test_unvalidated_session_fails_closed_through_sdk[responses-kwargs0]",
+      "test_unvalidated_session_fails_closed_through_sdk[embeddings-kwargs1]",
+      "test_unvalidated_session_fails_closed_through_sdk[speech-kwargs2]",
+      "test_unvalidated_session_fails_closed_through_sdk[images-kwargs3]",
+      "test_unvalidated_session_fails_closed_through_sdk[videos-kwargs4]",
+      "test_unvalidated_session_fails_closed_through_sdk[decisions-kwargs5]",
+      "test_public_rejects_deployment_overrides[service]",
+      "test_public_rejects_deployment_overrides[backend]",
+      "test_public_rejects_deployment_overrides[devices]",
+      "test_public_rejects_deployment_overrides[checkpoint]",
+      "test_public_rejects_deployment_overrides[variant]",
+      "test_auth_and_error_objects",
+      "test_remote_media_ssrf_rejected_before_adapter",
+      "test_video_unknown_and_not_completed_content",
+      "test_custom_music_jobs_and_disabled_enhancement",
+      "test_job_failure_has_no_content_or_false_completion",
+      "test_video_content_is_bound_to_owner_and_kind",
+      "test_unsupported_or_malformed_image_parameters_fail_closed[body0]",
+      "test_unsupported_or_malformed_image_parameters_fail_closed[body1]",
+      "test_unsupported_or_malformed_image_parameters_fail_closed[body2]",
+      "test_unsupported_or_malformed_image_parameters_fail_closed[body3]",
+      "test_unsupported_or_malformed_image_parameters_fail_closed[body4]",
+      "test_unsupported_or_malformed_image_parameters_fail_closed[body5]",
+      "test_unsupported_or_malformed_image_parameters_fail_closed[body6]",
+      "test_unsupported_or_malformed_image_parameters_fail_closed[body7]",
+      "test_main_application_mounts_all_required_routes",
+      "test_body_limit_measures_actual_bytes",
+      "test_custom_rerank_uses_canonical_engine",
+      "test_public_decision_batch_preserves_question_semantics_and_one_usage",
+      "test_decision_rejects_unsupported_native_subset[question0]",
+      "test_decision_rejects_unsupported_native_subset[question1]",
+      "test_decision_rejects_unsupported_native_subset[question2]",
+      "test_decision_rejects_unsupported_native_subset[question3]",
+      "test_native_adapter_checks_max_completion_tokens[0]",
+      "test_native_adapter_checks_max_completion_tokens[-1]",
+      "test_native_adapter_checks_max_completion_tokens[999999]",
+      "test_native_adapter_maps_max_completion_tokens_exactly",
+      "test_text_response_media_never_reaches_native_text_backend",
+      "test_native_response_sse_is_verified_not_fabricated[none]",
+      "test_native_response_sse_is_verified_not_fabricated[truncated]",
+      "test_native_response_sse_is_verified_not_fabricated[wrong_model]",
+      "test_native_response_sse_is_verified_not_fabricated[wrong_id]",
+      "test_native_response_sse_is_verified_not_fabricated[sequence]",
+      "test_native_response_sse_is_verified_not_fabricated[missing_usage]",
+      "test_native_response_sse_is_verified_not_fabricated[empty_text]"
+    ],
+    "junit_sha256": "cdde9f717af08a9d0f86651adab16eae3a0288f0a54712f6145b554bb8456dc5",
+    "sources": [
+      {
+        "file": "tests/contract/test_openai_sdk_api.py",
+        "sha256": "1367f742432166a15abfcea5545d36cc0b6cf1f721c6ad3303d2b09bf8dcb8ae"
+      },
+      {
+        "file": "tests/contract/test_phase6_native_contracts.py",
+        "sha256": "f53bc2f4634345c66946d987aa17934c299fb52a06cbdb4922a66286cb093ecd"
+      }
+    ],
+    "diagnostics": null
+  },
+  "findings": [],
+  "prior_engine_gate": "PASS",
+  "scope": "Unmodified official sync/async Python SDK against actual localhost HTTP routers and canonical Engines with explicit test-only authorization/adapter doubles. Existing video IDs are tested over HTTP because SDK 3.49.0 fails dictionary video extraction client-side. Video editing remains unsupported by current manifests.",
+  "production_ready": false,
+  "public_models": [],
+  "native_inference_executed_by_this_gate": false,
+  "semantic_validation_executed": false,
+  "full_factory_e2e_executed": false,
+  "limitations": [
+    "Supported API subset only; unsupported options return explicit errors",
+    "Hosted Videos API is shut down; compatibility targets retained historical SDK wire contract",
+    "All public model capabilities remain evidence-locked pending Native V3 + semantic + Full Factory E2E authorization",
+    "No OpenAI-hosted inference/API-key use; SDK uses Factory local credentials"
+  ]
+}

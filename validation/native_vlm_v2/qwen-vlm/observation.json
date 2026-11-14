@@ -1,0 +1,2346 @@
+{
+  "model": "qwen-vlm",
+  "engine": "EngineID.RESPONSES",
+  "backend": "vllm",
+  "checkpoint": {
+    "file_0": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "added_tokens.json",
+      "sha256": "7fa54985b58718a8fdb4f4d97484c4bd908db114847675e4bf3afe3e1d5d7bd4",
+      "size_bytes": 392,
+      "destination": "model/added_tokens.json"
+    },
+    "file_1": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "chat_template.json",
+      "sha256": "94174d7176c52a7192f96fc34eb2cf23c7c2059d63cdbfadca1586ba89731fb7",
+      "size_bytes": 1049,
+      "destination": "model/chat_template.json"
+    },
+    "file_2": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "config.json",
+      "sha256": "07e68f688788a24df16752c4eefd604005907059f53e89cccf8f2478779258f1",
+      "size_bytes": 1451,
+      "destination": "model/config.json"
+    },
+    "file_3": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "generation_config.json",
+      "sha256": "095745817a9d52e518c275687967564474a1f7719aa90982f268e47bfd70841f",
+      "size_bytes": 249,
+      "destination": "model/generation_config.json"
+    },
+    "file_4": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "merges.txt",
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "size_bytes": 1671853,
+      "destination": "model/merges.txt"
+    },
+    "primary": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "model-00001-of-00002.safetensors",
+      "sha256": "c379a074979237b5c45e5baefe42707908643d99ee013e1f23da82049a210068",
+      "size_bytes": 3980580168,
+      "destination": "model/model-00001-of-00002.safetensors"
+    },
+    "file_6": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "model-00002-of-00002.safetensors",
+      "sha256": "ee5d4f33d96c1d69a3935f54551a9166bb6080a23c142e0bdcb6f27b02e57546",
+      "size_bytes": 2941808400,
+      "destination": "model/model-00002-of-00002.safetensors"
+    },
+    "file_7": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "model.safetensors.index.json",
+      "sha256": "b3339cf7625b0dc009899cc99742ac8ebe7c12abc7b654fcaa159603221b5efc",
+      "size_bytes": 92944,
+      "destination": "model/model.safetensors.index.json"
+    },
+    "file_8": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "preprocessor_config.json",
+      "sha256": "8885ee26f126992101959631b5bc8cd2767da5cdae05a89f2989426e5dab0069",
+      "size_bytes": 567,
+      "destination": "model/preprocessor_config.json"
+    },
+    "file_9": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "special_tokens_map.json",
+      "sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+      "size_bytes": 613,
+      "destination": "model/special_tokens_map.json"
+    },
+    "file_10": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "tokenizer.json",
+      "sha256": "bfb053cacf2735b3a5bebbc40e4a853183efec30da0bc8f6304aef14ec0083bc",
+      "size_bytes": 7030315,
+      "destination": "model/tokenizer.json"
+    },
+    "file_11": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "tokenizer_config.json",
+      "sha256": "eb3c5a310899d7d65feec0dee4dff9067d7bc4ad2a17e2005bc9163f1ace0531",
+      "size_bytes": 4297,
+      "destination": "model/tokenizer_config.json"
+    },
+    "file_12": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "path": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "destination": "model/vocab.json"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "vlm-text-arithmetic",
+      "model": "qwen-vlm",
+      "capability": "responses.create",
+      "input_sha256": "3d7e9e62051bd18e542c39878ebc68a79b3e5264faa0983b6d7ab9c44dc6e971",
+      "fallback": false,
+      "weights_verified": true,
+      "status": "PASS",
+      "runs": [
+        {
+          "role": "warmup",
+          "iteration": 0,
+          "latency_ms": 3303.837421,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-text-arithmetic-0.json",
+          "output_sha256": "87eef9d7ea435841378f97a6c24b7cc8cbb209887827b9639506de451916ce8e",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_answer": true
+            },
+            "metrics": {
+              "actual_text": "42"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 533824190619,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 533888932686,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 534061479442,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 534232482522,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 534402619288,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 534569087942,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 534745486332,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 534921671382,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 535089760709,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 535257121785,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 535424770515,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 535595138419,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 535761780902,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 535938872318,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 536108676647,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 536275621835,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 536441228998,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 536607754176,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 536776268963,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 536946974027,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 537136242181,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 1,
+          "latency_ms": 391.822887,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-text-arithmetic-1.json",
+          "output_sha256": "9d6e09dcbea1205a31ce139fa845fe1323443565f52d8e24f92b49033183c17a",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_answer": true
+            },
+            "metrics": {
+              "actual_text": "42"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 537304392390,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 537367802379,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 537534347531,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 537701511898,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 2,
+          "latency_ms": 388.812123,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-text-arithmetic-2.json",
+          "output_sha256": "d0425111aedd0cf622617313bbd995ade9850564f13f9bad3d74f2751f4dd70b",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_answer": true
+            },
+            "metrics": {
+              "actual_text": "42"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 537867932513,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 537934546880,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 538102327646,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 538268672725,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 3,
+          "latency_ms": 388.526938,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-text-arithmetic-3.json",
+          "output_sha256": "7a6026d1598c890c842b2aaa2fb3b4904ba3aff3961fb5750ee9ef0d795d516a",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_answer": true
+            },
+            "metrics": {
+              "actual_text": "42"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 538434092735,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 538498914283,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 538665630290,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 538834474634,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "latency_ms": {
+        "median": 388.812123,
+        "min": 388.526938,
+        "max": 391.822887
+      },
+      "peak_vram_mb": 11734.0,
+      "native_inference_executed": true
+    },
+    {
+      "case_id": "vlm-astronaut-suit",
+      "model": "qwen-vlm",
+      "capability": "responses.image_chat",
+      "input_sha256": "e527d295bc489e2b28fafad01d2e210fcb1b059fda0f7d60fb78651e4bcae559",
+      "fallback": false,
+      "weights_verified": true,
+      "status": "PASS",
+      "runs": [
+        {
+          "role": "warmup",
+          "iteration": 0,
+          "latency_ms": 921.091176,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-astronaut-suit-0.json",
+          "output_sha256": "1db80606dd4f024062516c6c251d7acdf4f9c6fa58a91a231f1c797b77255ad7",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_answer": true
+            },
+            "metrics": {
+              "actual_text": "Orange"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 538998142527,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 539059914195,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 539230369184,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 539405790152,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11734.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 539571783686,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11774.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 539738056265,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11802.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 539907126121,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11802.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 1,
+          "latency_ms": 351.8286,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-astronaut-suit-1.json",
+          "output_sha256": "984edc3e166737cdf381de85e6fa41422f72384aa216dc2a451f9e7157c1046d",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_answer": true
+            },
+            "metrics": {
+              "actual_text": "Orange"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 540071928777,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11802.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 540139405632,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11802.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 540304811799,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 540470628507,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 2,
+          "latency_ms": 398.973474,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-astronaut-suit-2.json",
+          "output_sha256": "7b271d77864bb633cf4955a035e7525a61c6a906fe3760fa4a79ffa87f66509e",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_answer": true
+            },
+            "metrics": {
+              "actual_text": "Orange"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 540636198297,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 540700258831,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 540892662285,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 541062075662,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 3,
+          "latency_ms": 382.778204,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-astronaut-suit-3.json",
+          "output_sha256": "b8c2b9792791bd442ebbf585d802111cfa933364d9bc458ae8ae1d63a53c97f9",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "expected_answer": true
+            },
+            "metrics": {
+              "actual_text": "Orange"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 541228383107,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 541292545252,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 541472113713,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 541638911269,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "latency_ms": {
+        "median": 382.778204,
+        "min": 351.8286,
+        "max": 398.973474
+      },
+      "peak_vram_mb": 11804.0,
+      "native_inference_executed": true
+    },
+    {
+      "case_id": "vlm-document-title",
+      "model": "qwen-vlm",
+      "capability": "responses.document_qa",
+      "input_sha256": "4bdeb0c68dcb3fc496b8fecea11d1c60f5bc2f14f483250ae6bda2e9c6554760",
+      "fallback": false,
+      "weights_verified": true,
+      "status": "PASS",
+      "runs": [
+        {
+          "role": "warmup",
+          "iteration": 0,
+          "latency_ms": 642.595135,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-document-title-0.json",
+          "output_sha256": "9ece5cac98960686e3ba879273eeb6473de5dd3951df8c2996a3c3baa5b0ef0f",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "read_actual_document_title": true
+            },
+            "metrics": {
+              "actual_text": "Region-based segmentation"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 541807463504,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 541875118692,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11804.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 542044783835,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11806.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 542214124810,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 542382731385,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 1,
+          "latency_ms": 440.592709,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-document-title-1.json",
+          "output_sha256": "f6ae168a91b4e5970d673b6f3fa48688d00b63fdd8586087e190818ab061f547",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "read_actual_document_title": true
+            },
+            "metrics": {
+              "actual_text": "Region-based segmentation"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 542548648409,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 542614135136,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 542780688346,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 542945450471,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 2,
+          "latency_ms": 438.271112,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-document-title-2.json",
+          "output_sha256": "c37bc1904d77aef1d4351e7d781acb18e044d29778b6578e34f264288b4f3df4",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "read_actual_document_title": true
+            },
+            "metrics": {
+              "actual_text": "Region-based segmentation"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 543111536259,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 543176889001,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 543342080732,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 543506649959,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 3,
+          "latency_ms": 461.599036,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-document-title-3.json",
+          "output_sha256": "b943cd0e70bc645bb75df15a295471be64682118af3851e06a96a75ce4f9c0ea",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "read_actual_document_title": true
+            },
+            "metrics": {
+              "actual_text": "Region-based segmentation"
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 543670548824,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 543742182550,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 543906840381,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 544072271377,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "latency_ms": {
+        "median": 440.592709,
+        "min": 438.271112,
+        "max": 461.599036
+      },
+      "peak_vram_mb": 11808.0,
+      "native_inference_executed": true
+    },
+    {
+      "case_id": "vlm-head-grounding-v2",
+      "model": "qwen-vlm",
+      "capability": "responses.visual_grounding",
+      "input_sha256": "f030bbcd10ff28d41b58f0f705e38c8d39010894b4552d7d720d914c5206de8e",
+      "fallback": false,
+      "weights_verified": true,
+      "status": "PASS",
+      "runs": [
+        {
+          "role": "warmup",
+          "iteration": 0,
+          "latency_ms": 1794.13936,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-head-grounding-v2-0.json",
+          "output_sha256": "b916c733bb2713d36ec0d9f357c7e06bc1e51156974a535ed5648a67134721c5",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "valid_normalized_box": true,
+              "localizes_visible_head": true
+            },
+            "metrics": {
+              "actual_text": "```json\n{\n  \"bbox\": [197, 25, 602, 462]\n}\n```",
+              "actual_box": [
+                197,
+                25,
+                602,
+                462
+              ],
+              "intersection_over_union": 0.5997983870967742
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 544236723156,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 544297639967,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 544470874238,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 544636131261,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 544798560113,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 544963320284,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 545134109040,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 545299142318,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 545465769330,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 545630750753,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 545796099013,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 545970777734,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 1,
+          "latency_ms": 1725.90047,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-head-grounding-v2-1.json",
+          "output_sha256": "13cacd6ff4a260cdd4c8275540780140b904b563045a423221d6e86559f8cfd4",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "valid_normalized_box": true,
+              "localizes_visible_head": true
+            },
+            "metrics": {
+              "actual_text": "```json\n{\n  \"bbox\": [197, 25, 602, 462]\n}\n```",
+              "actual_box": [
+                197,
+                25,
+                602,
+                462
+              ],
+              "intersection_over_union": 0.5997983870967742
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 546136760879,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 546200979016,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 546371845423,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 546540297939,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 546703749226,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 546868097674,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 547036543717,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 547201860100,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 547367926567,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 547532047999,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 547696157474,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 547865433478,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 2,
+          "latency_ms": 1748.559524,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-head-grounding-v2-2.json",
+          "output_sha256": "9548a06ecb735eff7fbfd82ef9f785aba60c839dc0b7ab4650effbb069c01544",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "valid_normalized_box": true,
+              "localizes_visible_head": true
+            },
+            "metrics": {
+              "actual_text": "```json\n{\n  \"bbox\": [197, 25, 602, 462]\n}\n```",
+              "actual_box": [
+                197,
+                25,
+                602,
+                462
+              ],
+              "intersection_over_union": 0.5997983870967742
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 548030189024,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 548136234667,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 548303118939,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 548470189582,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 548640471920,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 548803789982,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 548969130388,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 549135130792,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 549299386989,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 549462408137,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 549628941474,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 549793415617,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 3,
+          "latency_ms": 1756.528748,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-head-grounding-v2-3.json",
+          "output_sha256": "b8147d990b70be66e478611b25d11d45584e03f0d8fdf89bfe8a2226c2ca684f",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "valid_normalized_box": true,
+              "localizes_visible_head": true
+            },
+            "metrics": {
+              "actual_text": "```json\n{\n  \"bbox\": [197, 25, 602, 462]\n}\n```",
+              "actual_box": [
+                197,
+                25,
+                602,
+                462
+              ],
+              "intersection_over_union": 0.5997983870967742
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 549957229724,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 550019126792,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 550192373705,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 550361054681,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 550529169430,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 550706590300,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 550870491297,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 551037898273,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 551205218531,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 551385080684,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 551551872241,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 551717190609,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "latency_ms": {
+        "median": 1748.559524,
+        "min": 1725.90047,
+        "max": 1756.528748
+      },
+      "peak_vram_mb": 11808.0,
+      "native_inference_executed": true
+    },
+    {
+      "case_id": "vlm-pedestrian-video",
+      "model": "qwen-vlm",
+      "capability": "responses.video_chat",
+      "input_sha256": "ba1a5790d949597b71fb36d34607ac4d6278d4e271a3f1f62aa61f62df684b70",
+      "fallback": false,
+      "weights_verified": true,
+      "status": "PASS",
+      "runs": [
+        {
+          "role": "warmup",
+          "iteration": 0,
+          "latency_ms": 1312.90945,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-pedestrian-video-0.json",
+          "output_sha256": "8b234c1c61d3165f72b5bfd64cc749c51cc5b36a0eb853aff48ebf9f30303c73",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "recognizes_people": true,
+              "recognizes_walking_action": true
+            },
+            "metrics": {
+              "actual_text": "The people in the video are walking across a parking lot."
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 551884500919,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 551949625434,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 552115999140,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 552285893040,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 552461458703,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 552629458355,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 552793395235,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 552959809871,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 553135401685,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 1,
+          "latency_ms": 888.042168,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-pedestrian-video-1.json",
+          "output_sha256": "369fd6e4f1ee438793cf41f2e0c470f37c40b836b09f03233790449973dad175",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "recognizes_people": true,
+              "recognizes_walking_action": true
+            },
+            "metrics": {
+              "actual_text": "The people in the video are walking across a parking lot."
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 553297733533,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 553362640658,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 553532109524,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 553697369683,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 553862772592,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 554026709842,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 554195476540,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 2,
+          "latency_ms": 917.876779,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-pedestrian-video-2.json",
+          "output_sha256": "6762e1d42bbd2598d0e18a30e715786a63e554dfbdb6463469584f60fdb2ac3c",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "recognizes_people": true,
+              "recognizes_walking_action": true
+            },
+            "metrics": {
+              "actual_text": "The people in the video are walking across a parking lot."
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 554359712254,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 554422474919,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 554596389306,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 554760448996,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 554926071424,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 555091408152,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 555256602410,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "measured",
+          "iteration": 3,
+          "latency_ms": 893.564763,
+          "timing_scope": "private_adapter_roundtrip_including_health_and_output_validation",
+          "output_file": "vlm-pedestrian-video-3.json",
+          "output_sha256": "db41ed629118545a3809869110b886fe5a6ba90854d9ae4c2e48fe3d6cde5ef6",
+          "semantic_validation": {
+            "status": "PASS",
+            "checks": {
+              "recognizes_people": true,
+              "recognizes_walking_action": true
+            },
+            "metrics": {
+              "actual_text": "The people in the video are walking across a parking lot."
+            }
+          },
+          "gpu_samples": [
+            {
+              "monotonic_ns": 555422589834,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 555485410682,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 555654818499,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 555821497181,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 555986765207,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 556152839820,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            },
+            {
+              "monotonic_ns": 556320400658,
+              "gpu_processes": [
+                {
+                  "pid": 241,
+                  "device": 0,
+                  "used_memory_mb": 11808.0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "latency_ms": {
+        "median": 893.564763,
+        "min": 888.042168,
+        "max": 917.876779
+      },
+      "peak_vram_mb": 11808.0,
+      "native_inference_executed": true
+    }
+  ],
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "public_models": [],
+  "fallback": false,
+  "checkpoint_files": [
+    {
+      "key": "file_0",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "added_tokens.json",
+      "sha256": "7fa54985b58718a8fdb4f4d97484c4bd908db114847675e4bf3afe3e1d5d7bd4",
+      "size_bytes": 392,
+      "matched": true
+    },
+    {
+      "key": "file_1",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "chat_template.json",
+      "sha256": "94174d7176c52a7192f96fc34eb2cf23c7c2059d63cdbfadca1586ba89731fb7",
+      "size_bytes": 1049,
+      "matched": true
+    },
+    {
+      "key": "file_2",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "config.json",
+      "sha256": "07e68f688788a24df16752c4eefd604005907059f53e89cccf8f2478779258f1",
+      "size_bytes": 1451,
+      "matched": true
+    },
+    {
+      "key": "file_3",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "generation_config.json",
+      "sha256": "095745817a9d52e518c275687967564474a1f7719aa90982f268e47bfd70841f",
+      "size_bytes": 249,
+      "matched": true
+    },
+    {
+      "key": "file_4",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "merges.txt",
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "size_bytes": 1671853,
+      "matched": true
+    },
+    {
+      "key": "primary",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "model-00001-of-00002.safetensors",
+      "sha256": "c379a074979237b5c45e5baefe42707908643d99ee013e1f23da82049a210068",
+      "size_bytes": 3980580168,
+      "matched": true
+    },
+    {
+      "key": "file_6",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "model-00002-of-00002.safetensors",
+      "sha256": "ee5d4f33d96c1d69a3935f54551a9166bb6080a23c142e0bdcb6f27b02e57546",
+      "size_bytes": 2941808400,
+      "matched": true
+    },
+    {
+      "key": "file_7",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "model.safetensors.index.json",
+      "sha256": "b3339cf7625b0dc009899cc99742ac8ebe7c12abc7b654fcaa159603221b5efc",
+      "size_bytes": 92944,
+      "matched": true
+    },
+    {
+      "key": "file_8",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "preprocessor_config.json",
+      "sha256": "8885ee26f126992101959631b5bc8cd2767da5cdae05a89f2989426e5dab0069",
+      "size_bytes": 567,
+      "matched": true
+    },
+    {
+      "key": "file_9",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "special_tokens_map.json",
+      "sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+      "size_bytes": 613,
+      "matched": true
+    },
+    {
+      "key": "file_10",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "tokenizer.json",
+      "sha256": "bfb053cacf2735b3a5bebbc40e4a853183efec30da0bc8f6304aef14ec0083bc",
+      "size_bytes": 7030315,
+      "matched": true
+    },
+    {
+      "key": "file_11",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "tokenizer_config.json",
+      "sha256": "eb3c5a310899d7d65feec0dee4dff9067d7bc4ad2a17e2005bc9163f1ace0531",
+      "size_bytes": 4297,
+      "matched": true
+    },
+    {
+      "key": "file_12",
+      "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "file": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "matched": true
+    }
+  ],
+  "status": "PASS",
+  "lifecycle": {
+    "healthy_backends": [
+      "qwen-vlm"
+    ],
+    "failures": {},
+    "backends": {
+      "qwen-vlm": {
+        "model": "qwen-vlm",
+        "backend": "vllm",
+        "adapter": "qwen_vlm",
+        "session_id": "986f24ef-0643-457f-8f12-eb22559264bc",
+        "checkpoint_graph_sha256": "22c37b22281b59b93861b17794b9e245f32baaee2705a965e265c4078f1f8258",
+        "devices": [
+          0
+        ],
+        "state": "HEALTHY",
+        "pid": 188,
+        "pid_started_at": 1794493493.83,
+        "port": 18990,
+        "weights_verified": true,
+        "model_loaded": true,
+        "gpu_processes": [
+          {
+            "pid": 241,
+            "device": 0,
+            "used_memory_mb": 11734.0
+          }
+        ],
+        "log_path": "/tmp/factory_phase8_a/runtime/986f24ef-0643-457f-8f12-eb22559264bc/qwen-vlm/backend.log",
+        "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+        "source_revision": null,
+        "sdk_runtime": null,
+        "adapter_assets": {},
+        "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+        "backend_package_version": "0.33.0",
+        "error": null,
+        "production_ready": false,
+        "inference_verified": false
+      }
+    },
+    "production_ready": false,
+    "native_inference_verified": false
+  },
+  "runtime_after_inference": {
+    "model": "qwen-vlm",
+    "backend": "vllm",
+    "adapter": "qwen_vlm",
+    "session_id": "986f24ef-0643-457f-8f12-eb22559264bc",
+    "checkpoint_graph_sha256": "22c37b22281b59b93861b17794b9e245f32baaee2705a965e265c4078f1f8258",
+    "devices": [
+      0
+    ],
+    "state": "HEALTHY",
+    "pid": 188,
+    "pid_started_at": 1794493493.83,
+    "port": 18990,
+    "weights_verified": true,
+    "model_loaded": true,
+    "gpu_processes": [
+      {
+        "pid": 241,
+        "device": 0,
+        "used_memory_mb": 11808.0
+      }
+    ],
+    "log_path": "/tmp/factory_phase8_a/runtime/986f24ef-0643-457f-8f12-eb22559264bc/qwen-vlm/backend.log",
+    "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+    "source_revision": null,
+    "sdk_runtime": null,
+    "adapter_assets": {},
+    "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+    "backend_package_version": "0.33.0",
+    "error": null,
+    "production_ready": false,
+    "inference_verified": false
+  },
+  "shutdown": {
+    "session_id": "986f24ef-0643-457f-8f12-eb22559264bc",
+    "config_sha256": "5969ffa50f343eefc046e59ca1d60ebc7d6bb68382a006f28aabca29c473a178",
+    "stopped_at_utc": "2026-11-12T14:29:04.835899+00:00",
+    "stop_completed": true,
+    "errors": [],
+    "backends": {
+      "qwen-vlm": {
+        "model": "qwen-vlm",
+        "backend": "vllm",
+        "adapter": "qwen_vlm",
+        "session_id": "986f24ef-0643-457f-8f12-eb22559264bc",
+        "checkpoint_graph_sha256": "22c37b22281b59b93861b17794b9e245f32baaee2705a965e265c4078f1f8258",
+        "devices": [
+          0
+        ],
+        "state": "STOPPED",
+        "pid": 188,
+        "pid_started_at": 1794493493.83,
+        "port": 18990,
+        "weights_verified": true,
+        "model_loaded": false,
+        "gpu_processes": [
+          {
+            "pid": 241,
+            "device": 0,
+            "used_memory_mb": 11808.0
+          }
+        ],
+        "log_path": "/tmp/factory_phase8_a/runtime/986f24ef-0643-457f-8f12-eb22559264bc/qwen-vlm/backend.log",
+        "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+        "source_revision": null,
+        "sdk_runtime": null,
+        "adapter_assets": {},
+        "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+        "backend_package_version": "0.33.0",
+        "error": null,
+        "production_ready": false,
+        "inference_verified": false
+      }
+    },
+    "production_ready": false
+  },
+  "stop_verified": true
+}

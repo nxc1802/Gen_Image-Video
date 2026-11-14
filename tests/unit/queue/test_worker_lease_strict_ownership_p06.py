@@ -11,6 +11,9 @@ Verifies that:
 """
 from datetime import datetime, timedelta, timezone
 import pytest
+
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from unittest.mock import MagicMock
 
 from factory_contracts.errors import ErrorDetail, UnauthorizedError

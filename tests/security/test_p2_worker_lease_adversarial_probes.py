@@ -24,6 +24,9 @@ import os
 import time
 import uuid
 import pytest
+
+# Legacy lifecycle/runner contract coverage; never inference certification.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 import jwt
 from starlette.testclient import TestClient
 
@@ -56,7 +59,7 @@ from factory.apps.control_api.src.queue.leasing import LeaseCoordinator
 from factory.apps.control_api.src.queue.manager import JobLifecycleManager
 from factory.apps.control_api.src.streaming.manager import StreamManager
 from factory.apps.control_api.src.queue.watchdog import check_active_jobs_watchdog
-from factory.apps.control_api.src.main import app as control_api_app
+from factory.apps.control_api.src.legacy import app as control_api_app
 from factory_auth.config import AuthConfig
 
 

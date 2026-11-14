@@ -170,6 +170,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     content={
                         "error": {
                             "code": "RATE_LIMITED",
+                            "type": "rate_limit_error",
+                            "param": None,
                             "message": f"Too many requests. Rate limit of {limit} requests per {self.window_seconds}s exceeded.",
                             "request_id": req_id,
                             "details": {

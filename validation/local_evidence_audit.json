@@ -1,0 +1,83 @@
+{
+  "review_date": "2026-11-12",
+  "scope": "Supplement to immutable tracked baseline, based on previously ignored local artifacts found during Kaggle source investigation. No new GPU inference executed. Raw media is retained locally and not bulk-committed. Hashes identify reviewed bytes.",
+  "evidence": [
+    {
+      "path": "deployments/kaggle/visual_outputs/visual_pipeline_report.json",
+      "sha256": "073a602ef36975612bce42291ef35e3d9ea7222014152b7a88a4c8bf7cbb67c8",
+      "origin": "local ignored artifact, outside frozen Git tree",
+      "classification": "HISTORICAL_NATIVE_CANDIDATE",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Contains mounted INT8 MiniMax and Turbo identities, but lacks immutable revisions, weight/input hashes, fallback=false and per-capability semantic/full Factory evidence. Not accepted as V3/V4.",
+      "minimax_identity_claim": {
+        "model": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+        "mounted_weights": "/kaggle/input/datasets/asdwddjksa/minimax-h3-diffusion/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+        "mode": "turbo_lora_fast (8 steps)",
+        "turbo_lora": "minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors",
+        "status": "passed",
+        "input_source_image": "/kaggle/working/visual_outputs/studio_qwen_image_master.png",
+        "resolution": "768x448",
+        "frames": 25,
+        "fps": 24,
+        "seed": 245870,
+        "steps": 8,
+        "duration_ms": 1153092.57,
+        "seconds_per_step": 144.14,
+        "peak_vram_gpu0_mb": 14319.2,
+        "peak_vram_gpu1_mb": 451.2,
+        "file_size_bytes": 762808,
+        "output_file": "/kaggle/working/visual_outputs/studio_minimax_h3_dragon_video.mp4",
+        "fast_output_file": "/kaggle/working/visual_outputs/studio_minimax_h3_dragon_video_fast.mp4"
+      }
+    },
+    {
+      "path": "deployments/kaggle/audio_outputs/audio_pipeline_report.json",
+      "sha256": "d3244764226d9a3f5a76fd1ab8b7770371369da05cee271c665d79c4f045eb1f",
+      "origin": "local ignored artifact, outside frozen Git tree",
+      "classification": "SYNTHETIC_AUDIO_CLAIM",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Claims success without per-result status/fallback flags; stored Qwen and XTTS WAVs match runner synthetic formulas. XTTS is also a different model."
+    },
+    {
+      "path": "deployments/kaggle/high_quality_outputs/high_quality_report.json",
+      "sha256": "03aef4ad31ea4290ce344cb989c076d86d5d6d2a53ef3826e6486cb75a3eed2c",
+      "origin": "local ignored artifact, outside frozen Git tree",
+      "classification": "ALTERNATIVE_MODEL_SMOKE",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Qwen2.5-0.5B, SD-Turbo, MiniLM and external speech do not certify requested checkpoints; video motion can be image animation."
+    },
+    {
+      "path": "deployments/kaggle/audio_outputs/qwen3_tts_english.wav",
+      "sha256": "8b7eab6d1826e8b77568a0abe2e4bf5241bfe96aabd77459eb6dc89feda3d948",
+      "origin": "local ignored artifact, outside frozen Git tree",
+      "classification": "SYNTHETIC_FORMULA_MATCH",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "sample_rate_hz": 24000,
+      "samples": 204000,
+      "seconds": 8.5,
+      "synthetic_formula": "(0.3*sin(2*pi*140*t)+0.15*sin(2*pi*280*t))*max(0,sin(2*pi*1.5*t))",
+      "correlation": 0.9999999965630726,
+      "rmse": 1.2604699834125282e-05,
+      "reason": "Near-perfect match to the historical runner sine-wave fallback, within PCM quantization error. Rejected as model speech inference."
+    },
+    {
+      "path": "deployments/kaggle/audio_outputs/xtts_v2_vietnamese.wav",
+      "sha256": "571c7c9dda60de5a9abfd01a158e3e01a1ee17c37408eb5b42927ccb8c2853d0",
+      "origin": "local ignored artifact, outside frozen Git tree",
+      "classification": "SYNTHETIC_FORMULA_MATCH",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "sample_rate_hz": 24000,
+      "samples": 187200,
+      "seconds": 7.8,
+      "synthetic_formula": "(0.28*sin(2*pi*175*t)+0.14*sin(2*pi*350*t))*max(0,sin(2*pi*2.0*t))",
+      "correlation": 0.9999999960749577,
+      "rmse": 1.2634843948207601e-05,
+      "reason": "Near-perfect match to the historical runner sine-wave fallback, within PCM quantization error. Rejected as model speech inference."
+    }
+  ]
+}

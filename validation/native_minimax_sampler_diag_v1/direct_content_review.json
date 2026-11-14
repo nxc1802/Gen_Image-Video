@@ -1,0 +1,11 @@
+{
+  "classification": "DIRECT_VISUAL_DIAGNOSTIC_REVIEW_NOT_V3",
+  "all_decoded_frames_reviewed": 124,
+  "decision": "FAIL",
+  "v3_certified": false,
+  "production_ready": false,
+  "mp4_sha256": "a4002d1e99a0cda5fa5b89a2e26a160dd808dfc590661d939f63ad33b6d21df1",
+  "output_json_sha256": "b804adb3e6df21cfc6d63594fc1a610862294d2327aa0a828d73669dbadbc619",
+  "contact_sheet_sha256": "072c936e7c43de345be2ce7a58dbc04c4e86859ec6513c4b773c57fda4381af5",
+  "observation": "res_multistep retains the material defect: blue-white face occlusion at frames 32\u201335, white face occlusion at 62\u201363, recurring red/cyan/green helmet, suit and background glows including green helmet at 123. Sampler-only change does not resolve this case. No canonical sampler change justified."
+}

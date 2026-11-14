@@ -1,0 +1,17 @@
+{
+  "classification": "DIRECT_ALL_FRAME_REVIEW_OF_CONTROLLED_SAME_LATENT_GPU_DIAGNOSIS_NOT_V3",
+  "reviewed_at_utc": "2026-11-14T06:24:48.356748+00:00",
+  "source_receipt_sha256": "8e8550b7652d7074c050d217b5cc43cbe91681803e84a96b4a283f24a935f861",
+  "actual_sampled_video_latent_sha256": "7bc1305d917e77eec7fe78e0eafa4b35e3d15d94b81ca7844afc0e34665b76c7",
+  "all_decoded_frames_reviewed": 248,
+  "fp16_mp4_sha256": "9e077d5e4683d382604e9e9233486484133b7908b254a8971754e64d8e241c0d",
+  "fp32_mp4_sha256": "23d8225d537c6c8a409f23f7c25f762b0c913fc7241b07d914e44262d34ec0ec",
+  "contact_sheets": {
+    "fp32_all_frames.png": "c4fa031bef1dc4876e4c703cf84a97c584984d933c72a9d304976a35bf6e767b",
+    "fp16_all_frames.png": "2cb11c34654577fc1b9c05946cf3a8b4953d55dcca3159cc2c89fc6d78445fca"
+  },
+  "observation": "The FP16 control reproduces the known symptom: blue-white face-obscuring glow at frames32-35, recurring red/cyan/green/white luminous patches on helmet, suit and background. Direct inspection of all124 frames from each decoder shows the same material artifacts at the same temporal/spatial locations in FP32, including face32-35 and final green helmet glow123. Minor pixel/detail differences are visible but neither output meets the existing content rule. Both retain recognizable person/scene and head motion.",
+  "conclusion": "FP32 decoder arithmetic alone does not fix the observed visual failure in this controlled actual same-latent case. This is negative causal evidence for the proposed precision-only fix, not proof of the exact remaining cause. No canonical precision, checkpoint, oracle or readiness change.",
+  "production_ready": false,
+  "v3_certified": false
+}

@@ -1,0 +1,271 @@
+import os
+import ctypes
+import platform
+from pathlib import Path
+import logging
+import importlib.util
+
+lib = None
+devctxs = []
+_log_callback = None
+
+_LOG_CALLBACK = ctypes.CFUNCTYPE(None, ctypes.c_int, ctypes.c_char_p)
+_LOG_LEVELS = {
+    1: logging.CRITICAL,
+    2: logging.ERROR,
+    3: logging.WARNING,
+    4: logging.INFO,
+    5: logging.DEBUG,
+    6: logging.DEBUG,
+    7: logging.DEBUG,
+}
+
+
+def _native_log(level, message):
+    logging.log(_LOG_LEVELS.get(level, logging.DEBUG),
+                message.decode("utf-8", errors="replace").rstrip())
+
+
+def detect_vendor():
+    version = ""
+    hip = None
+    cuda = None
+    try:
+        torch_spec = importlib.util.find_spec("torch")
+        for folder in torch_spec.submodule_search_locations:
+            ver_file = Path(folder) / "version.py"
+            if ver_file.is_file():
+                spec = importlib.util.spec_from_file_location("torch_version_import", ver_file)
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                version = module.__version__
+                hip = getattr(module, "hip", None)
+                cuda = getattr(module, "cuda", None)
+    except Exception as e:
+        logging.warning("Failed to detect Torch version")
+        pass
+
+    # torch.version.hip/cuda are authoritative. The local version segment is only
+    # a fallback: ROCm nightlies do not always carry a +rocm suffix.
+    if hip:
+        return "rocm"
+    if cuda:
+        return "cuda"
+
+    if '+cu' in version:
+        return "cuda"
+    if '+rocm' in version:
+        return "rocm"
+    return None
+
+
+def init(implementation: str | None = None, simple_vram_headroom: int | None = None, nvml_pressure: bool = False):
+    global lib, _log_callback
+
+    if lib is not None:
+        if simple_vram_headroom is not None:
+            lib.set_simple_vram_headroom(int(simple_vram_headroom))
+        lib.set_nvml_pressure(bool(nvml_pressure))
+        return True
+
+    if implementation is None:
+        implementation = detect_vendor()
+
+    if implementation is None:
+        logging.warning("Could not autodetect AIMDO implementation, assuming Nvidia")
+        implementation = "cuda"
+
+    impl = {
+        "cuda": "aimdo",
+        "rocm": "aimdo_rocm",
+    }[implementation]
+
+    try:
+        base_path = Path(__file__).parent.resolve()
+        system = platform.system()
+        if system == "Windows":
+            ext = "dll"
+            mode = 0
+        elif system == "Linux":
+            ext = "so"
+            mode = 258
+        else:
+            logging.info(f"comfy-aimdo unsupported operating system: {system}")
+            logging.info(f"NOTE: comfy-aimdo currently only supports Windows and Linux")
+            return False
+        lib = ctypes.CDLL(str(base_path / f"{impl}.{ext}"), mode=mode)
+    except Exception as e:
+        logging.info(f"comfy-aimdo failed to load: {e}")
+        logging.info(f"NOTE: comfy-aimdo currently only supports Nvidia and AMD GPUs")
+        return False
+
+    lib.set_log_callback.argtypes = [_LOG_CALLBACK]
+    lib.set_log_callback.restype = None
+    _log_callback = _LOG_CALLBACK(_native_log)
+    lib.set_log_callback(_log_callback)
+
+    lib.get_total_vram_usage.argtypes = [ctypes.c_void_p]
+    lib.get_total_vram_usage.restype = ctypes.c_uint64
+
+    lib.aimdo_analyze.argtypes = [ctypes.c_void_p]
+
+    lib.set_simple_vram_headroom.argtypes = [ctypes.c_int64]
+    lib.set_simple_vram_headroom.restype = None
+
+    lib.get_simple_vram_headroom.argtypes = []
+    lib.get_simple_vram_headroom.restype = ctypes.c_int64
+
+    lib.set_nvml_pressure.argtypes = [ctypes.c_bool]
+    lib.set_nvml_pressure.restype = None
+
+    lib.init.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_uint64), ctypes.c_size_t]
+    lib.init.restype = ctypes.c_bool
+
+    lib.get_devctx.argtypes = [ctypes.c_int]
+    lib.get_devctx.restype = ctypes.c_void_p
+
+    lib.malloc_graph_create.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_bool]
+    lib.malloc_graph_create.restype = ctypes.c_void_p
+
+    lib.malloc_graph_push.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+    lib.malloc_graph_push.restype = ctypes.c_bool
+
+    lib.malloc_graph_pause.argtypes = [ctypes.c_void_p, ctypes.c_bool, ctypes.c_bool]
+    lib.malloc_graph_pause.restype = ctypes.c_bool
+
+    lib.malloc_graph_set_stream.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+    lib.malloc_graph_set_stream.restype = ctypes.c_bool
+
+    lib.malloc_graph_pop.argtypes = [ctypes.c_void_p]
+    lib.malloc_graph_pop.restype = ctypes.c_int
+
+    lib.malloc_graph_abort.argtypes = [ctypes.c_void_p]
+    lib.malloc_graph_abort.restype = ctypes.c_bool
+
+    lib.malloc_graph_stat.argtypes = [ctypes.c_void_p, ctypes.c_int]
+    lib.malloc_graph_stat.restype = ctypes.c_uint64
+
+    lib.malloc_graph_destroy.argtypes = [ctypes.c_void_p]
+    lib.malloc_graph_destroy.restype = None
+
+    if simple_vram_headroom is not None:
+        lib.set_simple_vram_headroom(int(simple_vram_headroom))
+    lib.set_nvml_pressure(bool(nvml_pressure))
+
+    return True
+
+def init_devices(device_ids):
+    global devctxs
+
+    if lib is None:
+        return False
+
+    if devctxs:
+        logging.warning("comfy-aimdo devices are already initialized, call deinit() first")
+        return False
+
+    requested = []
+    headrooms = []
+    for device_id in device_ids:
+        if isinstance(device_id, tuple):
+            if len(device_id) != 2:
+                raise ValueError("device tuple must be (device_id, extra_vram_headroom)")
+            device_id, headroom = device_id
+        else:
+            headroom = 0
+
+        headroom = int(headroom)
+        if headroom < 0:
+            raise ValueError("extra_vram_headroom must be non-negative")
+        requested.append(int(device_id))
+        headrooms.append(headroom)
+
+    if not requested:
+        return False
+
+    if not lib.plat_init():
+        return False
+
+    device_array = (ctypes.c_int * len(requested))(*requested)
+    headroom_array = (ctypes.c_uint64 * len(headrooms))(*headrooms)
+    if lib.init(device_array, headroom_array, len(requested)):
+        devctxs = [get_devctx(device_id) for device_id in requested]
+        return True
+
+    devctxs = []
+    lib.plat_cleanup()
+    return False
+
+def init_device(device_id, extra_vram_headroom: int = 0):
+    if extra_vram_headroom:
+        device_id = (device_id, extra_vram_headroom)
+    return init_devices([device_id])
+
+
+def record(stream, assert_graph_breaks=False):
+    from .malloc_graph import record as malloc_graph_record
+    return malloc_graph_record(stream, assert_graph_breaks)
+
+def get_devctx(device_id: int):
+    devctx = lib.get_devctx(int(device_id))
+    if devctx:
+        return devctx
+    raise RuntimeError(f"comfy-aimdo device {device_id} is not initialized")
+
+def set_simple_vram_headroom(headroom: int):
+    """Set the VRAM the simple budget keeps free, in bytes.
+
+    One process wide value, compared against each device's own capacity. It
+    is separate from the per device extra_vram_headroom given to
+    init_devices(). Only the simple budget term reads it; the measured poll
+    term keeps its own compile time floor of 256 MB (VRAM_HEADROOM) and the
+    budget takes the larger of the two, so raising this above 256 MB is
+    honoured but lowering it below 256 MB changes nothing. Raising it takes
+    effect at the next VBAR fault or hooked device allocation and is honoured
+    by evicting VBAR pages only; torch allocations are counted against it
+    but never refused. Lowering it does not refill anything by itself: pages
+    come back when a VBAR is next prioritized, which ComfyUI does when it
+    loads a model.
+    """
+    headroom = int(headroom)
+    if headroom < 0 or headroom > (1 << 60):
+        raise ValueError("simple_vram_headroom must be between 0 and 2**60 bytes")
+    if lib is None:
+        raise RuntimeError("comfy-aimdo is not initialized")
+    lib.set_simple_vram_headroom(headroom)
+
+def get_simple_vram_headroom():
+    if lib is None:
+        raise RuntimeError("comfy-aimdo is not initialized")
+    return int(lib.get_simple_vram_headroom())
+
+def deinit():
+    global lib, devctxs, _log_callback
+    if lib is not None:
+        lib.cleanup()
+        devctxs = []
+        lib.plat_cleanup()
+        lib.set_log_callback(ctypes.cast(None, _LOG_CALLBACK))
+        _log_callback = None
+    lib = None
+
+
+def set_log_none(): lib.set_log_level_none()
+def set_log_critical(): lib.set_log_level_critical()
+def set_log_error(): lib.set_log_level_error()
+def set_log_warning(): lib.set_log_level_warning()
+def set_log_info(): lib.set_log_level_info()
+def set_log_debug(): lib.set_log_level_debug()
+def set_log_verbose(): lib.set_log_level_verbose()
+def set_log_vverbose(): lib.set_log_level_vverbose()
+
+def analyze():
+    if lib is None:
+        return
+    for devctx in devctxs:
+        lib.aimdo_analyze(devctx)
+
+def get_total_vram_usage():
+    if lib is None:
+        return 0
+    return sum(lib.get_total_vram_usage(devctx) for devctx in devctxs)

@@ -4,21 +4,28 @@ set -euo pipefail
 PORT="${PORT:-8008}"
 HOST="${HOST:-127.0.0.1}"
 TIMEOUT_SEC="${HEALTH_TIMEOUT:-60}"
-MODEL="${ACESTEP_MODEL:-ACE-Studio/ACE-Step-1.5}"
-VARIANT="${ACESTEP_VARIANT:-base}"
-
-echo "Starting Native ACE-Step 1.5 Server on ${HOST}:${PORT} (model: ${MODEL}, variant: ${VARIANT})..."
+# Explicit identity only; raw repository/variant defaults are retired.
+: "${ACESTEP_MODEL_REF:?Set an explicit canonical ACESTEP_MODEL_REF}"
+MODEL="$(python - <<'PYCODE'
+import os
+from model_registry.bindings import model_binding
+model = model_binding(os.environ['ACESTEP_MODEL_REF'])
+if model.apiVersion == 'factory.ai/v2':
+    raise SystemExit('Legacy ACE launcher cannot bind the full pinned bundle; canonical backend lifecycle is required. No checkpoint fallback.')
+print(model.weights.repository)
+PYCODE
+)"
 
 # Launch native acestep-api executable if available, otherwise launch via python module
 if command -v acestep-api >/dev/null 2>&1; then
-    acestep-api --host "${HOST}" --port "${PORT}" --model "${MODEL}" --variant "${VARIANT}" &
+    acestep-api --host "${HOST}" --port "${PORT}" --model "${MODEL}" &
     SERVER_PID=$!
 elif [ -n "${ACESTEP_DIR:-}" ] && [ -d "${ACESTEP_DIR:-}" ]; then
-    (cd "${ACESTEP_DIR}" && uv run acestep-api --server-name "${HOST}" --port "${PORT}" --model "${MODEL}" --variant "${VARIANT}") &
+    (cd "${ACESTEP_DIR}" && uv run acestep-api --server-name "${HOST}" --port "${PORT}" --model "${MODEL}") &
     SERVER_PID=$!
 else
     # Fallback to python module execution for native acestep entrypoint
-    python -m acestep.api --host "${HOST}" --port "${PORT}" --model "${MODEL}" --variant "${VARIANT}" &
+    python -m acestep.api --host "${HOST}" --port "${PORT}" --model "${MODEL}" &
     SERVER_PID=$!
 fi
 
@@ -41,7 +48,7 @@ while [ $(( $(date +%s) - START_TIME )) -lt "${TIMEOUT_SEC}" ]; do
         exit 1
     fi
     if curl -s -f -o /dev/null "http://${HOST}:${PORT}/health" 2>/dev/null; then
-        echo "Native ACE-Step backend is HEALTHY and ready for inference."
+        echo "Native ACE-Step process health check passed; inference remains uncertified."
         HEALTHY=1
         break
     fi

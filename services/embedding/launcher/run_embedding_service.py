@@ -33,6 +33,7 @@ def main() -> None:
         "vllm", "serve", config.model.embedding_name,
         "--host", host,
         "--port", str(port),
+        "--revision", config.model.embedding_revision,
         "--served-model-name", config.model.embedding_alias,
         "--runner", "pooling",
         "--max-model-len", str(config.model.max_context_tokens),

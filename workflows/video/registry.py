@@ -7,6 +7,7 @@ import copy
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from factory_contracts.capabilities import require_canonical
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 
@@ -23,25 +24,6 @@ ALL_TEMPLATES = [
 ]
 
 
-TASK_ALIASES: Dict[str, str] = {
-    # Short aliases
-    "t2v": "text_to_video",
-    "i2v": "image_to_video",
-    "fl2v": "first_last_frame_to_video",
-    "extension": "video_extension",
-    "with_audio": "video_with_audio",
-    "ref2va": "reference_conditioning",
-    # Capability IDs
-    "video.t2v": "text_to_video",
-    "video.i2v": "image_to_video",
-    "video.fl2v": "first_last_frame_to_video",
-    "video.extend": "video_extension",
-    "video.extension": "video_extension",
-    "video.audio": "video_with_audio",
-    "video.with_audio": "video_with_audio",
-    "video.reference": "reference_conditioning",
-    "video.ref2va": "reference_conditioning",
-}
 
 
 class VideoWorkflowRegistry:
@@ -83,22 +65,22 @@ class VideoWorkflowRegistry:
     def get_workflow_for_task(self, model: str, task: str) -> Dict[str, Any]:
         """Return only workflows genuinely implemented by the requested model family."""
         model_lower = (model or "").lower()
-        canonical_task = TASK_ALIASES.get(task, task)
+        canonical_task = require_canonical(task, engine="video")
 
         if "minimax" in model_lower or "h3" in model_lower:
             mapping = {
-                "text_to_video": "minimax_t2va",
-                "image_to_video": "minimax_i2va",
-                "first_last_frame_to_video": "minimax_fl2va",
-                "video_with_audio": "minimax_t2va",
-                "reference_conditioning": "minimax_ref2va",
+                "video.text_to_video": "minimax_t2va",
+                "video.image_to_video": "minimax_i2va",
+                "video.first_last_frame_to_video": "minimax_fl2va",
+                "video.video_with_audio": "minimax_t2va",
+                "video.reference_conditioning": "minimax_ref2va",
             }
         elif "wan" in model_lower:
             mapping = {
-                "text_to_video": "wan_t2v_a14b",
-                "image_to_video": "wan_i2v_a14b",
-                "first_last_frame_to_video": "wan_fl2v",
-                "video_extension": "wan_extension",
+                "video.text_to_video": "wan_t2v_a14b",
+                "video.image_to_video": "wan_i2v_a14b",
+                "video.first_last_frame_to_video": "wan_fl2v",
+                "video.video_extension": "wan_extension",
             }
         else:
             raise KeyError(f"Unknown video model family: {model}")

@@ -37,6 +37,7 @@ def main() -> None:
         "vllm", "serve", config.model.rerank_name,
         "--host", args.host,
         "--port", str(args.port),
+        "--revision", config.model.rerank_revision,
         "--served-model-name", config.model.rerank_alias,
         "--runner", "pooling",
         "--max-model-len", str(config.model.max_context_tokens),

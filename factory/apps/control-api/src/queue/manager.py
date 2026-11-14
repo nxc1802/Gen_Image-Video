@@ -34,7 +34,7 @@ from factory_contracts.jobs.worker_contract import (
     JobFailureRequest,
     ProgressUpdateRequest,
 )
-from factory_contracts.tasks import normalize_model, normalize_task
+from factory_contracts.tasks import normalize_model
 from factory.apps.control_api.src.queue.broker.base import BaseQueueBroker
 from factory.apps.control_api.src.queue.repository.base import BaseJobRepository
 from factory.apps.control_api.src.queue.state_machine import JobStateMachine
@@ -42,7 +42,8 @@ from factory.apps.control_api.src.storage.integrity import compute_bytes_sha256
 from factory.apps.control_api.src.streaming.manager import StreamManager
 from factory.apps.control_api.src.telemetry.metrics import metrics
 
-from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
+from model_registry.deployment import DeploymentRegistry
+from factory.apps.control_api.src.queue.policy import binding_for_job
 
 
 class JobLifecycleManager:
@@ -53,10 +54,12 @@ class JobLifecycleManager:
         repository: BaseJobRepository,
         broker: BaseQueueBroker,
         stream_manager: StreamManager,
+        deployment_registry: Optional[DeploymentRegistry] = None,
     ):
         self.repository = repository
         self.broker = broker
         self.stream_manager = stream_manager
+        self.deployment_registry = deployment_registry if deployment_registry is not None else DeploymentRegistry.from_environment()
         self._last_metrics_update: float = 0.0
 
     def _schedule_telemetry_update(self) -> None:
@@ -94,6 +97,9 @@ class JobLifecycleManager:
         if req.idempotency_key:
             existing = await self.repository.get_by_idempotency_key(req.idempotency_key)
             if existing:
+                if (existing.model, existing.task, existing.service) != (normalize_model(req.model), req.task, req.service):
+                    raise InvalidRequestError("Idempotency key belongs to a different explicit model/capability binding")
+                binding_for_job(self.deployment_registry, existing)
                 return existing, False
 
         import re
@@ -101,6 +107,7 @@ class JobLifecycleManager:
         if not valid_req_id or not re.match(r"^req-[0-9a-f-]+$", valid_req_id):
             valid_req_id = f"req-{uuid.uuid4()}"
 
+        binding = self.deployment_registry.assignment(req.model)
         job_id = f"job-{uuid.uuid4()}"
         now = datetime.now(timezone.utc)
         job = FactoryJob(
@@ -110,16 +117,19 @@ class JobLifecycleManager:
             idempotency_key=req.idempotency_key,
             service=req.service,
             model=normalize_model(req.model),
-            task=normalize_task(req.task),
+            task=req.task,
             inputs=req.inputs,
             priority=req.priority,
             state=JobState.QUEUED,
             created_at=now,
             progress=JobProgress(stage="queued", step=0, total=0, percent=0.0),
+            deployment_session_id=self.deployment_registry.session_id,
+            deployment_config_sha256=self.deployment_registry.config_sha256,
+            devices=list(binding.devices),
         )
 
         await self.repository.create_job(job)
-        gpu_device = SUBSYSTEM_GPU_MAP.get(job.service, 0)
+        gpu_device = binding.devices[0]
         enqueue_gpu_fn = getattr(self.broker, "enqueue_for_gpu", None)
         if enqueue_gpu_fn and inspect.iscoroutinefunction(enqueue_gpu_fn):
             await enqueue_gpu_fn(job.job_id, job.service, gpu_device, job.priority)
@@ -223,6 +233,7 @@ class JobLifecycleManager:
                 details={"job_id": job_id, "retry_count": job.retry_count, "max_retries": job.max_retries},
             )
 
+        binding = binding_for_job(self.deployment_registry, job)
         JobStateMachine.validate_transition(job.state, JobState.RETRYING, job_id)
 
         job.retry_count += 1
@@ -232,7 +243,7 @@ class JobLifecycleManager:
         job.completed_at = None
 
         await self.repository.update_job(job)
-        gpu_device = get_subsystem_gpu(job.service)
+        gpu_device = binding.devices[0]
         enqueue_gpu_fn = getattr(self.broker, "enqueue_for_gpu", None)
         if enqueue_gpu_fn and inspect.iscoroutinefunction(enqueue_gpu_fn):
             await enqueue_gpu_fn(job.job_id, job.service, gpu_device, job.priority)
@@ -559,7 +570,7 @@ class JobLifecycleManager:
                         )
                 else:
                     is_media_service = job.service in {"image", "video", "music"} or (
-                        job.service == "speech" and job.task in {"speech_synthesis", "text_to_speech", "voice_clone"}
+                        job.service == "speech" and job.task in {"speech.tts", "speech.voice_cloning"}
                     )
                     is_remote_storage = bool(
                         art.download_url
@@ -629,7 +640,7 @@ class JobLifecycleManager:
 
         # Validate required outputs
         is_media_service = job.service in {"image", "video", "music"} or (
-            job.service == "speech" and job.task in {"speech_synthesis", "text_to_speech", "voice_clone"}
+            job.service == "speech" and job.task in {"speech.tts", "speech.voice_cloning"}
         )
         if is_media_service:
             if not job.artifacts and not req.result:

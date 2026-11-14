@@ -88,12 +88,10 @@ class JobSubmissionRequest(BaseModel):
     priority: int = Field(default=10, ge=1, le=100, description="1=low, 10=standard, 100=critical")
     idempotency_key: Optional[str] = Field(default=None, max_length=128)
 
-    @field_validator("task", mode="before")
-    @classmethod
-    def _validate_task(cls, v: Any) -> str:
-        if v is None:
-            return ""
-        return normalize_task(str(v).strip())
+    @model_validator(mode="after")
+    def normalize_request_capability(self):
+        self.task = normalize_task(self.task, engine=self.service, inputs=self.inputs)
+        return self
 
     @field_validator("model", mode="before")
     @classmethod
@@ -128,6 +126,19 @@ class FactoryJob(BaseModel):
     artifacts: List[ArtifactReference] = Field(default_factory=list)
     result: Optional[Any] = Field(default=None, description="In-memory inference result payload")
     telemetry: JobTelemetry = Field(default_factory=JobTelemetry)
+    deployment_session_id: Optional[str] = None
+    deployment_config_sha256: Optional[str] = None
+    devices: List[int] = Field(default_factory=list)
+
+    @model_validator(mode="before")
+    @classmethod
+    def read_persisted_capability(cls, data):
+        # Reading pre-migration persisted jobs is an ingress boundary too.
+        if isinstance(data, dict) and "task" in data:
+            from factory_contracts.capabilities import CAPABILITIES
+            if not isinstance(data["task"], str) or data["task"] not in CAPABILITIES:
+                data = {**data, "task": normalize_task(data["task"], engine=data.get("service"), inputs=data.get("inputs", {}))}
+        return data
 
 
 class AssetRecord(BaseModel):

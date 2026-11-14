@@ -1,0 +1,94 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-vlm
+  family: qwen-vlm
+  display_name: Qwen2-VL Multimodal Model
+  service_id: vision-service
+  version: 2.0.0
+  license: Apache-2.0
+  license_url: https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct-AWQ/raw/main/LICENSE
+  commercial_use: true
+weights:
+  primary_checkpoint: Qwen/Qwen2-VL-7B-Instruct-AWQ
+  repository: Qwen/Qwen2-VL-7B-Instruct-AWQ
+  checkpoint_revision: 7b5394541cbde26227c262198ecfb2e63ef29583
+  weights_file: model-00001-of-00003.safetensors
+  format: safetensors
+  quantization: awq
+  default_precision: fp16
+hardware:
+  min_vram_gb: 14.0
+  context_window: 16384
+  preferred_gpu: t4
+  preferred_gpu_index: 0
+  quantization_format: awq
+  offload_ram_gb: 0.0
+  allocation_policy: single_gpu
+capabilities:
+  image_chat: true
+  responses_api: true
+  video_chat: true
+  visual_grounding: true
+  document_qa: true
+status: full
+coverage_percent: 100.0
+missing_capabilities: []
+validation_status: pending_live
+validation_notes: 'Phase 0 audit: no admissible per-capability V3/V4 evidence on Kaggle
+  Dual Tesla T4 with exact verified weights and semantic validation. Historical claims
+  are frozen in validation/baseline.json; full/partial and coverage describe implementation
+  claims only, not production readiness. Static installed/checkpoint_valid/backend_ready
+  flags are legacy configuration claims, not session attestation; replacement is deferred
+  to Phases 1 and 3.'
+limits:
+  max_context_tokens: 16384
+revision: 2.0.0
+dependencies:
+- vllm>=0.6.0
+- torch>=2.4.0
+- torchvision
+task_variant_matrix:
+  image_chat:
+  - standard
+  responses_api:
+  - standard
+  video_chat:
+  - standard
+  visual_grounding:
+  - standard
+  document_qa:
+  - standard
+validated_hardware_profiles: []
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+capabilities_truth:
+  image_chat:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  responses_api:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  video_chat:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  visual_grounding:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  document_qa:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+aliases:
+- qwen_vlm

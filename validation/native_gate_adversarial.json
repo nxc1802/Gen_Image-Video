@@ -1,0 +1,63 @@
+{
+  "classification": "SOFTWARE_EVIDENCE_VALIDATOR_REPLAY_ONLY",
+  "native_inference_executed": false,
+  "source_observation": "validation/native_vllm_v3/wave_a.json",
+  "source_receipt": "validation/native_vllm_receipt_v3.json",
+  "validator_sha256": "4eef88a97cc82715de170fa76aa132fd74b812c96033472839066b62e65cc254",
+  "mutation_runner_sha256": "9e259d0d4df1a89dc3466bf331f45d9048b04ea34aff610c4126da422e5c178a",
+  "checks": [
+    {
+      "case": "unmodified_collected_native_vllm",
+      "passed": true,
+      "expected_pass_pairs": 5
+    },
+    {
+      "case": "output_digest_mismatch_rejected",
+      "passed": true,
+      "classification": "REPLAY_MUTATION_ONLY_NOT_NEW_INFERENCE"
+    },
+    {
+      "case": "semantic_wrong_relevance_with_consistent_hashes_rejected",
+      "passed": true,
+      "classification": "REPLAY_MUTATION_ONLY_NOT_NEW_INFERENCE"
+    },
+    {
+      "case": "wrong_exact_checkpoint_with_consistent_hashes_rejected",
+      "passed": true,
+      "classification": "REPLAY_MUTATION_ONLY_NOT_NEW_INFERENCE"
+    },
+    {
+      "case": "wrong_assigned_gpu_with_consistent_hashes_rejected",
+      "passed": true,
+      "classification": "REPLAY_MUTATION_ONLY_NOT_NEW_INFERENCE"
+    },
+    {
+      "case": "resident_gpu_budget_violation_with_consistent_hashes_rejected",
+      "passed": true,
+      "classification": "REPLAY_MUTATION_ONLY_NOT_NEW_INFERENCE"
+    },
+    {
+      "case": "missing_measured_native_round_rejected",
+      "passed": true,
+      "classification": "REPLAY_MUTATION_ONLY_NOT_NEW_INFERENCE"
+    },
+    {
+      "case": "unauthorized_production_promotion_rejected",
+      "passed": true,
+      "classification": "REPLAY_MUTATION_ONLY_NOT_NEW_INFERENCE"
+    },
+    {
+      "case": "model_level_production_promotion_rejected",
+      "passed": true,
+      "classification": "REPLAY_MUTATION_ONLY_NOT_NEW_INFERENCE"
+    },
+    {
+      "case": "native_evidence_cannot_claim_full_factory_e2e",
+      "passed": true,
+      "classification": "REPLAY_MUTATION_ONLY_NOT_NEW_INFERENCE"
+    }
+  ],
+  "tamper_cases_rejected": 9,
+  "status": "PASS",
+  "production_ready": false
+}

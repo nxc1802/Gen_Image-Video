@@ -1,0 +1,13 @@
+{
+  "fixture_path": "tests/fixtures/native/vtest-first2s.mp4",
+  "sha256": "9579648ba27debc6e31a632fcb095edb4fa4b29f6403a6f0716415adc6eb5c99",
+  "size_bytes": 65911,
+  "mime_type": "video/mp4",
+  "original_url": "https://raw.githubusercontent.com/opencv/opencv/4.12.0/samples/data/vtest.avi",
+  "original_sha256": "45cddc9490be69345cbdab64ca583be65987e864ca408038e648db99e10516cf",
+  "original_size_bytes": 8131690,
+  "conversion": "ffmpeg -i vtest.avi -t 2 -vf fps=2,scale=384:-2 -an -c:v libx264 -pix_fmt yuv420p -crf 18 -map_metadata -1 -movflags +faststart vtest-first2s.mp4",
+  "duration_seconds": 2,
+  "frames": 4,
+  "ground_truth": "Visible outdoor pedestrians walking in original recorded surveillance footage; no generated frames"
+}

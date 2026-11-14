@@ -1,0 +1,59 @@
+{
+  "classification": "CPU_REDECODE_OF_EXISTING_REAL_MP4_NOT_NEW_MODEL_INFERENCE",
+  "production_ready": false,
+  "v3_certified": false,
+  "full_factory_e2e_executed": false,
+  "native_inference_executed": false,
+  "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+  "records": [
+    {
+      "source_output_json_sha256": "5fc12eaa083034840e69fb0146121714bcfdb5d6cbdf5c4d39d27ee129d48e91",
+      "input_mp4_sha256": "3f9ebf64622c92ab63901a0814c29d789fee638894252d3ab571f9d599c51b00",
+      "decoded_samples_sha256": "6dc18c82a29ae2ddabca217cd3a627fa1ed0dcbeda1c2c9bd05d31a8a2dbb5a0",
+      "sample_rate": 16000,
+      "sample_count": 71680,
+      "duration_seconds": 4.48,
+      "file": "actual_decoded_0.f32le",
+      "matches_original_native_pcm": true,
+      "matches_original_native_duration": true
+    },
+    {
+      "source_output_json_sha256": "5e7130b160f228072d33569beed53d31740cc4e326b95ff338a476c50615e39a",
+      "input_mp4_sha256": "465555f56521f972bff9826f46301ca406551e4163a31131d48cf77c4e81e6b3",
+      "decoded_samples_sha256": "fdb42b8dec63710f632dde5dadeba4ef92056a87a66f9dae140485059e0e6601",
+      "sample_rate": 16000,
+      "sample_count": 71680,
+      "duration_seconds": 4.48,
+      "file": "actual_decoded_1.f32le",
+      "matches_original_native_pcm": true,
+      "matches_original_native_duration": true
+    },
+    {
+      "source_output_json_sha256": "0c4b6999583198fdcd12e45a7df49d585586d1c3ed153793aca3c645783b8a22",
+      "input_mp4_sha256": "259ee3fc8703dea1d74f088291b80b1b849fc3325d85e7ed0460ce4819b22674",
+      "decoded_samples_sha256": "d86e6bfa0cecf0ea5b90bd0cdba78eaa160ceb17b6b8c2f31ce91feff7302bce",
+      "sample_rate": 16000,
+      "sample_count": 71680,
+      "duration_seconds": 4.48,
+      "file": "actual_decoded_2.f32le",
+      "matches_original_native_pcm": true,
+      "matches_original_native_duration": true
+    },
+    {
+      "source_output_json_sha256": "73c46d75b5ab8e44e1e47ee10d81affd2674f584c4db6f013db5b1a104a1bea0",
+      "input_mp4_sha256": "078a39b4664b7a56b53b58a63b273c87ce492820eb7862f51a259cafc083a65e",
+      "decoded_samples_sha256": "76d8227272d3a8a55fbe2c2c4b6436976758885948fa9fdbac4e4bd79846d06a",
+      "sample_rate": 16000,
+      "sample_count": 71680,
+      "duration_seconds": 4.48,
+      "file": "actual_decoded_3.f32le",
+      "matches_original_native_pcm": true,
+      "matches_original_native_duration": true
+    }
+  ],
+  "status": "PASS",
+  "decoder": {
+    "sha256": "ed16af623947494a72e284b6eb8ff225f2da22b38b5d5069c2fd4b4ba3384e41",
+    "version_output": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers\nbuilt with gcc 13 (Ubuntu 13.2.0-23ubuntu3)\nconfiguration: --prefix=/usr --extra-version=3ubuntu5 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --disable-omx --enable-gnutls --enable-libaom --enable-libass --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libglslang --enable-libgme --enable-libgsm --enable-libharfbuzz --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-openal --enable-opencl --enable-opengl --disable-sndio --enable-libvpl --disable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-ladspa --enable-libbluray --enable-libjack --enable-libpulse --enable-librabbitmq --enable-librist --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libx264 --enable-libzmq --enable-libzvbi --enable-lv2 --enable-sdl2 --enable-libplacebo --enable-librav1e --enable-pocketsphinx --enable-librsvg --enable-libjxl --enable-shared\nlibavutil      58. 29.100 / 58. 29.100\nlibavcodec     60. 31.102 / 60. 31.102\nlibavformat    60. 16.100 / 60. 16.100\nlibavdevice    60.  3.100 / 60.  3.100\nlibavfilter     9. 12.100 /  9. 12.100\nlibswscale      7.  5.100 /  7.  5.100\nlibswresample   4. 12.100 /  4. 12.100\nlibpostproc    57.  3.100 / 57.  3.100\n"
+  }
+}

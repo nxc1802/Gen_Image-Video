@@ -1,0 +1,149 @@
+{
+  "classification": "LOCAL_CPU_EXACT_VAE_RECORDED_VIDEO_COMPONENT_ROUNDTRIP_ONLY_NOT_WAN_T2V_OR_T4_CERTIFICATION",
+  "status": "COMPONENT_EXECUTION_COMPLETE_NOT_CERTIFICATION",
+  "script_sha256": "42882182bc4fe31d2df458d845704725ab7c9b0373a95b7debd6516407ade609",
+  "native_gpu_inference_executed": false,
+  "full_wan_model_inference_executed": false,
+  "v3_certified": false,
+  "full_factory_e2e_executed": false,
+  "production_ready": false,
+  "runtime_versions": {
+    "torch": "2.11.0",
+    "diffusers": "0.43.0",
+    "transformers": "5.19.0",
+    "numpy": "2.5.4",
+    "pillow": "13.0.0"
+  },
+  "input": {
+    "original_url": "https://raw.githubusercontent.com/opencv/opencv/4.12.0/samples/data/vtest.avi",
+    "original_sha256": "45cddc9490be69345cbdab64ca583be65987e864ca408038e648db99e10516cf",
+    "original_size_bytes": 8131690,
+    "decoded_rgb_sha256": "2b0fe5e89fe85925379d22b5a7c377560ded7bc51e4eb7353cc2c87c0f4b812a",
+    "shape_thwc": [
+      5,
+      288,
+      384,
+      3
+    ],
+    "decode_command": [
+      "ffmpeg",
+      "-nostdin",
+      "-v",
+      "error",
+      "-i",
+      "/tmp/factory-native-video/vtest-original.avi",
+      "-frames:v",
+      "5",
+      "-vf",
+      "scale=384:288",
+      "-sws_flags",
+      "bitexact+accurate_rnd",
+      "-pix_fmt",
+      "rgb24",
+      "-f",
+      "rawvideo",
+      "pipe:1"
+    ]
+  },
+  "vae_weights_sha256": "62cd18f19438e35b32ac63020e2852f566e9b02f46b6cdbd87972a356e3c6f4b",
+  "vae_config_sha256": "d996c340fe9a7df5d7371f76a7d8d6956f6c98256080074d8434fa5eeac11360",
+  "load_info": {
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "mismatched_keys": [],
+    "error_msgs": []
+  },
+  "parameters": {
+    "count": 704688668,
+    "devices": [
+      "cpu"
+    ],
+    "dtypes": [
+      "torch.float32"
+    ]
+  },
+  "roundtrip_seconds": 29.236684250179678,
+  "latent": {
+    "shape": [
+      1,
+      48,
+      2,
+      18,
+      24
+    ],
+    "minimum": -1.8648173809051514,
+    "maximum": 1.9354488849639893,
+    "finite": true
+  },
+  "decoded": {
+    "shape": [
+      1,
+      3,
+      5,
+      288,
+      384
+    ],
+    "minimum": -1.0,
+    "maximum": 1.0,
+    "finite": true,
+    "frame_mae_0_to_1": [
+      0.017212212085723877,
+      0.0158538818359375,
+      0.01559709943830967,
+      0.015473701059818268,
+      0.015248545445501804
+    ]
+  },
+  "frame_artifacts": [
+    {
+      "file": "input_0.png",
+      "sha256": "ee875ece2a3a8f9f309bed282c5ccf45fa267c318657429edc12aa4942d5e221",
+      "size_bytes": 169793
+    },
+    {
+      "file": "reconstructed_0.png",
+      "sha256": "3e23401f15059d6798572dabcf6f7ea46c63650a632c4512127036e0c0b32592",
+      "size_bytes": 182541
+    },
+    {
+      "file": "input_1.png",
+      "sha256": "5268c90b7308877c79e91813dff04cd36941bcdcf405128127ec636f1f506d18",
+      "size_bytes": 175926
+    },
+    {
+      "file": "reconstructed_1.png",
+      "sha256": "43a5aaced75174ab59908eb0a711de17e8abf3581d04b30f3562e50d23a88574",
+      "size_bytes": 189425
+    },
+    {
+      "file": "input_2.png",
+      "sha256": "d584f8f9697d7a8e57f8363d83ccaa5796266e39a7bde7773fe3c13ef4647757",
+      "size_bytes": 184602
+    },
+    {
+      "file": "reconstructed_2.png",
+      "sha256": "f7fafd8bf3920b4a2438d644d6da89d67b4b4d9653e002fdddf4f916513ea47d",
+      "size_bytes": 187993
+    },
+    {
+      "file": "input_3.png",
+      "sha256": "8f24f79096c93e3e213c303aa7949a252664b61d0a12edfbc5337eca1d21ce29",
+      "size_bytes": 187502
+    },
+    {
+      "file": "reconstructed_3.png",
+      "sha256": "32b4e1e78bbb551eaeff048fc43c02e19325c4b98112d87a97254c1794a79719",
+      "size_bytes": 187020
+    },
+    {
+      "file": "input_4.png",
+      "sha256": "00ebec18322dc0408813cea6d1df850361464bd6638209a5a84ee67496dc8678",
+      "size_bytes": 187879
+    },
+    {
+      "file": "reconstructed_4.png",
+      "sha256": "78a727266cc1c617fe63605dca3e06339a152db21c53742711d641804df58b31",
+      "size_bytes": 185645
+    }
+  ]
+}

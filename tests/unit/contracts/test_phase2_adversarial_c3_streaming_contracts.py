@@ -31,7 +31,7 @@ AUTH_HEADERS = {"Authorization": f"Bearer {VALID_TOKEN}", "Content-Type": "appli
 
 
 @pytest.fixture(scope="module")
-def control_client():
+def control_client(legacy_catalog):
     keys_to_preserve = ["FACTORY_API_KEY", "STORAGE_BACKEND", "FACTORY_DB_BACKEND", "SQLITE_DB_PATH", "VLLM_TEXT_URL"]
     old_env = {k: os.environ.get(k) for k in keys_to_preserve}
     os.environ["FACTORY_API_KEY"] = VALID_TOKEN
@@ -40,9 +40,11 @@ def control_client():
     os.environ["SQLITE_DB_PATH"] = ":memory:"
     os.environ["VLLM_TEXT_URL"] = "http://mock-vllm-text:8000"
 
-    from factory_control_api import app
+    from factory.apps.control_api.src.legacy import app
+    from services.text.src.legacy_engine import LegacyTextEngine
+    from factory.apps.control_api.src.api.routers import chat
     try:
-        with TestClient(app) as client:
+        with patch.object(chat,"_require_authorized_session",lambda *args:None), patch.object(chat,"_get_text_engine",lambda request:LegacyTextEngine(upstream_url="http://mock-vllm-text:8000")), TestClient(app) as client:
             yield client
     finally:
         for k, v in old_env.items():
@@ -112,35 +114,35 @@ class TestPhase2NormalizationMatrix:
     """Adversarially probe normalization with noise, casing, whitespace, and aliases."""
 
     @pytest.mark.parametrize("alias,canonical", [
-        ("  IMAGE.T2I  ", "text_to_image"),
-        ("\timage.i2i\n", "image_to_image"),
-        ("  VIDEO.T2V \r\n", "text_to_video"),
-        (" video.i2v ", "image_to_video"),
-        ("video.fl2v", "first_last_frame_to_video"),
-        ("MUSIC.T2M", "text_to_music"),
-        ("SPEECH.TTS", "speech_synthesis"),
-        ("speech.asr", "speech_transcription"),
-        ("enhance.sr_image", "image_super_resolution"),
-        ("text.chat", "chat_completion"),
-        ("vision.vlm", "visual_language"),
-        ("  T2I  ", "text_to_image"),
-        ("  T2V  ", "text_to_video"),
-        ("  FL2V  ", "first_last_frame_to_video"),
-        ("  TTS  ", "speech_synthesis"),
+        ("  IMAGE.T2I  ", 'image.text_to_image'),
+        ("\timage.i2i\n", 'image.image_to_image'),
+        ("  VIDEO.T2V \r\n", 'video.text_to_video'),
+        (" video.i2v ", 'video.image_to_video'),
+        ("video.fl2v", 'video.first_last_frame_to_video'),
+        ("MUSIC.T2M", 'music.text_to_music'),
+        ("SPEECH.TTS", 'speech.tts'),
+        ("speech.asr", 'speech.asr'),
+        ("enhance.sr_image", 'enhancement.image_super_resolution'),
+        ("text.chat", 'responses.chat_completion'),
+        ("vision.vlm", 'responses.image_chat'),
+        ("  T2I  ", 'image.text_to_image'),
+        ("  T2V  ", 'video.text_to_video'),
+        ("  FL2V  ", 'video.first_last_frame_to_video'),
+        ("  TTS  ", 'speech.tts'),
     ])
     def test_normalize_task_aliases_with_noise(self, alias: str, canonical: str):
         assert normalize_task(alias) == canonical
 
     @pytest.mark.parametrize("alias,canonical", [
         ("  QWEN-IMAGE  ", "qwen-image-2.1"),
-        ("\tqwen-image-turbo\n", "qwen-image-2.1"),
+        ("\tqwen-image-turbo\n", "qwen-image-2.1-turbo"),
         ("  WAN  ", "wan-2.2"),
         ("  wan2.2  ", "wan-2.2"),
         ("  MINIMAX  ", "minimax-h3"),
         ("ace-step", "ace-step-1.5"),
         ("  yue  ", "yue2"),
-        ("  QWEN3-TTS  ", "qwen-speech"),
-        ("qwen3-asr", "qwen-speech"),
+        ("  QWEN3-TTS  ", "qwen-tts"),
+        ("qwen3-asr", "qwen-asr"),
         ("enhancement-suite", "enhancement-suite-v1"),
     ])
     def test_normalize_model_aliases_with_noise(self, alias: str, canonical: str):
@@ -155,7 +157,7 @@ class TestPhase2NormalizationMatrix:
             inputs={"prompt": "cyberpunk city"},
         )
         assert req.model == "qwen-image-2.1"
-        assert req.task == "text_to_image"
+        assert req.task == 'image.text_to_image'
 
     def test_job_submission_request_none_and_empty_edge_cases(self):
         """Verify empty and None values in JobSubmissionRequest do not crash validators."""
@@ -183,7 +185,7 @@ class TestPhase2NormalizationMatrix:
         assert resp.status_code == 201
         data = resp.json()
         assert data["model"] == "qwen-image-2.1"
-        assert data["task"] == "text_to_image"
+        assert data["task"] == 'image.text_to_image'
         assert data["service"] == "image"
 
 
@@ -240,7 +242,7 @@ class TestPhase2OpenAIChatCompletions:
             }],
             "usage": {"prompt_tokens": 5, "completion_tokens": 10, "total_tokens": 15},
         }
-        with patch("services.text.src.engine.httpx.Client") as mock_client_cls:
+        with patch("services.text.src.legacy_engine.httpx.Client") as mock_client_cls:
             mock_inst = MagicMock()
             mock_inst.__enter__.return_value = mock_inst
             mock_inst.post.return_value = MagicMock(status_code=200, json=lambda: mock_resp)
@@ -274,7 +276,7 @@ class TestPhase2OpenAIChatCompletions:
             }],
             "usage": {"prompt_tokens": 12, "completion_tokens": 28, "total_tokens": 40},
         }
-        with patch("services.text.src.engine.httpx.Client") as mock_client_cls:
+        with patch("services.text.src.legacy_engine.httpx.Client") as mock_client_cls:
             mock_inst = MagicMock()
             mock_inst.__enter__.return_value = mock_inst
             mock_inst.post.return_value = MagicMock(status_code=200, json=lambda: mock_resp)
@@ -298,7 +300,7 @@ class TestPhase2OpenAIChatCompletions:
 
     def test_jobs_result_text_decouples_reasoning_content(self, control_client):
         """Verify GET /v1/jobs/{id}/result surfaces decoupled reasoning_content for text jobs."""
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         manager = app.state.job_manager
 
         job_id = "job-44444444-5555-6666-7777-888888888888"
@@ -332,7 +334,7 @@ class TestPhase2QueryAuthAndMediaDelivery:
 
     @pytest.fixture(autouse=True)
     def setup_video_artifact(self, control_client):
-        from factory_control_api import app
+        from factory.apps.control_api.src.legacy import app
         manager = app.state.job_manager
         scratch = app.state.scratch_disk
 

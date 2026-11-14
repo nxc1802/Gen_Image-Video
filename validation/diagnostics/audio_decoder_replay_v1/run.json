@@ -1,0 +1,23 @@
+{
+  "observed_at_utc": "2026-11-14T05:01:35.958844+00:00",
+  "slug": "factory-phase-8-audio-decoder-replay",
+  "response": {
+    "versionNumberNullable": 1,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-audio-decoder-replay",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-audio-decoder-replay",
+    "versionNumber": 1,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144929240
+  },
+  "kernel_code_sha256": "1fc5ee807e373fcf320a3ea972c827a8e25fe8500ef36da805ef01ba932ea5b9",
+  "source_receipt_sha256": "ca52293e4c28b13e2d45e4c2a9ead2cbc2f0f763a3646fffeea13a9a2a3aa163",
+  "classification": "CPU_REDECODE_OF_EXISTING_REAL_MP4_NOT_NEW_MODEL_INFERENCE",
+  "production_ready": false
+}

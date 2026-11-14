@@ -24,6 +24,8 @@ def main() -> None:
     args = parser.parse_args()
 
     config = load_text_config()
+    if config.backend != "vllm":
+        raise RuntimeError("The selected manifest requires " + config.backend + "; this legacy launcher only implements vLLM. Backend substitution is forbidden.")
     host = args.host or config.host
     port = args.port or config.port
     api_key = os.environ.get("FACTORY_API_KEY", "").strip()
@@ -37,6 +39,8 @@ def main() -> None:
         "vllm", "serve", config.model.name,
         "--host", host,
         "--port", str(port),
+        "--dtype", {"fp16": "float16", "bf16": "bfloat16", "fp32": "float32"}[config.model.precision],
+        "--revision", config.model.revision,
         "--served-model-name", config.model.alias,
         "--max-model-len", str(config.model.max_context_tokens),
         "--api-key", api_key,

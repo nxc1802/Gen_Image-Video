@@ -1,0 +1,23 @@
+{
+  "observed_at_utc": "2026-11-12T13:58:11.667086+00:00",
+  "slug": "factory-phase-8-native-asr",
+  "response": {
+    "versionNumberNullable": 1,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-asr",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-asr",
+    "versionNumber": 1,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144606034
+  },
+  "kernel_code_sha256": "ba4860cd5f40945e995421396f574f2120de899987315d82abaec9850fd0ebaf",
+  "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+  "validation_bundle_sha256": "7a04e138bb1831f86a895d6bdd5eaaedc13014aa1ce3b623fcb52176ed768058",
+  "accelerator": "NvidiaTeslaT4"
+}

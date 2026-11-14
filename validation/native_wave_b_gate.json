@@ -1,0 +1,1366 @@
+{
+  "wave": "B",
+  "observed_at_utc": "2026-11-13T11:29:03.259903+00:00",
+  "exit_gate": "PASS",
+  "classification": "NATIVE_V3_SEMANTIC_CANDIDATES_ONLY",
+  "golden_sha256": "8149144d9fdbd18b36f8e58aa29dd04f5a966b49ecda46c656dc9a85f06f354d",
+  "attempts": [
+    {
+      "kind": "asr",
+      "version": 2,
+      "observation": "validation/native_asr_v2/wave_b.json",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "validation_bundle_sha256": "7a04e138bb1831f86a895d6bdd5eaaedc13014aa1ce3b623fcb52176ed768058"
+    },
+    {
+      "kind": "vlm",
+      "version": 2,
+      "observation": "validation/native_vlm_v2/wave_b.json",
+      "source_bundle_sha256": "b6f7e90e29d7c373426f1705bc56a8b6269084966c09d5f2561a82cf4d5029cc",
+      "validation_bundle_sha256": "1dc910ddd5812c2d7d317f553baba5c917dc3390c667d51eb11377434209db9d"
+    },
+    {
+      "kind": "tts",
+      "version": 2,
+      "observation": "validation/native_tts_v2/wave_b.json",
+      "source_bundle_sha256": "c0567e0fa02696318989abd8d81ca5457520b0c385e78df5ccd46a45c911168f",
+      "validation_bundle_sha256": "55c6510196cce6cccc2140eadafaa08cb3187ae8480f3e0144eeef6937f6e682"
+    }
+  ],
+  "cases": [
+    {
+      "run_id": "kaggle:factory-phase-8-native-asr:v2:asr-jfk-real-speech",
+      "model": "qwen-asr",
+      "capability": "speech.asr",
+      "backend": "qwen_asr",
+      "checkpoint": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "b24c08034405dadd8993d3d76ea60cbec8377f43aa707aa4ea8dcb8863ab34dd",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "qwen-asr": "0.0.6",
+        "torch": "2.11.0+cu130",
+        "transformers": "4.57.6",
+        "huggingface-hub": "0.36.2",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_asr_v2/qwen-asr/observation.json",
+      "latency_ms": {
+        "median": 1681.48244,
+        "min": 1667.55451,
+        "max": 1697.014513
+      },
+      "output_sha256": [
+        "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153",
+        "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153",
+        "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153",
+        "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 4682.0
+      },
+      "peak_total_owned_vram_mb": 4682.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "transcript_matches_ground_truth": true,
+            "required_spoken_phrases": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": "And so, my fellow Americans, ask not what your country can do for you. Ask what you can do for your country."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "transcript_matches_ground_truth": true,
+            "required_spoken_phrases": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": "And so, my fellow Americans, ask not what your country can do for you. Ask what you can do for your country."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "transcript_matches_ground_truth": true,
+            "required_spoken_phrases": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": "And so, my fellow Americans, ask not what your country can do for you. Ask what you can do for your country."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "transcript_matches_ground_truth": true,
+            "required_spoken_phrases": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": "And so, my fellow Americans, ask not what your country can do for you. Ask what you can do for your country."
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vlm:v2:vlm-text-arithmetic",
+      "model": "qwen-vlm",
+      "capability": "responses.create",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "3d7e9e62051bd18e542c39878ebc68a79b3e5264faa0983b6d7ab9c44dc6e971",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "b6f7e90e29d7c373426f1705bc56a8b6269084966c09d5f2561a82cf4d5029cc",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vlm_v2/qwen-vlm/observation.json",
+      "latency_ms": {
+        "median": 388.812123,
+        "min": 388.526938,
+        "max": 391.822887
+      },
+      "output_sha256": [
+        "87eef9d7ea435841378f97a6c24b7cc8cbb209887827b9639506de451916ce8e",
+        "9d6e09dcbea1205a31ce139fa845fe1323443565f52d8e24f92b49033183c17a",
+        "d0425111aedd0cf622617313bbd995ade9850564f13f9bad3d74f2751f4dd70b",
+        "7a6026d1598c890c842b2aaa2fb3b4904ba3aff3961fb5750ee9ef0d795d516a"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 11734.0
+      },
+      "peak_total_owned_vram_mb": 11734.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vlm:v2:vlm-astronaut-suit",
+      "model": "qwen-vlm",
+      "capability": "responses.image_chat",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "e527d295bc489e2b28fafad01d2e210fcb1b059fda0f7d60fb78651e4bcae559",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "b6f7e90e29d7c373426f1705bc56a8b6269084966c09d5f2561a82cf4d5029cc",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vlm_v2/qwen-vlm/observation.json",
+      "latency_ms": {
+        "median": 382.778204,
+        "min": 351.8286,
+        "max": 398.973474
+      },
+      "output_sha256": [
+        "1db80606dd4f024062516c6c251d7acdf4f9c6fa58a91a231f1c797b77255ad7",
+        "984edc3e166737cdf381de85e6fa41422f72384aa216dc2a451f9e7157c1046d",
+        "7b271d77864bb633cf4955a035e7525a61c6a906fe3760fa4a79ffa87f66509e",
+        "b8c2b9792791bd442ebbf585d802111cfa933364d9bc458ae8ae1d63a53c97f9"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 11804.0
+      },
+      "peak_total_owned_vram_mb": 11804.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "Orange"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "Orange"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "Orange"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "Orange"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vlm:v2:vlm-document-title",
+      "model": "qwen-vlm",
+      "capability": "responses.document_qa",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "4bdeb0c68dcb3fc496b8fecea11d1c60f5bc2f14f483250ae6bda2e9c6554760",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "b6f7e90e29d7c373426f1705bc56a8b6269084966c09d5f2561a82cf4d5029cc",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vlm_v2/qwen-vlm/observation.json",
+      "latency_ms": {
+        "median": 440.592709,
+        "min": 438.271112,
+        "max": 461.599036
+      },
+      "output_sha256": [
+        "9ece5cac98960686e3ba879273eeb6473de5dd3951df8c2996a3c3baa5b0ef0f",
+        "f6ae168a91b4e5970d673b6f3fa48688d00b63fdd8586087e190818ab061f547",
+        "c37bc1904d77aef1d4351e7d781acb18e044d29778b6578e34f264288b4f3df4",
+        "b943cd0e70bc645bb75df15a295471be64682118af3851e06a96a75ce4f9c0ea"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 11808.0
+      },
+      "peak_total_owned_vram_mb": 11808.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "read_actual_document_title": true
+          },
+          "metrics": {
+            "actual_text": "Region-based segmentation"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "read_actual_document_title": true
+          },
+          "metrics": {
+            "actual_text": "Region-based segmentation"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "read_actual_document_title": true
+          },
+          "metrics": {
+            "actual_text": "Region-based segmentation"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "read_actual_document_title": true
+          },
+          "metrics": {
+            "actual_text": "Region-based segmentation"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vlm:v2:vlm-head-grounding-v2",
+      "model": "qwen-vlm",
+      "capability": "responses.visual_grounding",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "f030bbcd10ff28d41b58f0f705e38c8d39010894b4552d7d720d914c5206de8e",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "b6f7e90e29d7c373426f1705bc56a8b6269084966c09d5f2561a82cf4d5029cc",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vlm_v2/qwen-vlm/observation.json",
+      "latency_ms": {
+        "median": 1748.559524,
+        "min": 1725.90047,
+        "max": 1756.528748
+      },
+      "output_sha256": [
+        "b916c733bb2713d36ec0d9f357c7e06bc1e51156974a535ed5648a67134721c5",
+        "13cacd6ff4a260cdd4c8275540780140b904b563045a423221d6e86559f8cfd4",
+        "9548a06ecb735eff7fbfd82ef9f785aba60c839dc0b7ab4650effbb069c01544",
+        "b8147d990b70be66e478611b25d11d45584e03f0d8fdf89bfe8a2226c2ca684f"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 11808.0
+      },
+      "peak_total_owned_vram_mb": 11808.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "valid_normalized_box": true,
+            "localizes_visible_head": true
+          },
+          "metrics": {
+            "actual_text": "```json\n{\n  \"bbox\": [197, 25, 602, 462]\n}\n```",
+            "actual_box": [
+              197,
+              25,
+              602,
+              462
+            ],
+            "intersection_over_union": 0.5997983870967742
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "valid_normalized_box": true,
+            "localizes_visible_head": true
+          },
+          "metrics": {
+            "actual_text": "```json\n{\n  \"bbox\": [197, 25, 602, 462]\n}\n```",
+            "actual_box": [
+              197,
+              25,
+              602,
+              462
+            ],
+            "intersection_over_union": 0.5997983870967742
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "valid_normalized_box": true,
+            "localizes_visible_head": true
+          },
+          "metrics": {
+            "actual_text": "```json\n{\n  \"bbox\": [197, 25, 602, 462]\n}\n```",
+            "actual_box": [
+              197,
+              25,
+              602,
+              462
+            ],
+            "intersection_over_union": 0.5997983870967742
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "valid_normalized_box": true,
+            "localizes_visible_head": true
+          },
+          "metrics": {
+            "actual_text": "```json\n{\n  \"bbox\": [197, 25, 602, 462]\n}\n```",
+            "actual_box": [
+              197,
+              25,
+              602,
+              462
+            ],
+            "intersection_over_union": 0.5997983870967742
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vlm:v2:vlm-pedestrian-video",
+      "model": "qwen-vlm",
+      "capability": "responses.video_chat",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "ba1a5790d949597b71fb36d34607ac4d6278d4e271a3f1f62aa61f62df684b70",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "b6f7e90e29d7c373426f1705bc56a8b6269084966c09d5f2561a82cf4d5029cc",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vlm_v2/qwen-vlm/observation.json",
+      "latency_ms": {
+        "median": 893.564763,
+        "min": 888.042168,
+        "max": 917.876779
+      },
+      "output_sha256": [
+        "8b234c1c61d3165f72b5bfd64cc749c51cc5b36a0eb853aff48ebf9f30303c73",
+        "369fd6e4f1ee438793cf41f2e0c470f37c40b836b09f03233790449973dad175",
+        "6762e1d42bbd2598d0e18a30e715786a63e554dfbdb6463469584f60fdb2ac3c",
+        "db41ed629118545a3809869110b886fe5a6ba90854d9ae4c2e48fe3d6cde5ef6"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 11808.0
+      },
+      "peak_total_owned_vram_mb": 11808.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "recognizes_people": true,
+            "recognizes_walking_action": true
+          },
+          "metrics": {
+            "actual_text": "The people in the video are walking across a parking lot."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "recognizes_people": true,
+            "recognizes_walking_action": true
+          },
+          "metrics": {
+            "actual_text": "The people in the video are walking across a parking lot."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "recognizes_people": true,
+            "recognizes_walking_action": true
+          },
+          "metrics": {
+            "actual_text": "The people in the video are walking across a parking lot."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "recognizes_people": true,
+            "recognizes_walking_action": true
+          },
+          "metrics": {
+            "actual_text": "The people in the video are walking across a parking lot."
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-tts:v2:tts-base-intelligibility",
+      "model": "qwen-tts",
+      "capability": "speech.tts",
+      "backend": "vllm_omni",
+      "checkpoint": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "7f079cc798b291bcf87832a668c3cb536adab3d6b4cc352ddfaf067b728b81e4",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "c0567e0fa02696318989abd8d81ca5457520b0c385e78df5ccd46a45c911168f",
+      "runtime_versions": {
+        "vllm": "0.32.0",
+        "vllm-omni": "0.32.0",
+        "torch": "2.13.0+cu130",
+        "transformers": "5.19.0",
+        "huggingface-hub": "1.33.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "exact_native_semantic_verifiers",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_tts_v2/qwen-tts/observation.json",
+      "latency_ms": {
+        "median": 4348.317785,
+        "min": 3773.758708,
+        "max": 4724.314548
+      },
+      "output_sha256": [
+        "665b8b961f717fdf1c7f153cc01d21f252cb191267837cffeed03e4a24837021",
+        "c2170985d1f1733094b07cea900508732dbbf952d277b13ac3159b49b598acf6",
+        "41faf717560d2a699d18a5bdab498fe5577e04667b9eb7da3cfc9729731f9740",
+        "e18f8131f36abd33a725d24b7bf25c434a5ebc7fb3b61cd76291a8db6a468f93"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 9148.0
+      },
+      "peak_total_owned_vram_mb": 9148.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "real_waveform_identity": true,
+            "native_audio_type": true,
+            "expected_spoken_words": true,
+            "expected_duration": true,
+            "exact_reference_audio": true,
+            "exact_semantic_verifiers": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": " Please open the blue door and wait outside.",
+            "duration_seconds": 2.96
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "real_waveform_identity": true,
+            "native_audio_type": true,
+            "expected_spoken_words": true,
+            "expected_duration": true,
+            "exact_reference_audio": true,
+            "exact_semantic_verifiers": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": " Please open the blue door and wait outside.",
+            "duration_seconds": 3.52
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "real_waveform_identity": true,
+            "native_audio_type": true,
+            "expected_spoken_words": true,
+            "expected_duration": true,
+            "exact_reference_audio": true,
+            "exact_semantic_verifiers": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": " Please open the blue door and wait outside.",
+            "duration_seconds": 3.92
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "real_waveform_identity": true,
+            "native_audio_type": true,
+            "expected_spoken_words": true,
+            "expected_duration": true,
+            "exact_reference_audio": true,
+            "exact_semantic_verifiers": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": " Please open the blue door and wait outside.",
+            "duration_seconds": 3.04
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-tts:v2:tts-base-voice-cloning",
+      "model": "qwen-tts",
+      "capability": "speech.voice_cloning",
+      "backend": "vllm_omni",
+      "checkpoint": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "ff45c0490e0625869a7566be4b57bc8e9755325df147d70f198d4151efe6397c",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "c0567e0fa02696318989abd8d81ca5457520b0c385e78df5ccd46a45c911168f",
+      "runtime_versions": {
+        "vllm": "0.32.0",
+        "vllm-omni": "0.32.0",
+        "torch": "2.13.0+cu130",
+        "transformers": "5.19.0",
+        "huggingface-hub": "1.33.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "exact_native_semantic_verifiers",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_tts_v2/qwen-tts/observation.json",
+      "latency_ms": {
+        "median": 4842.546915,
+        "min": 4461.478798,
+        "max": 5978.289742
+      },
+      "output_sha256": [
+        "f5547ebc8933faa0d79b85a7862f2e335833d832e91343031a28d79aaa73480d",
+        "3f04c6799425c473e9937aa914a8fadbd4e609c2b1393e30d4041af0a3dd0080",
+        "6aada4c6b031e6416957312dbb55a1de5acb7bfe03abe706384d1d7aa52fce3b",
+        "a1762d3d444baf0e68e3d579f12b21d449801534ce542e002c79877c697c0dc8"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 9150.0
+      },
+      "peak_total_owned_vram_mb": 9150.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "real_waveform_identity": true,
+            "native_audio_type": true,
+            "expected_spoken_words": true,
+            "expected_duration": true,
+            "exact_reference_audio": true,
+            "exact_semantic_verifiers": true,
+            "valid_speaker_embeddings": true,
+            "reference_speaker_similarity": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": " The blue bicycle is parked beside the garden gate.",
+            "duration_seconds": 4.16,
+            "speaker_cosine": 0.9249951972180891
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "real_waveform_identity": true,
+            "native_audio_type": true,
+            "expected_spoken_words": true,
+            "expected_duration": true,
+            "exact_reference_audio": true,
+            "exact_semantic_verifiers": true,
+            "valid_speaker_embeddings": true,
+            "reference_speaker_similarity": true
+          },
+          "metrics": {
+            "word_error_rate": 0.1111111111111111,
+            "actual_transcript": " The Mo Bicycle is parked beside the garden gate.",
+            "duration_seconds": 3.6,
+            "speaker_cosine": 0.8987851358860109
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "real_waveform_identity": true,
+            "native_audio_type": true,
+            "expected_spoken_words": true,
+            "expected_duration": true,
+            "exact_reference_audio": true,
+            "exact_semantic_verifiers": true,
+            "valid_speaker_embeddings": true,
+            "reference_speaker_similarity": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": " The blue bicycle is parked beside the garden gate.",
+            "duration_seconds": 4.0,
+            "speaker_cosine": 0.9672822496947635
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "real_waveform_identity": true,
+            "native_audio_type": true,
+            "expected_spoken_words": true,
+            "expected_duration": true,
+            "exact_reference_audio": true,
+            "exact_semantic_verifiers": true,
+            "valid_speaker_embeddings": true,
+            "reference_speaker_similarity": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": " The blue bicycle is parked beside the garden gate.",
+            "duration_seconds": 4.96,
+            "speaker_cosine": 0.9484925136369053
+          }
+        }
+      ],
+      "error": null
+    }
+  ],
+  "findings": [],
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "phase_8_exit_gate": "NOT_MET (remaining native waves require validation)"
+}

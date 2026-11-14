@@ -2,6 +2,7 @@
 factory/apps/control-api/src/api/routers/models.py
 Declarative Model and Service Registry endpoints for Factory v4 Lite.
 """
+
 from typing import Optional
 from fastapi import APIRouter, Depends, Query, Request
 from factory_auth import verify_bearer_token
@@ -11,6 +12,23 @@ router = APIRouter(prefix="/v1", tags=["Registry"], dependencies=[Depends(verify
 
 
 @router.get("/models")
+async def active_models(request: Request):
+    """OpenAI discovery includes only authorized active-session deployments."""
+    registry = getattr(request.app.state, "deployment_registry", None)
+    data = []
+    if registry is not None:
+        for binding in registry.active_models():
+            data.append(
+                {
+                    "id": binding.model,
+                    "object": "model",
+                    "created": registry.created_at,
+                    "owned_by": "factory",
+                }
+            )
+    return {"object": "list", "data": data}
+
+
 @router.get("/registry/models")
 async def list_models(
     request: Request,
@@ -43,6 +61,14 @@ async def list_models(
         "data": dumped,
         "total": len(dumped),
     }
+
+
+@router.get("/registry/deployment")
+async def deployment_status(request: Request):
+    registry = getattr(request.app.state, "deployment_registry", None)
+    if registry is None:
+        return {"configured": {}, "active_models": [], "production_ready": False}
+    return registry.status()
 
 
 @router.get("/services")
@@ -79,4 +105,41 @@ async def list_capabilities(request: Request):
         "capabilities": caps_list,
         "data": caps_list,
         "total": len(caps_list),
+    }
+
+
+@router.get("/registry/runtime")
+async def local_runtime_status(request: Request):
+    """Current-process composition, not an inference/READY certification."""
+    import os, sys
+
+    legacy = (
+        "repository",
+        "broker",
+        "lease_coordinator",
+        "job_manager",
+        "model_runtime_manager",
+        "stream_manager",
+    )
+    optional = {
+        "redis",
+        "boto3",
+        "botocore",
+        "sqlalchemy",
+        "alembic",
+        "asyncpg",
+        "psycopg",
+        "psycopg2",
+    }
+    jobs = getattr(request.app.state, "public_media_jobs", None)
+    return {
+        "pid": os.getpid(),
+        "mode": "single-host",
+        "job_storage": "memory",
+        "artifact_storage": "local_scratch",
+        "external_services_required": [],
+        "loaded_optional_infrastructure": sorted(optional.intersection(sys.modules)),
+        "legacy_components": [name for name in legacy if hasattr(request.app.state, name)],
+        "jobs_accepting": jobs is not None and not jobs.closed,
+        "production_ready": False,
     }

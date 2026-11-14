@@ -1,0 +1,77 @@
+{
+  "kind": "minimax_turbo",
+  "version": 1,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-turbo",
+  "run_record_sha256": "789ad70bedccbf4e03300940def890146e2dcbaf20c04900f78e0be9e3a3a87c",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_turbo_v1/runtime_packages.json",
+      "sha256": "743e47a5c96a759f88f294fe86e0d9157a85396338c2ba23dd7518e000869620"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/installation.log",
+      "sha256": "a13d9fbd353099fb4536bc7cba564df266ad9be5703836fadb73cd113cac46f9"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/wave_d.json",
+      "sha256": "47ae60e70a705b9e5405f29088c7ee39aa9da6b72417249210fa0e34130c21e4"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/setup.json",
+      "sha256": "3cb28fe9a9b8fb029277b7495d2659d613618b2b7df9f1818a047dba458e8555"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/driver.log",
+      "sha256": "60215efec075614ffc277d38a6f45116599bb4835c8cab576c5da84d586e3c09"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/minimax-h3-turbo/observation.json",
+      "sha256": "e7e05c54992ca39d8ad9215e25db424763a91abce4241d3c9ff5255f62fb7f7e"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/minimax-h3-turbo/native_node_schemas.json",
+      "sha256": "f08a78f73907f8dd3cd92b6b758068f1695633f96ea4665d7d32fe13346f0eba"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/minimax-h3-turbo/backend.log",
+      "sha256": "e904f0af97df231589bbb70ca1a66d5311a811a0176608f2b0c6d7411f898157"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/inputs/astronaut_first/source.bin",
+      "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/inputs/astronaut_first/input_identity.json",
+      "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/inputs/astronaut_last/source.bin",
+      "sha256": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/inputs/astronaut_last/input_identity.json",
+      "sha256": "f396c7e72b9fa8eec8a8bebb12078d7c75d44e85356a130d5a96592fcb0b6f06"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/minimax-h3-turbo/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+      "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/minimax-h3-turbo/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+      "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/minimax-h3-turbo/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+      "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+    },
+    {
+      "file": "validation/native_minimax_turbo_v1/minimax-h3-turbo/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+      "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+    }
+  ]
+}

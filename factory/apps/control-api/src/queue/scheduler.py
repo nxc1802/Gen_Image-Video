@@ -10,7 +10,6 @@ from typing import Any, AsyncGenerator, Dict, List, Optional, Set, Tuple, Union
 
 from factory.apps.control_api.src.queue.broker.base import BaseQueueBroker
 from factory.apps.control_api.src.queue.broker.memory_broker import MemoryQueueBroker
-from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
 
 
 class InMemoryScheduler(MemoryQueueBroker):

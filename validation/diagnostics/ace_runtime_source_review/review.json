@@ -1,0 +1,24 @@
+{
+  "classification": "READ_ONLY_UPCOMING_WAVE_E_RUNTIME_SOURCE_REVIEW_NOT_INFERENCE_OR_RUNTIME_SELECTION",
+  "repository": "https://github.com/ace-step/ACE-Step-1.5",
+  "candidate_revision": "ca1e85fe9430179831e6bc6be790c332190a3866",
+  "files_sha256": {
+    "pyproject.toml": "b9288eabb1e8eea6334c70b8cd33c9ba07da20c24f7ff5ffb8ff4bb43cd9355b",
+    "acestep/model_downloader.py": "34fcd1914620c11ad487070f47966803d48a290b7b05b42259cf9fd437c032d5",
+    "acestep/core/generation/handler/init_service_orchestrator.py": "df1e3ac43db9018793adae343760b43c56e7e81648cfcd057730162352c49d72",
+    "acestep/core/generation/handler/init_service_downloads.py": "02a95f2293dc0cd82ff5046816503668f8339157ba0b18715e061f3142999f8f",
+    "acestep/core/generation/handler/init_service_loader.py": "22b41692bcb73fead4c831d16eaef3dda56cc995577f2353d763445dae7362e1",
+    "acestep/core/generation/handler/init_service_loader_components.py": "621fc7d24ee847835de2eb66f35451120cb92310cf5e112e4edbdf955535d6de"
+  },
+  "findings": [
+    "Candidate project requires Python>=3.11,<3.13 and Linux Torch2.10.0+cu128/TF4.51-4.57; current Kaggle system Python3.13 cannot be used blindly. No runtime installed or chosen yet.",
+    "Candidate distribution is ace-step, import package acestep; existing launch metadata distribution acestep differs and would miss exact backend version attestation.",
+    "Candidate initializer check_main_model_exists requires default Turbo plus VAE/text encoder/LM even for Base/SFT/XL; a Base-only exact bundle would trigger upstream unpinned main-repo auto-download. Factory must reject/disable this path rather than implicitly add another model.",
+    "Candidate can auto-sync checkpoint Python code from SDK for recognized relative model names; current absolute primary-directory argument appears to bypass that registry lookup, but exact pinned Python assets must remain immutable in any integration.",
+    "Candidate CUDA dtype resolves FP16 on pre-Ampere, compatible with existing Manifest precision if actual loaded parameters attest it. Source observation is not Dual-T4/model inference evidence."
+  ],
+  "proposal": "After WaveD exit, explicitly select/pin a compatible Python3.12 SDK environment and evaluate a source-verified Adapter-local handler that requires only the selected Manifest bundle, forbids upstream download/model-code mutation/alternate VAE, checks actual attention/dtypes/loaded component identities and preserves generic Engine. Validate exact original checkpoints with complete native goldens; no new checkpoint, LM fallback, or capability exclusion. No core changes while current source7266 jobs run.",
+  "core_changed": false,
+  "native_inference_executed": false,
+  "production_ready": false
+}

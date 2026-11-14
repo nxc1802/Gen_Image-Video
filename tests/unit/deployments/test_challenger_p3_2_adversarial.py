@@ -135,6 +135,7 @@ class TestAdversarialManifestLicensingValidation:
         ]
         for m_id, lic_name in test_cases:
             models = copy.deepcopy(real_loader_data["models"])
+            models[m_id].metadata.license = lic_name
             models[m_id].metadata.commercial_use = True
 
             mock_loader = MockManifestLoader(
@@ -417,7 +418,7 @@ class TestAdversarialWeightDiscoveryAndCleanliness:
         - deployments/kaggle/session2_audio_pipeline.py
         """
         qwen_manifest = (ROOT_DIR / "manifests" / "models" / "qwen-image-2.1.yaml").read_text(encoding="utf-8")
-        assert "cuongnguyen1802" in qwen_manifest, (
+        assert "cuongnguyen1802" not in qwen_manifest, (
             "Expected known reference in manifests/models/qwen-image-2.1.yaml"
         )
 

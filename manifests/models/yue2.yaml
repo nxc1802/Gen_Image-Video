@@ -1,114 +1,147 @@
-apiVersion: factory.ai/v1
+apiVersion: factory.ai/v2
 kind: ModelManifest
 metadata:
   id: yue2
   family: yue-music
-  display_name: "YuE2 Music Generation Pipeline"
+  display_name: YuE2 3B with YuE2 VAE
   service_id: music-service
-  version: "2.0.0"
-  license: "Apache-2.0"
-  license_url: "https://huggingface.co/m-a-p/YuE-s1-7B-anneal-en-cot/blob/main/LICENSE"
-  commercial_use: true
-
+  version: 2.0.0
+  license: cc-by-nc-4.0
+  license_url: https://huggingface.co/m-a-p/YuE2-3B/blob/8f24312f187763b9854adeec87e437e2b03bbff1/README.md
+  commercial_use: false
+aliases:
+- yue
+- yue-music
+engine: music
 weights:
-  primary_checkpoint: "m-a-p/YuE-s1-7B-anneal-en-cot"
-  repository: "m-a-p/YuE-s1-7B-anneal-en-cot"
-  checkpoint_revision: "672e8bb24802521c7a40b97cfc47c4cb033230a1"
-  weights_file: "model-00001-of-00004.safetensors"
+  files:
+    file_0:
+      provider: huggingface
+      repository: m-a-p/YuE2-3B
+      revision: 8f24312f187763b9854adeec87e437e2b03bbff1
+      path: config.json
+      sha256: ad3477bbef890bf98ae196c1e4b44779494a6231c4ab66f32708eabadf265329
+      size_bytes: 959
+      destination: model/config.json
+    file_1:
+      provider: huggingface
+      repository: m-a-p/YuE2-3B
+      revision: 8f24312f187763b9854adeec87e437e2b03bbff1
+      path: generation_config.json
+      sha256: ccc842772f029049fadf9b288393bcdd9f79271b361c0f1875ec1218e4ba5170
+      size_bytes: 204
+      destination: model/generation_config.json
+    primary:
+      provider: huggingface
+      repository: m-a-p/YuE2-3B
+      revision: 8f24312f187763b9854adeec87e437e2b03bbff1
+      path: model.safetensors
+      sha256: 1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9
+      size_bytes: 7261441640
+      destination: model/model.safetensors
+    file_3:
+      provider: huggingface
+      repository: m-a-p/YuE2-3B
+      revision: 8f24312f187763b9854adeec87e437e2b03bbff1
+      path: modeling_yue2.py
+      sha256: 62d2bd758c8fff1a0d64584a699343076fca9a7880db5d8e19263bc30ae79d7c
+      size_bytes: 32983
+      destination: model/modeling_yue2.py
+    file_4:
+      provider: huggingface
+      repository: m-a-p/YuE2-3B
+      revision: 8f24312f187763b9854adeec87e437e2b03bbff1
+      path: qwen.tiktoken
+      sha256: b2b1b8dfb5cc5f024bafc373121c6aba3f66f9a5a0269e243470a1de16a33186
+      size_bytes: 2561218
+      destination: model/qwen.tiktoken
+    file_5:
+      provider: huggingface
+      repository: m-a-p/YuE2-3B
+      revision: 8f24312f187763b9854adeec87e437e2b03bbff1
+      path: weights_manifest.json
+      sha256: 2296f82c29dcb11aeefde07e216403a32fc86c8f6da2ec15a70102abfd936a93
+      size_bytes: 179
+      destination: model/weights_manifest.json
+    file_6:
+      provider: huggingface
+      repository: m-a-p/YuE2-3B
+      revision: 8f24312f187763b9854adeec87e437e2b03bbff1
+      path: yue2_generation_config.json
+      sha256: 203830cebde6e3644eb291925362990d198e66c3b6006cd11f1aaa21904bcc61
+      size_bytes: 466
+      destination: model/yue2_generation_config.json
+    file_7:
+      provider: huggingface
+      repository: m-a-p/YuE2-Vae
+      revision: 152733a19ad43aa67e367f9b5503ef8075bb5126
+      path: config.json
+      sha256: f0191bb9694009956de44e0c361a6f1334760be4c8f848e599bde242a54a0970
+      size_bytes: 1378
+      destination: vae/config.json
+    file_8:
+      provider: huggingface
+      repository: m-a-p/YuE2-Vae
+      revision: 152733a19ad43aa67e367f9b5503ef8075bb5126
+      path: model.safetensors
+      sha256: 807ce9d5149fa27c5ad3e6582058469852e908f6c5acc8c8aa338e7ab7751346
+      size_bytes: 530512720
+      destination: vae/model.safetensors
+    file_9:
+      provider: huggingface
+      repository: m-a-p/YuE2-Vae
+      revision: 152733a19ad43aa67e367f9b5503ef8075bb5126
+      path: modeling_vae.py
+      sha256: b6578ff461e6be9fd079ca5ddf12893940f3b3338ff3435fceae89c466486f5a
+      size_bytes: 25265
+      destination: vae/modeling_vae.py
+    file_10:
+      provider: huggingface
+      repository: m-a-p/YuE2-Vae
+      revision: 152733a19ad43aa67e367f9b5503ef8075bb5126
+      path: weights_manifest.json
+      sha256: 017d64a4d288217a43fcac3866a0e1d55f796fa891d4dfb6de0bd170ab750026
+      size_bytes: 178
+      destination: vae/weights_manifest.json
   format: safetensors
   quantization: none
   default_precision: bf16
-
-hardware:
-  min_vram_gb: 12.0
-  preferred_gpu: t4
-  preferred_gpu_index: 1
-  quantization_format: none
-  offload_ram_gb: 2.0
-  allocation_policy: single_gpu
-
-
+backend:
+  adapter: yue2
+  supported:
+  - yue2_native
 capabilities:
-  text_to_music: true
-  lyrics_to_music: true
-  symbolic_score: true
-  custom_score: true
-  score_edit: true
-  song_variation: true
-  cover_edit: false
-
-status: partial
-coverage_percent: 85.7
-missing_capabilities:
-  - cover_edit
-validation_status: pending_live
-validation_notes: "YuE2 feasibility gate Y0 pending live verification."
-
-limits:
-  max_duration_seconds: 300.0
-
-revision: "2.0.0"
-dependencies:
-  - "torch>=2.4.0"
-  - "transformers"
-  - "xformers"
-
-task_variant_matrix:
-  text_to_music:
-    - standard
-  lyrics_to_music:
-    - standard
-  symbolic_score:
-    - standard
-  custom_score:
-    - standard
-  score_edit:
-    - standard
-  song_variation:
-    - standard
-
-validated_hardware_profiles:
-  - "kaggle-dual-t4"
-  - "colab-single-t4"
-
-installed: true
-checkpoint_valid: true
-backend_ready: true
-evidence_run_id: null
-
-capabilities_truth:
-  text_to_music:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  lyrics_to_music:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  symbolic_score:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  custom_score:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  score_edit:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  song_variation:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  cover_edit:
-    declared: true
-    implemented: false
-    live_verified: false
-    evidence_run_id: null
+  music.text_to_music: true
+  music.lyrics_to_music: true
+  music.symbolic_score: true
+  music.custom_score: true
+  music.score_edit: true
+  music.song_variation: true
+  music.cover_edit: false
+parameters:
+  max_duration_seconds:
+    type: number
+    default: 300.0
+runtime_profiles:
+  kaggle-dual-t4:
+    gpu_count: 1
+    min_vram_gb: 24
+    preferred_backend: yue2_native
+    exclusive: false
+    cpu_offload: true
+    notes: Declared preflight requirements; not hardware certification. CLI assigns
+      devices explicitly. Runtime load and semantic validation remain required.
+validation:
+  state: BLOCKED
+  reasons:
+  - Old YuE-s1-7B weights are not YuE2. Exact YuE2 and VAE identities pinned. Selected
+    unquantized native runtime requires BF16; Tesla T4 lacks native BF16 support.
+    Keep BLOCKED until an explicitly chosen compatible runtime/precision is implemented
+    and validated; no YuE1 or quantized checkpoint fallback.
+  implemented_capabilities:
+  - music.text_to_music
+  - music.lyrics_to_music
+  - music.symbolic_score
+  - music.custom_score
+  - music.score_edit
+  - music.song_variation

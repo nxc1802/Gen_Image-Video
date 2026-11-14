@@ -75,16 +75,15 @@ from factory_contracts.jobs.worker_contract import (
     WorkerLeaseRequest,
 )
 from factory.apps.control_api.src.main import app
-from factory.apps.control_api.src.queue.leasing import SUBSYSTEM_GPU_MAP as LEASING_MAP, LeaseCoordinator
-from factory.apps.control_api.src.queue.manager import SUBSYSTEM_GPU_MAP as MANAGER_MAP, JobLifecycleManager
+from factory.apps.control_api.src.queue.leasing import LeaseCoordinator
+from factory.apps.control_api.src.queue.manager import JobLifecycleManager
 from factory.apps.control_api.src.queue.model_runtime import ModelRuntimeManager
-from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
+from model_registry.deployment import DeploymentRegistry
 from factory.apps.control_api.src.queue.repository.memory import InMemoryJobStore
-from factory.apps.control_api.src.queue.scheduler import SUBSYSTEM_GPU_MAP as SCHEDULER_MAP, InMemoryScheduler
+from factory.apps.control_api.src.queue.scheduler import InMemoryScheduler
 from factory.apps.control_api.src.queue.watchdog import (
     MODEL_EXECUTION_TIMEOUTS,
     SERVICE_EXECUTION_TIMEOUTS,
-    SUBSYSTEM_GPU_MAP as WATCHDOG_MAP,
     TASK_EXECUTION_TIMEOUTS,
 )
 from factory.apps.control_api.src.storage.integrity import compute_bytes_sha256
@@ -642,16 +641,13 @@ class BenchmarkRunner:
                     status = "PASS"
 
             elif cid == "R24":
-                # Consolidated SUBSYSTEM_GPU_MAP (FIX-04)
-                if (
-                    SUBSYSTEM_GPU_MAP == LEASING_MAP
-                    and SUBSYSTEM_GPU_MAP == MANAGER_MAP
-                    and SUBSYSTEM_GPU_MAP == SCHEDULER_MAP
-                    and SUBSYSTEM_GPU_MAP == WATCHDOG_MAP
-                ):
+                # Configuration contract only, never model inference evidence.
+                registry = DeploymentRegistry.from_environment()
+                configured = registry.bindings()
+                if configured and all(binding.devices for binding in configured):
                     status = "PASS"
                 else:
-                    err_dict = {"code": "MAP_DIVERGENCE", "message": "SUBSYSTEM_GPU_MAP differs across queue modules"}
+                    err_dict = {"code": "DEPLOYMENT_MISSING", "message": "Explicit model/device configuration is required"}
 
             elif cid == "R25":
                 # Watchdog deadline & reaper enforcement (FIX-05)

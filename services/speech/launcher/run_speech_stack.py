@@ -12,6 +12,9 @@ import signal
 import subprocess
 import sys
 import time
+from pathlib import Path
+import yaml
+from model_registry.bindings import model_binding
 
 
 def _require(name: str) -> None:
@@ -20,6 +23,11 @@ def _require(name: str) -> None:
 
 
 def main() -> None:
+    config = yaml.safe_load((Path(__file__).parents[1] / "configs/speech_config.yaml").read_text())
+    refs = config["model_refs"]
+    asr_binding, tts_binding = model_binding(refs["asr"]), model_binding(refs["tts"])
+    if asr_binding.runtime_profiles["kaggle-dual-t4"].preferred_backend != "vllm":
+        raise RuntimeError("This legacy speech launcher only implements vLLM ASR. The selected manifest requires another backend; canonical backend lifecycle must launch it explicitly. No backend/model fallback.")
     _require("vllm")
     api_key = os.environ.get("FACTORY_API_KEY", "").strip()
     if not api_key:
@@ -28,8 +36,8 @@ def main() -> None:
     asr_port = os.environ.get("QWEN_ASR_PORT", "8290")
     tts_port = os.environ.get("QWEN_TTS_PORT", "8291")
     gateway_port = os.environ.get("SPEECH_SERVICE_PORT", "8288")
-    asr_model = os.environ.get("QWEN_ASR_MODEL", "Qwen/Qwen3-ASR-1.7B")
-    tts_model = os.environ.get("QWEN_TTS_MODEL", "Qwen/Qwen3-TTS-12Hz-1.7B-Base")
+    asr_model = asr_binding.weights.repository
+    tts_model = tts_binding.weights.repository
 
     common_env = os.environ.copy()
     common_env["VLLM_MEDIA_URL_ALLOW_REDIRECTS"] = "0"
@@ -41,6 +49,7 @@ def main() -> None:
 
     asr = subprocess.Popen([
         "vllm", "serve", asr_model,
+        "--revision", asr_binding.weights.checkpoint_revision,
         "--host", "127.0.0.1",
         "--port", asr_port,
         "--served-model-name", "qwen3-asr",
@@ -49,6 +58,7 @@ def main() -> None:
 
     tts = subprocess.Popen([
         "vllm", "serve", tts_model,
+        "--revision", tts_binding.weights.checkpoint_revision,
         "--omni",
         "--host", "127.0.0.1",
         "--port", tts_port,

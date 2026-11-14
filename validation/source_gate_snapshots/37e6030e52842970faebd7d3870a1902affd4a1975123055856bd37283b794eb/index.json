@@ -1,0 +1,26 @@
+{
+  "classification": "SOURCE_SCOPED_GATE_SNAPSHOT_NOT_NEW_INFERENCE",
+  "source_bundle_sha256": "37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb",
+  "phase_4_observation": "validation/backend_lifecycle_observation_v18.json",
+  "phase_5_observation": "validation/enhancement_observation_v13.json",
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "reports": {
+    "4": {
+      "file": "validation/source_gate_snapshots/37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb/backend_lifecycle_gate.json",
+      "sha256": "ed772809d1d3e563b907ef1e62b62631351b43c0a5e6c7c7e14eae44c1907136"
+    },
+    "5": {
+      "file": "validation/source_gate_snapshots/37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb/engine_refactor_gate.json",
+      "sha256": "3c6cc0d7dba6015d3543159909c90ad1650851ee59dc8d7bf3d1f33cef8efaef"
+    },
+    "6": {
+      "file": "validation/source_gate_snapshots/37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb/openai_api_gate.json",
+      "sha256": "8fad7705313867d8ae281fda47fd0c28742e4cbdae06d4037ccde2b68f29f4f7"
+    },
+    "7": {
+      "file": "validation/source_gate_snapshots/37e6030e52842970faebd7d3870a1902affd4a1975123055856bd37283b794eb/control_plane_gate.json",
+      "sha256": "44db8abfeae54b4fcaf8fe79c57445706bedb0d69dc9fe147d7f41a1d1e0ef01"
+    }
+  }
+}

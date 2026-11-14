@@ -1,0 +1,100 @@
+{
+  "classification": "LOCAL_CPU_EXACT_TILED_VAE_HIGH_RES_PHOTO_ROUNDTRIP_ONLY_NOT_WAN_T2V_OR_T4_CERTIFICATION",
+  "status": "COMPONENT_EXECUTION_COMPLETE_NOT_CERTIFICATION",
+  "script_sha256": "951055b87313523fd5acd1d06b263320ee84d9f7ee9f189504a2528c07476185",
+  "native_gpu_inference_executed": false,
+  "full_wan_model_inference_executed": false,
+  "v3_certified": false,
+  "full_factory_e2e_executed": false,
+  "production_ready": false,
+  "runtime_versions": {
+    "torch": "2.11.0",
+    "diffusers": "0.43.0",
+    "transformers": "5.19.0",
+    "numpy": "2.5.4",
+    "pillow": "13.0.0"
+  },
+  "verified_files": {
+    "vae/config.json": {
+      "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+      "revision": "b8fff7315c768468a5333511427288870b2e9635",
+      "sha256": "d996c340fe9a7df5d7371f76a7d8d6956f6c98256080074d8434fa5eeac11360",
+      "size_bytes": 1701,
+      "matched": true
+    },
+    "vae/diffusion_pytorch_model.safetensors": {
+      "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+      "revision": "b8fff7315c768468a5333511427288870b2e9635",
+      "sha256": "62cd18f19438e35b32ac63020e2852f566e9b02f46b6cdbd87972a356e3c6f4b",
+      "size_bytes": 2818777808,
+      "matched": true
+    }
+  },
+  "input": {
+    "source_sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+    "source_size_bytes": 170704,
+    "sha256": "e5003cf6a2c0a10b140a12b36dcd5f124e383368f0c41d3e02f3a7f9ccdb5bef",
+    "size_bytes": 896375,
+    "dimensions": [
+      1280,
+      704
+    ],
+    "conversion": "Actual predeclared photograph resized to 1280x704 with Pillow Lanczos; no generated input pixels."
+  },
+  "load_info": {
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "mismatched_keys": [],
+    "error_msgs": []
+  },
+  "component_tiling": {
+    "enabled": true,
+    "vae": {
+      "tile_height": 512,
+      "tile_width": 512,
+      "stride_height": 384,
+      "stride_width": 384
+    }
+  },
+  "parameters": {
+    "count": 704688668,
+    "devices": [
+      "cpu"
+    ],
+    "dtypes": [
+      "torch.float32"
+    ]
+  },
+  "roundtrip_seconds": 78.5817732498981,
+  "latent": {
+    "shape": [
+      1,
+      48,
+      1,
+      44,
+      80
+    ],
+    "minimum": -2.2511420249938965,
+    "maximum": 2.749499797821045,
+    "finite": true
+  },
+  "decoded": {
+    "shape": [
+      1,
+      3,
+      1,
+      704,
+      1280
+    ],
+    "minimum": -1.0,
+    "maximum": 1.0,
+    "finite": true,
+    "mean_absolute_error_0_to_1": 0.0038471510633826256,
+    "root_mean_square_error_0_to_1": 0.006141348276287317
+  },
+  "output": {
+    "file": "reconstructed.png",
+    "sha256": "9f8c21c1b3564b6c6310e306f7b439caf7b211a6a3c8cfe3399e58fd0d0964f2",
+    "size_bytes": 950022
+  }
+}

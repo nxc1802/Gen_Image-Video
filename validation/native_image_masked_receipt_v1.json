@@ -1,0 +1,185 @@
+{
+  "kind": "image_masked",
+  "version": 1,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-image-masked",
+  "run_record_sha256": "864407739d7485f6a21542e86642f27911f597c2a8f09f585718984a6611fdbe",
+  "artifacts": [
+    {
+      "file": "validation/native_image_masked_v1/installation.log",
+      "sha256": "a02e33b5a247013c7f2c9d1e660d0e8790ec6abbffe28d73b7381aa26fa8187d"
+    },
+    {
+      "file": "validation/native_image_masked_v1/runtime_packages.json",
+      "sha256": "c58137756206895ea21e86d8a086074882c4dda1e817b642f4ec162c29d8f465"
+    },
+    {
+      "file": "validation/native_image_masked_v1/wave_c.json",
+      "sha256": "cd82ec08bee7c516dcd8437173ebde2b81f5272e58b93549d20d6146bb9c87cb"
+    },
+    {
+      "file": "validation/native_image_masked_v1/driver.log",
+      "sha256": "20967cdd0e400efcd1058b0c5a3cf194e99a8e9cf8b8f5e86c0f973e51b0343d"
+    },
+    {
+      "file": "validation/native_image_masked_v1/setup.json",
+      "sha256": "921031dcdee95d91749b65f74cda742913d269c3a05adb38db5769e5b1d39cc4"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/observation.json",
+      "sha256": "eb975a5ee1b26188a0efd876a1e8238383d4ae98dce1af380115b5c2ef5b92fa"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/image-outpaint-background-1.json",
+      "sha256": "e7bdf266946c5ff9b354f043c597533df9fb7297dc0b5b928245daf56303d48b"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/image-inpaint-blue-patch-2.json",
+      "sha256": "2d697432f4c098b012ce856a34237b964a2087aacf6df24a1af0243ca1353bfe"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/image-inpaint-blue-patch-3.json",
+      "sha256": "fcd2ff77bbd3edb41ac9cdb0d7d444f47541cfb8458cb55cd4fd9a98388ac105"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/backend.log",
+      "sha256": "c430dcf8ee42833ad04e3ac834592c6d0a07e211814690f71cd821a9d48998f9"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/image-outpaint-background-0.json",
+      "sha256": "165feef66e9900370d44828b053e7852f4d0655499ef39bba29474c249e4fdc7"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/image-inpaint-blue-patch-0.json",
+      "sha256": "498767e7a51b9a4f0f28f2c51a8a1f3b0adbc281c5d98aa52973e449581c6272"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/image-inpaint-blue-patch-1.json",
+      "sha256": "e0e2c672171a0a9a9bc055191260918821d9417c433bb9c69146e02d92538552"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/image-outpaint-background-3.json",
+      "sha256": "15d8e523ab6e23a99cf89b34a3bb1cc424a399e36997ceabd08a85d7728adb3f"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/image-outpaint-background-2.json",
+      "sha256": "9a103dd13efb8e37c335ab96b1bcb2ad5efa3c95829efc4cf735f34fbacf9d27"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/qwen_image_gguf_nodes_upstream.py",
+      "sha256": "16be3b08b13de6279fc432addc628320019fcb24963cbc6b52b248de8f06316e"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/qwen_image_native_dependencies.json",
+      "sha256": "8deabe3b38b647c68fb68e6efe7b340ec890e8a70c13b465ff3407ecfd9c60c9"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/qwen_image_gguf_loader_upstream.py",
+      "sha256": "ffff39d209ce22654e67378b80c6a3ca3d349cf8f00ec267085bd16e194730c2"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/factory_qwen_latent/__init__.py",
+      "sha256": "f240567347d90b3bc17fa931508950e6b952795c68779609ceca4de6b4bec313"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/nodes.py",
+      "sha256": "1ffde231abd1da460290cfd8266af101250ff3e7a518dbfbe22d029b6505ab2a"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/requirements.txt",
+      "sha256": "7f044de2d008cd7a4db54c27efc206327517bca4eb3e0f0835cf769b98d9de6c"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/loader.py",
+      "sha256": "a607c9acf3bcea3dccab4c9d72bf908ca6f41903ab4705694c689f8321c13ffc"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/pyproject.toml",
+      "sha256": "05df17550e375d558e28f099f8ebf7b833835a97d47bf1a071b49a37a7a5b3fa"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/README.md",
+      "sha256": "db22b62785c762a128bf2207fc33937254e4fe4164bbabaf5e56c99eab0ff07a"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/.gitignore",
+      "sha256": "7094032e0194e23b5b2755e295303417c4299072b700e244aee0bd4fcd43347f"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/__init__.py",
+      "sha256": "7ba473d8254a2867534565bb0b2ae194f1c55d5c2c00e30b6dbaf76be7d7a6b7"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/ops.py",
+      "sha256": "b927e24a7b00c181e9511900fb5afde45464793cf460e1d39a5e736ba093ce64"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/dequant.py",
+      "sha256": "215369438d96c372c09eb8701eec3c3b0348084c96dd3ea83872601ebed42017"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/README.md",
+      "sha256": "bb973b16eb55c6ac09f796839e28359c1825b4dd341ea8be22c7480e30827497"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/read_tensors.py",
+      "sha256": "8edead4f867f3573518b9620157129f086a824c9a941f26adcf52db9b589098a"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/convert.py",
+      "sha256": "a55249b9eadd1f92ff32583784e31d52eafbdf059410a8abe0495e5e8cf6140d"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/fix_5d_tensors.py",
+      "sha256": "a9368a0a5695903e48c53ed7f817384a86493347d602daa62a773483396a8d49"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/lcpp.patch",
+      "sha256": "3f486d5be5a359061daa3ff208acae5afe6233262894b44103843914d7b986fa"
+    },
+    {
+      "file": "validation/native_image_masked_v1/qwen-image-2.1/adapter_assets/comfy_base/custom_nodes/ComfyUI-GGUF/tools/fix_lines_ending.py",
+      "sha256": "67bce5c00f119694835b5feb4931ccb90eba972590aca77206752fcd6e2a397b"
+    },
+    {
+      "file": "validation/native_image_masked_v1/inputs/astronaut/source.bin",
+      "sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5"
+    },
+    {
+      "file": "validation/native_image_masked_v1/inputs/astronaut/input_identity.json",
+      "sha256": "d2955231f7dd7e240de4dd08f977e791c628fb4261da1a150d81042faab6ab09"
+    },
+    {
+      "file": "validation/native_image_masked_v1/inputs/outpaint_canvas/source.bin",
+      "sha256": "d8a94cda090b9376af51c4e41421f992117e3e33a89adbce0b464e495b93199d"
+    },
+    {
+      "file": "validation/native_image_masked_v1/inputs/outpaint_canvas/input_identity.json",
+      "sha256": "306a6e624237d9fbdec5cd1f8e9a6056f059018312b2bd3feb2d357465579fcf"
+    },
+    {
+      "file": "validation/native_image_masked_v1/inputs/outpaint_mask/source.bin",
+      "sha256": "0ae89067187c37ea66a79c38ce0309d46c6a127da9e4d27d2df488ce459229f5"
+    },
+    {
+      "file": "validation/native_image_masked_v1/inputs/outpaint_mask/input_identity.json",
+      "sha256": "e2048fa1502aaf06a51efd625f820f417740f594e3dfd4972aa5beede5124809"
+    },
+    {
+      "file": "validation/native_image_masked_v1/inputs/inpaint_mask/source.bin",
+      "sha256": "db11452e174a28d5c0d9e47ffec0e893e298cfaee9e6b784d778ed966f319c0d"
+    },
+    {
+      "file": "validation/native_image_masked_v1/inputs/inpaint_mask/input_identity.json",
+      "sha256": "669d9464320b0524e5ef9cd050bd080c407e239eacac3448f55ae74feaa08200"
+    }
+  ]
+}

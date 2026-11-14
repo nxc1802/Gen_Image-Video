@@ -1,0 +1,43 @@
+apiVersion: factory.ai/v1
+kind: ServiceManifest
+metadata:
+  id: rerank-service
+  name: "vLLM Qwen3 Rerank Daemon"
+  subsystem: embedding
+  version: 1.0.0
+
+network:
+  static_domain: "${NGROK_DOMAIN_RERANK}"
+  internal_port: 8084
+  protocol: http
+  auth_required: true
+  cors_origins:
+    - "https://${NGROK_DOMAIN_STUDIO}"
+    - http://localhost:3000
+
+health_check:
+  endpoint: /health
+  interval_seconds: 15
+  timeout_seconds: 5
+  unhealthy_threshold: 3
+
+framework:
+  type: vllm
+  version: ">=0.31.0"
+  entrypoint: "python -m services.embedding.launcher.run_rerank_service --port 8084"
+
+hardware:
+  gpu_required: true
+  gpu_device_index: 1
+  min_vram_gb: 4.0
+  min_ram_gb: 8.0
+  cuda_version_min: "12.1"
+
+supported_modalities:
+  - embedding
+
+auth_policy:
+  scheme: bearer
+  jwt_audience: factory-rerank-api
+  rate_limit_rpm: 120
+  allow_unauthenticated: false

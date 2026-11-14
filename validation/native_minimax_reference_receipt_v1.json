@@ -1,0 +1,85 @@
+{
+  "kind": "minimax_reference",
+  "version": 1,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-reference",
+  "run_record_sha256": "1ab9a83a0dcda6c11da104b511ba0b1ca88edd2cb130cc58e9dd8fc0390fcd7c",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_reference_v1/installation.log",
+      "sha256": "cb6b9842b9bb8b61ef9cf62f752f64389d143fa0d9ec8b2427f67df138aca69b"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/setup.json",
+      "sha256": "711e46aee93580113046340dffe49f138f29af6c74281bf24509f155d795e547"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/driver.log",
+      "sha256": "b1cbb94d3349bad08ba1a10725d9bdf569a213174f64cd5f800e7498c7054761"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/wave_d.json",
+      "sha256": "88af0f051de86b61e13fb56d55d2572fdb7bfc09ee64774386bf3192347703aa"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/runtime_packages.json",
+      "sha256": "4430a840141ccfeaec26e97c4002e53c87f8ec43daa3436ced9eaad4c3c8ce03"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/minimax-h3-reference/native_node_schemas.json",
+      "sha256": "c19f5c8099058dd5c0250e62a344e7790594e24a6ab1ac3413cb656d764bad13"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/minimax-h3-reference/observation.json",
+      "sha256": "cfc93a9290f90820f0b3517ebcd62b6417fd26bbf278028e3bf749a807361aa7"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/minimax-h3-reference/minimax-reference-astronaut-0.json",
+      "sha256": "ac7f6446882b62e080c8780bbe22b3c6be082927f77d36a28bb6d3ca745c884d"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/minimax-h3-reference/backend.log",
+      "sha256": "1e9882af77ba580743e0588155ec6c3425124ef1664f0fc548ac3370eaa53a79"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/minimax-h3-reference/minimax-reference-astronaut-1.json",
+      "sha256": "60c4e5a44d94a9f1c54913217c56eb471eccfaffa0ff38178e4815aee5687358"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/minimax-h3-reference/minimax-reference-astronaut-3.json",
+      "sha256": "a0ab0b1f344137dcc4ca2e9c8b5595127a9073c3a4db452fbcdded560acc37cc"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/minimax-h3-reference/minimax-reference-astronaut-2.json",
+      "sha256": "43d51b288761fa23357b3e346ac6b3c0281ce1eec7daede57618de4acda84d04"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/inputs/astronaut_first/source.bin",
+      "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/inputs/astronaut_first/input_identity.json",
+      "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+      "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+      "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+      "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+    },
+    {
+      "file": "validation/native_minimax_reference_v1/minimax-h3-reference/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+      "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+    }
+  ]
+}

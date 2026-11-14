@@ -1,0 +1,7 @@
+{
+  "classification": "DIRECT_REVIEW_OF_ALL_51_CPU_VAE_COMPONENT_FRAMES_NOT_TRANSFORMER_OR_GPU_CERTIFICATION",
+  "report_sha256": "78203d3d82f321764dfc0508f1680ba4907033777a42a1d40f2aac726aad541d",
+  "all_frames_reviewed": true,
+  "observation": "The real-photo crop-sequence roundtrip is coherent. Joint held-first conditioning creates conspicuous double-image corruption in frames 13-16 and is rejected. Joint linear endpoint context preserves recognizable subject/scene and the final photo (last MAE .026836), with mild transient double contours around frames 13-15. This is only a codec-feasibility candidate for a GPU experiment, not artifact-free quality or FL2V acceptance. Generated Transformer context may differ substantially from this diagnostic photo-crop context.",
+  "production_ready": false
+}

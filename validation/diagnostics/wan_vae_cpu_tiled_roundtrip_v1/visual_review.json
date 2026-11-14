@@ -1,0 +1,13 @@
+{
+  "classification": "DIRECT_VISUAL_REVIEW_OF_LOCAL_CPU_TILED_VAE_COMPONENT_ONLY_NOT_NATIVE_T4_CERTIFICATION",
+  "execution_report_sha256": "3bc2f97fa03dc3f8d0f4f3dcf341e97cf2f4687747a58259c82e63ea0aa1c5e1",
+  "files": {
+    "input.png": "e5003cf6a2c0a10b140a12b36dcd5f124e383368f0c41d3e02f3a7f9ccdb5bef",
+    "reconstructed.png": "9f8c21c1b3564b6c6310e306f7b439caf7b211a6a3c8cfe3399e58fd0d0964f2"
+  },
+  "all_recorded_input_and_reconstructed_frames_reviewed": true,
+  "observation": "The actual resized astronaut photo is coherently reconstructed at 1280x704 by the original FP32 VAE with native 512/384 tiling. The person, orange suit, flag, helmet and natural colors remain clear, without severe color blocks or obvious tile seams. This single CPU frame does not validate generated-video meaning, temporal CUDA decoding or GPU memory feasibility. Its lower pixel error must not be interpreted as a quality improvement over differently sized prior inputs.",
+  "v3_certified": false,
+  "production_ready": false,
+  "full_factory_e2e_executed": false
+}

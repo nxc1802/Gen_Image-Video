@@ -21,13 +21,13 @@ from factory.apps.control_api.src.telemetry.middleware import TelemetryTracingMi
 
 
 @pytest.mark.asyncio
-async def test_job_lifecycle_manager_persists_trace_id():
+async def test_job_lifecycle_manager_persists_trace_id(routing_registry):
     repo = InMemoryJobStore()
     await repo.initialize()
     broker = MemoryQueueBroker()
     await broker.initialize()
     stream_mgr = StreamManager(repository=repo)
-    manager = JobLifecycleManager(repository=repo, broker=broker, stream_manager=stream_mgr)
+    manager = JobLifecycleManager(repository=repo, broker=broker, stream_manager=stream_mgr, deployment_registry=routing_registry([("qwen-text", [0, 1])]))
 
     req = JobSubmissionRequest(
         service="text",

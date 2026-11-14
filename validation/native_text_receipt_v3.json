@@ -1,0 +1,117 @@
+{
+  "kind": "text",
+  "version": 3,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-text",
+  "run_record_sha256": "3e41b6f347b1a06481ed28a2a3051e8466e12c8a8edc1e073a070e5cdb4e5307",
+  "artifacts": [
+    {
+      "file": "validation/native_text_v3/installation.log",
+      "sha256": "b20bf4625e5f685156a702af429694735412bdda577402fa04f0b9c6dda1204a"
+    },
+    {
+      "file": "validation/native_text_v3/driver.log",
+      "sha256": "69ee0487bd9af6ae8f7ec845bd291c8ce7c3614903175db2b9d96abb0af9ef23"
+    },
+    {
+      "file": "validation/native_text_v3/setup.json",
+      "sha256": "e70d46f0f2210b2a2552fd4fb66dc43cdcfc15a2c7de941f99843ea8e88cab8d"
+    },
+    {
+      "file": "validation/native_text_v3/wave_a.json",
+      "sha256": "fdd691b66a9659243834fd101024ef3dc166c00581df8999b2909432dbee3079"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-responses-2.json",
+      "sha256": "127af812eb7754e390d4ded0a4cb53d2134dbf4a0c31542e11f2132d22bd6611"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-tool-weather-3.json",
+      "sha256": "cae38a750d0a6b1d329f19753e281b8d46b94ad65e74ac820308808206ad9a2a"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-streaming-3.json",
+      "sha256": "d03a9e4e4453a87f94827f61283fd98ecd06b1af8fc6eea3c6b1e21743bd4341"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-arithmetic-1.json",
+      "sha256": "fa83ab4a4abf65a418f232f7486e6abff12df9a9d64f875445a577a08f6f0166"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-arithmetic-0.json",
+      "sha256": "3f706b9775f45f09a1d881aeec5899fd3ae6a5314a9fa06974021382144e8115"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-arithmetic-3.json",
+      "sha256": "3a564e2a8606f4c464fad5ba2fafcb09388cdf8fd10a532d15647b052a6faee3"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-streaming-0.json",
+      "sha256": "f248887d3bb8de6ae2f1fe369fee95352a2f94327f4c5d7c62d26d7906aea57e"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-responses-0.json",
+      "sha256": "3e4d5312b2db6711dfaf094f4fdcbab922b07741990fd9770d463b55c8db2f33"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-streaming-2.json",
+      "sha256": "2ac19dbd634ab1fd1a6a3b437045a97d5f26cb1ec85a604136138c26e4361783"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-tool-weather-1.json",
+      "sha256": "55a14485928eb7b059cd7391fa3278e7b750a29fc4967ace5abcdb65680afd3d"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-responses-3.json",
+      "sha256": "b5c548f9364fbf06e5e2197e9dd0f9631ae7e8a14342f6b6bb1616bc9ff43138"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-streaming-1.json",
+      "sha256": "527c3ff5cf959988ec584dbe649848fa676a1ee827ab1f96d6bf8e4da684e846"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-structured-city-2.json",
+      "sha256": "b185a6846aa6b00365ae77b518f593ebc38928f76b2b6c8100ba9f643a0cda00"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-tool-weather-0.json",
+      "sha256": "0816f8f671efe551d61f7b38a987041e71ee7c77a6bc7c786f551bca9f2ac1c5"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-structured-city-3.json",
+      "sha256": "f94e7ee27c5559a85919e1fadb5521a47bcf3bd7603ead4a80a7e0ef56d08a3e"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-structured-city-1.json",
+      "sha256": "58a31c102cfdfea018a8854f827847b3bc71154225ef5865fc0b74c28af93039"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-arithmetic-2.json",
+      "sha256": "8ddb934ef0069af9b1431323375fd0ccab2733ced73f64547e243fa5bf7c0d86"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-responses-1.json",
+      "sha256": "93e64c6d39f35d09170ac394b0c4182cfaa71bc14aa3b0c99ff93646968ff9b0"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/backend.log",
+      "sha256": "1e85a3410ac8c5b32f3a3bb1303188533d3067e0775a479965fa0ddbfe6c00b3"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-tool-weather-2.json",
+      "sha256": "2ce5f969a8ded68d5f79064ae24e63fa2a9c651ba860c0a4caecc96927a5b77c"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/text-structured-city-0.json",
+      "sha256": "f822bcee42c02eb4b8e3b48ed995173808588f68e0e8617b85ddbe4c5ba78c7e"
+    },
+    {
+      "file": "validation/native_text_v3/qwen-text/observation.json",
+      "sha256": "382c72425f12398d80fb90186ba1900c532683717fd0a2a08c052b81845cedf6"
+    }
+  ]
+}

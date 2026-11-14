@@ -5,6 +5,9 @@ Verifies timeout enforcement, 504 GATEWAY_TIMEOUT responses, streaming exemption
 """
 import asyncio
 import pytest
+
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.testclient import TestClient

@@ -29,6 +29,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from factory_auth import verify_bearer_token
+from factory.core.legacy import forbid_legacy_production
 from factory_contracts.errors import InvalidRequestError
 from factory_contracts.jobs.job_contract import ArtifactReference
 from factory.apps.control_api.src.api.errors import register_exception_handlers
@@ -40,6 +41,7 @@ from services.enhancement.processors.video_sr import VideoSuperResolutionProcess
 from services.text.src.multimodal import validate_url_security
 
 app = FastAPI(
+    dependencies=[Depends(forbid_legacy_production)],
     title="Factory v4 Media Enhancement Service",
     version="1.0.0",
     description="Dedicated Media Post-Processing and Enhancement Subsystem",

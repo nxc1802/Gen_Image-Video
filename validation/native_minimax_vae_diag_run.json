@@ -1,0 +1,25 @@
+{
+  "observed_at_utc": "2026-11-14T05:51:21.767174+00:00",
+  "slug": "factory-phase-8-native-minimax-vae-diag",
+  "response": {
+    "versionNumberNullable": 1,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-minimax-vae-diag",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-vae-diag",
+    "versionNumber": 1,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144937883
+  },
+  "kernel_code_sha256": "05faf8916d3519d01f8054a9e7fad862eedecbc03c475a81619429442568f39e",
+  "source_bundle_sha256": "7266e8243bfef0b0161a8e4711619893f4263fd770894f802d13151fdd613f94",
+  "validation_bundle_sha256": "57048ca7ea8900f65740dc0c814f36541c59e04a518830de71a8d5a970fd4475",
+  "accelerator": "NvidiaTeslaT4",
+  "driver_timeout_seconds": 7200,
+  "session_timeout_seconds": 10800
+}

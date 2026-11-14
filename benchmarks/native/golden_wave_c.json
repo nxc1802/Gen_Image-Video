@@ -1,0 +1,458 @@
+{
+  "classification": "PREDECLARED_NATIVE_IMAGE_GOLDENS_NOT_INFERENCE_EVIDENCE",
+  "evaluation_scope": "Each exact checkpoint and declared capability: one warmup and three measured native calls with distinct predeclared seeds. CPU CLIP and pixel oracles test these recorded examples only; no general quality certification or public readiness.",
+  "assets": {
+    "astronaut": {
+      "url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+      "sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+      "size_bytes": 791555,
+      "mime_type": "image/png"
+    },
+    "chelsea": {
+      "url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/chelsea.png",
+      "sha256": "596aa1e7cb875eb79f437e310381d26b338a81c2da23439704a73c4651e8c4bb",
+      "size_bytes": 240512,
+      "mime_type": "image/png"
+    },
+    "coffee": {
+      "url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/coffee.png",
+      "sha256": "cc02f8ca188b167c775a7101b5d767d1e71792cf762c33d6fa15a4599b5a8de7",
+      "size_bytes": 466706,
+      "mime_type": "image/png"
+    },
+    "inpaint_mask": {
+      "recipe": {
+        "kind": "alpha_mask",
+        "size": [
+          512,
+          512
+        ],
+        "region": [
+          32,
+          240,
+          128,
+          336
+        ]
+      },
+      "sha256": "db11452e174a28d5c0d9e47ffec0e893e298cfaee9e6b784d778ed966f319c0d",
+      "size_bytes": 1049236,
+      "mime_type": "image/png"
+    },
+    "outpaint_canvas": {
+      "recipe": {
+        "kind": "expanded_canvas",
+        "size": [
+          640,
+          512
+        ],
+        "source": "astronaut",
+        "fill_rgba": [
+          0,
+          255,
+          0,
+          255
+        ]
+      },
+      "sha256": "d8a94cda090b9376af51c4e41421f992117e3e33a89adbce0b464e495b93199d",
+      "size_bytes": 1311400,
+      "mime_type": "image/png"
+    },
+    "outpaint_mask": {
+      "recipe": {
+        "kind": "alpha_mask",
+        "size": [
+          640,
+          512
+        ],
+        "region": [
+          512,
+          0,
+          640,
+          512
+        ]
+      },
+      "sha256": "0ae89067187c37ea66a79c38ce0309d46c6a127da9e4d27d2df488ce459229f5",
+      "size_bytes": 1311400,
+      "mime_type": "image/png"
+    }
+  },
+  "cases": [
+    {
+      "id": "image-standard-red-apple",
+      "model": "qwen-image-2.1",
+      "capability": "image.text_to_image",
+      "operation": "image",
+      "assets": [],
+      "asset_identities": {},
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "A studio photograph of a single bright red apple on a plain white table, centered, realistic.",
+        "width": 512,
+        "height": 512,
+        "steps": 30,
+        "cfg": 1.0
+      },
+      "expected": {
+        "positive_text": "a photograph of a red apple on a white table",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a green tree",
+          "a photograph of a black dog"
+        ],
+        "minimum_text_cosine": 0.24,
+        "minimum_text_margin": 0.02,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "color": {
+          "name": "red",
+          "minimum_fraction": 0.01
+        }
+      }
+    },
+    {
+      "id": "image-turbo-red-apple",
+      "model": "qwen-image-2.1-turbo",
+      "capability": "image.text_to_image",
+      "operation": "image",
+      "assets": [],
+      "asset_identities": {},
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "A studio photograph of a single bright red apple on a plain white table, centered, realistic.",
+        "width": 512,
+        "height": 512,
+        "steps": 8,
+        "cfg": 1.0
+      },
+      "expected": {
+        "positive_text": "a photograph of a red apple on a white table",
+        "negative_texts": [
+          "a photograph of a blue car",
+          "a photograph of a green tree",
+          "a photograph of a black dog"
+        ],
+        "minimum_text_cosine": 0.24,
+        "minimum_text_margin": 0.02,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "color": {
+          "name": "red",
+          "minimum_fraction": 0.01
+        }
+      }
+    },
+    {
+      "id": "image-i2i-pencil-v2",
+      "model": "qwen-image-2.1",
+      "capability": "image.image_to_image",
+      "operation": "image",
+      "assets": [
+        "astronaut"
+      ],
+      "asset_identities": {
+        "astronaut": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "Transform this astronaut photograph into a black and white pencil drawing. Keep the same person, spacesuit and composition. No color.",
+        "width": 512,
+        "height": 512,
+        "steps": 30,
+        "cfg": 1.0,
+        "image": "@astronaut",
+        "strength": 1.0
+      },
+      "expected": {
+        "positive_text": "a black and white pencil drawing of an astronaut",
+        "negative_texts": [
+          "a colorful photograph of an astronaut",
+          "a photograph of a dog"
+        ],
+        "minimum_text_cosine": 0.24,
+        "minimum_text_margin": 0.02,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "maximum_saturation": 0.2,
+        "reference_cosines": {
+          "astronaut": 0.4
+        }
+      }
+    },
+    {
+      "id": "image-inpaint-blue-patch",
+      "model": "qwen-image-2.1",
+      "capability": "image.inpaint",
+      "operation": "image",
+      "assets": [
+        "astronaut",
+        "inpaint_mask"
+      ],
+      "asset_identities": {
+        "astronaut": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+        "inpaint_mask": "db11452e174a28d5c0d9e47ffec0e893e298cfaee9e6b784d778ed966f319c0d"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "Replace the masked patch on the left sleeve with solid blue fabric. Preserve the astronaut and the rest of the photograph.",
+        "width": 512,
+        "height": 512,
+        "steps": 30,
+        "cfg": 1.0,
+        "image": "@astronaut",
+        "mask": "@inpaint_mask"
+      },
+      "expected": {
+        "positive_text": "a photograph of an astronaut with a blue fabric patch on the sleeve",
+        "negative_texts": [
+          "a photograph of a dog",
+          "a photograph of a landscape"
+        ],
+        "minimum_text_cosine": 0.24,
+        "minimum_text_margin": 0.02,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "color": {
+          "name": "blue",
+          "minimum_fraction": 0.1,
+          "region": [
+            32,
+            240,
+            128,
+            336
+          ]
+        },
+        "preserve": {
+          "asset": "astronaut",
+          "mask": "inpaint_mask",
+          "maximum_mean_absolute_error": 0.12
+        }
+      }
+    },
+    {
+      "id": "image-outpaint-background",
+      "model": "qwen-image-2.1",
+      "capability": "image.outpaint",
+      "operation": "image",
+      "assets": [
+        "astronaut",
+        "outpaint_canvas",
+        "outpaint_mask"
+      ],
+      "asset_identities": {
+        "astronaut": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+        "outpaint_canvas": "d8a94cda090b9376af51c4e41421f992117e3e33a89adbce0b464e495b93199d",
+        "outpaint_mask": "0ae89067187c37ea66a79c38ce0309d46c6a127da9e4d27d2df488ce459229f5"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "Fill the masked right side by extending the warm beige interior background of the astronaut photograph. Remove the green area, keep the original astronaut unchanged.",
+        "width": 640,
+        "height": 512,
+        "steps": 30,
+        "cfg": 1.0,
+        "image": "@outpaint_canvas",
+        "mask": "@outpaint_mask"
+      },
+      "expected": {
+        "positive_text": "a photograph of an astronaut in a beige interior",
+        "negative_texts": [
+          "a photograph of an astronaut on a bright green background",
+          "a photograph of a dog"
+        ],
+        "minimum_text_cosine": 0.24,
+        "minimum_text_margin": 0.02,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "color": {
+          "name": "beige",
+          "minimum_fraction": 0.2,
+          "region": [
+            512,
+            0,
+            640,
+            512
+          ]
+        },
+        "preserve": {
+          "asset": "outpaint_canvas",
+          "mask": "outpaint_mask",
+          "maximum_mean_absolute_error": 0.12
+        }
+      }
+    },
+    {
+      "id": "image-edit-blue-suit",
+      "model": "qwen-image-2.1",
+      "capability": "image.instruction_edit",
+      "operation": "image",
+      "assets": [
+        "astronaut"
+      ],
+      "asset_identities": {
+        "astronaut": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "Change the orange spacesuit to a bright blue spacesuit. Keep the same person, face and composition.",
+        "width": 512,
+        "height": 512,
+        "steps": 30,
+        "cfg": 1.0,
+        "image": "@astronaut"
+      },
+      "expected": {
+        "positive_text": "a photograph of an astronaut wearing a blue spacesuit",
+        "negative_texts": [
+          "a photograph of an astronaut wearing an orange spacesuit",
+          "a photograph of a car"
+        ],
+        "minimum_text_cosine": 0.24,
+        "minimum_text_margin": 0.02,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "color": {
+          "name": "blue",
+          "minimum_fraction": 0.2,
+          "region": [
+            20,
+            195,
+            350,
+            495
+          ]
+        },
+        "preserve": {
+          "asset": "astronaut",
+          "region": [
+            150,
+            20,
+            300,
+            180
+          ],
+          "maximum_mean_absolute_error": 0.25
+        }
+      }
+    },
+    {
+      "id": "image-reference-cat",
+      "model": "qwen-image-2.1",
+      "capability": "image.reference_image",
+      "operation": "image",
+      "assets": [
+        "chelsea"
+      ],
+      "asset_identities": {
+        "chelsea": "596aa1e7cb875eb79f437e310381d26b338a81c2da23439704a73c4651e8c4bb"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "Use the cat in the reference image. Show this same brown tabby cat sitting on a large green grassy lawn, full body, realistic photograph.",
+        "width": 512,
+        "height": 512,
+        "steps": 30,
+        "cfg": 1.0,
+        "reference_images": [
+          "@chelsea"
+        ]
+      },
+      "expected": {
+        "positive_text": "a photograph of a brown tabby cat sitting on green grass",
+        "negative_texts": [
+          "a close up photograph of a cat face",
+          "a photograph of a cup of coffee",
+          "a photograph of a car"
+        ],
+        "minimum_text_cosine": 0.24,
+        "minimum_text_margin": 0.02,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "color": {
+          "name": "green",
+          "minimum_fraction": 0.1
+        },
+        "reference_cosines": {
+          "chelsea": 0.35
+        }
+      }
+    },
+    {
+      "id": "image-multi-cat-coffee",
+      "model": "qwen-image-2.1",
+      "capability": "image.multi_reference",
+      "operation": "image",
+      "assets": [
+        "chelsea",
+        "coffee"
+      ],
+      "asset_identities": {
+        "chelsea": "596aa1e7cb875eb79f437e310381d26b338a81c2da23439704a73c4651e8c4bb",
+        "coffee": "cc02f8ca188b167c775a7101b5d767d1e71792cf762c33d6fa15a4599b5a8de7"
+      },
+      "seed_sequence": [
+        314159,
+        271828,
+        161803,
+        141421
+      ],
+      "request": {
+        "prompt": "Combine both reference subjects into one realistic photograph: the same brown tabby cat sitting beside a large white cup of coffee on a table. Both the cat and the coffee cup must be clearly visible and equally prominent.",
+        "width": 512,
+        "height": 512,
+        "steps": 30,
+        "cfg": 1.0,
+        "reference_images": [
+          "@chelsea",
+          "@coffee"
+        ]
+      },
+      "expected": {
+        "positive_text": "a photograph of a brown tabby cat next to a large white cup of coffee on a table",
+        "negative_texts": [
+          "a photograph of only a cat",
+          "a photograph of only a cup of coffee",
+          "a photograph of a red apple"
+        ],
+        "minimum_text_cosine": 0.24,
+        "minimum_text_margin": 0.01,
+        "verifier_pins_sha256": "53748bac360efc0d0340565bddf6437f9bf5030eb5e5df7c8c84b896777ac84d",
+        "reference_cosines": {
+          "chelsea": 0.3,
+          "coffee": 0.3
+        }
+      }
+    }
+  ],
+  "excluded": {
+    "qwen-image-2.1-uncensored": "DISABLED; no run or fallback",
+    "controlnet.pose": "Not declared: no pinned auxiliary weights",
+    "controlnet.depth": "Not declared: no pinned auxiliary weights",
+    "controlnet.canny": "Not declared: no pinned auxiliary weights"
+  }
+}

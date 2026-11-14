@@ -1,0 +1,82 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-embedding
+  family: qwen-embedding
+  display_name: Qwen Embedding & Reranker
+  service_id: embed-service
+  version: 1.0.0
+  license: Apache-2.0
+  license_url: https://huggingface.co/Qwen/Qwen3-Embedding-0.6B/blob/main/LICENSE
+  commercial_use: true
+weights:
+  files:
+    primary:
+      provider: huggingface
+      repository: Qwen/Qwen3-Embedding-0.6B
+      revision: 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3
+      path: model.safetensors
+      sha256: 0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd
+      size_bytes: 1191586416
+  components:
+    reranker: Qwen/Qwen3-Reranker-0.6B
+  format: safetensors
+  quantization: none
+  default_precision: fp16
+hardware:
+  min_vram_gb: 4.0
+  context_window: 8192
+  preferred_gpu: t4
+  preferred_gpu_index: 1
+  quantization_format: none
+  offload_ram_gb: 0.0
+  allocation_policy: single_gpu
+capabilities:
+  text_embedding: true
+  multimodal_embedding: false
+  reranking: true
+status: partial
+coverage_percent: 66.67
+missing_capabilities:
+- multimodal_embedding
+validation_status: pending_live
+validation_notes: 'Phase 0 audit: no admissible per-capability V3/V4 evidence on Kaggle
+  Dual Tesla T4 with exact verified weights and semantic validation. Historical claims
+  are frozen in validation/baseline.json; full/partial and coverage describe implementation
+  claims only, not production readiness. Static installed/checkpoint_valid/backend_ready
+  flags are legacy configuration claims, not session attestation; replacement is deferred
+  to Phases 1 and 3.'
+limits:
+  max_context_tokens: 8192
+revision: 1.0.0
+dependencies:
+- torch>=2.4.0
+- transformers>=4.40.0
+task_variant_matrix:
+  text_embedding:
+  - standard
+  reranking:
+  - standard
+validated_hardware_profiles: []
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+capabilities_truth:
+  text_embedding:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  multimodal_embedding:
+    declared: true
+    implemented: false
+    live_verified: false
+    evidence_run_id: null
+  reranking:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+aliases:
+- qwen_embedding

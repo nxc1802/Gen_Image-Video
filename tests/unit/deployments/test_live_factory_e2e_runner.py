@@ -9,6 +9,9 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 import pytest
 
+# Legacy compatibility contracts with simulated readiness; no inference evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
+
 from deployments.kaggle.live_factory_e2e_runner import (
     BackendUnavailableError,
     HardwareAttestationError,
@@ -152,3 +155,10 @@ class TestLiveFactoryE2ERunnerStrictContracts:
             assert res["lifecycle_stages"]["inference"]["prompt_id"] == "prompt-e2e-ok"
             assert res["lifecycle_stages"]["download_and_cleanup"]["scratch_disk_purged"] is True
             assert res["lifecycle_stages"]["download_and_cleanup"]["bytes_received"] == len(valid_png_bytes)
+
+
+@pytest.fixture(autouse=True)
+def explicit_legacy_runner_app(monkeypatch):
+    """The retained runner's import is a test double; never Factory E2E evidence."""
+    from factory.apps.control_api.src.legacy import app
+    monkeypatch.setattr("factory.apps.control_api.src.main.app",app)

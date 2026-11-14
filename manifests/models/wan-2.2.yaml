@@ -1,109 +1,374 @@
-apiVersion: factory.ai/v1
+apiVersion: factory.ai/v2
 kind: ModelManifest
 metadata:
   id: wan-2.2
   family: wan-video
-  display_name: "Wan 2.2 Video Family"
+  display_name: Wan 2.2 Video Family
   service_id: video-service
-  version: "2.2.0"
-  license: "Apache-2.0"
-  license_url: "https://huggingface.co/Wan-AI/Wan2.1-T2V-14B/blob/main/LICENSE.txt"
+  version: 2.2.0
+  license: apache-2.0
+  license_url: https://huggingface.co/Wan-AI/Wan2.2-TI2V-5B-Diffusers/blob/b8fff7315c768468a5333511427288870b2e9635/README.md
   commercial_use: true
-
+aliases:
+- wan
+- wan2.2
+- wan_2.2
+engine: video
 weights:
-  primary_checkpoint: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
-  repository: "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
-  checkpoint_revision: "f2c81a5e18641957de9a31a7f05eb1b702758bf8"
-  weights_file: "diffusion_pytorch_model.safetensors"
+  files:
+    file_0:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: model_index.json
+      sha256: 6a72faeb564b0e894aea8fc4ef27241106eb739e8584e869b61589a65473add7
+      size_bytes: 499
+      destination: model/model_index.json
+    file_1:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: scheduler/scheduler_config.json
+      sha256: 571a3eed68bcd943a61b9fea8efa9e141472216ada59f928c8b5128ce24b32e0
+      size_bytes: 820
+      destination: model/scheduler/scheduler_config.json
+    file_2:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: text_encoder/config.json
+      sha256: a2bcb24699f6c009a2427432bdd483ef8b2b42a712abc9503759cdc77d171f07
+      size_bytes: 855
+      destination: model/text_encoder/config.json
+    file_3:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: text_encoder/model-00001-of-00003.safetensors
+      sha256: a8e861969c7433e707cc5a74065d795d36cca07ec96eb6763eb4083df7248f58
+      size_bytes: 4935812536
+      destination: model/text_encoder/model-00001-of-00003.safetensors
+    file_4:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: text_encoder/model-00002-of-00003.safetensors
+      sha256: d57d948ece4837d850b7a859a4415121d57cacf8b9ee1d4db200c67f592902d7
+      size_bytes: 4983103192
+      destination: model/text_encoder/model-00002-of-00003.safetensors
+    file_5:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: text_encoder/model-00003-of-00003.safetensors
+      sha256: 0da9ee284e21d1406df708788db1d502d95d75f69faa25cd26151bf8829b7c5f
+      size_bytes: 1442935480
+      destination: model/text_encoder/model-00003-of-00003.safetensors
+    file_6:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: text_encoder/model.safetensors.index.json
+      sha256: 31c4c7bcce679eaa0dd4667462394ddb013dc2f748e0bffc893dc9146a320dab
+      size_bytes: 22476
+      destination: model/text_encoder/model.safetensors.index.json
+    file_7:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: tokenizer/special_tokens_map.json
+      sha256: 456b58fd240a06c743a7c2cf8008bec501240d68ebd1fc4018ea569505fea270
+      size_bytes: 7079
+      destination: model/tokenizer/special_tokens_map.json
+    file_8:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: tokenizer/spiece.model
+      sha256: e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458
+      size_bytes: 4548313
+      destination: model/tokenizer/spiece.model
+    file_9:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: tokenizer/tokenizer.json
+      sha256: 20a46ac256746594ed7e1e3ef733b83fbc5a6f0922aa7480eda961743de080ef
+      size_bytes: 16837459
+      destination: model/tokenizer/tokenizer.json
+    file_10:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: tokenizer/tokenizer_config.json
+      sha256: 1d8d2a216bf8e70ac15b7ddcea566c4dd0433c024b39a58ca5e4c66bd78defbd
+      size_bytes: 61758
+      destination: model/tokenizer/tokenizer_config.json
+    file_11:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: transformer/config.json
+      sha256: dc00d9866e72cf77db6b531aaa33be4dc7148fef9338442bd0ae9181f7075e9b
+      size_bytes: 495
+      destination: model/transformer/config.json
+    primary:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: transformer/diffusion_pytorch_model-00001-of-00005.safetensors
+      sha256: 511bec832a201caa410d09c5ce7dbbf8ad2708c345d82038f684fc74cce982be
+      size_bytes: 4978254344
+      destination: model/transformer/diffusion_pytorch_model-00001-of-00005.safetensors
+    file_13:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: transformer/diffusion_pytorch_model-00002-of-00005.safetensors
+      sha256: 7c42724912b1911429125dc50c0e9a49ccbada5a601b657d4ed2e15e7597c193
+      size_bytes: 4846784976
+      destination: model/transformer/diffusion_pytorch_model-00002-of-00005.safetensors
+    file_14:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: transformer/diffusion_pytorch_model-00003-of-00005.safetensors
+      sha256: e9c3d0c76de786566382f8258101fea973ae37681c6e9fe0e5fe1fb93b806424
+      size_bytes: 4972658392
+      destination: model/transformer/diffusion_pytorch_model-00003-of-00005.safetensors
+    file_15:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: transformer/diffusion_pytorch_model-00004-of-00005.safetensors
+      sha256: a331121771790939678db6f585553fd5184609f7d02593c699a4d241b0d834c5
+      size_bytes: 4846785080
+      destination: model/transformer/diffusion_pytorch_model-00004-of-00005.safetensors
+    file_16:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: transformer/diffusion_pytorch_model-00005-of-00005.safetensors
+      sha256: 78b655685c47efdb2349f36826bb101264e9f212a16325d584aeb5f53c88e719
+      size_bytes: 354751840
+      destination: model/transformer/diffusion_pytorch_model-00005-of-00005.safetensors
+    file_17:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: transformer/diffusion_pytorch_model.safetensors.index.json
+      sha256: d6c1f72d86fbddef8fb5ef1c03f5b56b2bfdb6ae58032db98c6019fd1dae9021
+      size_bytes: 73297
+      destination: model/transformer/diffusion_pytorch_model.safetensors.index.json
+    file_18:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: vae/config.json
+      sha256: d996c340fe9a7df5d7371f76a7d8d6956f6c98256080074d8434fa5eeac11360
+      size_bytes: 1701
+      destination: model/vae/config.json
+    file_19:
+      provider: huggingface
+      repository: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+      revision: b8fff7315c768468a5333511427288870b2e9635
+      path: vae/diffusion_pytorch_model.safetensors
+      sha256: 62cd18f19438e35b32ac63020e2852f566e9b02f46b6cdbd87972a356e3c6f4b
+      size_bytes: 2818777808
+      destination: model/vae/diffusion_pytorch_model.safetensors
   format: diffusers
-  quantization: "4bit"
+  quantization: none
   default_precision: fp16
-
-hardware:
-  min_vram_gb: 14.0
-  preferred_gpu: t4
-  preferred_gpu_index: 1
-  quantization_format: "4bit"
-  offload_ram_gb: 0.0
-  allocation_policy: single_gpu
-
-
+  component_precisions:
+    vae: fp32
+  component_parameter_precisions:
+    transformer:
+      scale_shift_table: fp32
+      condition_embedder.time_embedder.linear_1.weight: fp32
+      condition_embedder.time_embedder.linear_1.bias: fp32
+      condition_embedder.time_embedder.linear_2.weight: fp32
+      condition_embedder.time_embedder.linear_2.bias: fp32
+      blocks.0.scale_shift_table: fp32
+      blocks.0.norm2.weight: fp32
+      blocks.0.norm2.bias: fp32
+      blocks.1.scale_shift_table: fp32
+      blocks.1.norm2.weight: fp32
+      blocks.1.norm2.bias: fp32
+      blocks.2.scale_shift_table: fp32
+      blocks.2.norm2.weight: fp32
+      blocks.2.norm2.bias: fp32
+      blocks.3.scale_shift_table: fp32
+      blocks.3.norm2.weight: fp32
+      blocks.3.norm2.bias: fp32
+      blocks.4.scale_shift_table: fp32
+      blocks.4.norm2.weight: fp32
+      blocks.4.norm2.bias: fp32
+      blocks.5.scale_shift_table: fp32
+      blocks.5.norm2.weight: fp32
+      blocks.5.norm2.bias: fp32
+      blocks.6.scale_shift_table: fp32
+      blocks.6.norm2.weight: fp32
+      blocks.6.norm2.bias: fp32
+      blocks.7.scale_shift_table: fp32
+      blocks.7.norm2.weight: fp32
+      blocks.7.norm2.bias: fp32
+      blocks.8.scale_shift_table: fp32
+      blocks.8.norm2.weight: fp32
+      blocks.8.norm2.bias: fp32
+      blocks.9.scale_shift_table: fp32
+      blocks.9.norm2.weight: fp32
+      blocks.9.norm2.bias: fp32
+      blocks.10.scale_shift_table: fp32
+      blocks.10.norm2.weight: fp32
+      blocks.10.norm2.bias: fp32
+      blocks.11.scale_shift_table: fp32
+      blocks.11.norm2.weight: fp32
+      blocks.11.norm2.bias: fp32
+      blocks.12.scale_shift_table: fp32
+      blocks.12.norm2.weight: fp32
+      blocks.12.norm2.bias: fp32
+      blocks.13.scale_shift_table: fp32
+      blocks.13.norm2.weight: fp32
+      blocks.13.norm2.bias: fp32
+      blocks.14.scale_shift_table: fp32
+      blocks.14.norm2.weight: fp32
+      blocks.14.norm2.bias: fp32
+      blocks.15.scale_shift_table: fp32
+      blocks.15.norm2.weight: fp32
+      blocks.15.norm2.bias: fp32
+      blocks.16.scale_shift_table: fp32
+      blocks.16.norm2.weight: fp32
+      blocks.16.norm2.bias: fp32
+      blocks.17.scale_shift_table: fp32
+      blocks.17.norm2.weight: fp32
+      blocks.17.norm2.bias: fp32
+      blocks.18.scale_shift_table: fp32
+      blocks.18.norm2.weight: fp32
+      blocks.18.norm2.bias: fp32
+      blocks.19.scale_shift_table: fp32
+      blocks.19.norm2.weight: fp32
+      blocks.19.norm2.bias: fp32
+      blocks.20.scale_shift_table: fp32
+      blocks.20.norm2.weight: fp32
+      blocks.20.norm2.bias: fp32
+      blocks.21.scale_shift_table: fp32
+      blocks.21.norm2.weight: fp32
+      blocks.21.norm2.bias: fp32
+      blocks.22.scale_shift_table: fp32
+      blocks.22.norm2.weight: fp32
+      blocks.22.norm2.bias: fp32
+      blocks.23.scale_shift_table: fp32
+      blocks.23.norm2.weight: fp32
+      blocks.23.norm2.bias: fp32
+      blocks.24.scale_shift_table: fp32
+      blocks.24.norm2.weight: fp32
+      blocks.24.norm2.bias: fp32
+      blocks.25.scale_shift_table: fp32
+      blocks.25.norm2.weight: fp32
+      blocks.25.norm2.bias: fp32
+      blocks.26.scale_shift_table: fp32
+      blocks.26.norm2.weight: fp32
+      blocks.26.norm2.bias: fp32
+      blocks.27.scale_shift_table: fp32
+      blocks.27.norm2.weight: fp32
+      blocks.27.norm2.bias: fp32
+      blocks.28.scale_shift_table: fp32
+      blocks.28.norm2.weight: fp32
+      blocks.28.norm2.bias: fp32
+      blocks.29.scale_shift_table: fp32
+      blocks.29.norm2.weight: fp32
+      blocks.29.norm2.bias: fp32
+    text_encoder:
+      encoder.block.0.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.1.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.2.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.3.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.4.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.5.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.6.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.7.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.8.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.9.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.10.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.11.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.12.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.13.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.14.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.15.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.16.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.17.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.18.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.19.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.20.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.21.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.22.layer.1.DenseReluDense.wo.weight: fp32
+      encoder.block.23.layer.1.DenseReluDense.wo.weight: fp32
+backend:
+  adapter: wan
+  supported:
+  - diffusers
 capabilities:
-  text_to_video: true
-  image_to_video: true
-  first_last_frame_to_video: true
-  video_extension: true
-  video_with_audio: false
-  reference_conditioning: false
-
-status: partial
-coverage_percent: 66.67
-missing_capabilities:
-  - video_with_audio
-  - reference_conditioning
-validation_status: pending_live
-validation_notes: "Pre-flight contract simulation passed for all 5 gates (MP4 container structure verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 1) per BENCHMARK.md."
-
-limits:
-  max_width: 1280
-  max_height: 720
-  max_frames: 81
-  max_duration_seconds: 5.0
-
-revision: "2.2.0"
-dependencies:
-  - "torch>=2.4.0"
-  - "diffusers>=0.30.0"
-  - "imageio"
-  - "imageio-ffmpeg"
-
-task_variant_matrix:
-  text_to_video:
-    - standard
-  image_to_video:
-    - standard
-  first_last_frame_to_video:
-    - standard
-  video_extension:
-    - standard
-
-validated_hardware_profiles:
-  - "kaggle-dual-t4"
-  - "colab-single-t4"
-
-installed: true
-checkpoint_valid: true
-backend_ready: true
-evidence_run_id: null
-
-capabilities_truth:
-  text_to_video:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  image_to_video:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  first_last_frame_to_video:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  video_extension:
-    declared: true
-    implemented: true
-    live_verified: false
-    evidence_run_id: null
-  video_with_audio:
-    declared: true
-    implemented: false
-    live_verified: false
-    evidence_run_id: null
-  reference_conditioning:
-    declared: true
-    implemented: false
-    live_verified: false
-    evidence_run_id: null
+  video.text_to_video: true
+  video.image_to_video: true
+  video.first_last_frame_to_video: true
+  video.video_extension: true
+  video.video_with_audio: false
+  video.reference_conditioning: false
+parameters:
+  max_width:
+    type: integer
+    default: 1280
+  max_height:
+    type: integer
+    default: 720
+  max_frames:
+    type: integer
+    default: 81
+  max_duration_seconds:
+    type: number
+    default: 5.0
+  width:
+    type: integer
+    default: 512
+  height:
+    type: integer
+    default: 512
+  num_frames:
+    type: integer
+    default: 17
+  steps:
+    type: integer
+    default: 30
+    minimum: 1
+    maximum: 100
+  fps:
+    type: integer
+    default: 16
+runtime_profiles:
+  kaggle-dual-t4:
+    gpu_count: 1
+    min_vram_gb: 14
+    preferred_backend: diffusers
+    exclusive: false
+    cpu_offload: true
+    offload_strategy: sequential
+    inference_timeout_seconds: 1800
+    notes: Declared preflight requirements; not hardware certification. CLI assigns
+      devices explicitly. Runtime load and semantic validation remain required.
+    component_tiling:
+      vae:
+        tile_height: 512
+        tile_width: 512
+        stride_height: 384
+        stride_width: 384
+validation:
+  state: EXPERIMENTAL
+  reasons:
+  - Exact TI2V-5B Diffusers snapshot pinned. Old A14B ComfyUI templates are not implementations
+    of this checkpoint. CPU offload/T4 feasibility and all adapters require validation;
+    do not substitute A14B/GGUF.
+  implemented_capabilities:
+  - video.text_to_video
+  - video.image_to_video
+  - video.first_last_frame_to_video
+  - video.video_extension

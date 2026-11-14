@@ -75,11 +75,11 @@ def test_fix_15_e2e_suite_split_and_labeling(monkeypatch):
 # ---------------------------------------------------------------------------
 # FIX-16: Kaggle simulated reports cannot carry LIVE_PASS
 # ---------------------------------------------------------------------------
-def test_fix_16_kaggle_simulated_report_cannot_carry_live_pass():
+def test_fix_16_kaggle_simulated_report_cannot_carry_live_pass(legacy_catalog):
     """FIX-16: Simulated report cannot carry LIVE_PASS."""
     from deployments.kaggle.certify_kernel import PreflightContractSimulator
 
-    simulator = PreflightContractSimulator()
+    simulator = PreflightContractSimulator(manifests_dir=legacy_catalog)
     res = simulator.execute_all()
     assert res["all_gates_passed"] is True
     assert res["live_pass"] is False
@@ -181,5 +181,6 @@ def test_fix_20_deploy_config_trimmed():
     assert "STORAGE_BACKEND=ephemeral_disk" in env_example
 
     readme = Path("README.md").read_text(encoding="utf-8")
-    assert "Single Working Deploy Path" in readme
+    assert "factory serve" in readme
+    assert "docs/CONTROL_PLANE.md" in readme
     assert "uvicorn factory_control_api.server:app" in readme

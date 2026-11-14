@@ -1,0 +1,12 @@
+{
+  "observed_at_utc": "2026-11-12T14:09:33.368606+00:00",
+  "version": 2,
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-asr",
+  "run_record_sha256": "ea145acd2d84e3f92f2b21a4a01d1770e1bdd3a0e8f626874a8bf92427fc14b1",
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "classification": "REMOTE_JOB_STATUS_ONLY_NOT_INFERENCE_EVIDENCE"
+}

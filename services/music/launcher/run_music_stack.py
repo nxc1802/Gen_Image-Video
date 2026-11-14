@@ -11,6 +11,9 @@ import subprocess
 import sys
 import time
 import urllib.request
+from pathlib import Path
+import yaml
+from model_registry.bindings import model_binding
 
 
 def _wait_ready(proc: subprocess.Popen, port: int, timeout: float = 240.0) -> None:
@@ -29,6 +32,10 @@ def _wait_ready(proc: subprocess.Popen, port: int, timeout: float = 240.0) -> No
 
 
 def main() -> None:
+    config = yaml.safe_load((Path(__file__).parents[1] / "configs/music_config.yaml").read_text())
+    model = model_binding(config["model_ref"])
+    if model.apiVersion == "factory.ai/v2":
+        raise RuntimeError("The legacy music launcher does not bind the full canonical checkpoint bundle; it could select ACE-Step's default Turbo instead. Use the canonical backend lifecycle once implemented; no implicit checkpoint selection is allowed.")
     if shutil.which("uv") is None:
         raise RuntimeError("uv is required to launch ACE-Step.")
     ace_dir = os.environ.get("ACESTEP_DIR", "").strip()

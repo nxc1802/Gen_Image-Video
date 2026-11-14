@@ -358,6 +358,11 @@ class InMemoryJobStore(BaseJobRepository):
         temperature_c: Optional[float] = None,
     ) -> None:
         async with self._lock:
+            # Direct registration/config input is an ingress boundary as well.
+            if supported_tasks is not None:
+                from factory_contracts.capabilities import normalize_capability
+                context = subsystem or self._workers.get(worker_id, {}).get("subsystem")
+                supported_tasks = list(dict.fromkeys(normalize_capability(task, engine=context) for task in supported_tasks))
             now_iso = datetime.now(timezone.utc).isoformat()
             if worker_id in self._workers:
                 worker = self._workers[worker_id]

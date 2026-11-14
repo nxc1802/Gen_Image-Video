@@ -1,0 +1,53 @@
+{
+  "kind": "minimax_t2v",
+  "version": 2,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-t2v",
+  "run_record_sha256": "9b400c4ba922476f85a7bacf1d46d349684bb7dcd28080562b4f36eb7dc9022d",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_t2v_v2/installation.log",
+      "sha256": "e0278a969c62e67d5447ff70e336ca8e11682f447b8a0588793c289a4c1e1e24"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v2/wave_d.json",
+      "sha256": "b5d12d7516eac44cc07499259f41d01fa044551f0370b8968383dc7cc5d63df1"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v2/driver.log",
+      "sha256": "60215efec075614ffc277d38a6f45116599bb4835c8cab576c5da84d586e3c09"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v2/runtime_packages.json",
+      "sha256": "c58137756206895ea21e86d8a086074882c4dda1e817b642f4ec162c29d8f465"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v2/setup.json",
+      "sha256": "b22945d19f93cfe72f9b3507fce7010cd6c40b1346c5795122684e85be2c2f91"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v2/minimax-h3/backend.log",
+      "sha256": "3bbb4ee8ac427be5ce6026a8644afdb839fe198667fc5a2c007833643665c6da"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v2/minimax-h3/observation.json",
+      "sha256": "aff20f7f29d18a758a0e7bac5800165f3f059a1a50ff0595cbbaac04c19edf23"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v2/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+      "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v2/minimax-h3/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+      "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+    },
+    {
+      "file": "validation/native_minimax_t2v_v2/minimax-h3/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+      "sha256": "6f483dd9b9911237afa5032136e675473df479ced57d7f241c6fdfc0f243ee87"
+    }
+  ]
+}

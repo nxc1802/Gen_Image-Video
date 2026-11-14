@@ -1,0 +1,318 @@
+{
+  "model": "qwen-reranker",
+  "engine": "EngineID.VECTOR",
+  "backend": "vllm",
+  "checkpoint": {
+    "file_0": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "1_LogitScore/config.json",
+      "sha256": "73e3156450564d8a98b7e47bcf5aace0f29600828b51937da545571e84db3ff3",
+      "size_bytes": 57,
+      "destination": "model/1_LogitScore/config.json"
+    },
+    "file_1": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "chat_template.jinja",
+      "sha256": "6f682162495ec5b39fd9005c01b6aa2a74669379fe967039f1e2cbbe8752369d",
+      "size_bytes": 741,
+      "destination": "model/chat_template.jinja"
+    },
+    "file_2": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "config.json",
+      "sha256": "d479c427a9ca5295218063d4f9aca4f297ab4ac27487cca7af42c84643d51ef0",
+      "size_bytes": 727,
+      "destination": "model/config.json"
+    },
+    "file_3": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "config_sentence_transformers.json",
+      "sha256": "6a153d6696f78fd588c1c728967f0b773ea869d3c6028f151ce71ebe49140762",
+      "size_bytes": 325,
+      "destination": "model/config_sentence_transformers.json"
+    },
+    "file_4": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "generation_config.json",
+      "sha256": "81051cd3f6e77013827148d0b8a6ead93f8ac390d5ab805f849199f0af6a08db",
+      "size_bytes": 214,
+      "destination": "model/generation_config.json"
+    },
+    "file_5": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "merges.txt",
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "size_bytes": 1671853,
+      "destination": "model/merges.txt"
+    },
+    "primary": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "model.safetensors",
+      "sha256": "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b",
+      "size_bytes": 1191588280,
+      "destination": "model/model.safetensors"
+    },
+    "file_7": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "modules.json",
+      "sha256": "6f13b6b4a89e577b591b2077bca40c67c26541a6740a8809267cb474f90806a9",
+      "size_bytes": 280,
+      "destination": "model/modules.json"
+    },
+    "file_8": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "sentence_bert_config.json",
+      "sha256": "3234ebd224d492cbe8d55d5ec80a3f408451c4db3005bafb64fe1c51c763e01e",
+      "size_bytes": 362,
+      "destination": "model/sentence_bert_config.json"
+    },
+    "file_9": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "tokenizer.json",
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+      "size_bytes": 11422654,
+      "destination": "model/tokenizer.json"
+    },
+    "file_10": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "tokenizer_config.json",
+      "sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+      "size_bytes": 9706,
+      "destination": "model/tokenizer_config.json"
+    },
+    "file_11": {
+      "provider": "huggingface",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "path": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "destination": "model/vocab.json"
+    }
+  },
+  "cases": [],
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "public_models": [],
+  "fallback": false,
+  "checkpoint_files": [
+    {
+      "key": "file_0",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "1_LogitScore/config.json",
+      "sha256": "73e3156450564d8a98b7e47bcf5aace0f29600828b51937da545571e84db3ff3",
+      "size_bytes": 57,
+      "matched": true
+    },
+    {
+      "key": "file_1",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "chat_template.jinja",
+      "sha256": "6f682162495ec5b39fd9005c01b6aa2a74669379fe967039f1e2cbbe8752369d",
+      "size_bytes": 741,
+      "matched": true
+    },
+    {
+      "key": "file_2",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "config.json",
+      "sha256": "d479c427a9ca5295218063d4f9aca4f297ab4ac27487cca7af42c84643d51ef0",
+      "size_bytes": 727,
+      "matched": true
+    },
+    {
+      "key": "file_3",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "config_sentence_transformers.json",
+      "sha256": "6a153d6696f78fd588c1c728967f0b773ea869d3c6028f151ce71ebe49140762",
+      "size_bytes": 325,
+      "matched": true
+    },
+    {
+      "key": "file_4",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "generation_config.json",
+      "sha256": "81051cd3f6e77013827148d0b8a6ead93f8ac390d5ab805f849199f0af6a08db",
+      "size_bytes": 214,
+      "matched": true
+    },
+    {
+      "key": "file_5",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "merges.txt",
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "size_bytes": 1671853,
+      "matched": true
+    },
+    {
+      "key": "primary",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "model.safetensors",
+      "sha256": "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b",
+      "size_bytes": 1191588280,
+      "matched": true
+    },
+    {
+      "key": "file_7",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "modules.json",
+      "sha256": "6f13b6b4a89e577b591b2077bca40c67c26541a6740a8809267cb474f90806a9",
+      "size_bytes": 280,
+      "matched": true
+    },
+    {
+      "key": "file_8",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "sentence_bert_config.json",
+      "sha256": "3234ebd224d492cbe8d55d5ec80a3f408451c4db3005bafb64fe1c51c763e01e",
+      "size_bytes": 362,
+      "matched": true
+    },
+    {
+      "key": "file_9",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "tokenizer.json",
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+      "size_bytes": 11422654,
+      "matched": true
+    },
+    {
+      "key": "file_10",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "tokenizer_config.json",
+      "sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+      "size_bytes": 9706,
+      "matched": true
+    },
+    {
+      "key": "file_11",
+      "repository": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "file": "vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "size_bytes": 2776833,
+      "matched": true
+    }
+  ],
+  "status": "NOT_MET",
+  "lifecycle": {
+    "healthy_backends": [],
+    "failures": {
+      "qwen-reranker": {
+        "type": "BackendError",
+        "message": "Selected backend port is already occupied; refusing to attach to another daemon"
+      }
+    },
+    "backends": {
+      "qwen-reranker": {
+        "model": "qwen-reranker",
+        "backend": "vllm",
+        "adapter": "qwen_reranker",
+        "session_id": "225d5324-b29c-45c6-b5ee-dfcdada156bd",
+        "checkpoint_graph_sha256": "c5445e0db271ca4b931998fb10b0168c04de074ab461aa6b58bd10ee28d87c21",
+        "devices": [
+          0
+        ],
+        "state": "STOPPED",
+        "pid": null,
+        "pid_started_at": null,
+        "port": 18990,
+        "weights_verified": true,
+        "model_loaded": false,
+        "gpu_processes": [],
+        "log_path": "/tmp/factory_phase8_a/runtime/225d5324-b29c-45c6-b5ee-dfcdada156bd/qwen-reranker/backend.log",
+        "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+        "source_revision": null,
+        "sdk_runtime": null,
+        "adapter_assets": {
+          "qwen3_reranker.jinja": "1f00a0e0a36679a27f32abe465493ab6aa3d4c09aed6e9116dd7a5968e88bfc6"
+        },
+        "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+        "backend_package_version": "0.33.0",
+        "error": "Selected backend port is already occupied; refusing to attach to another daemon",
+        "production_ready": false,
+        "inference_verified": false
+      }
+    },
+    "production_ready": false,
+    "native_inference_verified": false
+  },
+  "error": {
+    "type": "RuntimeError",
+    "message": "Selected backend failed startup: {\"qwen-reranker\": {\"type\": \"BackendError\", \"message\": \"Selected backend port is already occupied; refusing to attach to another daemon\"}}",
+    "traceback": "Traceback (most recent call last):\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_a.py\", line 266, in model_run\n    raise RuntimeError(\"Selected backend failed startup: \" + json.dumps(session.failures))\nRuntimeError: Selected backend failed startup: {\"qwen-reranker\": {\"type\": \"BackendError\", \"message\": \"Selected backend port is already occupied; refusing to attach to another daemon\"}}\n"
+  },
+  "shutdown": {
+    "session_id": "225d5324-b29c-45c6-b5ee-dfcdada156bd",
+    "config_sha256": "be9a3d9a3f3b23dc4b8cbd9c4e8a49560e23bc1e88db6d7d656bd1627c95f0ef",
+    "stopped_at_utc": "2026-11-12T12:50:20.644435+00:00",
+    "stop_completed": true,
+    "errors": [],
+    "backends": {
+      "qwen-reranker": {
+        "model": "qwen-reranker",
+        "backend": "vllm",
+        "adapter": "qwen_reranker",
+        "session_id": "225d5324-b29c-45c6-b5ee-dfcdada156bd",
+        "checkpoint_graph_sha256": "c5445e0db271ca4b931998fb10b0168c04de074ab461aa6b58bd10ee28d87c21",
+        "devices": [
+          0
+        ],
+        "state": "STOPPED",
+        "pid": null,
+        "pid_started_at": null,
+        "port": 18990,
+        "weights_verified": true,
+        "model_loaded": false,
+        "gpu_processes": [],
+        "log_path": "/tmp/factory_phase8_a/runtime/225d5324-b29c-45c6-b5ee-dfcdada156bd/qwen-reranker/backend.log",
+        "executable": "/tmp/factory_phase8_a/venv/bin/vllm",
+        "source_revision": null,
+        "sdk_runtime": null,
+        "adapter_assets": {
+          "qwen3_reranker.jinja": "1f00a0e0a36679a27f32abe465493ab6aa3d4c09aed6e9116dd7a5968e88bfc6"
+        },
+        "executable_sha256": "3c42f9ef184f8b89eb3ed338c50eea793771ced6f5a49b2a8bcbde05f7c752f4",
+        "backend_package_version": "0.33.0",
+        "error": "Selected backend port is already occupied; refusing to attach to another daemon",
+        "production_ready": false,
+        "inference_verified": false
+      }
+    },
+    "production_ready": false
+  },
+  "stop_verified": true
+}

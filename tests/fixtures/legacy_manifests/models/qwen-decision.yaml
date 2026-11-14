@@ -1,0 +1,77 @@
+apiVersion: factory.ai/v1
+kind: ModelManifest
+metadata:
+  id: qwen-decision
+  family: qwen-decision
+  display_name: Qwen 2.5 Decision Router
+  service_id: decision-service
+  version: 1.0.0
+  license: Tongyi Qianwen License
+  license_url: https://huggingface.co/Qwen/Qwen2.5-3B-Instruct/blob/main/LICENSE
+  commercial_use: true
+weights:
+  primary_checkpoint: Qwen/Qwen2.5-3B-Instruct
+  repository: Qwen/Qwen2.5-3B-Instruct
+  checkpoint_revision: 47f5250ff5779796016e3c0d832e5399587bf2b1
+  weights_file: model.safetensors
+  format: safetensors
+  quantization: none
+  default_precision: bf16
+hardware:
+  min_vram_gb: 6.0
+  context_window: 8192
+  preferred_gpu: t4
+  preferred_gpu_index: 0
+  quantization_format: none
+  offload_ram_gb: 0.0
+  allocation_policy: single_gpu
+capabilities:
+  predicate_evaluation: true
+  choice_routing: true
+  score_ranking: true
+status: full
+coverage_percent: 100.0
+missing_capabilities: []
+validation_status: pending_live
+validation_notes: 'Phase 0 audit: no admissible per-capability V3/V4 evidence on Kaggle
+  Dual Tesla T4 with exact verified weights and semantic validation. Historical claims
+  are frozen in validation/baseline.json; full/partial and coverage describe implementation
+  claims only, not production readiness. Static installed/checkpoint_valid/backend_ready
+  flags are legacy configuration claims, not session attestation; replacement is deferred
+  to Phases 1 and 3.'
+limits:
+  max_context_tokens: 8192
+revision: 1.0.0
+dependencies:
+- vllm>=0.6.0
+- torch>=2.4.0
+task_variant_matrix:
+  predicate_evaluation:
+  - standard
+  choice_routing:
+  - standard
+  score_ranking:
+  - standard
+validated_hardware_profiles: []
+installed: true
+checkpoint_valid: true
+backend_ready: true
+evidence_run_id: null
+capabilities_truth:
+  predicate_evaluation:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  choice_routing:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+  score_ranking:
+    declared: true
+    implemented: true
+    live_verified: false
+    evidence_run_id: null
+aliases:
+- qwen_decision

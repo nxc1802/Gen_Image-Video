@@ -1,0 +1,25 @@
+{
+  "observed_at_utc": "2026-11-13T14:30:19.206754+00:00",
+  "slug": "factory-phase-8-native-minimax-turbo",
+  "response": {
+    "versionNumberNullable": 2,
+    "ref": "/code/cuongnguyen1802/factory-phase-8-native-minimax-turbo",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-turbo",
+    "versionNumber": 2,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144803301
+  },
+  "kernel_code_sha256": "c4234f91b329232e2ed87cd8b849b3f7fc67cf01ab5f0ac0fdb19c2a47894399",
+  "source_bundle_sha256": "2da7ad7773e50f27bf841590499ae65337c24210e87b9a1d27c5e366aa3766e0",
+  "validation_bundle_sha256": "67224eaeedae26981573f63b5a5e5d23dc6a2f3a57f539d9f5ec8866d6eac067",
+  "accelerator": "NvidiaTeslaT4",
+  "driver_timeout_seconds": 16800,
+  "session_timeout_seconds": 20400
+}

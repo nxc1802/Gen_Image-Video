@@ -3,9 +3,9 @@ deployments.kaggle.prepare_datasets
 Manifest-driven Kaggle Dataset preparation & deployment orchestrator for Factory v4 Lite.
 
 Key capabilities:
-1. Aligns with all 11 Model Manifests in manifests/models/*.yaml.
+1. Derives every checkpoint identity from manifests/models/*.yaml.
 2. Direct integration with Kaggle API via Bearer token (KGAT_*) authentication.
-3. Queries existing dataset readiness (e.g. cuongnguyen1802/qwen25-7b-instruct-awq, minimax-h3-gguf).
+3. Queries dataset publication status separately from weight integrity.
 4. Generates standalone remote downloader kernels deployed directly to Kaggle Cloud
    (utilizing Kaggle's high-speed network and 73GB /tmp storage without consuming local disk).
 5. Monitors download, packaging, and dataset publication progress in real-time.
@@ -29,206 +29,9 @@ from deployments.kaggle.runner import KaggleAPIClient, resolve_kaggle_username
 logger = logging.getLogger("prepare_datasets")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-# Authoritative dataset specifications for Factory v4 Lite 11 models
-MODEL_DATASETS: List[Dict[str, Any]] = [
-    {
-        "id": "wan-2.2",
-        "slug": "wan22-ti2v-5b-gguf",
-        "title": "Wan 2.2 TI2V 5B GGUF",
-        "repo": "QuantStack/Wan2.2-TI2V-5B-GGUF",
-        "revision": "f2c81a5e18641957de9a31a7f05eb1b702758bf8",
-        "license": "Apache-2.0",
-        "license_name": "apache-2.0",
-        "commercial_use": True,
-        "service_id": "video-service",
-        "target_gpu": 1,
-        "estimated_gb": 4.5,
-        "files": [
-            {"src": "Wan2.2-TI2V-5B-Q4_K_M.gguf", "dest": "Wan2.2-TI2V-5B-Q4_K_M.gguf"},
-            {"src": "VAE/Wan2.2_VAE.safetensors", "dest": "Wan2.2_VAE.safetensors"},
-        ],
-    },
-    {
-        "id": "minimax-h3",
-        "slug": "minimax-h3-gguf",
-        "title": "MiniMax Hailuo H3 GGUF Video & Audio",
-        "repo": "unsloth/MiniMax-H3-GGUF",
-        "revision": "e4b52c49c7198762d0577a8a8163f9ebfa9b7754",
-        "license": "MiniMax Non-Commercial License",
-        "license_name": "other",
-        "commercial_use": False,
-        "service_id": "video-service",
-        "target_gpu": 1,
-        "estimated_gb": 33.1,
-        "files": [
-            {"src": "minimax_h3_fl2va_pruned-Q4_K.gguf", "dest": "MiniMax-H3-FL2VA-Q4_K_M.gguf"},
-            {"src": "qwen3vl_32b_minimax_h3-Q4_K_M.gguf", "dest": "qwen3_vl_32b_q4_k_m.gguf"},
-            {"src": "vae/minimax_h3_video_vae_fp16.safetensors", "dest": "minimax_h3_video_vae_fp16.safetensors"},
-            {"src": "vae/minimax_h3_audio_vae_fp32.safetensors", "dest": "minimax_h3_audio_vae_fp32.safetensors"},
-        ],
-    },
-    {
-        "id": "qwen-image-2.1",
-        "slug": "qwen-image-2-1-gguf",
-        "title": "Qwen Image 2.1 GGUF",
-        "repo": "abenzerps/Qwen-Image-2.1-GGUF",
-        "revision": "d1245e8964af54497e25e83ec9bb892bf32e5190",
-        "license": "Tongyi Qianwen License",
-        "license_name": "other",
-        "commercial_use": True,
-        "service_id": "image-service",
-        "target_gpu": 0,
-        "estimated_gb": 4.2,
-        "files": [
-            {"src": "qwen-image-2.1-Q4_K_M.gguf", "dest": "qwen-image-2.1-Q4_K_M.gguf"},
-            {"src": "vae/qwen_image_2.1_vae_bf16.safetensors", "dest": "qwen_image_2.1_vae_bf16.safetensors"},
-        ],
-    },
-    {
-        "id": "qwen-image-2.1-turbo",
-        "slug": "qwen-image-2-1-turbo-gguf",
-        "title": "Qwen Image 2.1 Turbo GGUF",
-        "repo": "unsloth/Qwen-Image-2.1-Turbo-GGUF",
-        "revision": "d1245e8964af54497e25e83ec9bb892bf32e5190",
-        "license": "Tongyi Qianwen License",
-        "license_name": "other",
-        "commercial_use": True,
-        "service_id": "image-service",
-        "target_gpu": 0,
-        "estimated_gb": 3.91,
-        "files": [
-            {"src": "qwen-image-2.1-turbo-Q4_K_M.gguf", "dest": "qwen-image-2.1-turbo-Q4_K_M.gguf"},
-        ],
-    },
-    {
-        "id": "qwen-text",
-        "slug": "qwen25-7b-instruct-awq",
-        "title": "Qwen 2.5 7B Instruct AWQ Official",
-        "repo": "Qwen/Qwen2.5-7B-Instruct-AWQ",
-        "revision": "c4e519289299478f79fba50d757d54b4f5358043",
-        "license": "Tongyi Qianwen License",
-        "license_name": "other",
-        "commercial_use": True,
-        "service_id": "text-service",
-        "target_gpu": 0,
-        "estimated_gb": 4.5,
-        "snapshot": True,
-        "files": [],
-    },
-    {
-        "id": "qwen-vlm",
-        "slug": "qwen2-vl-7b-instruct-awq",
-        "title": "Qwen2-VL 7B Instruct AWQ Official",
-        "repo": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
-        "revision": "7b5394541cbde26227c262198ecfb2e63ef29583",
-        "license": "Apache-2.0",
-        "license_name": "apache-2.0",
-        "commercial_use": True,
-        "service_id": "vision-service",
-        "target_gpu": 0,
-        "estimated_gb": 5.5,
-        "snapshot": True,
-        "files": [],
-    },
-    {
-        "id": "qwen-speech",
-        "slug": "qwen3-asr-tts",
-        "title": "Qwen3 ASR & TTS Multilingual Suite",
-        "repo": "Qwen/Qwen3-ASR-1.7B",
-        "revision": "8a7b931c8d76e43f07a61d1988e0b23acdf55610",
-        "license": "Apache-2.0",
-        "license_name": "apache-2.0",
-        "commercial_use": True,
-        "service_id": "speech-service",
-        "target_gpu": 0,
-        "estimated_gb": 7.4,
-        "snapshot": True,
-        "files": [],
-        "extra_repos": [
-            {"repo": "Qwen/Qwen3-TTS-12Hz-1.7B-Base", "dest_dir": "tts_base"},
-        ],
-    },
-    {
-        "id": "qwen-embedding",
-        "slug": "kaggle-embedding-models",
-        "title": "Qwen3 Embedding & Reranker GGUF",
-        "repo": "mradermacher/Qwen3-Embedding-0.6B-GGUF",
-        "revision": "b63a921d7b32c69d80cf2821ae039833f272a806",
-        "license": "Apache-2.0",
-        "license_name": "apache-2.0",
-        "commercial_use": True,
-        "service_id": "embed-service",
-        "target_gpu": 1,
-        "estimated_gb": 5.2,
-        "files": [
-            {"src": "Qwen3-Embedding-0.6B.Q4_K_M.gguf", "dest": "Qwen3-Embedding-0.6B.Q4_K_M.gguf"},
-        ],
-        "extra_downloads": [
-            {"repo": "mradermacher/Qwen3-Reranker-0.6B-GGUF", "src": "Qwen3-Reranker-0.6B.Q4_K_M.gguf", "dest": "Qwen3-Reranker-0.6B.Q4_K_M.gguf"},
-            {"repo": "Qwen/Qwen3-Embedding-4B-GGUF", "src": "Qwen3-Embedding-4B-Q4_K_M.gguf", "dest": "Qwen3-Embedding-4B-Q4_K_M.gguf"},
-        ],
-    },
-    {
-        "id": "qwen-decision",
-        "slug": "qwen-decision-router",
-        "title": "Qwen 2.5 Decision Router",
-        "repo": "Qwen/Qwen2.5-3B-Instruct",
-        "revision": "47f5250ff5779796016e3c0d832e5399587bf2b1",
-        "license": "Tongyi Qianwen License",
-        "license_name": "other",
-        "commercial_use": True,
-        "service_id": "decision-service",
-        "target_gpu": 0,
-        "estimated_gb": 3.2,
-        "snapshot": True,
-        "files": [],
-    },
-    {
-        "id": "ace-step-1.5",
-        "slug": "acestep-music-1-5",
-        "title": "ACE-Step 1.5 Music Generation",
-        "repo": "ACE-Studio/ACE-Step-1.5",
-        "revision": "9d82e1c312781b0a70cf6bf79e2730ca7f918042",
-        "license": "CC-BY-NC-4.0",
-        "license_name": "cc-by-nc-4.0",
-        "commercial_use": False,
-        "service_id": "music-service",
-        "target_gpu": 1,
-        "estimated_gb": 3.5,
-        "snapshot": True,
-        "files": [],
-    },
-    {
-        "id": "enhancement-suite-v1",
-        "slug": "enhancement-suite",
-        "title": "Media Post-Processing & Enhancement Suite",
-        "repo": "xinntao/Real-ESRGAN",
-        "revision": "4a8f9b2d861d848773950ef31355ca0d39e24807",
-        "license": "Composite Non-Commercial (RIFE / BSD-3 / Apache-2.0)",
-        "license_name": "other",
-        "commercial_use": False,
-        "service_id": "enhancement-service",
-        "target_gpu": 1,
-        "estimated_gb": 2.5,
-        "snapshot": True,
-        "files": [],
-    },
-    {
-        "id": "yue2",
-        "slug": "yue-s1-7b",
-        "title": "YuE s1 7B Annealed En CoT",
-        "repo": "m-a-p/YuE-s1-7B-anneal-en-cot",
-        "revision": "672e8bb24802521c7a40b97cfc47c4cb033230a1",
-        "license": "Apache-2.0",
-        "license_name": "apache-2.0",
-        "commercial_use": True,
-        "service_id": "music-service",
-        "target_gpu": 1,
-        "estimated_gb": 13.5,
-        "snapshot": True,
-        "files": [],
-    },
-]
+# Read-only view: model identity, artifacts and licenses are manifest-owned.
+from model_registry.datasets import CatalogDatasetSpecs
+MODEL_DATASETS = CatalogDatasetSpecs()
 
 
 class DatasetPreparationManager:
@@ -249,7 +52,7 @@ class DatasetPreparationManager:
             return {"exists": False, "status": "not_found", "error": str(e), "code": code}
 
     def inspect_all_datasets(self) -> List[Dict[str, Any]]:
-        """Inspects status of all 11 Factory v4 model datasets on Kaggle."""
+        """Inspects publication status for the current manifest catalog."""
         results = []
         for item in MODEL_DATASETS:
             st = self.check_dataset_status(item["slug"])
@@ -275,6 +78,7 @@ class DatasetPreparationManager:
         jobs_json = json.dumps(selected_jobs, indent=2)
 
         script_code = f"""# Auto-generated by Factory v4 Lite DatasetPreparationManager
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -391,10 +195,12 @@ for job in JOBS:
     try:
         cur_st = str(k_api.dataset_status(dataset_ref)).strip().lower()
         if cur_st == "ready":
-            print(f"ℹ️ Dataset {{dataset_ref}} is already published and READY. Skipping.")
-            continue
+            already_ready = True
     except Exception:
         pass
+
+    if already_ready:
+        raise RuntimeError("Existing dataset presence is not checkpoint verification; verify its exact hashes before reuse or explicitly publish a new version.")
 
     clean_staging()
     model_dir = staging_root / slug
@@ -413,6 +219,14 @@ for job in JOBS:
                 dest_path.parent.mkdir(parents=True, exist_ok=True)
                 print(f"📥 Downloading {{src}} -> {{dest}} (revision: {{revision}})...")
                 dl_path = hf_hub_download(repo_id=repo, filename=src, revision=revision, local_dir=str(model_dir))
+                if not f_info.get("sha256"):
+                    raise RuntimeError("Unpinned file identity; publication refused")
+                digest = hashlib.sha256()
+                with Path(dl_path).open("rb") as stream:
+                    while chunk := stream.read(8 * 1024 * 1024):
+                        digest.update(chunk)
+                if digest.hexdigest() != f_info["sha256"] or Path(dl_path).stat().st_size != f_info["size_bytes"]:
+                    raise RuntimeError("Checkpoint integrity mismatch; publication refused")
                 if Path(dl_path).resolve() != dest_path.resolve():
                     shutil.move(str(dl_path), str(dest_path))
 
@@ -420,11 +234,17 @@ for job in JOBS:
             e_repo = extra["repo"]
             e_src = extra["src"]
             e_dest = extra["dest"]
-            e_rev = extra.get("revision", revision)
+            e_rev = extra["revision"]
             e_dest_path = model_dir / e_dest
             e_dest_path.parent.mkdir(parents=True, exist_ok=True)
             print(f"📥 Extra download: {{e_repo}}/{{e_src}} -> {{e_dest}}...")
             dl_path = hf_hub_download(repo_id=e_repo, filename=e_src, revision=e_rev, local_dir=str(model_dir))
+            digest = hashlib.sha256()
+            with Path(dl_path).open("rb") as stream:
+                while chunk := stream.read(8 * 1024 * 1024):
+                    digest.update(chunk)
+            if digest.hexdigest() != extra["sha256"] or Path(dl_path).stat().st_size != extra["size_bytes"]:
+                raise RuntimeError("Component integrity mismatch; publication refused")
             if Path(dl_path).resolve() != e_dest_path.resolve():
                 shutil.move(str(dl_path), str(e_dest_path))
 
@@ -503,7 +323,7 @@ print("\\n🏁 All dataset download & publish jobs processed.")
 
 def main():
     parser = argparse.ArgumentParser(description="Factory v4 Lite Kaggle Dataset Preparation Manager")
-    parser.add_argument("--status", action="store_true", help="Inspect status of all 10 model datasets on Kaggle")
+    parser.add_argument("--status", action="store_true", help="Inspect publication status for manifest-derived datasets on Kaggle")
     parser.add_argument("--deploy", action="store_true", help="Deploy remote downloader kernel to Kaggle")
     parser.add_argument("--models", nargs="*", default=None, help="Specific model IDs or slugs to prepare")
     parser.add_argument("--slug", default="factory-v4-lite-model-downloader", help="Kaggle kernel slug for downloader")

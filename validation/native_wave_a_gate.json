@@ -1,0 +1,1629 @@
+{
+  "wave": "A",
+  "observed_at_utc": "2026-11-13T11:29:02.998699+00:00",
+  "exit_gate": "PASS",
+  "classification": "NATIVE_V3_SEMANTIC_CANDIDATES_ONLY",
+  "golden_sha256": "4c58187dfba2fbd464029013113c223bb651e9995995755c4e395a772f029965",
+  "attempts": [
+    {
+      "kind": "vllm",
+      "version": 3,
+      "observation": "validation/native_vllm_v3/wave_a.json",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "validation_bundle_sha256": "73b36722032f0dd4382b15b7dd833cfc89f769cdc9b035ea22014c8793c59ae3"
+    },
+    {
+      "kind": "text",
+      "version": 3,
+      "observation": "validation/native_text_v3/wave_a.json",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "validation_bundle_sha256": "73b36722032f0dd4382b15b7dd833cfc89f769cdc9b035ea22014c8793c59ae3"
+    }
+  ],
+  "cases": [
+    {
+      "run_id": "kaggle:factory-phase-8-native-vllm:v3:decision-predicate-facts",
+      "model": "qwen-decision",
+      "capability": "decision.predicate_evaluation",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "487920a842bd07401873e60ccf0201075fc5c98d2105a2f82a7af3fb03fd7047",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vllm_v3/qwen-decision/observation.json",
+      "latency_ms": {
+        "median": 290.252774,
+        "min": 286.706065,
+        "max": 308.746845
+      },
+      "output_sha256": [
+        "f45cffd56b9f402a767f23c0833db4931148b09f1e49dd02813281923dde92c0",
+        "8f415e45dec72a237950f8c72332d5f48e0534e131a3be3b220504c07e56105f",
+        "8f415e45dec72a237950f8c72332d5f48e0534e131a3be3b220504c07e56105f",
+        "8f415e45dec72a237950f8c72332d5f48e0534e131a3be3b220504c07e56105f"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 7942.0
+      },
+      "peak_total_owned_vram_mb": 7942.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "positive_expected_true": true,
+            "negative_expected_false": true
+          },
+          "metrics": {
+            "positive_probability": 0.9999996940976638,
+            "negative_probability": 1.0102783933368222e-10,
+            "brier_score": 4.678812476170582e-14
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "positive_expected_true": true,
+            "negative_expected_false": true
+          },
+          "metrics": {
+            "positive_probability": 0.9999996940976638,
+            "negative_probability": 1.0102783933368222e-10,
+            "brier_score": 4.678812476170582e-14
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "positive_expected_true": true,
+            "negative_expected_false": true
+          },
+          "metrics": {
+            "positive_probability": 0.9999996940976638,
+            "negative_probability": 1.0102783933368222e-10,
+            "brier_score": 4.678812476170582e-14
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "positive_expected_true": true,
+            "negative_expected_false": true
+          },
+          "metrics": {
+            "positive_probability": 0.9999996940976638,
+            "negative_probability": 1.0102783933368222e-10,
+            "brier_score": 4.678812476170582e-14
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vllm:v3:decision-choice-billing",
+      "model": "qwen-decision",
+      "capability": "decision.choice_routing",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "196036abfacc04c7350963ba7e5503c82377dd6e744d76fd5742c3a880e8baff",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vllm_v3/qwen-decision/observation.json",
+      "latency_ms": {
+        "median": 262.777463,
+        "min": 238.948656,
+        "max": 269.015329
+      },
+      "output_sha256": [
+        "96f3aad133b79d751a45ebd049a78c4e8803e7e5f03d34447f786e9bad695e59",
+        "918c78523b7cb6e20a5f4553a23cb14f1e165d1279f4eb63c463b8539a7a516d",
+        "918c78523b7cb6e20a5f4553a23cb14f1e165d1279f4eb63c463b8539a7a516d",
+        "918c78523b7cb6e20a5f4553a23cb14f1e165d1279f4eb63c463b8539a7a516d"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 7942.0
+      },
+      "peak_total_owned_vram_mb": 7942.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_choice": true
+          },
+          "metrics": {
+            "actual_choice": "billing"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_choice": true
+          },
+          "metrics": {
+            "actual_choice": "billing"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_choice": true
+          },
+          "metrics": {
+            "actual_choice": "billing"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_choice": true
+          },
+          "metrics": {
+            "actual_choice": "billing"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vllm:v3:decision-score-damage",
+      "model": "qwen-decision",
+      "capability": "decision.score_ranking",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "4187fc33a7ed3b77076e405ffc02a1994093d6ec8623924562ce7c3dd153e3f8",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vllm_v3/qwen-decision/observation.json",
+      "latency_ms": {
+        "median": 282.819049,
+        "min": 280.671109,
+        "max": 289.148108
+      },
+      "output_sha256": [
+        "485c346d6701afe0a9dffabe06501548bc6de53c1a3cf4819310fc5bc252bcfa",
+        "a8e69d74e94df113cd2acc0ca3d8e43647674a33ace4dfddfd51c33a8b066cee",
+        "a8e69d74e94df113cd2acc0ca3d8e43647674a33ace4dfddfd51c33a8b066cee",
+        "a8e69d74e94df113cd2acc0ca3d8e43647674a33ace4dfddfd51c33a8b066cee"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 7942.0
+      },
+      "peak_total_owned_vram_mb": 7942.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_ordering": true
+          },
+          "metrics": {
+            "lower_score": 2.2900987863203668e-05,
+            "higher_score": 1.999999525832122,
+            "margin": 1.9999766248442588
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_ordering": true
+          },
+          "metrics": {
+            "lower_score": 2.3063593554401175e-05,
+            "higher_score": 1.9999995107804251,
+            "margin": 1.9999764471868708
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_ordering": true
+          },
+          "metrics": {
+            "lower_score": 2.3063593554401175e-05,
+            "higher_score": 1.9999995107804251,
+            "margin": 1.9999764471868708
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_ordering": true
+          },
+          "metrics": {
+            "lower_score": 2.3063593554401175e-05,
+            "higher_score": 1.9999995107804251,
+            "margin": 1.9999764471868708
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vllm:v3:embedding-france-retrieval",
+      "model": "qwen-embedding",
+      "capability": "vector.text_embedding",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "6868945387d996400d716716f8b9fae4b25840393619c8f1ec59448382c238b9",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vllm_v3/qwen-embedding/observation.json",
+      "latency_ms": {
+        "median": 285.848831,
+        "min": 284.231242,
+        "max": 289.634916
+      },
+      "output_sha256": [
+        "f469352fb46f050016b9d2ef6149869956e8199d7455008f04d2e9d1540b90a7",
+        "f469352fb46f050016b9d2ef6149869956e8199d7455008f04d2e9d1540b90a7",
+        "f469352fb46f050016b9d2ef6149869956e8199d7455008f04d2e9d1540b90a7",
+        "f469352fb46f050016b9d2ef6149869956e8199d7455008f04d2e9d1540b90a7"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 4076.0
+      },
+      "peak_total_owned_vram_mb": 4076.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_dimension": true,
+            "finite": true,
+            "normalization": true,
+            "positive_above_negative": true
+          },
+          "metrics": {
+            "positive_cosine": 0.7832292886379987,
+            "negative_cosine": 0.37470024316295253,
+            "margin": 0.40852904547504615,
+            "norms": [
+              1.0000000006535088,
+              0.9999999954027761,
+              1.0000000078686624
+            ]
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_dimension": true,
+            "finite": true,
+            "normalization": true,
+            "positive_above_negative": true
+          },
+          "metrics": {
+            "positive_cosine": 0.7832292886379987,
+            "negative_cosine": 0.37470024316295253,
+            "margin": 0.40852904547504615,
+            "norms": [
+              1.0000000006535088,
+              0.9999999954027761,
+              1.0000000078686624
+            ]
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_dimension": true,
+            "finite": true,
+            "normalization": true,
+            "positive_above_negative": true
+          },
+          "metrics": {
+            "positive_cosine": 0.7832292886379987,
+            "negative_cosine": 0.37470024316295253,
+            "margin": 0.40852904547504615,
+            "norms": [
+              1.0000000006535088,
+              0.9999999954027761,
+              1.0000000078686624
+            ]
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_dimension": true,
+            "finite": true,
+            "normalization": true,
+            "positive_above_negative": true
+          },
+          "metrics": {
+            "positive_cosine": 0.7832292886379987,
+            "negative_cosine": 0.37470024316295253,
+            "margin": 0.40852904547504615,
+            "norms": [
+              1.0000000006535088,
+              0.9999999954027761,
+              1.0000000078686624
+            ]
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vllm:v3:rerank-france-capital",
+      "model": "qwen-reranker",
+      "capability": "vector.reranking",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "409fcfdc2181ce50573460a95da71951b315755765cfb27bc197be08c6116b12",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vllm_v3/qwen-reranker/observation.json",
+      "latency_ms": {
+        "median": 327.664675,
+        "min": 317.865658,
+        "max": 356.144657
+      },
+      "output_sha256": [
+        "02f386e5f0499c6677ad63b6a4e8b5cdd11e89816bb3be2f903754b80cdeec9e",
+        "9a866c2f9d2e9712dd61edc16b46f35349606b3fb0e647e9b48a8e49696f9a95",
+        "9a866c2f9d2e9712dd61edc16b46f35349606b3fb0e647e9b48a8e49696f9a95",
+        "9a866c2f9d2e9712dd61edc16b46f35349606b3fb0e647e9b48a8e49696f9a95"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 4078.0
+      },
+      "peak_total_owned_vram_mb": 4078.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_top_document": true,
+            "positive_above_distractors": true
+          },
+          "metrics": {
+            "scores": {
+              "1": 0.9976087808609009,
+              "2": 0.00031326443422585726,
+              "0": 5.1281554078741465e-06
+            },
+            "margin": 0.997295516426675
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_top_document": true,
+            "positive_above_distractors": true
+          },
+          "metrics": {
+            "scores": {
+              "1": 0.9975927472114563,
+              "2": 0.00031471988768316805,
+              "0": 5.106248863739893e-06
+            },
+            "margin": 0.9972780273237731
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_top_document": true,
+            "positive_above_distractors": true
+          },
+          "metrics": {
+            "scores": {
+              "1": 0.9975927472114563,
+              "2": 0.00031471988768316805,
+              "0": 5.106248863739893e-06
+            },
+            "margin": 0.9972780273237731
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_top_document": true,
+            "positive_above_distractors": true
+          },
+          "metrics": {
+            "scores": {
+              "1": 0.9975927472114563,
+              "2": 0.00031471988768316805,
+              "0": 5.106248863739893e-06
+            },
+            "margin": 0.9972780273237731
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-text:v3:text-arithmetic",
+      "model": "qwen-text",
+      "capability": "responses.chat_completion",
+      "backend": "llama_cpp",
+      "checkpoint": "unsloth/Qwen3.8-27B-GGUF",
+      "revision": "ce331efc48d5722b4b8041f72793e530eae18d9b",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "62756d53eb768dd8adeeb9286645a453c9e7d84bfeb68e935136c65daf774c61",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2",
+        "httpx": "0.28.1"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_text_v3/qwen-text/observation.json",
+      "latency_ms": {
+        "median": 2770.884815,
+        "min": 2764.804881,
+        "max": 2813.889147
+      },
+      "output_sha256": [
+        "3f706b9775f45f09a1d881aeec5899fd3ae6a5314a9fa06974021382144e8115",
+        "fa83ab4a4abf65a418f232f7486e6abff12df9a9d64f875445a577a08f6f0166",
+        "8ddb934ef0069af9b1431323375fd0ccab2733ced73f64547e243fa5bf7c0d86",
+        "3a564e2a8606f4c464fad5ba2fafcb09388cdf8fd10a532d15647b052a6faee3"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 8466.0,
+        "1": 9424.0
+      },
+      "peak_total_owned_vram_mb": 17890.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-text:v3:text-responses",
+      "model": "qwen-text",
+      "capability": "responses.create",
+      "backend": "llama_cpp",
+      "checkpoint": "unsloth/Qwen3.8-27B-GGUF",
+      "revision": "ce331efc48d5722b4b8041f72793e530eae18d9b",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "ff5aa779a649027f78216d00051495aa59a6e0e7e7c6e1085d8132dccb80bf27",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2",
+        "httpx": "0.28.1"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_text_v3/qwen-text/observation.json",
+      "latency_ms": {
+        "median": 3057.456414,
+        "min": 3053.394981,
+        "max": 3057.496679
+      },
+      "output_sha256": [
+        "3e4d5312b2db6711dfaf094f4fdcbab922b07741990fd9770d463b55c8db2f33",
+        "93e64c6d39f35d09170ac394b0c4182cfaa71bc14aa3b0c99ff93646968ff9b0",
+        "127af812eb7754e390d4ded0a4cb53d2134dbf4a0c31542e11f2132d22bd6611",
+        "b5c548f9364fbf06e5e2197e9dd0f9631ae7e8a14342f6b6bb1616bc9ff43138"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 8466.0,
+        "1": 9424.0
+      },
+      "peak_total_owned_vram_mb": 17890.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "FACTORY_NATIVE_OK"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "FACTORY_NATIVE_OK"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "FACTORY_NATIVE_OK"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "FACTORY_NATIVE_OK"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-text:v3:text-structured-city",
+      "model": "qwen-text",
+      "capability": "responses.structured_output",
+      "backend": "llama_cpp",
+      "checkpoint": "unsloth/Qwen3.8-27B-GGUF",
+      "revision": "ce331efc48d5722b4b8041f72793e530eae18d9b",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "7f0b004126f059107126dcbb4f2d7dfd9c370e5dc62372036970b3183d5b5f31",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2",
+        "httpx": "0.28.1"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_text_v3/qwen-text/observation.json",
+      "latency_ms": {
+        "median": 5222.839251,
+        "min": 5192.200303,
+        "max": 5301.809806
+      },
+      "output_sha256": [
+        "f822bcee42c02eb4b8e3b48ed995173808588f68e0e8617b85ddbe4c5ba78c7e",
+        "58a31c102cfdfea018a8854f827847b3bc71154225ef5865fc0b74c28af93039",
+        "b185a6846aa6b00365ae77b518f593ebc38928f76b2b6c8100ba9f643a0cda00",
+        "f94e7ee27c5559a85919e1fadb5521a47bcf3bd7603ead4a80a7e0ef56d08a3e"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 8466.0,
+        "1": 9424.0
+      },
+      "peak_total_owned_vram_mb": 17890.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "structured_json_and_expected_fact": true
+          },
+          "metrics": {
+            "actual_json": {
+              "city": "Paris"
+            }
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "structured_json_and_expected_fact": true
+          },
+          "metrics": {
+            "actual_json": {
+              "city": "Paris"
+            }
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "structured_json_and_expected_fact": true
+          },
+          "metrics": {
+            "actual_json": {
+              "city": "Paris"
+            }
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "structured_json_and_expected_fact": true
+          },
+          "metrics": {
+            "actual_json": {
+              "city": "Paris"
+            }
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-text:v3:text-tool-weather",
+      "model": "qwen-text",
+      "capability": "responses.tool_calling",
+      "backend": "llama_cpp",
+      "checkpoint": "unsloth/Qwen3.8-27B-GGUF",
+      "revision": "ce331efc48d5722b4b8041f72793e530eae18d9b",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "f45d1041af9384f74d66aa8a4b81ca798e80fbadec4ba3cb1c7badb433deeab9",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2",
+        "httpx": "0.28.1"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_text_v3/qwen-text/observation.json",
+      "latency_ms": {
+        "median": 7836.138143,
+        "min": 7825.490181,
+        "max": 7844.146626
+      },
+      "output_sha256": [
+        "0816f8f671efe551d61f7b38a987041e71ee7c77a6bc7c786f551bca9f2ac1c5",
+        "55a14485928eb7b059cd7391fa3278e7b750a29fc4967ace5abcdb65680afd3d",
+        "2ce5f969a8ded68d5f79064ae24e63fa2a9c651ba860c0a4caecc96927a5b77c",
+        "cae38a750d0a6b1d329f19753e281b8d46b94ad65e74ac820308808206ad9a2a"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 8472.0,
+        "1": 9428.0
+      },
+      "peak_total_owned_vram_mb": 17900.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "one_native_function_call": true,
+            "expected_function": true,
+            "expected_city": true,
+            "no_extra_arguments": true
+          },
+          "metrics": {}
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "one_native_function_call": true,
+            "expected_function": true,
+            "expected_city": true,
+            "no_extra_arguments": true
+          },
+          "metrics": {}
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "one_native_function_call": true,
+            "expected_function": true,
+            "expected_city": true,
+            "no_extra_arguments": true
+          },
+          "metrics": {}
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "one_native_function_call": true,
+            "expected_function": true,
+            "expected_city": true,
+            "no_extra_arguments": true
+          },
+          "metrics": {}
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-text:v3:text-streaming",
+      "model": "qwen-text",
+      "capability": "responses.streaming",
+      "backend": "llama_cpp",
+      "checkpoint": "unsloth/Qwen3.8-27B-GGUF",
+      "revision": "ce331efc48d5722b4b8041f72793e530eae18d9b",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "b8df67a022781f0a06b5d27c2aac5b43fd066e4f3090becdec79cc84c63ea478",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2",
+        "httpx": "0.28.1"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_text_v3/qwen-text/observation.json",
+      "latency_ms": {
+        "median": 3686.136704,
+        "min": 3667.834072,
+        "max": 3687.570532
+      },
+      "output_sha256": [
+        "f248887d3bb8de6ae2f1fe369fee95352a2f94327f4c5d7c62d26d7906aea57e",
+        "527c3ff5cf959988ec584dbe649848fa676a1ee827ab1f96d6bf8e4da684e846",
+        "2ac19dbd634ab1fd1a6a3b437045a97d5f26cb1ec85a604136138c26e4361783",
+        "d03a9e4e4453a87f94827f61283fd98ecd06b1af8fc6eea3c6b1e21743bd4341"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 8472.0,
+        "1": 9428.0
+      },
+      "peak_total_owned_vram_mb": 17900.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "native_done": true,
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "FACTORY_STREAM_OK"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "native_done": true,
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "FACTORY_STREAM_OK"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "native_done": true,
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "FACTORY_STREAM_OK"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "native_done": true,
+            "exact_meaningful_answer": true
+          },
+          "metrics": {
+            "actual_text": "FACTORY_STREAM_OK"
+          }
+        }
+      ],
+      "error": null
+    }
+  ],
+  "findings": [],
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "phase_8_exit_gate": "NOT_MET (remaining native waves require validation)"
+}

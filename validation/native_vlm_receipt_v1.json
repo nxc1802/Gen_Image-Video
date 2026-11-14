@@ -1,0 +1,129 @@
+{
+  "kind": "vlm",
+  "version": 1,
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-vlm",
+  "run_record_sha256": "db33214c14bfe1acaadf0416e2ac59ad8af182eca6efac373ec0384094613ef3",
+  "artifacts": [
+    {
+      "file": "validation/native_vlm_v1/wave_b.json",
+      "sha256": "3d011c5f408d3662f16a8f3cb45527a06baca8cd1b71f53436c72041734c4f88"
+    },
+    {
+      "file": "validation/native_vlm_v1/setup.json",
+      "sha256": "dfac56df2127f81502127da1e2480f279c7aec44ca66c015dcdce1ef00d7ca96"
+    },
+    {
+      "file": "validation/native_vlm_v1/driver.log",
+      "sha256": "22c66a635a89e3552ca7f7c9a8f876fc358e1f04fcbce4925b448dde8b2dd57b"
+    },
+    {
+      "file": "validation/native_vlm_v1/installation.log",
+      "sha256": "bae212c943b8eba9d9babdde979f47979e21dabfe65f50d7710e1afcb72fe34c"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-text-arithmetic-0.json",
+      "sha256": "d13fbd3a98c06bc6e710f6eb55b69d2cd697e63009af79ec446d35df6c6bdde9"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-pedestrian-video-3.json",
+      "sha256": "64f7da00529b1633fd35a76632834fa86698aa9fae77e6338f1de1912e468374"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-astronaut-suit-0.json",
+      "sha256": "15497b27e58f584b2a9014939daa238ff1e24f430deddb01c3febee76cbc1945"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-text-arithmetic-2.json",
+      "sha256": "139278a87647c969a0ab316023998333220ece4870c426edea47fa5e6977b469"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/backend.log",
+      "sha256": "dce41ff984793482fa12589ed8af91fe2292f927036c2c88c2f9ba4dcac3043b"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-astronaut-suit-3.json",
+      "sha256": "c7d39359dd74b8d05d512f370a93b36c655bfda504b9606ac5534eeb492d26cf"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-document-title-0.json",
+      "sha256": "8d9aad16066750ca0062f396a29475ca8cd8f8a617676f97b41c201a5883d16d"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-astronaut-suit-1.json",
+      "sha256": "614597186962f0892e4951fe9620a979c216e8677fc4912d9ff1333854f17721"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-astronaut-suit-2.json",
+      "sha256": "375198cf2c5b375b5b0c4d9e2d35b89cea41fff3678478afe9d7dac699bd048f"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-text-arithmetic-3.json",
+      "sha256": "3da1d5ba8b6799175020d94e411da137f43f45039a84e9e8f85ea8054550c192"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-head-grounding-0.json",
+      "sha256": "32345ea28d64b36a160b4aa8009346d0e1a8626f4ca09d36db1fd27686d80bb9"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-pedestrian-video-2.json",
+      "sha256": "52ab0f555ec091326dd93c88351f65e53c52b80822a2d022c1b112f49e61f9c2"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-text-arithmetic-1.json",
+      "sha256": "229a3f5e44645d4f8c511926cbb56e9715be1557bce1236b8e49d6f88c1ec819"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-document-title-1.json",
+      "sha256": "c0cb52478a4bdbf0aee8c983a885c397cf07a6a798fc2042c938b1cee794d5bc"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-pedestrian-video-0.json",
+      "sha256": "a13c7aea83945fe2cb5c2f64dbb9528d5568c4c9c256bd5e789feee2e75a7add"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-pedestrian-video-1.json",
+      "sha256": "dc6a7312214189fd30c81febe2352f3b461d4cd0f6a18306f234bb2abb9b9dbb"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-document-title-3.json",
+      "sha256": "0f8aa4f804b6b63567d920aa667b34fdc647c2baea41370323b921ad7f939c1e"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/vlm-document-title-2.json",
+      "sha256": "d1354a0a25c9815283f13aa5a8e2750be5c502208429ab8ae6fab55b7d3b5169"
+    },
+    {
+      "file": "validation/native_vlm_v1/qwen-vlm/observation.json",
+      "sha256": "7ac0dceb92bb2513d14fae1d6f658456c1332d71fc60bbe85b69d703af9568ec"
+    },
+    {
+      "file": "validation/native_vlm_v1/inputs/astronaut/input_identity.json",
+      "sha256": "d2955231f7dd7e240de4dd08f977e791c628fb4261da1a150d81042faab6ab09"
+    },
+    {
+      "file": "validation/native_vlm_v1/inputs/astronaut/source.bin",
+      "sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5"
+    },
+    {
+      "file": "validation/native_vlm_v1/inputs/page/input_identity.json",
+      "sha256": "ecfe743f9d0b87be4cb656b23b7f333a323f9a56b7fcc1c764967f4f8e6e9aa4"
+    },
+    {
+      "file": "validation/native_vlm_v1/inputs/page/source.bin",
+      "sha256": "341a6f0a61557662b02734a9b6e56ec33a915b2c41886b97509dedf2a43b47a3"
+    },
+    {
+      "file": "validation/native_vlm_v1/inputs/pedestrians/input_identity.json",
+      "sha256": "baf74ebe13b6f3aa6105a48ceff561c1e649a5bd87f68656e6e410313df5d792"
+    },
+    {
+      "file": "validation/native_vlm_v1/inputs/pedestrians/source.bin",
+      "sha256": "9579648ba27debc6e31a632fcb095edb4fa4b29f6403a6f0716415adc6eb5c99"
+    }
+  ]
+}

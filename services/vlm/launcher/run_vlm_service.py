@@ -41,6 +41,8 @@ def main() -> None:
         "vllm", "serve", config.model.name,
         "--host", host,
         "--port", str(port),
+        "--dtype", {"fp16": "float16", "bf16": "bfloat16", "fp32": "float32"}[config.model.precision],
+        "--revision", config.model.revision,
         "--served-model-name", config.model.alias,
         "--max-model-len", str(config.model.max_context_tokens),
         "--api-key", api_key,

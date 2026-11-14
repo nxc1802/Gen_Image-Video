@@ -1,0 +1,9 @@
+{
+  "classification": "UPSTREAM_DOCUMENTATION_AND_PREDECLARED_REQUEST_ONLY_NOT_INFERENCE",
+  "documentation_revision": "0919fb684102ef115126612f3fbb84d1027e7317",
+  "documentation_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/0919fb684102ef115126612f3fbb84d1027e7317/docs/VIDEO_PROMPT_WRITING_GUIDE_base_en.md",
+  "documentation_sha256": "2cfebc096a6e08370f288d468d90b60f7f9bcb938f94bf090816e910e48e75fc",
+  "case_id": "minimax-spoken-audio-native-dialogue-v2",
+  "native_inference_executed": false,
+  "production_ready": false
+}

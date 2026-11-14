@@ -1,0 +1,16 @@
+{
+  "classification": "CROSS_PLATFORM_DECODER_DIAGNOSIS_NOT_MODEL_INFERENCE_OR_GATE_POLICY",
+  "input_mp4_sha256": "259ee3fc8703dea1d74f088291b80b1b849fc3325d85e7ed0460ce4819b22674",
+  "upstream_source_url": "https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz",
+  "upstream_source_sha256": "8684f4b00f94b85461884c3719382f1261f0d9eb3d59640a1f4ac0873616f968",
+  "mac_executable_sha256": "f700cfa7e53a71e2d62519eba1e7795d868467cd44002e3979dea45c4215efc1",
+  "mac_version_output": "ffmpeg version 6.1.1 Copyright (c) 2000-2023 the FFmpeg developers\nbuilt with Apple clang version 17.0.0 (clang-1700.6.3.2)\nconfiguration: --disable-everything --disable-autodetect --disable-doc --disable-debug --disable-network --disable-videotoolbox --disable-audiotoolbox --disable-avdevice --disable-postproc --disable-x86asm --enable-small --enable-ffmpeg --enable-ffprobe --enable-decoder=aac --enable-demuxer=mov --enable-parser=aac --enable-protocol='file,pipe' --enable-muxer=pcm_f32le --enable-encoder=pcm_f32le --enable-filter='aresample,aformat,anull'\nlibavutil      58. 29.100 / 58. 29.100\nlibavcodec     60. 31.102 / 60. 31.102\nlibavformat    60. 16.100 / 60. 16.100\nlibavfilter     9. 12.100 /  9. 12.100\nlibswscale      7.  5.100 /  7.  5.100\nlibswresample   4. 12.100 /  4. 12.100\n",
+  "native_pcm_sha256": "d86e6bfa0cecf0ea5b90bd0cdba78eaa160ceb17b6b8c2f31ce91feff7302bce",
+  "mac_pcm_sha256": "408c4cdb480eee5c9bdd526630c9252c295f0551588fc4fe5502dba512b1058c",
+  "equal_sample_count": 71680,
+  "unequal_samples": 50604,
+  "maximum_absolute_sample_difference": 2.9802322387695312e-08,
+  "mean_absolute_sample_difference": 4.687829072066947e-10,
+  "strict_digest_match": false,
+  "production_ready": false
+}

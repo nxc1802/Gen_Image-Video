@@ -1,0 +1,12 @@
+{
+  "observed_at_utc": "2026-11-13T06:44:28.258488+00:00",
+  "version": 1,
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-image-t2i",
+  "run_record_sha256": "0f8c95bc569f1c33acc3d98a6f69618d76f6425a643cefbb50068d6c9aabe82f",
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "classification": "REMOTE_JOB_STATUS_ONLY_NOT_INFERENCE_EVIDENCE"
+}

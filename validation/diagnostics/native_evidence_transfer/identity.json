@@ -1,0 +1,20 @@
+{
+  "classification": "BYTE_IDENTICAL_COPY_OF_COLLECTED_NATIVE_ARTIFACTS_NOT_NEW_INFERENCE",
+  "attempts": [
+    {
+      "kind": "wan_t2v",
+      "version": 8,
+      "zip": "exact_native_wan_t2v_v8.bin",
+      "sha256": "3f450e3e6effea28149210ae2ad5b189350ffdb57d0c8baf45581bd008eae7b4",
+      "receipt_sha256": "abe6a64ef6e5fcbafc5b2694e05cb61626bcaf31458475c825156f7c8d5bf0d6"
+    },
+    {
+      "kind": "minimax_turbo",
+      "version": 4,
+      "zip": "exact_native_minimax_turbo_v4.bin",
+      "sha256": "7a54d5f7871bc3e0f0e1f3293bdc15adcc88544ddc54a68f9b750da46698fea5",
+      "receipt_sha256": "7bd9657d30722a18f78616d727167711dcb149cf02439fe5407e47caf63a073d"
+    }
+  ],
+  "dataset_ref": "cuongnguyen1802/factory-phase8-exact-evidence-20261114"
+}

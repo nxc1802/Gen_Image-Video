@@ -14,6 +14,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from typing import Any, Dict, List, Optional
 import httpx
+from factory_contracts.capabilities import capability_ids
 
 from factory_contracts.errors.error_contract import ErrorDetail, classify_worker_error
 from factory.apps.control_api.src.assets.ssrf import validate_target_url
@@ -132,29 +133,7 @@ class VideoWorkerDaemon:
             worker_id=self.config.worker_id,
             subsystem="video",
             supported_models=["wan-2.2", "minimax-h3"],
-            supported_tasks=[
-                "text_to_video",
-                "video.t2v",
-                "t2v",
-                "image_to_video",
-                "video.i2v",
-                "i2v",
-                "fl2v",
-                "video.fl2v",
-                "first_last_frame_to_video",
-                "video_extension",
-                "video.extend",
-                "video.extension",
-                "extension",
-                "video_with_audio",
-                "video.audio",
-                "video.with_audio",
-                "with_audio",
-                "reference_conditioning",
-                "video.reference",
-                "video.ref2va",
-                "ref2va",
-            ],
+            supported_tasks=list(capability_ids("video")),
             gpu_device=self.config.gpu_device,
             lease_duration_seconds=self.config.lease_duration_seconds,
         )
@@ -297,7 +276,7 @@ class VideoWorkerDaemon:
                     staged_files[key] = staged_fname
 
             # Special handling for Video Extension
-            if job.task in ("video_extension", "extension"):
+            if job.task == "video.video_extension":
                 video_url = job.inputs.get("video_url")
                 if video_url and "video_url" in staged_files:
                     src_vid_path = self.config.input_dir / staged_files["video_url"]
@@ -345,7 +324,7 @@ class VideoWorkerDaemon:
 
             # FIX-13: Concatenate original and generated segment for extension; validate codecs/timing.
             current_stage = "concatenating_segments"
-            if job.task in ("video_extension", "extension") and "video_url" in staged_files:
+            if job.task == "video.video_extension" and "video_url" in staged_files:
                 src_vid_path = self.config.input_dir / staged_files["video_url"]
                 output_files = self.artifact_collector._resolve_output_files(outputs)
                 if output_files and src_vid_path.exists():

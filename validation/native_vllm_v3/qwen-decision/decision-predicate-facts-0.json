@@ -1,0 +1,1 @@
+{"answers":[{"name":"true_fact","probability":0.9999996940976638,"type":"predicate"},{"name":"false_fact","probability":1.0102783933368222e-10,"type":"predicate"}],"model":"qwen-decision","usage":{"input_tokens":138,"input_tokens_details":{"cache_write_tokens":96,"cached_tokens":32},"output_tokens":2,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":140}}

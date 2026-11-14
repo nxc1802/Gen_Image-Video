@@ -1,0 +1,825 @@
+{
+  "wave": "B",
+  "observed_at_utc": "2026-11-12T14:22:20.412904+00:00",
+  "exit_gate": "NOT_MET",
+  "classification": "NATIVE_V3_SEMANTIC_CANDIDATES_ONLY",
+  "golden_sha256": "cde5f2f47bc91692906408f1570c0957df352a84e8530fe0e38c08a09391f071",
+  "attempts": [
+    {
+      "kind": "asr",
+      "version": 2,
+      "observation": "validation/native_asr_v2/wave_b.json",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "validation_bundle_sha256": "7a04e138bb1831f86a895d6bdd5eaaedc13014aa1ce3b623fcb52176ed768058"
+    },
+    {
+      "kind": "vlm",
+      "version": 1,
+      "observation": "validation/native_vlm_v1/wave_b.json",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "validation_bundle_sha256": "46d0db31ce9578d4b4d7d1cd41867fe47146d86df30468fb1c7c7e55491b7fc2"
+    }
+  ],
+  "cases": [
+    {
+      "run_id": "kaggle:factory-phase-8-native-asr:v2:asr-jfk-real-speech",
+      "model": "qwen-asr",
+      "capability": "speech.asr",
+      "backend": "qwen_asr",
+      "checkpoint": "Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "b24c08034405dadd8993d3d76ea60cbec8377f43aa707aa4ea8dcb8863ab34dd",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "qwen-asr": "0.0.6",
+        "torch": "2.11.0+cu130",
+        "transformers": "4.57.6",
+        "huggingface-hub": "0.36.2",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_asr_v2/qwen-asr/observation.json",
+      "latency_ms": {
+        "median": 1681.48244,
+        "min": 1667.55451,
+        "max": 1697.014513
+      },
+      "output_sha256": [
+        "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153",
+        "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153",
+        "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153",
+        "d6af4eb0716b885052ee01b2bafdbc0b651d0b9a99b1d31da510812faffeb153"
+      ],
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "transcript_matches_ground_truth": true,
+            "required_spoken_phrases": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": "And so, my fellow Americans, ask not what your country can do for you. Ask what you can do for your country."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "transcript_matches_ground_truth": true,
+            "required_spoken_phrases": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": "And so, my fellow Americans, ask not what your country can do for you. Ask what you can do for your country."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "transcript_matches_ground_truth": true,
+            "required_spoken_phrases": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": "And so, my fellow Americans, ask not what your country can do for you. Ask what you can do for your country."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "transcript_matches_ground_truth": true,
+            "required_spoken_phrases": true
+          },
+          "metrics": {
+            "word_error_rate": 0.0,
+            "actual_transcript": "And so, my fellow Americans, ask not what your country can do for you. Ask what you can do for your country."
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vlm:v1:vlm-text-arithmetic",
+      "model": "qwen-vlm",
+      "capability": "responses.create",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "3d7e9e62051bd18e542c39878ebc68a79b3e5264faa0983b6d7ab9c44dc6e971",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vlm_v1/qwen-vlm/observation.json",
+      "latency_ms": {
+        "median": 424.136665,
+        "min": 419.469165,
+        "max": 468.393601
+      },
+      "output_sha256": [
+        "d13fbd3a98c06bc6e710f6eb55b69d2cd697e63009af79ec446d35df6c6bdde9",
+        "229a3f5e44645d4f8c511926cbb56e9715be1557bce1236b8e49d6f88c1ec819",
+        "139278a87647c969a0ab316023998333220ece4870c426edea47fa5e6977b469",
+        "3da1d5ba8b6799175020d94e411da137f43f45039a84e9e8f85ea8054550c192"
+      ],
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "42"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vlm:v1:vlm-astronaut-suit",
+      "model": "qwen-vlm",
+      "capability": "responses.image_chat",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "e527d295bc489e2b28fafad01d2e210fcb1b059fda0f7d60fb78651e4bcae559",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vlm_v1/qwen-vlm/observation.json",
+      "latency_ms": {
+        "median": 375.26653,
+        "min": 362.897338,
+        "max": 388.079929
+      },
+      "output_sha256": [
+        "15497b27e58f584b2a9014939daa238ff1e24f430deddb01c3febee76cbc1945",
+        "614597186962f0892e4951fe9620a979c216e8677fc4912d9ff1333854f17721",
+        "375198cf2c5b375b5b0c4d9e2d35b89cea41fff3678478afe9d7dac699bd048f",
+        "c7d39359dd74b8d05d512f370a93b36c655bfda504b9606ac5534eeb492d26cf"
+      ],
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "Orange"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "Orange"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "Orange"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "expected_answer": true
+          },
+          "metrics": {
+            "actual_text": "Orange"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vlm:v1:vlm-document-title",
+      "model": "qwen-vlm",
+      "capability": "responses.document_qa",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "4bdeb0c68dcb3fc496b8fecea11d1c60f5bc2f14f483250ae6bda2e9c6554760",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vlm_v1/qwen-vlm/observation.json",
+      "latency_ms": {
+        "median": 472.17329,
+        "min": 461.357088,
+        "max": 472.368078
+      },
+      "output_sha256": [
+        "8d9aad16066750ca0062f396a29475ca8cd8f8a617676f97b41c201a5883d16d",
+        "c0cb52478a4bdbf0aee8c983a885c397cf07a6a798fc2042c938b1cee794d5bc",
+        "d1354a0a25c9815283f13aa5a8e2750be5c502208429ab8ae6fab55b7d3b5169",
+        "0f8aa4f804b6b63567d920aa667b34fdc647c2baea41370323b921ad7f939c1e"
+      ],
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "read_actual_document_title": true
+          },
+          "metrics": {
+            "actual_text": "Region-based segmentation"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "read_actual_document_title": true
+          },
+          "metrics": {
+            "actual_text": "Region-based segmentation"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "read_actual_document_title": true
+          },
+          "metrics": {
+            "actual_text": "Region-based segmentation"
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "read_actual_document_title": true
+          },
+          "metrics": {
+            "actual_text": "Region-based segmentation"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vlm:v1:vlm-head-grounding",
+      "model": "qwen-vlm",
+      "capability": "responses.visual_grounding",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "6e0a14b587bc470c1ce6ebaec9774bcdc0699baf273a54c5c490403bd602cf57",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "NOT_MET",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": false
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": false
+        }
+      ],
+      "native_inference_verified": false,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vlm_v1/qwen-vlm/observation.json",
+      "output_sha256": [],
+      "semantic_validation": [],
+      "error": {
+        "type": "JSONDecodeError",
+        "message": "Expecting value: line 1 column 1 (char 0)",
+        "details": {},
+        "traceback": "Traceback (most recent call last):\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_a.py\", line 318, in model_run\n    semantics = validator(case, actual)\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_b.py\", line 45, in semantic\n    return visual_semantic(case, output)\n  File \"/tmp/factory_phase8_a/benchmarks/native/wave_b.py\", line 80, in visual_semantic\n    box = json.loads(text)[\"bbox\"]\n          ~~~~~~~~~~^^^^^^\n  File \"/usr/lib/python3.13/json/__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"/usr/lib/python3.13/json/decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/json/decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)\n"
+      }
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-vlm:v1:vlm-pedestrian-video",
+      "model": "qwen-vlm",
+      "capability": "responses.video_chat",
+      "backend": "vllm",
+      "checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+      "revision": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "ba1a5790d949597b71fb36d34607ac4d6278d4e271a3f1f62aa61f62df684b70",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "38c64f14f61fbd0bcefc9fcef52ccde5f45ee499a9699b41329fe4aff23a46eb",
+      "runtime_versions": {
+        "vllm": "0.33.0",
+        "torch": "2.14.0",
+        "transformers": "5.20.2",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_vlm_v1/qwen-vlm/observation.json",
+      "latency_ms": {
+        "median": 1021.671179,
+        "min": 1004.660346,
+        "max": 1053.465181
+      },
+      "output_sha256": [
+        "a13c7aea83945fe2cb5c2f64dbb9528d5568c4c9c256bd5e789feee2e75a7add",
+        "dc6a7312214189fd30c81febe2352f3b461d4cd0f6a18306f234bb2abb9b9dbb",
+        "52ab0f555ec091326dd93c88351f65e53c52b80822a2d022c1b112f49e61f9c2",
+        "64f7da00529b1633fd35a76632834fa86698aa9fae77e6338f1de1912e468374"
+      ],
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "recognizes_people": true,
+            "recognizes_walking_action": true
+          },
+          "metrics": {
+            "actual_text": "The people in the video are walking across a parking lot."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "recognizes_people": true,
+            "recognizes_walking_action": true
+          },
+          "metrics": {
+            "actual_text": "The people in the video are walking across a parking lot."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "recognizes_people": true,
+            "recognizes_walking_action": true
+          },
+          "metrics": {
+            "actual_text": "The people in the video are walking across a parking lot."
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "recognizes_people": true,
+            "recognizes_walking_action": true
+          },
+          "metrics": {
+            "actual_text": "The people in the video are walking across a parking lot."
+          }
+        }
+      ],
+      "error": null
+    }
+  ],
+  "findings": [
+    "Golden coverage differs from declared Wave B capabilities: {'missing': [('qwen-tts', 'speech.tts'), ('qwen-tts', 'speech.voice_cloning')], 'undeclared': []}",
+    "qwen-tts: no collected native case evidence",
+    "1 native capabilities have not met the gate"
+  ],
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "phase_8_exit_gate": "NOT_MET (remaining native waves require validation)"
+}

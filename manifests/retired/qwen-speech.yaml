@@ -1,0 +1,8 @@
+id: qwen-speech
+aliases:
+- qwen_speech
+replacements:
+- qwen-asr
+- qwen-tts
+reason: Ambiguous composite checkpoint retired. Choose the ASR or TTS model explicitly;
+  no request-time model substitution.

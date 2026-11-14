@@ -1,0 +1,9 @@
+{
+  "fixture_path": "tests/fixtures/native/astronaut_last.png",
+  "sha256": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f",
+  "size_bytes": 174767,
+  "mime_type": "image/png",
+  "original_url": "https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png",
+  "original_sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+  "conversion": "Same actual photograph cropped by 32 pixels and resized to 384x256 as an explicit zoom keyframe; no generated output."
+}

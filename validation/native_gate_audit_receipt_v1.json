@@ -1,0 +1,14 @@
+{
+  "kernel_status": {
+    "status": "error",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "run_record_sha256": "c4e91aba44ea38a77aaecd4e0c3f6af96906c954902210732568c48a0259dca6",
+  "artifacts": [
+    {
+      "file": "validation/native_gate_audit_v1/audit.json",
+      "sha256": "6aeebaa145b7a31cf60223d293b4aa3f30cd17902f933f4aa6f9c9285780ac67"
+    }
+  ]
+}

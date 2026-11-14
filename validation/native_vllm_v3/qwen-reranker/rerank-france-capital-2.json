@@ -1,0 +1,1 @@
+{"model":"qwen-reranker","results":[{"document":"Paris is the capital of France.","index":1,"relevance_score":0.9975927472114563},{"document":"Berlin is the capital of Germany.","index":2,"relevance_score":0.00031471988768316805},{"document":"Bananas are tropical fruits.","index":0,"relevance_score":5.106248863739893e-06}]}

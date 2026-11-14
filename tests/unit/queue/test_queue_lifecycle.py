@@ -7,6 +7,9 @@ import asyncio
 from datetime import datetime, timedelta, timezone
 import pytest
 
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
+
 from factory_contracts.errors import FactoryError, InvalidRequestError, NotFoundError
 from factory_contracts.jobs.job_contract import (
     ArtifactReference,
@@ -131,7 +134,7 @@ class TestSqliteRepository:
         ineligible = await repo.find_eligible_jobs_for_worker(
             subsystem="image",
             supported_models=["qwen-image-2.1"],
-            supported_tasks=["text_to_image"],
+            supported_tasks=["image.text_to_image"],
         )
         assert len(ineligible) == 0
 
@@ -139,7 +142,7 @@ class TestSqliteRepository:
         eligible = await repo.find_eligible_jobs_for_worker(
             subsystem="video",
             supported_models=["wan-2.2"],
-            supported_tasks=["text_to_video"],
+            supported_tasks=["video.text_to_video"],
         )
         assert len(eligible) == 1
         assert eligible[0].job_id == job.job_id

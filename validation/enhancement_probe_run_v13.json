@@ -1,0 +1,20 @@
+{
+  "observed_at_utc": "2026-11-13T12:59:10.377136+00:00",
+  "response": {
+    "versionNumberNullable": 13,
+    "ref": "/code/cuongnguyen1802/factory-phase-5-enhancement-native",
+    "url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-5-enhancement-native",
+    "versionNumber": 13,
+    "hasVersionNumber": true,
+    "error": "",
+    "hasError": false,
+    "invalidTags": [],
+    "invalidDatasetSources": [],
+    "invalidCompetitionSources": [],
+    "invalidKernelSources": [],
+    "invalidModelSources": [],
+    "kernelId": 144527317
+  },
+  "slug": "factory-phase-5-enhancement-native",
+  "kernel_code_sha256": "75f72287466697fd43e47ae03aff6b490368a5bc9becc58ec2a53494e6ba4a43"
+}

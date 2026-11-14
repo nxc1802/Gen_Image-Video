@@ -1,0 +1,4656 @@
+{
+  "schema_version": 1,
+  "phase": 0,
+  "source_commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+  "audit_date": "2026-11-12",
+  "master_plan": {
+    "path": "docs/MASTER_PLAN.md",
+    "sha256": "28b6ca6f5802cf1685d5992ddc80a4df25bfce8ee11b11642ee50201560bcb19"
+  },
+  "scope": "Immutable source-tree/code/evidence audit, not a GPU run. BLOCKED means required proof missing, not inference failure.",
+  "legacy_runtime_flags": "Frozen installed/checkpoint_valid/backend_ready flags are unverified static declarations, never current deployment attestation. Correct replacement belongs to Phases 1/3/4.",
+  "summary": {
+    "models": 12,
+    "model_capability_pairs": 69,
+    "dispositions": {
+      "BLOCKED": 52,
+      "DISABLED": 17
+    },
+    "production_ready_pairs": 0
+  },
+  "models": [
+    {
+      "id": "ace-step-1.5",
+      "manifest": {
+        "path": "manifests/models/ace-step-1.5.yaml",
+        "sha256": "530544d47aba0c22da64468213054a7c0b01848090f4075d3700953fb8b027cd"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "ACE-Studio/ACE-Step-1.5",
+        "repository": "ACE-Studio/ACE-Step-1.5",
+        "checkpoint_revision": "9d82e1c312781b0a70cf6bf79e2730ca7f918042",
+        "weights_file": "model.safetensors",
+        "format": "safetensors",
+        "quantization": "none",
+        "default_precision": "bf16",
+        "variants": {
+          "turbo": {
+            "id": "turbo",
+            "display_name": "ACE-Step 1.5 2B Turbo",
+            "checkpoint": "ACE-Studio/ACE-Step-1.5-Turbo",
+            "format": "safetensors",
+            "quantization": "none",
+            "default_precision": "bf16",
+            "recommended_steps": 8,
+            "min_vram_gb": 6.0
+          },
+          "sft": {
+            "id": "sft",
+            "display_name": "ACE-Step 1.5 2B SFT",
+            "checkpoint": "ACE-Studio/ACE-Step-1.5-SFT",
+            "format": "safetensors",
+            "quantization": "none",
+            "default_precision": "bf16",
+            "recommended_steps": 25,
+            "min_vram_gb": 6.0
+          },
+          "base": {
+            "id": "base",
+            "display_name": "ACE-Step 1.5 2B Base",
+            "checkpoint": "ACE-Studio/ACE-Step-1.5",
+            "format": "safetensors",
+            "quantization": "none",
+            "default_precision": "bf16",
+            "recommended_steps": 50,
+            "min_vram_gb": 6.0
+          },
+          "xl_base": {
+            "id": "xl_base",
+            "display_name": "ACE-Step 1.5 XL Base",
+            "checkpoint": "ACE-Studio/ACE-Step-1.5-XL",
+            "format": "safetensors",
+            "quantization": "none",
+            "default_precision": "bf16",
+            "recommended_steps": 50,
+            "min_vram_gb": 12.0
+          }
+        }
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "ACE-Step native HTTP",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 6.0,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 1,
+        "quantization_format": "none",
+        "offload_ram_gb": 0.0,
+        "allocation_policy": "single_gpu"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "partial",
+        "coverage_percent": 81.82,
+        "validation_status": "pending_live",
+        "validation_notes": "Phase 3 capability matrix updated: Base variant (2B Base / XL Base) supports text_to_music, lyrics_to_music, reference_audio, cover, repaint, extract, lego, complete, music_extend. Turbo variant (2B Turbo / SFT) supports text_to_music, lyrics_to_music, reference_audio, cover, repaint and strictly rejects specialized tasks. Legacy generic audio_to_audio/audio_to_music remain declared but unbacked in favor of task-specific endpoints.",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": true,
+        "checkpoint_valid": true,
+        "backend_ready": true,
+        "evidence_run_id": null
+      },
+      "audit_state": "EXPERIMENTAL",
+      "finding": "Task mapper/client/worker exist. Base/SFT/Turbo/XL are different weights behind variants. Specialized tasks require Base/XL. Tensor projections and contract checks do not certify music. Deprecated gateway returns 410.",
+      "capabilities": [
+        {
+          "capability": "audio_to_audio",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/music/acestep/adapter.py",
+            "services/music/acestep/client.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "audio_to_music",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/music/acestep/adapter.py",
+            "services/music/acestep/client.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "complete",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "base",
+            "xl_base"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/acestep/adapter.py",
+            "services/music/acestep/client.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/worker exist. Base/SFT/Turbo/XL are different weights behind variants. Specialized tasks require Base/XL. Tensor projections and contract checks do not certify music. Deprecated gateway returns 410.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "cover",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard",
+            "base",
+            "turbo",
+            "sft",
+            "xl_base"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/acestep/adapter.py",
+            "services/music/acestep/client.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/worker exist. Base/SFT/Turbo/XL are different weights behind variants. Specialized tasks require Base/XL. Tensor projections and contract checks do not certify music. Deprecated gateway returns 410.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "extract",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "base",
+            "xl_base"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/acestep/adapter.py",
+            "services/music/acestep/client.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/worker exist. Base/SFT/Turbo/XL are different weights behind variants. Specialized tasks require Base/XL. Tensor projections and contract checks do not certify music. Deprecated gateway returns 410.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "lego",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "base",
+            "xl_base"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/acestep/adapter.py",
+            "services/music/acestep/client.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/worker exist. Base/SFT/Turbo/XL are different weights behind variants. Specialized tasks require Base/XL. Tensor projections and contract checks do not certify music. Deprecated gateway returns 410.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "lyrics_to_music",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard",
+            "base",
+            "turbo",
+            "sft",
+            "xl_base"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/acestep/adapter.py",
+            "services/music/acestep/client.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/worker exist. Base/SFT/Turbo/XL are different weights behind variants. Specialized tasks require Base/XL. Tensor projections and contract checks do not certify music. Deprecated gateway returns 410.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "music_extend",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "base",
+            "xl_base"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/acestep/adapter.py",
+            "services/music/acestep/client.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/worker exist. Base/SFT/Turbo/XL are different weights behind variants. Specialized tasks require Base/XL. Tensor projections and contract checks do not certify music. Deprecated gateway returns 410.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "reference_audio",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard",
+            "base",
+            "turbo",
+            "sft",
+            "xl_base"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/acestep/adapter.py",
+            "services/music/acestep/client.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/worker exist. Base/SFT/Turbo/XL are different weights behind variants. Specialized tasks require Base/XL. Tensor projections and contract checks do not certify music. Deprecated gateway returns 410.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "repaint",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard",
+            "base",
+            "turbo",
+            "sft",
+            "xl_base"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/acestep/adapter.py",
+            "services/music/acestep/client.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/worker exist. Base/SFT/Turbo/XL are different weights behind variants. Specialized tasks require Base/XL. Tensor projections and contract checks do not certify music. Deprecated gateway returns 410.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "text_to_music",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard",
+            "base",
+            "turbo",
+            "sft",
+            "xl_base"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/acestep/adapter.py",
+            "services/music/acestep/client.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/worker exist. Base/SFT/Turbo/XL are different weights behind variants. Specialized tasks require Base/XL. Tensor projections and contract checks do not certify music. Deprecated gateway returns 410.",
+          "accepted_evidence": []
+        }
+      ]
+    },
+    {
+      "id": "enhancement-suite-v1",
+      "manifest": {
+        "path": "manifests/models/enhancement-suite-v1.yaml",
+        "sha256": "f0e60fac2d7e98f1fd370c4b2db51a958fdacc25be6b83f6c6468ce1e83c17ad"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "xinntao/Real-ESRGAN",
+        "repository": "xinntao/Real-ESRGAN",
+        "checkpoint_revision": "4a8f9b2d861d848773950ef31355ca0d39e24807",
+        "weights_file": "RealESRGAN_x4plus.pth",
+        "components": {
+          "rife": "hzwer/RIFE",
+          "bsrgan": "cszn/BSRGAN",
+          "audio_denoise": "Rikorose/DeepFilterNet"
+        },
+        "format": "safetensors",
+        "quantization": "none",
+        "default_precision": "fp16"
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "external enhancement HTTP",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 6.0,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 1,
+        "quantization_format": "none",
+        "offload_ram_gb": 0.0,
+        "allocation_policy": "single_gpu"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "partial",
+        "coverage_percent": 0.0,
+        "validation_status": "pending_live",
+        "validation_notes": "Enhancement suite workflows are staged; live GPU backend verification is pending.",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": false,
+        "checkpoint_valid": false,
+        "backend_ready": false,
+        "evidence_run_id": null
+      },
+      "audit_state": "DISABLED",
+      "finding": "Fail-closed HTTP scaffolding exists, but no complete shipped native enhancement runtime. All four capabilities disabled. Tensor resize/interpolation is not Real-ESRGAN/RIFE/DeepFilterNet inference.",
+      "capabilities": [
+        {
+          "capability": "audio_enhancement",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/enhancement/backend.py",
+            "services/enhancement/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "frame_interpolation",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/enhancement/backend.py",
+            "services/enhancement/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "image_super_resolution",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/enhancement/backend.py",
+            "services/enhancement/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "video_super_resolution",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/enhancement/backend.py",
+            "services/enhancement/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        }
+      ]
+    },
+    {
+      "id": "minimax-h3",
+      "manifest": {
+        "path": "manifests/models/minimax-h3.yaml",
+        "sha256": "883a4f200b5c686812e1276e63c6a5e7b4c3638ee812c1255d2191c9889afdab"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "MiniMax/Hailuo-H3-Diffusers",
+        "repository": "MiniMax/Hailuo-H3-Diffusers",
+        "checkpoint_revision": "e4b52c49c7198762d0577a8a8163f9ebfa9b7754",
+        "weights_file": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+        "components": {
+          "unet": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+          "turbo_lora": "minimax_h3_fl2v_turbo.safetensors",
+          "audio_vae": "minimax_h3_audio_vae_fp32.safetensors",
+          "video_vae": "minimax_h3_video_vae_fp16.safetensors"
+        },
+        "format": "diffusers",
+        "quantization": "4bit",
+        "default_precision": "fp16"
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "comfyui",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 14.0,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 1,
+        "quantization_format": "4bit",
+        "offload_ram_gb": 0.0,
+        "allocation_policy": "single_gpu"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "partial",
+        "coverage_percent": 83.33,
+        "validation_status": "live_verified",
+        "validation_notes": "Live verified on Kaggle Tesla T4 via ComfyUI loading minimax_h3_fl2va_pruned_int8_convrot.safetensors with Turbo LoRA. 25 frames @ 24fps 768x448, peak VRAM 14,319 MB.",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": true,
+        "checkpoint_valid": true,
+        "backend_ready": true,
+        "evidence_run_id": "factory-v4-lite-visual-pipeline-20261104"
+      },
+      "audit_state": "EXPERIMENTAL",
+      "finding": "Worker/templates exist; historical FL2V report is a candidate only. Revision, component integrity, real inputs and semantic validation not bound in an admissible evidence record; other capabilities cannot inherit FL2V evidence.",
+      "capabilities": [
+        {
+          "capability": "first_last_frame_to_video",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": true,
+            "evidence_run_id": "factory-v4-lite-visual-pipeline-20261104"
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "deployments/kaggle/session1_visual_pipeline.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/templates exist; historical FL2V report is a candidate only. Revision, component integrity, real inputs and semantic validation not bound in an admissible evidence record; other capabilities cannot inherit FL2V evidence.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "image_to_video",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "deployments/kaggle/session1_visual_pipeline.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/templates exist; historical FL2V report is a candidate only. Revision, component integrity, real inputs and semantic validation not bound in an admissible evidence record; other capabilities cannot inherit FL2V evidence.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "reference_conditioning",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "deployments/kaggle/session1_visual_pipeline.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/templates exist; historical FL2V report is a candidate only. Revision, component integrity, real inputs and semantic validation not bound in an admissible evidence record; other capabilities cannot inherit FL2V evidence.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "text_to_video",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "deployments/kaggle/session1_visual_pipeline.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/templates exist; historical FL2V report is a candidate only. Revision, component integrity, real inputs and semantic validation not bound in an admissible evidence record; other capabilities cannot inherit FL2V evidence.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "video_extension",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "deployments/kaggle/session1_visual_pipeline.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "video_with_audio",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "deployments/kaggle/session1_visual_pipeline.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/templates exist; historical FL2V report is a candidate only. Revision, component integrity, real inputs and semantic validation not bound in an admissible evidence record; other capabilities cannot inherit FL2V evidence.",
+          "accepted_evidence": []
+        }
+      ]
+    },
+    {
+      "id": "qwen-decision",
+      "manifest": {
+        "path": "manifests/models/qwen-decision.yaml",
+        "sha256": "0b7f2a07705466046b7aa8235e8a054fe3be407939c932da4a12a93103aaeced"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "Qwen/Qwen2.5-3B-Instruct",
+        "repository": "Qwen/Qwen2.5-3B-Instruct",
+        "checkpoint_revision": "47f5250ff5779796016e3c0d832e5399587bf2b1",
+        "weights_file": "model.safetensors",
+        "format": "safetensors",
+        "quantization": "none",
+        "default_precision": "bf16"
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "vllm",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 6.0,
+        "context_window": 8192,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 0,
+        "quantization_format": "none",
+        "offload_ram_gb": 0.0,
+        "allocation_policy": "single_gpu"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "full",
+        "coverage_percent": 100.0,
+        "validation_status": "pending_live",
+        "validation_notes": "Pre-flight contract simulation passed for all 5 gates (predicate and choice routing verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per BENCHMARK.md.",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": true,
+        "checkpoint_valid": true,
+        "backend_ready": true,
+        "evidence_run_id": null
+      },
+      "audit_state": "EXPERIMENTAL",
+      "finding": "Predicate/choice/score delegated to upstream. In-memory golden path and contract PASS do not prove native decision inference.",
+      "capabilities": [
+        {
+          "capability": "choice_routing",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/decision/src/engine.py",
+            "services/decision/src/vllm_adapter.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Predicate/choice/score delegated to upstream. In-memory golden path and contract PASS do not prove native decision inference.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "predicate_evaluation",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/decision/src/engine.py",
+            "services/decision/src/vllm_adapter.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Predicate/choice/score delegated to upstream. In-memory golden path and contract PASS do not prove native decision inference.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "score_ranking",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/decision/src/engine.py",
+            "services/decision/src/vllm_adapter.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Predicate/choice/score delegated to upstream. In-memory golden path and contract PASS do not prove native decision inference.",
+          "accepted_evidence": []
+        }
+      ]
+    },
+    {
+      "id": "qwen-embedding",
+      "manifest": {
+        "path": "manifests/models/qwen-embedding.yaml",
+        "sha256": "e6342f95b59d4157a7910ff7608581faccb351fa82a85b4d7b5f8b8526539baa"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "Qwen/Qwen3-Embedding-0.6B",
+        "repository": "Qwen/Qwen3-Embedding-0.6B",
+        "checkpoint_revision": "b63a921d7b32c69d80cf2821ae039833f272a806",
+        "weights_file": "model.safetensors",
+        "components": {
+          "reranker": "Qwen/Qwen3-Reranker-0.6B"
+        },
+        "format": "safetensors",
+        "quantization": "none",
+        "default_precision": "fp16"
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "vllm / TEI (configured externally)",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 4.0,
+        "context_window": 8192,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 1,
+        "quantization_format": "none",
+        "offload_ram_gb": 0.0,
+        "allocation_policy": "single_gpu"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "partial",
+        "coverage_percent": 66.67,
+        "validation_status": "pending_live",
+        "validation_notes": "Pre-flight contract simulation passed for all 5 gates (unit L2 norm tolerance verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 1) per BENCHMARK.md.",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": true,
+        "checkpoint_valid": true,
+        "backend_ready": true,
+        "evidence_run_id": null
+      },
+      "audit_state": "EXPERIMENTAL",
+      "finding": "HTTP embedding/rerank adapters exist. Config uses Qwen-Embedding/Qwen-Rerank while manifest uses Qwen3. Reranker component has no own revision/integrity. Multimodal is disabled; wrapper alone does not implement it.",
+      "capabilities": [
+        {
+          "capability": "multimodal_embedding",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/embedding/src/text_embed.py",
+            "services/embedding/src/reranker.py",
+            "services/embedding/src/multimodal_embed.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "reranking",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/embedding/src/text_embed.py",
+            "services/embedding/src/reranker.py",
+            "services/embedding/src/multimodal_embed.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "HTTP embedding/rerank adapters exist. Config uses Qwen-Embedding/Qwen-Rerank while manifest uses Qwen3. Reranker component has no own revision/integrity. Multimodal is disabled; wrapper alone does not implement it.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "text_embedding",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/embedding/src/text_embed.py",
+            "services/embedding/src/reranker.py",
+            "services/embedding/src/multimodal_embed.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "HTTP embedding/rerank adapters exist. Config uses Qwen-Embedding/Qwen-Rerank while manifest uses Qwen3. Reranker component has no own revision/integrity. Multimodal is disabled; wrapper alone does not implement it.",
+          "accepted_evidence": []
+        }
+      ]
+    },
+    {
+      "id": "qwen-image-2.1-turbo",
+      "manifest": {
+        "path": "manifests/models/qwen-image-2.1-turbo.yaml",
+        "sha256": "1820ac721e877a48daa888252c5c9150a8bd26ddb47f07a55f9d9164a4dfaa19"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "unsloth/Qwen-Image-2.1-Turbo-GGUF/qwen-image-2.1-turbo-Q4_K_M.gguf",
+        "repository": "unsloth/Qwen-Image-2.1-Turbo-GGUF",
+        "checkpoint_revision": "d1245e8964af54497e25e83ec9bb892bf32e5190",
+        "weights_file": "qwen-image-2.1-turbo-Q4_K_M.gguf",
+        "components": {
+          "clip": "qwen3vl_8b_fp8_scaled.safetensors",
+          "vae": "qwen_image_2.1_vae_bf16.safetensors",
+          "control_pose": "qwen_image_control_pose.safetensors",
+          "control_depth": "qwen_image_control_depth.safetensors"
+        },
+        "format": "gguf",
+        "quantization": "q4_k_m",
+        "default_precision": "bf16",
+        "variants": {
+          "turbo": {
+            "id": "turbo",
+            "display_name": "Qwen-Image 2.1 Turbo GGUF (8 Euler steps)",
+            "checkpoint": "qwen-image-2.1-turbo-Q4_K_M.gguf",
+            "format": "gguf",
+            "quantization": "q4_k_m",
+            "default_precision": "bf16",
+            "recommended_steps": 8,
+            "kaggle_dataset": "cuongnguyen1802/qwen-image-2-1-turbo-gguf",
+            "huggingface_repo": "unsloth/Qwen-Image-2.1-Turbo-GGUF",
+            "file_name": "qwen-image-2.1-turbo-Q4_K_M.gguf",
+            "size_bytes": 4199565120,
+            "min_vram_gb": 14.0
+          }
+        }
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "comfyui",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 14.0,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 0,
+        "quantization_format": "q4_k_m",
+        "offload_ram_gb": 0.0,
+        "allocation_policy": "single_gpu"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "partial",
+        "coverage_percent": 20.0,
+        "validation_status": "live_verified",
+        "validation_notes": "Live verified on Kaggle Dual Tesla T4 (GPU 0) via ComfyUI-GGUF. 8 Euler steps, 960x640 resolution, peak VRAM 13,053 MB, output SHA-256 6e5f4b36002894c964fb9ae623a2815053536f83b2b763a87433d6315303369b.",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": true,
+        "checkpoint_valid": true,
+        "backend_ready": true,
+        "evidence_run_id": "factory-v4-lite-visual-pipeline-20261104"
+      },
+      "audit_state": "EXPERIMENTAL",
+      "finding": "Turbo T2I runner/workflow exists; worker advertises Standard ID. Historical report claims native execution but lacks pinned verified weight/input/semantic evidence. No V4 through target deployment registry/adapter path.",
+      "capabilities": [
+        {
+          "capability": "controlnet",
+          "claimed_support": false,
+          "claimed_truth": {},
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "deployments/kaggle/live_factory_e2e_runner.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "inpaint",
+          "claimed_support": false,
+          "claimed_truth": {},
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "deployments/kaggle/live_factory_e2e_runner.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "instruction_edit",
+          "claimed_support": false,
+          "claimed_truth": {},
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "deployments/kaggle/live_factory_e2e_runner.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "outpaint",
+          "claimed_support": false,
+          "claimed_truth": {},
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "deployments/kaggle/live_factory_e2e_runner.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "text_to_image",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": true,
+            "evidence_run_id": "factory-v4-lite-visual-pipeline-20261104"
+          },
+          "claimed_variants": [],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "deployments/kaggle/live_factory_e2e_runner.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Turbo T2I runner/workflow exists; worker advertises Standard ID. Historical report claims native execution but lacks pinned verified weight/input/semantic evidence. No V4 through target deployment registry/adapter path.",
+          "accepted_evidence": []
+        }
+      ]
+    },
+    {
+      "id": "qwen-image-2.1",
+      "manifest": {
+        "path": "manifests/models/qwen-image-2.1.yaml",
+        "sha256": "361c333fe448c6861e2cd90bb5630e09a401c6aa75f00981224c7e909cb7b1c9"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "abenzerps/Qwen-Image-2.1-GGUF/qwen-image-2.1-Q4_K_M.gguf",
+        "repository": "abenzerps/Qwen-Image-2.1-GGUF",
+        "checkpoint_revision": "d1245e8964af54497e25e83ec9bb892bf32e5190",
+        "weights_file": "qwen-image-2.1-Q4_K_M.gguf",
+        "components": {
+          "clip": "qwen3vl_8b_fp8_scaled.safetensors",
+          "vae": "qwen_image_2.1_vae_bf16.safetensors",
+          "control_pose": "qwen_image_control_pose.safetensors",
+          "control_depth": "qwen_image_control_depth.safetensors"
+        },
+        "format": "gguf",
+        "quantization": "q4_k_m",
+        "default_precision": "bf16",
+        "variants": {
+          "turbo": {
+            "id": "turbo",
+            "display_name": "Qwen-Image 2.1 Turbo GGUF (8 Euler steps)",
+            "checkpoint": "qwen-image-2.1-turbo-Q4_K_M.gguf",
+            "format": "gguf",
+            "quantization": "q4_k_m",
+            "default_precision": "bf16",
+            "recommended_steps": 8,
+            "kaggle_dataset": "cuongnguyen1802/qwen-image-2-1-turbo-gguf",
+            "huggingface_repo": "unsloth/Qwen-Image-2.1-Turbo-GGUF",
+            "file_name": "qwen-image-2.1-turbo-Q4_K_M.gguf",
+            "size_bytes": 4199565120,
+            "min_vram_gb": 14.0
+          }
+        }
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "comfyui",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 14.0,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 0,
+        "quantization_format": "q4_k_m",
+        "offload_ram_gb": 0.0,
+        "allocation_policy": "single_gpu"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "full",
+        "coverage_percent": 100.0,
+        "validation_status": "pending_live",
+        "validation_notes": "Pre-flight contract simulation passed for all 5 gates. Registered variants: 'turbo' (GGUF, 8 Euler steps, dataset: cuongnguyen1802/qwen-image-2-1-turbo-gguf). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per BENCHMARK.md.",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": true,
+        "checkpoint_valid": true,
+        "backend_ready": true,
+        "evidence_run_id": null
+      },
+      "audit_state": "EXPERIMENTAL",
+      "finding": "Worker/template path exists. Manifest reference_image/multi_reference/control_pose/control_depth do not have matching registry task keys. Standard manifest also embeds a different Turbo checkpoint. Turbo output does not certify Standard.",
+      "capabilities": [
+        {
+          "capability": "control_depth",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "TASK_REGISTRY_MISMATCH",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "workflows/image/registry.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/template path exists. Manifest reference_image/multi_reference/control_pose/control_depth do not have matching registry task keys. Standard manifest also embeds a different Turbo checkpoint. Turbo output does not certify Standard.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "control_pose",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "TASK_REGISTRY_MISMATCH",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "workflows/image/registry.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/template path exists. Manifest reference_image/multi_reference/control_pose/control_depth do not have matching registry task keys. Standard manifest also embeds a different Turbo checkpoint. Turbo output does not certify Standard.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "controlnet",
+          "claimed_support": false,
+          "claimed_truth": {},
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "MATRIX_ONLY_DRIFT",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "workflows/image/registry.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "image_to_image",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard",
+            "turbo"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "workflows/image/registry.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/template path exists. Manifest reference_image/multi_reference/control_pose/control_depth do not have matching registry task keys. Standard manifest also embeds a different Turbo checkpoint. Turbo output does not certify Standard.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "inpaint",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "workflows/image/registry.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/template path exists. Manifest reference_image/multi_reference/control_pose/control_depth do not have matching registry task keys. Standard manifest also embeds a different Turbo checkpoint. Turbo output does not certify Standard.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "instruction_edit",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "workflows/image/registry.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/template path exists. Manifest reference_image/multi_reference/control_pose/control_depth do not have matching registry task keys. Standard manifest also embeds a different Turbo checkpoint. Turbo output does not certify Standard.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "multi_reference",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "TASK_REGISTRY_MISMATCH",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "workflows/image/registry.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/template path exists. Manifest reference_image/multi_reference/control_pose/control_depth do not have matching registry task keys. Standard manifest also embeds a different Turbo checkpoint. Turbo output does not certify Standard.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "outpaint",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "workflows/image/registry.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/template path exists. Manifest reference_image/multi_reference/control_pose/control_depth do not have matching registry task keys. Standard manifest also embeds a different Turbo checkpoint. Turbo output does not certify Standard.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "reference_image",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "TASK_REGISTRY_MISMATCH",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "workflows/image/registry.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/template path exists. Manifest reference_image/multi_reference/control_pose/control_depth do not have matching registry task keys. Standard manifest also embeds a different Turbo checkpoint. Turbo output does not certify Standard.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "text_to_image",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard",
+            "turbo"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/image/worker.py",
+            "workflows/image/registry.py",
+            "workflows/image/parameter_mappings.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/template path exists. Manifest reference_image/multi_reference/control_pose/control_depth do not have matching registry task keys. Standard manifest also embeds a different Turbo checkpoint. Turbo output does not certify Standard.",
+          "accepted_evidence": []
+        }
+      ]
+    },
+    {
+      "id": "qwen-speech",
+      "manifest": {
+        "path": "manifests/models/qwen-speech.yaml",
+        "sha256": "69b0e7f2eab3336c90d0ba44838ef2ba9657b340809ae322e4ba01083dc23a7b"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "Qwen/Qwen3-ASR-1.7B",
+        "repository": "Qwen/Qwen3-ASR-1.7B",
+        "checkpoint_revision": "8a7b931c8d76e43f07a61d1988e0b23acdf55610",
+        "weights_file": "model.safetensors",
+        "components": {
+          "tts_base": "Qwen/Qwen3-TTS-12Hz-1.7B-Base"
+        },
+        "format": "safetensors",
+        "quantization": "none",
+        "default_precision": "bf16"
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "Qwen ASR / vllm-omni TTS / external aligner",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 8.0,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 0,
+        "quantization_format": "none",
+        "offload_ram_gb": 0.0,
+        "allocation_policy": "dual_gpu_split"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "partial",
+        "coverage_percent": 75.0,
+        "validation_status": "live_verified",
+        "validation_notes": "Live verified on Kaggle Tesla T4 (GPU 0) for TTS & Voice Cloning only via on-device neural inference: Qwen3-TTS-12Hz-1.7B-Base (8.5s WAV, 408KB) and XTTS-v2-Vietnamese (7.8s WAV, 374KB). Speech-to-Text (ASR) capability remains unverified on live hardware (pending live).",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": true,
+        "checkpoint_valid": true,
+        "backend_ready": true,
+        "evidence_run_id": "factory-v4-lite-audio-pipeline-20261103"
+      },
+      "audit_state": "EXPERIMENTAL",
+      "finding": "ASR/TTS HTTP boundaries exist; alignment disabled. Revoke TTS/cloning verification: historical runner catches errors and writes sine-wave WAV plus unrelated CUDA allocations. XTTS is not Qwen TTS. No admissible exact-model ASR/TTS/cloning evidence.",
+      "capabilities": [
+        {
+          "capability": "speech_to_text",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/speech/asr/engine.py",
+            "services/speech/tts/engine.py",
+            "services/speech/alignment/aligner.py",
+            "deployments/kaggle/session2_audio_pipeline.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "ASR/TTS HTTP boundaries exist; alignment disabled. Revoke TTS/cloning verification: historical runner catches errors and writes sine-wave WAV plus unrelated CUDA allocations. XTTS is not Qwen TTS. No admissible exact-model ASR/TTS/cloning evidence.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "text_to_speech",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": true,
+            "evidence_run_id": "factory-v4-lite-audio-pipeline-20261103"
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/speech/asr/engine.py",
+            "services/speech/tts/engine.py",
+            "services/speech/alignment/aligner.py",
+            "deployments/kaggle/session2_audio_pipeline.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "ASR/TTS HTTP boundaries exist; alignment disabled. Revoke TTS/cloning verification: historical runner catches errors and writes sine-wave WAV plus unrelated CUDA allocations. XTTS is not Qwen TTS. No admissible exact-model ASR/TTS/cloning evidence.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "voice_cloning",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": true,
+            "evidence_run_id": "factory-v4-lite-audio-pipeline-20261103"
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/speech/asr/engine.py",
+            "services/speech/tts/engine.py",
+            "services/speech/alignment/aligner.py",
+            "deployments/kaggle/session2_audio_pipeline.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "ASR/TTS HTTP boundaries exist; alignment disabled. Revoke TTS/cloning verification: historical runner catches errors and writes sine-wave WAV plus unrelated CUDA allocations. XTTS is not Qwen TTS. No admissible exact-model ASR/TTS/cloning evidence.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "word_timestamps",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/speech/asr/engine.py",
+            "services/speech/tts/engine.py",
+            "services/speech/alignment/aligner.py",
+            "deployments/kaggle/session2_audio_pipeline.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        }
+      ]
+    },
+    {
+      "id": "qwen-text",
+      "manifest": {
+        "path": "manifests/models/qwen-text.yaml",
+        "sha256": "6041c741d022c7ef02d69f9ab08a227ae86d1d0da1a317406e482a8573c6d32a"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "unsloth/Qwen3.8-27B-GGUF/Qwen3.8-27B-UD-Q4_K_M.gguf",
+        "repository": "unsloth/Qwen3.8-27B-GGUF",
+        "checkpoint_revision": "c4e519289299478f79fba50d757d54b4f5358043",
+        "weights_file": "Qwen3.8-27B-UD-Q4_K_M.gguf",
+        "format": "gguf",
+        "quantization": "q4_k_m",
+        "default_precision": "bf16"
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "vllm",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 11.0,
+        "context_window": 32768,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 0,
+        "quantization_format": "q4_k_m",
+        "offload_ram_gb": 0.0,
+        "allocation_policy": "dual_gpu_split"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "full",
+        "coverage_percent": 100.0,
+        "validation_status": "pending_live",
+        "validation_notes": "Pre-flight contract simulation passed for all 5 gates. Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per BENCHMARK.md.",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": true,
+        "checkpoint_valid": true,
+        "backend_ready": true,
+        "evidence_run_id": "factory-v4-lite-visual-pipeline-20261104"
+      },
+      "audit_state": "EXPERIMENTAL",
+      "finding": "HTTP/streaming adapters exist. Manifest is Qwen3.8 GGUF; service config launches Qwen2.5 AWQ via vLLM. Shard filename omits UD. Exact checkpoint/revision/integrity and semantic evidence are missing.",
+      "capabilities": [
+        {
+          "capability": "chat_completion",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": true,
+            "evidence_run_id": "factory-v4-lite-visual-pipeline-20261104"
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/text/src/engine.py",
+            "services/text/src/responses_handler.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "HTTP/streaming adapters exist. Manifest is Qwen3.8 GGUF; service config launches Qwen2.5 AWQ via vLLM. Shard filename omits UD. Exact checkpoint/revision/integrity and semantic evidence are missing.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "responses_api",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/text/src/engine.py",
+            "services/text/src/responses_handler.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "HTTP/streaming adapters exist. Manifest is Qwen3.8 GGUF; service config launches Qwen2.5 AWQ via vLLM. Shard filename omits UD. Exact checkpoint/revision/integrity and semantic evidence are missing.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "streaming",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/text/src/engine.py",
+            "services/text/src/responses_handler.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "HTTP/streaming adapters exist. Manifest is Qwen3.8 GGUF; service config launches Qwen2.5 AWQ via vLLM. Shard filename omits UD. Exact checkpoint/revision/integrity and semantic evidence are missing.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "structured_output",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/text/src/engine.py",
+            "services/text/src/responses_handler.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "HTTP/streaming adapters exist. Manifest is Qwen3.8 GGUF; service config launches Qwen2.5 AWQ via vLLM. Shard filename omits UD. Exact checkpoint/revision/integrity and semantic evidence are missing.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "tool_calling",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/text/src/engine.py",
+            "services/text/src/responses_handler.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "HTTP/streaming adapters exist. Manifest is Qwen3.8 GGUF; service config launches Qwen2.5 AWQ via vLLM. Shard filename omits UD. Exact checkpoint/revision/integrity and semantic evidence are missing.",
+          "accepted_evidence": []
+        }
+      ]
+    },
+    {
+      "id": "qwen-vlm",
+      "manifest": {
+        "path": "manifests/models/qwen-vlm.yaml",
+        "sha256": "a7c5c75b6e7404663d1bf0b070e8ffd9a3f819690e8644ff12e572ae16d39171"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+        "repository": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+        "checkpoint_revision": "7b5394541cbde26227c262198ecfb2e63ef29583",
+        "weights_file": "model-00001-of-00003.safetensors",
+        "format": "safetensors",
+        "quantization": "awq",
+        "default_precision": "fp16"
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "vllm",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 14.0,
+        "context_window": 16384,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 0,
+        "quantization_format": "awq",
+        "offload_ram_gb": 0.0,
+        "allocation_policy": "single_gpu"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "full",
+        "coverage_percent": 100.0,
+        "validation_status": "pending_live",
+        "validation_notes": "Pre-flight contract simulation passed for all 5 gates (multimodal chat and grounding contract verified). Declared foundation checkpoint Qwen/Qwen2-VL-7B-Instruct-AWQ is pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 0) per BENCHMARK.md. Note: Experimental Shard 1 run evaluated Qwen3.8-27B with mmproj GGUF, not this declared AWQ checkpoint.",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": true,
+        "checkpoint_valid": true,
+        "backend_ready": true,
+        "evidence_run_id": null
+      },
+      "audit_state": "EXPERIMENTAL",
+      "finding": "Multimodal HTTP/streaming boundary exists. Shard used Qwen3.8 GGUF, not declared Qwen2-VL AWQ. Responses uses shared text handler. Grounding/video/document semantics have no exact-model proof.",
+      "capabilities": [
+        {
+          "capability": "document_qa",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/vlm/src/engine.py",
+            "services/vlm/src/app.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Multimodal HTTP/streaming boundary exists. Shard used Qwen3.8 GGUF, not declared Qwen2-VL AWQ. Responses uses shared text handler. Grounding/video/document semantics have no exact-model proof.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "image_chat",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/vlm/src/engine.py",
+            "services/vlm/src/app.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Multimodal HTTP/streaming boundary exists. Shard used Qwen3.8 GGUF, not declared Qwen2-VL AWQ. Responses uses shared text handler. Grounding/video/document semantics have no exact-model proof.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "responses_api",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/vlm/src/engine.py",
+            "services/vlm/src/app.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Multimodal HTTP/streaming boundary exists. Shard used Qwen3.8 GGUF, not declared Qwen2-VL AWQ. Responses uses shared text handler. Grounding/video/document semantics have no exact-model proof.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "video_chat",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/vlm/src/engine.py",
+            "services/vlm/src/app.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Multimodal HTTP/streaming boundary exists. Shard used Qwen3.8 GGUF, not declared Qwen2-VL AWQ. Responses uses shared text handler. Grounding/video/document semantics have no exact-model proof.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "visual_grounding",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/vlm/src/engine.py",
+            "services/vlm/src/app.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Multimodal HTTP/streaming boundary exists. Shard used Qwen3.8 GGUF, not declared Qwen2-VL AWQ. Responses uses shared text handler. Grounding/video/document semantics have no exact-model proof.",
+          "accepted_evidence": []
+        }
+      ]
+    },
+    {
+      "id": "wan-2.2",
+      "manifest": {
+        "path": "manifests/models/wan-2.2.yaml",
+        "sha256": "59a386236946306a394512e383e205f3aaa380b3e99aeb62e9a0b8993d3dea00"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+        "repository": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+        "checkpoint_revision": "f2c81a5e18641957de9a31a7f05eb1b702758bf8",
+        "weights_file": "diffusion_pytorch_model.safetensors",
+        "format": "diffusers",
+        "quantization": "4bit",
+        "default_precision": "fp16"
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "comfyui",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 14.0,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 1,
+        "quantization_format": "4bit",
+        "offload_ram_gb": 0.0,
+        "allocation_policy": "single_gpu"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "partial",
+        "coverage_percent": 66.67,
+        "validation_status": "pending_live",
+        "validation_notes": "Pre-flight contract simulation passed for all 5 gates (MP4 container structure verified). Pending live remote GPU execution and verification on Kaggle Dual Tesla T4 (GPU 1) per BENCHMARK.md.",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": true,
+        "checkpoint_valid": true,
+        "backend_ready": true,
+        "evidence_run_id": null
+      },
+      "audit_state": "EXPERIMENTAL",
+      "finding": "Worker/templates exist. Manifest targets TI2V-5B Diffusers, registry selects A14B T2V/I2V templates. Mounted checkpoint and MP4 container checks cannot certify inference.",
+      "capabilities": [
+        {
+          "capability": "first_last_frame_to_video",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "workflows/video/templates/wan_t2v_a14b.json"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/templates exist. Manifest targets TI2V-5B Diffusers, registry selects A14B T2V/I2V templates. Mounted checkpoint and MP4 container checks cannot certify inference.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "image_to_video",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "workflows/video/templates/wan_t2v_a14b.json"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/templates exist. Manifest targets TI2V-5B Diffusers, registry selects A14B T2V/I2V templates. Mounted checkpoint and MP4 container checks cannot certify inference.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "reference_conditioning",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "workflows/video/templates/wan_t2v_a14b.json"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "text_to_video",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "workflows/video/templates/wan_t2v_a14b.json"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/templates exist. Manifest targets TI2V-5B Diffusers, registry selects A14B T2V/I2V templates. Mounted checkpoint and MP4 container checks cannot certify inference.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "video_extension",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "workflows/video/templates/wan_t2v_a14b.json"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Worker/templates exist. Manifest targets TI2V-5B Diffusers, registry selects A14B T2V/I2V templates. Mounted checkpoint and MP4 container checks cannot certify inference.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "video_with_audio",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/video/worker.py",
+            "workflows/video/registry.py",
+            "workflows/video/templates/wan_t2v_a14b.json"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        }
+      ]
+    },
+    {
+      "id": "yue2",
+      "manifest": {
+        "path": "manifests/models/yue2.yaml",
+        "sha256": "a893925e5238943d79967c8f453fe5418224effc99f68c6cb16aa7100cd50155"
+      },
+      "checkpoint_claim": {
+        "primary_checkpoint": "m-a-p/YuE-s1-7B-anneal-en-cot",
+        "repository": "m-a-p/YuE-s1-7B-anneal-en-cot",
+        "checkpoint_revision": "672e8bb24802521c7a40b97cfc47c4cb033230a1",
+        "weights_file": "model-00001-of-00004.safetensors",
+        "format": "safetensors",
+        "quantization": "none",
+        "default_precision": "bf16"
+      },
+      "checkpoint_verification": "BLOCKED",
+      "backend_observed_in_code": "external YuE runtime HTTP",
+      "hardware_requirement_claim": {
+        "min_vram_gb": 12.0,
+        "preferred_gpu": "t4",
+        "preferred_gpu_index": 1,
+        "quantization_format": "none",
+        "offload_ram_gb": 2.0,
+        "allocation_policy": "single_gpu"
+      },
+      "hardware_verified": false,
+      "frozen_manifest_claims": {
+        "status": "partial",
+        "coverage_percent": 85.7,
+        "validation_status": "pending_live",
+        "validation_notes": "YuE2 feasibility gate Y0 pending live verification.",
+        "validated_hardware_profiles": [
+          "kaggle-dual-t4",
+          "colab-single-t4"
+        ],
+        "installed": true,
+        "checkpoint_valid": true,
+        "backend_ready": true,
+        "evidence_run_id": null
+      },
+      "audit_state": "EXPERIMENTAL",
+      "finding": "Task mapper/client/runtime wrapper exist. Score parsing/edit helpers are not neural song inference. Native exact checkpoint/GPU/backend/semantic evidence absent.",
+      "capabilities": [
+        {
+          "capability": "cover_edit",
+          "claimed_support": false,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": false,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [],
+          "implementation": "DISABLED_OR_UNBACKED",
+          "implementation_sources": [
+            "services/music/yue2/adapter.py",
+            "services/music/yue2/client.py",
+            "services/music/yue2/runtime.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "DISABLED",
+          "reason": "Not enabled by frozen manifest; wrappers/matrix entries do not establish support.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "custom_score",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/yue2/adapter.py",
+            "services/music/yue2/client.py",
+            "services/music/yue2/runtime.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/runtime wrapper exist. Score parsing/edit helpers are not neural song inference. Native exact checkpoint/GPU/backend/semantic evidence absent.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "lyrics_to_music",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/yue2/adapter.py",
+            "services/music/yue2/client.py",
+            "services/music/yue2/runtime.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/runtime wrapper exist. Score parsing/edit helpers are not neural song inference. Native exact checkpoint/GPU/backend/semantic evidence absent.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "score_edit",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/yue2/adapter.py",
+            "services/music/yue2/client.py",
+            "services/music/yue2/runtime.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/runtime wrapper exist. Score parsing/edit helpers are not neural song inference. Native exact checkpoint/GPU/backend/semantic evidence absent.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "song_variation",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/yue2/adapter.py",
+            "services/music/yue2/client.py",
+            "services/music/yue2/runtime.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/runtime wrapper exist. Score parsing/edit helpers are not neural song inference. Native exact checkpoint/GPU/backend/semantic evidence absent.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "symbolic_score",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/yue2/adapter.py",
+            "services/music/yue2/client.py",
+            "services/music/yue2/runtime.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/runtime wrapper exist. Score parsing/edit helpers are not neural song inference. Native exact checkpoint/GPU/backend/semantic evidence absent.",
+          "accepted_evidence": []
+        },
+        {
+          "capability": "text_to_music",
+          "claimed_support": true,
+          "claimed_truth": {
+            "declared": true,
+            "implemented": true,
+            "live_verified": false,
+            "evidence_run_id": null
+          },
+          "claimed_variants": [
+            "standard"
+          ],
+          "implementation": "ADAPTER_OR_WORKFLOW_PRESENT",
+          "implementation_sources": [
+            "services/music/yue2/adapter.py",
+            "services/music/yue2/client.py",
+            "services/music/yue2/runtime.py",
+            "services/music/worker.py"
+          ],
+          "V3": "BLOCKED",
+          "V4": "BLOCKED",
+          "semantic": "BLOCKED",
+          "production_ready": false,
+          "disposition": "BLOCKED",
+          "reason": "Task mapper/client/runtime wrapper exist. Score parsing/edit helpers are not neural song inference. Native exact checkpoint/GPU/backend/semantic evidence absent.",
+          "accepted_evidence": []
+        }
+      ]
+    }
+  ],
+  "evidence_audit": [
+    {
+      "path": "benchmarks/reports/MASTER_DUAL_T4_BENCHMARK_REPORT.md",
+      "sha256": "83dd75cf49828cb13e997e5e658b675f25c99130b612e1355b97b2b7c6d81741",
+      "classification": "HISTORICAL_CLAIM",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Markdown claims are not §38 evidence records. Native L4 claims are not automatically V3; lifecycle/L5 claims are not automatically V4. Speech fallback invalidates certification."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_01/failures.json",
+      "sha256": "c7a635b3088aa6b6c9566028ed17f7266c58bda1af522aabdb838ec4d4eca9ca",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_01/metadata.json",
+      "sha256": "f06ca2ea3f1427a766baa5fdeccb5e880cf364f75cbc842cc31bd5397504a9d7",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_01/results.jsonl",
+      "sha256": "4dba74fef283798ab2faca77faecd381f8c5e7ad5e49c21d6a1949645a15b804",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_02/failures.json",
+      "sha256": "33cb00f0c8d6f2c0e2f8086736c4995acfe337672eb52706e2a7b80be81f4e4f",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_02/metadata.json",
+      "sha256": "4818237573af5facc2094a080bbff3f2fa999c22f87feb6e260fbae92ec11324",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_02/results.jsonl",
+      "sha256": "ca4125eec8cc2a3c998609d89596eb7683b9058f3987fc50350a762a25c2508c",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_03/failures.json",
+      "sha256": "ea42598b767be7de46437a2c6aab659112c21c6be0a2d9468920e4a5ea68e9fd",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_03/metadata.json",
+      "sha256": "702196b0358a28afaec0571032445e90d013e682c8f69abf74ba85e7bb9aa479",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_03/results.jsonl",
+      "sha256": "4078461aae05ded35896f848cce04721ebf5105525aa3496a00c91bb03ad9667",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_04/failures.json",
+      "sha256": "08b2b094429e8ea1f7a4ebce55a14f88d09465d93454b713d48625fdc5bd1055",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_04/metadata.json",
+      "sha256": "27b33f7678e2cd4b3c259f66b826c0820723a1d43c445a66158cd8096d886bb5",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/p5_matrix_live_04/results.jsonl",
+      "sha256": "bf040da415388121fb2c70d091006285483d537224e1deb85c8e18956303d48a",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/run_20261109_050343/results.json",
+      "sha256": "6b25249b891e44ea485a48b11044de4a301fd13d8808cb3e8db92a1f823af97b",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/run_20261109_050356/results.json",
+      "sha256": "ead787b28f453543bacd9c6b5ffac43f6d7b937298ccd3efc89869713cdb795b",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "benchmarks/results/run_20261109_173256/results.json",
+      "sha256": "e7bd54aad59f55245359daab82d7c354d8f73eda991d72f7db8ded863377208d",
+      "classification": "LEGACY_NON_CERTIFYING",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Legacy contract/smoke/local results; no admissible §38 record binding exact weights, real GPU, real input/output and semantic validation."
+    },
+    {
+      "path": "deployments/kaggle/certification_results.json",
+      "sha256": "3c21e4cc7ebc0b0b60d44325135942feba449b10f69ae5dad424f1b42674ed2a",
+      "classification": "CONTRACT_SIMULATION",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Top-level execution_mode is pre-flight-contract-simulation, live_pass=false and telemetry UNAVAILABLE; nested certified=true is rejected."
+    },
+    {
+      "path": "deployments/kaggle/live_hardware_attested_report.json",
+      "sha256": "6734bcac365ffcf07ea02adf8b7d9aed8f3049aa760e327e3a32f5fe962f8f6d",
+      "classification": "SYNTHETIC_TENSOR",
+      "accepted_for_V3": false,
+      "accepted_for_V4": false,
+      "reason": "Top-level synthetic_tensor_benchmark / SYNTHETIC_PASS; hardware presence does not prove weight inference."
+    }
+  ],
+  "supplemental_local_evidence_audit": {
+    "path": "validation/local_evidence_audit.json",
+    "sha256": "a04a2807630af054a63874ea850d4a070dd719ead2c767eb6d517328f89b4f53",
+    "scope": "Supplement to immutable tracked baseline, based on previously ignored local artifacts found during Kaggle source investigation. No new GPU inference executed. Raw media is retained locally and not bulk-committed. Hashes identify reviewed bytes.",
+    "evidence": [
+      {
+        "path": "deployments/kaggle/visual_outputs/visual_pipeline_report.json",
+        "sha256": "073a602ef36975612bce42291ef35e3d9ea7222014152b7a88a4c8bf7cbb67c8",
+        "origin": "local ignored artifact, outside frozen Git tree",
+        "classification": "HISTORICAL_NATIVE_CANDIDATE",
+        "accepted_for_V3": false,
+        "accepted_for_V4": false,
+        "reason": "Contains mounted INT8 MiniMax and Turbo identities, but lacks immutable revisions, weight/input hashes, fallback=false and per-capability semantic/full Factory evidence. Not accepted as V3/V4.",
+        "minimax_identity_claim": {
+          "model": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+          "mounted_weights": "/kaggle/input/datasets/asdwddjksa/minimax-h3-diffusion/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+          "mode": "turbo_lora_fast (8 steps)",
+          "turbo_lora": "minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors",
+          "status": "passed",
+          "input_source_image": "/kaggle/working/visual_outputs/studio_qwen_image_master.png",
+          "resolution": "768x448",
+          "frames": 25,
+          "fps": 24,
+          "seed": 245870,
+          "steps": 8,
+          "duration_ms": 1153092.57,
+          "seconds_per_step": 144.14,
+          "peak_vram_gpu0_mb": 14319.2,
+          "peak_vram_gpu1_mb": 451.2,
+          "file_size_bytes": 762808,
+          "output_file": "/kaggle/working/visual_outputs/studio_minimax_h3_dragon_video.mp4",
+          "fast_output_file": "/kaggle/working/visual_outputs/studio_minimax_h3_dragon_video_fast.mp4"
+        }
+      },
+      {
+        "path": "deployments/kaggle/audio_outputs/audio_pipeline_report.json",
+        "sha256": "d3244764226d9a3f5a76fd1ab8b7770371369da05cee271c665d79c4f045eb1f",
+        "origin": "local ignored artifact, outside frozen Git tree",
+        "classification": "SYNTHETIC_AUDIO_CLAIM",
+        "accepted_for_V3": false,
+        "accepted_for_V4": false,
+        "reason": "Claims success without per-result status/fallback flags; stored Qwen and XTTS WAVs match runner synthetic formulas. XTTS is also a different model."
+      },
+      {
+        "path": "deployments/kaggle/high_quality_outputs/high_quality_report.json",
+        "sha256": "03aef4ad31ea4290ce344cb989c076d86d5d6d2a53ef3826e6486cb75a3eed2c",
+        "origin": "local ignored artifact, outside frozen Git tree",
+        "classification": "ALTERNATIVE_MODEL_SMOKE",
+        "accepted_for_V3": false,
+        "accepted_for_V4": false,
+        "reason": "Qwen2.5-0.5B, SD-Turbo, MiniLM and external speech do not certify requested checkpoints; video motion can be image animation."
+      },
+      {
+        "path": "deployments/kaggle/audio_outputs/qwen3_tts_english.wav",
+        "sha256": "8b7eab6d1826e8b77568a0abe2e4bf5241bfe96aabd77459eb6dc89feda3d948",
+        "origin": "local ignored artifact, outside frozen Git tree",
+        "classification": "SYNTHETIC_FORMULA_MATCH",
+        "accepted_for_V3": false,
+        "accepted_for_V4": false,
+        "sample_rate_hz": 24000,
+        "samples": 204000,
+        "seconds": 8.5,
+        "synthetic_formula": "(0.3*sin(2*pi*140*t)+0.15*sin(2*pi*280*t))*max(0,sin(2*pi*1.5*t))",
+        "correlation": 0.9999999965630726,
+        "rmse": 1.2604699834125282e-05,
+        "reason": "Near-perfect match to the historical runner sine-wave fallback, within PCM quantization error. Rejected as model speech inference."
+      },
+      {
+        "path": "deployments/kaggle/audio_outputs/xtts_v2_vietnamese.wav",
+        "sha256": "571c7c9dda60de5a9abfd01a158e3e01a1ee17c37408eb5b42927ccb8c2853d0",
+        "origin": "local ignored artifact, outside frozen Git tree",
+        "classification": "SYNTHETIC_FORMULA_MATCH",
+        "accepted_for_V3": false,
+        "accepted_for_V4": false,
+        "sample_rate_hz": 24000,
+        "samples": 187200,
+        "seconds": 7.8,
+        "synthetic_formula": "(0.28*sin(2*pi*175*t)+0.14*sin(2*pi*350*t))*max(0,sin(2*pi*2.0*t))",
+        "correlation": 0.9999999960749577,
+        "rmse": 1.2634843948207601e-05,
+        "reason": "Near-perfect match to the historical runner sine-wave fallback, within PCM quantization error. Rejected as model speech inference."
+      }
+    ]
+  },
+  "api_inventory": {
+    "method": "Static AST route decorators with local router prefixes; grouped by source/process, not a claim of unified public reachability. FastAPI generated documentation routes excluded.",
+    "routes": [
+      {
+        "method": "POST",
+        "path": "/v1/assets/upload",
+        "source": "factory/apps/control-api/src/api/routers/assets.py",
+        "line": 58,
+        "handler": "upload_asset"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/assets/validate",
+        "source": "factory/apps/control-api/src/api/routers/assets.py",
+        "line": 290,
+        "handler": "validate_asset"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/assets/{asset_id}/download",
+        "source": "factory/apps/control-api/src/api/routers/assets.py",
+        "line": 206,
+        "handler": "download_asset"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "source": "factory/apps/control-api/src/api/routers/chat.py",
+        "line": 27,
+        "handler": "chat_completions"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/responses",
+        "source": "factory/apps/control-api/src/api/routers/chat.py",
+        "line": 50,
+        "handler": "responses_api"
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "source": "factory/apps/control-api/src/api/routers/health.py",
+        "line": 10,
+        "handler": "health"
+      },
+      {
+        "method": "GET",
+        "path": "/healthz",
+        "source": "factory/apps/control-api/src/api/routers/health.py",
+        "line": 11,
+        "handler": "health"
+      },
+      {
+        "method": "POST",
+        "path": "/api/studio/codegen",
+        "source": "factory/apps/control-api/src/api/routers/inspector.py",
+        "line": 69,
+        "handler": "studio_codegen"
+      },
+      {
+        "method": "GET",
+        "path": "/api/studio/inspect/stream",
+        "source": "factory/apps/control-api/src/api/routers/inspector.py",
+        "line": 133,
+        "handler": "studio_telemetry_stream"
+      },
+      {
+        "method": "GET",
+        "path": "/api/studio/memory",
+        "source": "factory/apps/control-api/src/api/routers/inspector.py",
+        "line": 164,
+        "handler": "get_memory_status"
+      },
+      {
+        "method": "GET",
+        "path": "/api/studio/schemas",
+        "source": "factory/apps/control-api/src/api/routers/inspector.py",
+        "line": 53,
+        "handler": "get_studio_schemas"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/memory",
+        "source": "factory/apps/control-api/src/api/routers/inspector.py",
+        "line": 163,
+        "handler": "get_memory_status"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/jobs",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 336,
+        "handler": "list_jobs"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/jobs",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 302,
+        "handler": "submit_job"
+      },
+      {
+        "method": "DELETE",
+        "path": "/v1/jobs/{job_id}",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 642,
+        "handler": "cancel_job_delete"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/jobs/{job_id}",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 363,
+        "handler": "get_job_status"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/jobs/{job_id}/cancel",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 655,
+        "handler": "cancel_job_post"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/jobs/{job_id}/events",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 677,
+        "handler": "get_job_events"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/jobs/{job_id}/result",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 380,
+        "handler": "get_job_result"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/jobs/{job_id}/retry",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 668,
+        "handler": "retry_job"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/jobs/{job_id}/stream/audio",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 756,
+        "handler": "stream_job_audio"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/jobs/{job_id}/stream/progress",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 725,
+        "handler": "stream_job_progress"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/jobs/{job_id}/stream/tokens",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 743,
+        "handler": "stream_job_tokens"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/jobs/{job_id}/ws",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 769,
+        "handler": "get_job_websocket_info"
+      },
+      {
+        "method": "WEBSOCKET",
+        "path": "/v1/jobs/{job_id}/ws",
+        "source": "factory/apps/control-api/src/api/routers/jobs.py",
+        "line": 785,
+        "handler": "websocket_job_stream"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/capabilities",
+        "source": "factory/apps/control-api/src/api/routers/models.py",
+        "line": 71,
+        "handler": "list_capabilities"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/models",
+        "source": "factory/apps/control-api/src/api/routers/models.py",
+        "line": 13,
+        "handler": "list_models"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/registry/capabilities",
+        "source": "factory/apps/control-api/src/api/routers/models.py",
+        "line": 72,
+        "handler": "list_capabilities"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/registry/models",
+        "source": "factory/apps/control-api/src/api/routers/models.py",
+        "line": 14,
+        "handler": "list_models"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/registry/services",
+        "source": "factory/apps/control-api/src/api/routers/models.py",
+        "line": 49,
+        "handler": "list_services"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/services",
+        "source": "factory/apps/control-api/src/api/routers/models.py",
+        "line": 48,
+        "handler": "list_services"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/jobs/lease",
+        "source": "factory/apps/control-api/src/api/routers/workers.py",
+        "line": 50,
+        "handler": "lease_job"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/jobs/{job_id}/complete",
+        "source": "factory/apps/control-api/src/api/routers/workers.py",
+        "line": 115,
+        "handler": "complete_job"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/jobs/{job_id}/fail",
+        "source": "factory/apps/control-api/src/api/routers/workers.py",
+        "line": 140,
+        "handler": "fail_job"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/jobs/{job_id}/progress",
+        "source": "factory/apps/control-api/src/api/routers/workers.py",
+        "line": 90,
+        "handler": "update_job_progress"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/workers/{worker_id}/heartbeat",
+        "source": "factory/apps/control-api/src/api/routers/workers.py",
+        "line": 69,
+        "handler": "worker_heartbeat"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/me",
+        "source": "factory/apps/control-api/src/main.py",
+        "line": 164,
+        "handler": "get_current_user"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/storage/download",
+        "source": "factory/apps/control-api/src/storage/router.py",
+        "line": 98,
+        "handler": "local_storage_download"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/storage/download-url",
+        "source": "factory/apps/control-api/src/storage/router.py",
+        "line": 79,
+        "handler": "create_download_url"
+      },
+      {
+        "method": "PUT",
+        "path": "/v1/storage/upload",
+        "source": "factory/apps/control-api/src/storage/router.py",
+        "line": 127,
+        "handler": "local_storage_upload"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/storage/upload-url",
+        "source": "factory/apps/control-api/src/storage/router.py",
+        "line": 60,
+        "handler": "create_upload_url"
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "source": "services/decision/src/app.py",
+        "line": 51,
+        "handler": "health_check"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/decisions",
+        "source": "services/decision/src/app.py",
+        "line": 61,
+        "handler": "evaluate_decision"
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "source": "services/embedding/src/app.py",
+        "line": 51,
+        "handler": "health_check"
+      },
+      {
+        "method": "POST",
+        "path": "/rerank",
+        "source": "services/embedding/src/app.py",
+        "line": 84,
+        "handler": "rerank_documents_legacy"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/embeddings",
+        "source": "services/embedding/src/app.py",
+        "line": 62,
+        "handler": "create_embeddings_v1"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/rerank",
+        "source": "services/embedding/src/app.py",
+        "line": 77,
+        "handler": "rerank_documents_v1"
+      },
+      {
+        "method": "POST",
+        "path": "/v2/embed",
+        "source": "services/embedding/src/app.py",
+        "line": 69,
+        "handler": "create_embeddings_v2"
+      },
+      {
+        "method": "POST",
+        "path": "/v2/rerank",
+        "source": "services/embedding/src/app.py",
+        "line": 91,
+        "handler": "rerank_documents_v2"
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "source": "services/enhancement/server.py",
+        "line": 91,
+        "handler": "health_check"
+      },
+      {
+        "method": "GET",
+        "path": "/healthz",
+        "source": "services/enhancement/server.py",
+        "line": 92,
+        "handler": "health_check"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/audio_enhancement",
+        "source": "services/enhancement/server.py",
+        "line": 134,
+        "handler": "enhance_audio"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/frame_interpolation",
+        "source": "services/enhancement/server.py",
+        "line": 128,
+        "handler": "interpolate_frames"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/image_super_resolution",
+        "source": "services/enhancement/server.py",
+        "line": 116,
+        "handler": "super_resolve_image"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/video_super_resolution",
+        "source": "services/enhancement/server.py",
+        "line": 122,
+        "handler": "super_resolve_video"
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "source": "services/image/gateway.py",
+        "line": 51,
+        "handler": "health"
+      },
+      {
+        "method": "POST",
+        "path": "/interrupt",
+        "source": "services/image/gateway.py",
+        "line": 85,
+        "handler": "proxy_interrupt"
+      },
+      {
+        "method": "POST",
+        "path": "/prompt",
+        "source": "services/image/gateway.py",
+        "line": 73,
+        "handler": "proxy_prompt"
+      },
+      {
+        "method": "GET",
+        "path": "/system_stats",
+        "source": "services/image/gateway.py",
+        "line": 62,
+        "handler": "system_stats"
+      },
+      {
+        "method": "WEBSOCKET",
+        "path": "/ws",
+        "source": "services/image/gateway.py",
+        "line": 114,
+        "handler": "websocket_proxy"
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "source": "services/music/server.py",
+        "line": 31,
+        "handler": "health"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/audio_to_audio",
+        "source": "services/music/server.py",
+        "line": 61,
+        "handler": "audio_to_audio"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/lyrics_to_music",
+        "source": "services/music/server.py",
+        "line": 56,
+        "handler": "lyrics_to_music"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/text_to_music",
+        "source": "services/music/server.py",
+        "line": 51,
+        "handler": "text_to_music"
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "source": "services/speech/server.py",
+        "line": 127,
+        "handler": "health_check"
+      },
+      {
+        "method": "GET",
+        "path": "/healthz",
+        "source": "services/speech/server.py",
+        "line": 128,
+        "handler": "health_check"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/audio/alignments",
+        "source": "services/speech/server.py",
+        "line": 292,
+        "handler": "forced_alignment"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/audio/speech",
+        "source": "services/speech/server.py",
+        "line": 299,
+        "handler": "synthesize_speech"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/audio/transcriptions",
+        "source": "services/speech/server.py",
+        "line": 139,
+        "handler": "create_transcription"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/audio/transcriptions/stream",
+        "source": "services/speech/server.py",
+        "line": 200,
+        "handler": "stream_transcription_chunk"
+      },
+      {
+        "method": "WEBSOCKET",
+        "path": "/v1/audio/transcriptions/ws",
+        "source": "services/speech/server.py",
+        "line": 211,
+        "handler": "websocket_transcription_stream"
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "source": "services/text/src/app.py",
+        "line": 160,
+        "handler": "health_check"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "source": "services/text/src/app.py",
+        "line": 171,
+        "handler": "chat_completions"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/responses",
+        "source": "services/text/src/app.py",
+        "line": 190,
+        "handler": "responses_api"
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "source": "services/video/gateway.py",
+        "line": 51,
+        "handler": "health"
+      },
+      {
+        "method": "POST",
+        "path": "/interrupt",
+        "source": "services/video/gateway.py",
+        "line": 85,
+        "handler": "proxy_interrupt"
+      },
+      {
+        "method": "POST",
+        "path": "/prompt",
+        "source": "services/video/gateway.py",
+        "line": 73,
+        "handler": "proxy_prompt"
+      },
+      {
+        "method": "GET",
+        "path": "/system_stats",
+        "source": "services/video/gateway.py",
+        "line": 62,
+        "handler": "system_stats"
+      },
+      {
+        "method": "WEBSOCKET",
+        "path": "/ws",
+        "source": "services/video/gateway.py",
+        "line": 114,
+        "handler": "websocket_proxy"
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "source": "services/vlm/src/app.py",
+        "line": 54,
+        "handler": "health_check"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "source": "services/vlm/src/app.py",
+        "line": 64,
+        "handler": "chat_completions"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/responses",
+        "source": "services/vlm/src/app.py",
+        "line": 77,
+        "handler": "responses_api"
+      }
+    ]
+  },
+  "tests": {
+    "scope": "All tracked Python test/conftest files, including suites outside default pytest testpaths. Parametrized cases are not inferred from function counts.",
+    "configuration": [
+      {
+        "path": "pytest.ini",
+        "sha256": "dc4e733423dd955babaeec2558bd9f35bf9b1f0800bd846d356b2acbf0da171d"
+      },
+      {
+        "path": "pyproject.toml",
+        "sha256": "c432b99c8a5b6adcac9b468ff1e127637fe6f7917f714e3577d05f76d951d2d2"
+      }
+    ],
+    "files": [
+      {
+        "path": "services/decision/tests/test_decision_service.py",
+        "sha256": "031bfcd1e5923a04f4ec198643ad4aa3af8c2202a4fee28ccbe26b017afb019c",
+        "test_functions": [
+          "test_decision_health",
+          "test_decision_fail_fast_offline_model",
+          "test_decision_invalid_scale",
+          "test_decision_empty_choices",
+          "test_decision_unconfigured_predicate_fail_closed",
+          "test_decision_unconfigured_choice_fail_closed",
+          "test_decision_unconfigured_score_fail_closed",
+          "test_decision_configured_predicate_proxy",
+          "test_decision_configured_choice_proxy",
+          "test_decision_configured_score_proxy"
+        ]
+      },
+      {
+        "path": "services/embedding/tests/test_embedding_service.py",
+        "sha256": "0901cb7b57f1d30d2abd8df03c6eccefa69acb24c808097747dd41c4c819d4af",
+        "test_functions": [
+          "test_embed_health",
+          "test_embeddings_fail_fast_offline_model",
+          "test_embeddings_empty_input_rejected",
+          "test_embeddings_unconfigured_fail_closed",
+          "test_embeddings_v2_unconfigured_fail_closed",
+          "test_embeddings_configured_proxy",
+          "test_rerank_fail_fast_offline_model",
+          "test_rerank_empty_query_rejected",
+          "test_rerank_unconfigured_fail_closed",
+          "test_rerank_legacy_unconfigured_fail_closed",
+          "test_rerank_configured_proxy_and_truncation"
+        ]
+      },
+      {
+        "path": "services/enhancement/tests/test_enhancement_service.py",
+        "sha256": "14f9a79f992eb91bfb0919688746c9968d6a901d7f23fcbdea280e10aae42ff4",
+        "test_functions": [
+          "test_enhancement_health",
+          "test_image_super_resolution",
+          "test_video_super_resolution",
+          "test_frame_interpolation",
+          "test_audio_enhancement"
+        ]
+      },
+      {
+        "path": "services/music/tests/test_music_service.py",
+        "sha256": "fee4b2008ff0c68d7b44d3ea01a49e7ae5f44a2f7dbbba9390bc84619b7d8c18",
+        "test_functions": [
+          "test_music_health",
+          "test_music_text_to_music",
+          "test_music_lyrics_to_music",
+          "test_music_audio_to_audio"
+        ]
+      },
+      {
+        "path": "services/speech/tests/test_speech_service.py",
+        "sha256": "31068731e68073306424bc964906dd97c178bb5ea28c645380e79bc9a04de024",
+        "test_functions": [
+          "test_speech_health",
+          "test_speech_transcription",
+          "test_speech_streaming_chunk",
+          "test_speech_alignment",
+          "test_speech_synthesis"
+        ]
+      },
+      {
+        "path": "services/text/tests/test_reasoning_effort.py",
+        "sha256": "dcdb6c34bbaa34148cb4d54eadc8f765e15ddd8cfb4ab4da782f7fd60d7c6b9e",
+        "test_functions": [
+          "test_reasoning_effort_valid_values",
+          "test_reasoning_nested_effort_alias",
+          "test_reasoning_effort_invalid_rejected_400",
+          "test_decouple_think_tokens_helper",
+          "test_think_tokens_isolated_non_streaming",
+          "test_think_tokens_isolated_streaming",
+          "test_completion_tokens_details_schema",
+          "test_vlm_engine_reasoning_validation_and_decoupling"
+        ]
+      },
+      {
+        "path": "services/text/tests/test_text_service.py",
+        "sha256": "4e6dd7caef0b57f4de0e9df54d99045b01c9fab51233b1fd7f1e1064f4d64846",
+        "test_functions": [
+          "test_text_health",
+          "test_text_unauthorized",
+          "test_text_chat_completions_standard",
+          "test_text_chat_completions_streaming",
+          "test_text_responses_api",
+          "test_text_offline_model_fail_fast",
+          "test_text_empty_messages_rejected",
+          "test_text_context_overflow_rejected",
+          "test_text_chat_completions_configured_proxy"
+        ]
+      },
+      {
+        "path": "services/vlm/tests/test_vlm_service.py",
+        "sha256": "3824ff17f794d4bbf1f52ea33d6f81ab195b1fa7fc3d677d4e606920a65d27eb",
+        "test_functions": [
+          "test_vlm_health",
+          "test_vlm_ssrf_blocked",
+          "test_vlm_offline_fail_fast",
+          "test_vlm_unconfigured_multimodal_chat",
+          "test_vlm_unconfigured_video_modality_chat",
+          "test_vlm_unconfigured_text_only_chat",
+          "test_vlm_configured_proxy_chat"
+        ]
+      },
+      {
+        "path": "tests/conftest.py",
+        "sha256": "5363ee7c05abc59a6ffcdb55e7744fd51294060de8ead35676d0e0a40f97bbbb",
+        "test_functions": []
+      },
+      {
+        "path": "tests/contract/test_contract_chain.py",
+        "sha256": "de21c39b9bc75b350c76256b20e81a014881387012fb6c5b41fb1929db4fb687",
+        "test_functions": [
+          "test_all_capability_manifests_mapped_in_canonical_task_map",
+          "test_all_model_manifests_mapped_in_canonical_model_map",
+          "test_model_and_task_aliases_bidirectional",
+          "test_cross_model_workflow_fallback_forbidden"
+        ]
+      },
+      {
+        "path": "tests/contract/test_manifest_schemas.py",
+        "sha256": "3df96b8ce2edfe17d1702410fe45bf176c5d01da3c19dc0b367202c908b16232",
+        "test_functions": [
+          "test_all_manifests_pass_validation",
+          "test_services_count",
+          "test_models_count",
+          "test_hardware_count"
+        ]
+      },
+      {
+        "path": "tests/contract/test_provenance_and_licensing.py",
+        "sha256": "e15d7b13805dc2ed28ed0328e8c4b4ae7dd976a196e64fc5220b41e229c44a71",
+        "test_functions": [
+          "test_all_11_models_present",
+          "test_all_11_models_have_legal_license_declarations",
+          "test_non_commercial_models_flagged_correctly",
+          "test_commercial_models_flagged_correctly",
+          "test_zero_generic_mit_on_non_mit_models",
+          "test_all_11_models_declare_checkpoint_revision_and_weights_file",
+          "test_prepare_datasets_licenses_match_manifests",
+          "test_manifest_validator_catches_invalid_licensing"
+        ]
+      },
+      {
+        "path": "tests/contract/test_studio_cross_stack.py",
+        "sha256": "ecfcc3e9e2e90cae01ed8e6c4f816da643baee82ff7d41b2dde723a33159bcd5",
+        "test_functions": [
+          "test_studio_dependencies_available_zero_silent_skips",
+          "test_studio_typescript_typecheck",
+          "test_manifest_inputs_compatible_with_studio_types",
+          "test_openapi_route_parity_with_studio_client"
+        ]
+      },
+      {
+        "path": "tests/e2e/conftest.py",
+        "sha256": "b050bd669fd11ca0afa893a12c48b6951f06c0bdda085bdf2f4750d8f3b7ebd1",
+        "test_functions": []
+      },
+      {
+        "path": "tests/e2e/test_factory_lite_e2e.py",
+        "sha256": "239ae641ecb0254d84449c3cb5e1ce4e04a3735c470e9e6962c75fbf43c20502",
+        "test_functions": [
+          "test_t1_health_check_public",
+          "test_t1_model_discovery",
+          "test_t1_single_api_key_auth_enforcement",
+          "test_t1_job_submission",
+          "test_t1_job_status_lookup",
+          "test_t1_job_events_stream",
+          "test_t1_job_cancellation",
+          "test_t1_job_result_decision_json",
+          "test_t1_job_result_image_binary",
+          "test_t1_job_result_audio_binary",
+          "test_t1_job_result_video_binary",
+          "test_t1_job_result_text_stream",
+          "test_t2_invalid_payload_schema",
+          "test_t2_unknown_model_rejected",
+          "test_t2_unsupported_capability_rejected",
+          "test_t2_payload_exceeding_1mb_rejected",
+          "test_t2_invalid_api_key_variations",
+          "test_t2_nonexistent_job_id_lookup_result_cancel",
+          "test_t2_double_cancel_handling",
+          "test_t2_cancel_succeeded_job_rejected",
+          "test_t2_error_sanitization_integrity",
+          "test_t3_submit_stream_download_disk_cleanup",
+          "test_t3_idempotent_job_submission_consistency",
+          "test_t4_concurrent_job_submissions_dual_t4_gpus",
+          "test_t4_worker_disconnect_and_timeout_deterministic_failure",
+          "test_t4_worker_http_status_reporting_without_lease_token"
+        ]
+      },
+      {
+        "path": "tests/e2e/test_golden_path_real_e2e.py",
+        "sha256": "b44d2499fa9f2ec145dcf419bfd1d58aa7b05830a0a1a6f602087bb603f27a2c",
+        "test_functions": [
+          "test_golden_path_image_pipeline_e2e",
+          "test_golden_path_decision_pipeline_e2e",
+          "test_golden_path_text_pipeline_e2e",
+          "test_golden_path_embedding_pipeline_e2e"
+        ]
+      },
+      {
+        "path": "tests/security/test_adversarial_security_harness.py",
+        "sha256": "4010d0c35aaf4253d068f69d7135014b0cd4acf4d5dbfe4b3a03076477cc1183",
+        "test_functions": [
+          "test_auth_rejects_malformed_headers",
+          "test_valid_token_variations_accepted",
+          "test_adversarial_invalid_tokens",
+          "test_path_traversal_cannot_bypass_auth",
+          "test_ssrf_standard_vectors_blocked",
+          "test_ssrf_ipv6_wildcard_bypass_vulnerability",
+          "test_ssrf_ip_literal_port_bypass_vulnerability",
+          "test_dns_rebinding_attack_prevented",
+          "test_dns_pinning_multi_ip_fallback",
+          "test_truncated_image_headers_rejected",
+          "test_truncated_mp4_rejected",
+          "test_fake_mime_types_with_corrupt_bytes_rejected",
+          "test_payload_exceeding_50mb_boundary",
+          "test_decompression_bombs_rejected",
+          "test_sensitive_errors_do_not_leak_to_client",
+          "test_404_and_405_errors_conform_and_sanitize"
+        ]
+      },
+      {
+        "path": "tests/security/test_auth_bypass_prevention.py",
+        "sha256": "7137731a274ee4cf4b91efa978048a568cb39de7b3c298df497ab1291836f9a8",
+        "test_functions": [
+          "test_production_fails_fast_on_empty_api_key",
+          "test_development_generates_ephemeral_dev_key",
+          "test_missing_authorization_header_rejected",
+          "test_invalid_scheme_rejected",
+          "test_empty_bearer_token_rejected",
+          "test_incorrect_bearer_token_rejected",
+          "test_valid_bearer_token_accepted",
+          "test_fastapi_endpoints_enforce_auth"
+        ]
+      },
+      {
+        "path": "tests/security/test_error_sanitization.py",
+        "sha256": "96fad0d3e1b7086494e8d2103c1ca7a1741cd951538b700448491c132a87fe9d",
+        "test_functions": [
+          "test_unhandled_exception_sanitizes_public_response",
+          "test_domain_exceptions_adhere_to_unified_contract"
+        ]
+      },
+      {
+        "path": "tests/security/test_feature30_adversarial_docs_and_config.py",
+        "sha256": "ad477afe9586b698e6716aee5dc0efdf9a1c4cf3b53f00918dd1fc7f218f20f7",
+        "test_functions": [
+          "test_readme_referenced_paths_exist",
+          "test_architecture_overview_paths_exist",
+          "test_kaggle_deployment_readme_scripts_exist",
+          "test_manifest_coverage_and_documentation_discrepancies",
+          "test_import_server_app",
+          "test_server_lifespan_startup_and_endpoints",
+          "test_env_example_contains_all_operational_variables",
+          "test_env_example_has_no_raw_production_secrets",
+          "test_nextjs_version_pinned_15_5_29",
+          "test_next_config_unoptimized_images"
+        ]
+      },
+      {
+        "path": "tests/security/test_no_legacy_imports.py",
+        "sha256": "d7d8437d28467352c8b3b28f635dd82048f75a143f7b8b257596cb50c8f83459",
+        "test_functions": [
+          "test_zero_legacy_imports_across_workspace",
+          "test_zero_proxy_or_fallback_in_production_code"
+        ]
+      },
+      {
+        "path": "tests/security/test_p2_worker_lease_adversarial_probes.py",
+        "sha256": "61564edf14dec94efb7802e1714ae87d55901750a1d92f0a6b823288dc2de809",
+        "test_functions": [
+          "test_probe_mismatched_lease_token_on_active_job",
+          "test_probe_missing_lease_token_on_leased_job",
+          "test_probe_unleased_job_mutation_rejected_no_dynamic_lease",
+          "test_probe_forged_or_stale_token_on_terminal_jobs",
+          "test_probe_stolen_token_cross_worker_hijack_blocked",
+          "test_probe_concurrent_worker_lease_collision_exactly_one_wins",
+          "test_probe_heartbeat_on_cancelled_job_signals_cancel_and_does_not_extend",
+          "test_probe_terminal_job_double_complete_and_double_fail_idempotence",
+          "test_probe_worker_cleared_on_job_completion",
+          "test_probe_worker_cleared_on_job_failure",
+          "test_probe_worker_cleared_on_job_cancellation",
+          "test_probe_worker_cleared_on_watchdog_timeout",
+          "test_probe_dual_gpu_fails_when_gpu0_busy_gpu1_remains_free",
+          "test_probe_dual_gpu_fails_when_gpu1_busy_gpu0_remains_free",
+          "test_probe_dual_gpu_atomic_acquisition_and_mutual_exclusion",
+          "test_probe_rapid_multi_cycle_concurrency_stress",
+          "test_http_probe_spoofed_worker_identity_rejected",
+          "test_http_probe_non_worker_role_rejected",
+          "test_http_probe_missing_lease_token_returns_403"
+        ]
+      },
+      {
+        "path": "tests/security/test_phase4_adversarial_storage_and_queue.py",
+        "sha256": "1b734971e4588f5a26465ed1c0495ff0bc912285a7911a0f7b2ef95bf082fa02",
+        "test_functions": [
+          "test_streaming_upload_52mb_rejected_with_413_and_zero_tmp_leak",
+          "test_content_length_exceeding_50mb_rejected_before_stream_read",
+          "test_stream_network_abortion_purges_temporary_file",
+          "test_presigned_url_tampering_of_max_size_fails_signature",
+          "test_asset_multipart_upload_rejects_content_length_over_50mb",
+          "test_range_valid_standard_slices",
+          "test_range_boundary_single_byte",
+          "test_range_open_ended",
+          "test_range_suffix_specification",
+          "test_range_malformed_and_out_of_bounds_gracefully_degrades",
+          "test_untrusted_direct_socket_cycling_spoofed_xff_is_rate_limited",
+          "test_untrusted_socket_attempting_localhost_impersonation_in_xff",
+          "test_untrusted_socket_with_comma_separated_and_garbage_xff",
+          "test_verified_trusted_proxy_correctly_isolates_downstream_clients",
+          "test_media_job_missing_artifact_path_transitions_to_failed_never_succeeded",
+          "test_media_job_empty_zero_byte_artifact_file_fails",
+          "test_media_job_artifacts_list_with_empty_file_fails",
+          "test_media_job_forged_sha256_mismatch_fails",
+          "test_non_media_job_empty_result_fails_directly",
+          "test_media_job_completely_missing_artifacts_fails_directly",
+          "test_complete_job_unleased_worker_raises_forbidden_and_preserves_state"
+        ]
+      },
+      {
+        "path": "tests/security/test_proxy_elimination.py",
+        "sha256": "d72ae2e80974cb672825dfdeaa7af5d2b4133c1f2b24c7519a1ddaf0d5633cc7",
+        "test_functions": [
+          "test_proxy_route_directory_deleted",
+          "test_no_x_target_base_url_in_studio_web",
+          "test_no_trycloudflare_fallback_in_studio_web"
+        ]
+      },
+      {
+        "path": "tests/security/test_ssrf_asset_validator.py",
+        "sha256": "1e58b5e62d4a036ad04aa3ef0d638641a54426b0f639c7a45e4cea143ec902cc",
+        "test_functions": [
+          "test_ssrf_blocks_malicious_urls",
+          "test_valid_png",
+          "test_valid_jpeg",
+          "test_valid_webp",
+          "test_valid_mp4_header",
+          "test_valid_wav_header",
+          "test_empty_and_truncated_riff_rejected",
+          "test_corrupt_signature_rejected",
+          "test_decompression_bomb_rejected",
+          "test_payload_exceeding_50mb_rejected",
+          "test_valid_payload_ingested_correctly",
+          "test_ingest_url_malformed_content_length_rejected",
+          "test_ingest_url_negative_content_length_rejected",
+          "test_ingest_url_redirect_rejected",
+          "test_ingest_url_payload_too_large"
+        ]
+      },
+      {
+        "path": "tests/test_preflight.py",
+        "sha256": "b493f7b3de78cc955842689b524d2455d31388f52345fadea2174bb158ba32ce",
+        "test_functions": [
+          "test_pre_01_startup_health_check",
+          "test_pre_02_manifest_discovery",
+          "test_pre_03_auth_enforcement",
+          "test_pre_04_job_submission_and_normalization",
+          "test_pre_05_fail_closed_rejection",
+          "test_pre_06_job_lifecycle_state_transitions",
+          "test_pre_07_progress_streaming_sse",
+          "test_pre_08_cancellation_and_idempotency",
+          "test_pre_09_worker_lease_and_watchdog",
+          "test_pre_10_gpu_allocation_and_bounds",
+          "test_pre_11_artifact_verification",
+          "test_pre_12_scratch_disk_storage",
+          "test_pre_13_ssrf_and_boundary_containment",
+          "test_pre_14_error_sanitization",
+          "test_pre_15_backend_unavailable_probe"
+        ]
+      },
+      {
+        "path": "tests/unit/api/test_artifact_concurrency_p04.py",
+        "sha256": "a9ab49274643b905e5155ef67f975984d0e33dda0c34b1ba44cda3e4134e6cef",
+        "test_functions": [
+          "test_p04_concurrent_downloads_10_requests_succeed_200",
+          "test_p04_artifact_retention_and_retry_download",
+          "test_p04_missing_artifact_returns_controlled_404_artifact_not_found",
+          "test_p04_atomic_write_publish",
+          "test_p04_sweeper_evicts_only_after_ttl_expiration"
+        ]
+      },
+      {
+        "path": "tests/unit/api/test_assets_upload.py",
+        "sha256": "21227f33c96b03f5dbcfe193e171e50685765f70da5470a22efbde1283e14239",
+        "test_functions": [
+          "test_unauthenticated_asset_upload_rejected",
+          "test_unauthenticated_asset_download_rejected",
+          "test_valid_png_multipart_upload_and_download",
+          "test_asset_download_not_found",
+          "test_json_upload_rejected_415",
+          "test_multipart_missing_file_rejected_400",
+          "test_multipart_empty_file_rejected_400",
+          "test_unsupported_mime_rejected_415",
+          "test_empty_mime_rejected_415",
+          "test_oversized_payload_rejected_413",
+          "test_corrupt_media_rejected_400",
+          "test_asset_validate_empty_url_400",
+          "test_asset_validate_invalid_scheme_400",
+          "test_asset_validate_ssrf_blocked_400",
+          "test_asset_validate_ssrf_bypass_attempt_blocked_400",
+          "test_asset_validate_public_url_200",
+          "test_asset_metadata_persisted_in_database",
+          "test_asset_upload_storage_failure_fails_fast_503",
+          "test_asset_download_storage_failure_fails_fast_503"
+        ]
+      },
+      {
+        "path": "tests/unit/api/test_control_plane_api_live.py",
+        "sha256": "a090d0a737c709c8a6f1c20f3d66b1471e8195cf0ac0a7424de21d4f3f4037ce",
+        "test_functions": [
+          "test_health_check",
+          "test_unauthenticated_request_rejected",
+          "test_job_submission_and_query",
+          "test_job_submission_idempotency",
+          "test_inline_payload_over_1mb_rejected_with_413",
+          "test_worker_leasing_heartbeat_and_completion_lifecycle",
+          "test_cancellation_and_retry",
+          "test_websocket_discovery_endpoint",
+          "test_storage_presigned_upload_url",
+          "test_websocket_stream_unauthenticated_closed_with_1008",
+          "test_websocket_stream_invalid_token_closed_with_1008",
+          "test_websocket_stream_rejects_query_param_token",
+          "test_websocket_stream_authenticated_via_subprotocol",
+          "test_websocket_stream_authenticated_via_auth_header"
+        ]
+      },
+      {
+        "path": "tests/unit/api/test_jobs_list.py",
+        "sha256": "1d623e4e8213e855e03617bf4f729893f0f60c60044a67727629545ecf949dbd",
+        "test_functions": [
+          "test_unauthenticated_jobs_list_rejected",
+          "test_empty_or_initial_jobs_list",
+          "test_jobs_list_ordering",
+          "test_jobs_list_pagination",
+          "test_jobs_list_service_filter",
+          "test_jobs_list_state_filter",
+          "test_jobs_list_status_filter_alias",
+          "test_jobs_list_presigned_urls_attached"
+        ]
+      },
+      {
+        "path": "tests/unit/api/test_media_range_requests.py",
+        "sha256": "b062f549089ca134ab84f84ec95b593e85f6fec7f0d8ede0e646ceafe785804f",
+        "test_functions": [
+          "test_asset_download_range_request_returns_206",
+          "test_video_artifact_range_request_returns_206",
+          "test_video_retention_across_multiple_range_requests",
+          "test_local_storage_download_headers"
+        ]
+      },
+      {
+        "path": "tests/unit/api/test_p0_job_admission_fixes.py",
+        "sha256": "07d6a97460e3e05bd811d1818a5b8ad3686da012d4f0e60e995c45bcf9b2be1d",
+        "test_functions": [
+          "test_fix_06_no_misleading_72b_aliases",
+          "test_fix_06_requested_identity_matches_resolved_weights",
+          "test_fix_07_job_admission_checks_variants_and_capabilities"
+        ]
+      },
+      {
+        "path": "tests/unit/api/test_rate_limit_middleware.py",
+        "sha256": "7458bbb2a7e3c9da0e53c1930c35a0d1c6900dcc0ad7e6ccb7e1371c73483013",
+        "test_functions": [
+          "test_requests_within_limit_succeed",
+          "test_exceeding_rate_limit_returns_429_rate_limited",
+          "test_client_key_isolation_by_token",
+          "test_client_key_isolation_by_ip",
+          "test_exempt_path_health_is_not_limited",
+          "test_periodic_key_eviction_removes_expired_clients",
+          "test_capacity_limit_caps_unique_clients_under_burst"
+        ]
+      },
+      {
+        "path": "tests/unit/api/test_rate_limit_trusted_proxies.py",
+        "sha256": "990d239d8dc773db320bcf278914bcad042e286ccf178a9dd6f3204344d2bb17",
+        "test_functions": [
+          "test_rate_limiter_ignores_spoofed_xff_from_untrusted_direct_client",
+          "test_rate_limiter_respects_xff_from_trusted_proxy",
+          "test_trusted_proxies_environment_configuration"
+        ]
+      },
+      {
+        "path": "tests/unit/api/test_studio_contract_sync_p05.py",
+        "sha256": "b77a7ce45423fe94c95fbbacb16e9a21faf0f3c83a2e55dddd0cdd090505a470",
+        "test_functions": [
+          "test_studio_capability_task_submission_normalizes_image_t2i",
+          "test_studio_capability_task_submission_normalizes_video_t2v",
+          "test_studio_capability_unsupported_task_fails_400",
+          "test_memory_endpoint_dual_t4_telemetry",
+          "test_studio_schemas_discovery"
+        ]
+      },
+      {
+        "path": "tests/unit/api/test_timeout_middleware.py",
+        "sha256": "4657b5fd4d8f6ba5d7076a0b292c2e45696596e9d9d7b0929575433b70d285a5",
+        "test_functions": [
+          "test_fast_request_succeeds_within_timeout",
+          "test_slow_request_triggers_504_gateway_timeout",
+          "test_streaming_endpoint_exempt_from_timeout"
+        ]
+      },
+      {
+        "path": "tests/unit/benchmarks/test_challenger_adversarial.py",
+        "sha256": "2acce5f792cf5018b2cf0a058c9609f622f064e5964e2c4cbdf30f35752ba858",
+        "test_functions": [
+          "test_truncated_jpeg_rejection",
+          "test_corrupted_webp_vp8_bitstream_rejection",
+          "test_silent_wav_rejection",
+          "test_zero_frame_wav_rejection",
+          "test_mp4_missing_mdat_rejection",
+          "test_mp4_corrupt_mdat_size_rejection",
+          "test_whitespace_text_rejection",
+          "test_empty_json_with_required_fields_rejection",
+          "test_zero_norm_embedding_rejection",
+          "test_checksum_mismatch_rejection",
+          "test_size_mismatch_rejection",
+          "test_9_negative_passes_and_82_unavailable",
+          "test_check_only_dry_run_purity",
+          "test_dataset_specs_namespacing_collision_prevention"
+        ]
+      },
+      {
+        "path": "tests/unit/benchmarks/test_challenger_p3_adversarial.py",
+        "sha256": "10d5b97c55ede3d7ccabb492b8674f26bcc3517c4522648a471c871ffb4b1b45",
+        "test_functions": [
+          "test_mtp_zero_latency_handling",
+          "test_mtp_negative_latency_handling",
+          "test_mtp_zero_tokens_division_by_zero_protection",
+          "test_mtp_empty_prompt_and_empty_output_rejection",
+          "test_mtp_seed_stability_and_invariance",
+          "test_mtp_sub_1_speedup_invariant_failure",
+          "test_mtp_excessive_vram_overhead_failure",
+          "test_qwen_image_zero_and_negative_duration_handling",
+          "test_qwen_image_memory_bounds_strictly_enforced",
+          "test_qwen_image_speedup_and_step_rate_invariants_failure",
+          "test_qwen_image_perceptual_collapse_detection",
+          "test_qwen_image_dimension_mismatch_failure",
+          "test_compute_image_stats_solid_vs_noise",
+          "test_compute_image_stats_corrupt_bytes_rejection",
+          "test_stage_2_infer_rejects_negative_and_zero_ttft",
+          "test_stage_2_infer_rejects_negative_phase_duration",
+          "test_stage_2_infer_rejects_missing_phase_keys",
+          "test_create_canonical_record_retains_authentic_phases_and_ttft"
+        ]
+      },
+      {
+        "path": "tests/unit/benchmarks/test_qwen38_mtp_comparison.py",
+        "sha256": "702c3f2664d704e6b571ebb0a3b90b9330cda23f28a6bd9652e87e69daa1fc4a",
+        "test_functions": [
+          "test_qwen38_mtp_comparison_identical_parameters",
+          "test_qwen38_mtp_comparison_speedup_calculation",
+          "test_qwen38_mtp_comparison_vram_overhead_bounded",
+          "test_qwen38_mtp_comparison_authentic_ttft_and_phases",
+          "test_qwen38_mtp_comparison_json_serialization",
+          "test_session1_exported_mtp_comparison"
+        ]
+      },
+      {
+        "path": "tests/unit/benchmarks/test_qwen_image_turbo_vs_standard.py",
+        "sha256": "fd0f192a7206a98380609230f298ab901dd826a42726060c97c03409498de90d",
+        "test_functions": [
+          "test_qwen_image_variants_steps_and_unet",
+          "test_qwen_image_variants_speedup_and_step_rate_ratio",
+          "test_qwen_image_variants_vram_bounds",
+          "test_qwen_image_variants_perceptual_std",
+          "test_qwen_image_variants_json_report_export",
+          "test_session1_exported_image_benchmark"
+        ]
+      },
+      {
+        "path": "tests/unit/benchmarks/test_unified_benchmark_runner.py",
+        "sha256": "234f3ba39a61cd5c9d172fa7f7b1dc3046050471af0cddce9ccfda988b38e6ea",
+        "test_functions": [
+          "test_cases_cover_all_11_model_manifests",
+          "test_validators_png_magic_and_dimensions",
+          "test_validators_wav_audio_and_duration",
+          "test_validators_mp4_video_container",
+          "test_validators_decision_schema",
+          "test_validators_embedding_vector",
+          "test_validators_yue2_abc_score",
+          "test_adversarial_png_corruption_rejection",
+          "test_adversarial_wav_corruption_rejection",
+          "test_adversarial_mp4_corruption_rejection",
+          "test_adversarial_sha256_rule_enforcement",
+          "test_adversarial_decision_schema_hardening",
+          "test_adversarial_embedding_vector_robustness",
+          "test_memory_guard_dual_t4_bounds",
+          "test_runner_negative_case_rejection",
+          "test_runner_backend_unavailable_status",
+          "test_runner_hardware_blocked_status",
+          "test_report_generator_produces_valid_deliverables",
+          "test_kaggle_bootstrap_diagnostics",
+          "test_bootstrap_check_only_dry_run_isolation",
+          "test_runner_negative_case_error_code_enforcement",
+          "test_validators_corrupted_image_container_rejection"
+        ]
+      },
+      {
+        "path": "tests/unit/contracts/test_phase2_adversarial_c1_c2.py",
+        "sha256": "0d3adb67e97f10f0284f16ee474cfb5ced78b3a0f11ecdd1ab691b90cb61b532",
+        "test_functions": [
+          "test_c1_offline_closed_port_never_claims_ready",
+          "test_c1_offline_http_500_503_never_claims_ready",
+          "test_c1_require_live_backends_without_url_raises_not_loaded",
+          "test_c1_job_submission_offline_engine_fails_closed_503",
+          "test_c1_job_result_failed_state_no_dummy_fallback",
+          "test_c2_wan22_invalid_variant_rejected_400",
+          "test_c2_wan22_turbo_variant_rejected_400",
+          "test_c2_minimax_h3_turbo_variant_rejected_400",
+          "test_c2_qwen_image_turbo_on_inpaint_rejected_400",
+          "test_c2_ace_step_extract_task_matrix_boundaries",
+          "test_c2_unimplemented_capability_truth_fails_closed_400",
+          "test_c2_declared_vram_exceeding_14_2_gb_rejected_400",
+          "test_c2_variant_vram_exceeding_14_2_gb_rejected_400",
+          "test_c2_model_runtime_manager_vram_boundary"
+        ]
+      },
+      {
+        "path": "tests/unit/contracts/test_phase2_adversarial_c3_streaming_contracts.py",
+        "sha256": "285c4af3b8af885ea91fa8704296997f05d0cf6c3cf6ed005834aa0d31e412aa",
+        "test_functions": [
+          "test_contracts_all_7_submodules_accessible",
+          "test_contracts_all_list_contains_submodules",
+          "test_from_contracts_import_submodules",
+          "test_contracts_deep_submodule_import_limitation",
+          "test_normalize_task_aliases_with_noise",
+          "test_normalize_model_aliases_with_noise",
+          "test_job_submission_request_validator_normalizes_fields",
+          "test_job_submission_request_none_and_empty_edge_cases",
+          "test_post_v1_jobs_normalizes_aliased_payload",
+          "test_reasoning_effort_valid_boundaries",
+          "test_reasoning_effort_invalid_fails_closed_schema",
+          "test_chat_completions_invalid_effort_rejected_422",
+          "test_chat_completions_none_effort_dispatches_cleanly",
+          "test_chat_completions_decouples_reasoning_content",
+          "test_jobs_result_text_decouples_reasoning_content",
+          "test_query_param_token_valid_key_returns_200",
+          "test_query_param_token_invalid_key_returns_401",
+          "test_query_param_token_empty_returns_401",
+          "test_missing_auth_header_and_token_returns_401",
+          "test_video_range_request_partial_content_206",
+          "test_video_range_request_open_ended_and_suffix",
+          "test_video_range_request_unsatisfiable_416"
+        ]
+      },
+      {
+        "path": "tests/unit/contracts/test_phase2_correctness_hardening.py",
+        "sha256": "8905799d6225aaf9b9680a9e46b8ca2e66d812b6405508a242baf52bd122b472",
+        "test_functions": [
+          "test_c1_model_runtime_manager_truth_and_live_probe",
+          "test_c1_live_readiness_probe_failure_transitions_to_unloaded",
+          "test_c2_capability_truth_strict_task_variant_matrix",
+          "test_c2_offline_backend_fails_closed_503",
+          "test_c2_unsupported_variant_fails_closed_400",
+          "test_c3_storage_ephemeral_disk_alias",
+          "test_c4_server_entrypoint_parity",
+          "test_c5_artifact_cleanup_policy_default_false",
+          "test_c8_hardware_profile_dual_t4_bounds",
+          "test_contracts_import_parity"
+        ]
+      },
+      {
+        "path": "tests/unit/contracts/test_schemas.py",
+        "sha256": "973b30571875bfaccd822d0a651e7c149151613fcbf6581f8937da1ea9d4e90f",
+        "test_functions": [
+          "test_valid_service_manifest",
+          "test_service_manifest_rejects_unauthenticated_bypass",
+          "test_service_manifest_rejects_auth_required_false",
+          "test_full_model_family_valid",
+          "test_full_model_rejected_if_coverage_under_100",
+          "test_full_model_rejected_if_missing_capabilities_present",
+          "test_partial_model_valid",
+          "test_partial_model_rejected_if_it_is_actually_100_percent_full",
+          "test_unified_error_response_valid",
+          "test_extra_fields_forbidden",
+          "test_job_submission_and_factory_job"
+        ]
+      },
+      {
+        "path": "tests/unit/contracts/test_task_normalization.py",
+        "sha256": "e33eb43db773407082ba6587d8194593e6d64d42586866f4addd86be4fe2e334",
+        "test_functions": [
+          "test_canonical_task_map_coverage",
+          "test_normalize_task_image_capabilities",
+          "test_normalize_task_video_capabilities",
+          "test_normalize_task_music_speech_enhance",
+          "test_normalize_task_edge_cases",
+          "test_image_registry_resolves_capability_ids",
+          "test_video_registry_resolves_capability_ids",
+          "test_job_lifecycle_manager_normalizes_task_on_submit"
+        ]
+      },
+      {
+        "path": "tests/unit/deployments/test_challenger_p3_2_adversarial.py",
+        "sha256": "61680e0007cf062a21fa5b1356fec7e9c1d80d8065d5a04e0c0373bb08f3423b",
+        "test_functions": [
+          "test_empty_and_none_license_strictly_rejected",
+          "test_missing_commercial_use_boolean_rejected",
+          "test_inconsistent_commercial_use_on_non_commercial_licenses_rejected",
+          "test_missing_weights_repository_and_checkpoint_rejected",
+          "test_checkpoint_revision_boundary_checks",
+          "test_whitespace_license_and_revision_empirical_gap",
+          "test_substring_nc_false_positive_risk_in_validator",
+          "test_shallow_commit_fetch_and_detached_head",
+          "test_shallow_fetch_failure_falls_back_to_full_clone",
+          "test_preexisting_dirty_directory_cleaned_before_checkout",
+          "test_discover_weight_missing_dirs_and_nonexistent_patterns",
+          "test_live_gpu_test_missing_weight_fallback_safety",
+          "test_zero_cuongnguyen1802_in_live_gpu_and_session1",
+          "test_audit_remaining_author_slugs_in_repo",
+          "test_benchmarks_runner_scratch_dir_honors_env",
+          "test_live_runner_scratch_dir_honors_env"
+        ]
+      },
+      {
+        "path": "tests/unit/deployments/test_kaggle_bootstrap_r2.py",
+        "sha256": "4bcdf8c9fac9f85d2e2080d4010fb6f48c641b7b6e52d1b04d51351556ae178d",
+        "test_functions": [
+          "test_manifest_reconciliation_all_11_models",
+          "test_prepare_datasets_manifest_alignment",
+          "test_bootstrap_model_path_namespacing",
+          "test_bootstrap_rejects_marker_only_safetensors_index",
+          "test_bootstrap_sharded_safetensors_validation_success",
+          "test_bootstrap_rejects_zero_byte_files",
+          "test_bootstrap_diffusers_rejects_marker_only",
+          "test_bootstrap_validates_declared_components",
+          "test_bootstrap_check_only_pure_dry_run_zero_mutation",
+          "test_kaggle_dual_t4_vram_and_yue2_feasibility",
+          "test_bootstrap_backend_health_probing"
+        ]
+      },
+      {
+        "path": "tests/unit/deployments/test_kaggle_runner.py",
+        "sha256": "04b518117075e9e679940359560bf925d7bed514a1c3803145ea2bf6338f9972",
+        "test_functions": [
+          "test_bearer_token_resolution_from_env_kaggle_api_token",
+          "test_bearer_token_legacy_fallback_to_kaggle_key",
+          "test_explicit_api_key_takes_precedence_over_env",
+          "test_missing_api_key_raises_kaggle_auth_error",
+          "test_basic_auth_fallback_for_legacy_key",
+          "test_push_kernel_payload_structure",
+          "test_push_kernel_api_error_response",
+          "test_http_error_handling_401_auth_error",
+          "test_http_error_handling_500_api_error",
+          "test_poll_until_complete_stream_logs",
+          "test_poll_until_complete_error_raises_kernel_failed",
+          "test_assigned_gpu_routing",
+          "test_assigned_gpu_routing_all_ten_models_matching_hardware_manifest",
+          "test_exclusive_admission_conflict_on_same_gpu",
+          "test_admit_and_evict_lifecycle",
+          "test_gate_1_load_gate_success",
+          "test_gate_1_load_gate_exceeds_limit",
+          "test_gate_1_load_gate_driver_context_anomaly",
+          "test_gate_2_inference_gate_peak_vram_exceeded",
+          "test_gate_2_text_numerical_correctness",
+          "test_gate_2_decision_numerical_correctness",
+          "test_gate_2_embedding_unit_l2_norm",
+          "test_gate_2_image_png_signature_and_ihdr",
+          "test_gate_2_video_mp4_container_structure",
+          "test_gate_3_contract_gate_full_adherence",
+          "test_gate_3_contract_gate_unsupported_capability_leak_fails",
+          "test_gate_4_stress_gate_zero_leak",
+          "test_gate_5_recovery_gate_sigkill_and_reboot",
+          "test_certifier_executes_all_tier1_models",
+          "test_production_certification_results_file_integrity",
+          "test_model_manifests_pending_live_anti_escalation",
+          "test_hardware_memory_profiler_on_cpu_environment",
+          "test_hardware_memory_profiler_with_nvml_mock",
+          "test_preflight_contract_simulator_execution",
+          "test_kaggle_live_executor_fail_closed_without_gpu",
+          "test_tier1_model_certifier_mode_dispatch",
+          "test_explicit_username_precedence",
+          "test_env_var_username_precedence",
+          "test_kaggle_json_dynamic_detection",
+          "test_missing_username_raises_kaggle_auth_error",
+          "test_embedding_tight_tolerance_rejection",
+          "test_embedding_tight_tolerance_acceptance",
+          "test_embedding_nan_rejection",
+          "test_png_rejects_truncated_payload",
+          "test_png_rejects_invalid_ihdr_length",
+          "test_mp4_rejects_missing_mdat",
+          "test_mp4_rejects_missing_moov",
+          "test_mp4_accepts_both_moov_and_mdat",
+          "test_stage_1_load_gpu_placement_success",
+          "test_stage_1_load_gpu_placement_mismatch_fails",
+          "test_stage_1_load_music_and_enhancement_on_gpu_1_success",
+          "test_stage_1_load_music_and_enhancement_on_wrong_gpu_fails",
+          "test_stage_2_infer_forward_pass_and_latency",
+          "test_stage_2_infer_peak_vram_limit_exceeded",
+          "test_stage_3_validate_output_and_manifest_contract",
+          "test_stage_3_validate_unsupported_capability_leak_fails",
+          "test_stage_4_profile_telemetry_and_zero_leak",
+          "test_stage_4_profile_excessive_leak_fails",
+          "test_four_stage_pipeline_in_preflight_certification_results",
+          "test_init_default_mode_without_credentials",
+          "test_init_mode_preflight_without_credentials",
+          "test_init_mode_remote_without_credentials",
+          "test_lazy_client_property_raises_auth_error_when_unconfigured",
+          "test_explicit_client_injection",
+          "test_init_accepts_arbitrary_kwargs_without_type_error",
+          "test_run_local_certification_preflight_without_credentials",
+          "test_run_dispatcher_preflight",
+          "test_deploy_and_certify_remote_triggers_auth_check_when_uncredentialed",
+          "test_import_deployments_kaggle_package",
+          "test_submodules_import_cleanly_without_credentials"
+        ]
+      },
+      {
+        "path": "tests/unit/deployments/test_kernel_smoke.py",
+        "sha256": "9fe70d5974d181d1058610ed1cb3140134d62bdd950c9e047b3f1233db441242",
+        "test_functions": [
+          "test_generated_kernel_ast_validity",
+          "test_runner_prepare_kernel_script_ast_validity",
+          "test_generated_kernel_contains_zero_leaked_secrets",
+          "test_kaggle_client_repr_masks_api_key",
+          "test_env_token_resolution_precedence",
+          "test_cli_help_flag_exits_cleanly",
+          "test_certify_kernel_preflight_execution",
+          "test_runner_local_mode_dispatch"
+        ]
+      },
+      {
+        "path": "tests/unit/deployments/test_live_factory_e2e_runner.py",
+        "sha256": "f6678c9b6748f82c2d045d09a5ef444ff46c699d7025d117ef24f565505fe27f",
+        "test_functions": [
+          "test_query_nvml_vram_fails_closed_when_pynvml_unavailable",
+          "test_comfyui_workflow_fails_closed_when_backend_offline",
+          "test_comfyui_workflow_raises_when_execution_fails",
+          "test_llama_completion_fails_closed_when_backend_offline",
+          "test_run_live_factory_e2e_classifies_hardware_unavailable_on_no_gpu",
+          "test_run_live_factory_e2e_classifies_backend_unavailable_when_engine_offline",
+          "test_run_live_factory_e2e_full_success_when_engine_and_gpu_online"
+        ]
+      },
+      {
+        "path": "tests/unit/deployments/test_pipeline_fallback.py",
+        "sha256": "09685e6479558f34765df7e15f39a65f99ea35b053cbf833cca7a2a5fdaeb96d",
+        "test_functions": [
+          "test_valid_prompt_decoupling_with_complete_think_and_prompt_tags",
+          "test_choked_tokens_without_closing_think_tag_triggers_fallback",
+          "test_closing_think_tag_with_empty_prompt_triggers_fallback",
+          "test_prompt_shorter_than_20_chars_triggers_fallback",
+          "test_direct_prompt_without_think_tags_passes",
+          "test_gate_2_accepts_valid_67_byte_png",
+          "test_gate_2_rejects_truncated_png_under_33_bytes",
+          "test_gate_2_rejects_invalid_ihdr_chunk",
+          "test_gate_2_accepts_unit_basis_vector",
+          "test_gate_2_rejects_unnormalized_vector",
+          "test_gate_2_rejects_nan_in_embedding_vector",
+          "test_all_passed_yields_success",
+          "test_any_fallback_yields_fallback_status",
+          "test_any_failed_yields_failed_status_even_with_fallback",
+          "test_preflight_simulator_generates_authentic_primitives"
+        ]
+      },
+      {
+        "path": "tests/unit/deployments/test_smoke_runner.py",
+        "sha256": "9869208d9ef829feb917c2f6945c4dfc79f18ae149e997c4ae20879844364b9c",
+        "test_functions": [
+          "test_full_4stage_pipeline_success",
+          "test_infer_failure_halts_pipeline",
+          "test_empty_output_fails_validate_stage",
+          "test_real_nvml_hardware_verification"
+        ]
+      },
+      {
+        "path": "tests/unit/gpu/test_gpu_lifecycle_p1.py",
+        "sha256": "64d2e8e4acb9a4a6c16f3ac35f963626a3b46782b60c496f09b17af6fe08e2df",
+        "test_functions": [
+          "test_gpu_01_load_infer_unload",
+          "test_gpu_02_model_switching_a_to_b",
+          "test_gpu_03_two_jobs_on_distinct_gpus",
+          "test_gpu_04_two_heavy_jobs_on_same_gpu",
+          "test_gpu_05_atomic_dual_gpu_reservation",
+          "test_gpu_05b_real_qwen_text_dual_gpu_atomic_reservation",
+          "test_gpu_06_backend_crash_recovery",
+          "test_gpu_07_cancellation_during_load_and_inference",
+          "test_gpu_08_heartbeat_timeout_and_retry",
+          "test_gpu_09_multi_model_pipeline_sequence",
+          "test_gpu_10_repeated_swaps_memory_leak_check",
+          "test_truth_model_three_distinct_levels",
+          "test_truth_model_manifest_schema_fields",
+          "test_truth_model_readiness_not_inferred_from_coverage",
+          "test_variant_turbo_vs_standard_checkpoint_selection",
+          "test_variant_early_rejection_incompatible_task",
+          "test_variant_early_rejection_incompatible_steps"
+        ]
+      },
+      {
+        "path": "tests/unit/manifests/test_challenger_p5_adversarial.py",
+        "sha256": "146db21d681b8a01e5155d5294b81298b43e8ffc589569e3cd3670d96a196fde",
+        "test_functions": [
+          "test_parse_qwen_image_turbo_manifest_via_model_validate",
+          "test_all_12_manifests_parse_and_validate_cleanly",
+          "test_vram_rejection_at_job_admission_exceeding_hardware_envelope",
+          "test_vram_rejection_at_model_runtime_manager_boundary",
+          "test_dual_gpu_split_lease_atomic_mutual_exclusion",
+          "test_qwen_image_turbo_lease_gap_in_subsystem_manifest_capabilities",
+          "test_canonical_model_aliases_resolution",
+          "test_dummy_media_weights_and_databases_are_ignored",
+          "test_fixtures_and_web_assets_are_not_ignored",
+          "test_active_git_status_contains_zero_media_or_weights"
+        ]
+      },
+      {
+        "path": "tests/unit/manifests/test_manifest_coverage.py",
+        "sha256": "00a687faa57e35180fbb192836b8b77f8e5ff668e086cb44d4e6bcc1d8fbf875",
+        "test_functions": [
+          "test_manifest_coverage_count_and_ids",
+          "test_qwen_image_turbo_manifest_integrity",
+          "test_all_12_manifests_pass_validator"
+        ]
+      },
+      {
+        "path": "tests/unit/queue/test_gpu_concurrency.py",
+        "sha256": "770b6577e3da6783cf5bb9ae1f38cd85c557955c9141884f2330a9baf211a9ea",
+        "test_functions": [
+          "test_vram_pre_admission_rejection_over_14_2_gb",
+          "test_concurrency_bound_one_per_gpu",
+          "test_discrete_gpu0_vs_gpu1_independence",
+          "test_deterministic_disconnect_failure_no_requeue",
+          "test_worker_http_reporting_without_lease_token",
+          "test_watchdog_handles_none_leased_at_gracefully",
+          "test_lease_job_releases_gpu_on_repository_exception"
+        ]
+      },
+      {
+        "path": "tests/unit/queue/test_p0_queue_watchdog_fixes.py",
+        "sha256": "03f8fcdfdec2dcffd26e1c2ea1f6e2bcd69389d5352221e2547125dda759e40b",
+        "test_functions": [
+          "test_fix_04_consolidated_subsystem_gpu_map",
+          "test_fix_01_missing_artifact_produces_failed",
+          "test_fix_02_real_sha256_computation_and_rejection_of_zeros",
+          "test_fix_03_retry_gpu_aware_enqueue",
+          "test_fix_05_watchdog_configurable_timeouts_and_heartbeat_grace",
+          "test_fix_05_watchdog_hierarchy_without_explicit_input_timeout"
+        ]
+      },
+      {
+        "path": "tests/unit/queue/test_queue_lifecycle.py",
+        "sha256": "336815403b4564eb2ebfccf6d30cddb2d9cbd623c70d2f0a5847dc3c9270dd79",
+        "test_functions": [
+          "test_valid_forward_transitions",
+          "test_valid_cancellations",
+          "test_invalid_transitions_raise_error",
+          "test_terminal_states",
+          "test_crud_and_idempotency",
+          "test_worker_leasing_and_matching",
+          "test_priority_ordering",
+          "test_remove_job",
+          "test_leasing_flow",
+          "test_lease_coordinator_evicts_job_from_broker",
+          "test_full_job_lifecycle",
+          "test_complete_job_idempotent_no_artifact_mutation"
+        ]
+      },
+      {
+        "path": "tests/unit/queue/test_terminal_succeeded_guard.py",
+        "sha256": "2688d9976b44c3894bd1aac41ca2110d52de16c41008875ede8f25917727686f",
+        "test_functions": [
+          "test_job_never_transitions_to_succeeded_on_artifact_failure",
+          "test_non_media_job_fails_when_result_payload_missing",
+          "test_job_succeeds_only_after_artifact_persistence_verified",
+          "test_watchdog_multi_gpu_release_on_timeout"
+        ]
+      },
+      {
+        "path": "tests/unit/queue/test_worker_lease_auth.py",
+        "sha256": "d2e881412091eeaefebdd92c409cbdebbdf51c2c73f1dbe046a9981d9c4deaff",
+        "test_functions": [
+          "test_authorized_worker_can_progress_and_complete",
+          "test_authorized_worker_can_fail_job",
+          "test_unauthorized_worker_rejected_on_progress",
+          "test_unauthorized_worker_rejected_on_complete",
+          "test_unauthorized_worker_rejected_on_fail",
+          "test_heartbeat_lease_extension_requires_valid_token",
+          "test_stale_job_id_cleared_on_idle_heartbeat",
+          "test_unleased_job_backward_compatibility",
+          "test_caller_worker_id_mismatch_rejected",
+          "test_expired_lease_blocks_progress_and_completion",
+          "test_worker_capability_matching_enforces_registered_manifests"
+        ]
+      },
+      {
+        "path": "tests/unit/queue/test_worker_lease_strict_ownership_p06.py",
+        "sha256": "f727827cf118e0ad5ac25f1979591597bb0dd7910af901e1790be909612ec7c9",
+        "test_functions": [
+          "test_worker_calling_progress_without_lease_token_rejected_403",
+          "test_worker_calling_complete_without_lease_token_rejected_403",
+          "test_worker_calling_fail_without_lease_token_rejected_403",
+          "test_forged_lease_token_rejected_on_all_endpoints",
+          "test_expired_lease_rejected_on_all_operations",
+          "test_heartbeat_ownership_validation",
+          "test_admin_role_bypasses_lease_ownership"
+        ]
+      },
+      {
+        "path": "tests/unit/queue/test_worker_runtime_lite.py",
+        "sha256": "5ee12cb67a3b75fd95fd96a01aaeb41b364a62843b66aafdfd13499546de0af1",
+        "test_functions": [
+          "test_video_job_allowed_up_to_900s_with_fresh_heartbeats",
+          "test_worker_disconnected_heartbeat_timeout"
+        ]
+      },
+      {
+        "path": "tests/unit/repository/test_alembic_migrations.py",
+        "sha256": "44f5e59318fa371280c07e023d0fb3053a2535b7e00e755eeb5bfdd20750cf77",
+        "test_functions": [
+          "test_migration_full_lifecycle_and_schema_inspection",
+          "test_postgresql_offline_ddl_generation",
+          "test_alembic_cli_invocation"
+        ]
+      },
+      {
+        "path": "tests/unit/repository/test_in_memory_repository.py",
+        "sha256": "914f7c0846259e2f2573c7f6f3486e4db476b06cf2651e93c46b8bd0385d7bff",
+        "test_functions": [
+          "test_create_and_get_job",
+          "test_update_job",
+          "test_list_jobs_and_filtering",
+          "test_capacity_exceeded_error_when_all_non_terminal",
+          "test_overflow_evicts_oldest_terminal_job",
+          "test_ttl_automatic_eviction",
+          "test_concurrent_job_creation",
+          "test_event_recording_and_retrieval",
+          "test_asset_records",
+          "test_worker_heartbeat_and_registration"
+        ]
+      },
+      {
+        "path": "tests/unit/resilience/test_circuit_breaker.py",
+        "sha256": "fbf210d199a414faa2eb4da3e68a895cc26552e400f02932cc739cc836aaf74d",
+        "test_functions": [
+          "test_initial_state_is_closed",
+          "test_circuit_trips_to_open_on_consecutive_failures",
+          "test_circuit_recovery_half_open_to_closed",
+          "test_half_open_failure_re_opens_circuit",
+          "test_circuit_breaker_fallback_execution",
+          "test_manual_trip_and_reset",
+          "test_half_open_bounded_concurrency_on_success",
+          "test_half_open_bounded_concurrency_on_failure_shields_downstream"
+        ]
+      },
+      {
+        "path": "tests/unit/security/test_api_key_strict_verification.py",
+        "sha256": "2a76850e33564c2ff3a3e388a42621c08239bfed72533c2fa8993f7dda1d8675",
+        "test_functions": [
+          "test_valid_api_key_accepted",
+          "test_incorrect_api_key_rejected",
+          "test_missing_authorization_header_rejected",
+          "test_empty_bearer_token_rejected",
+          "test_invalid_scheme_rejected",
+          "test_production_mode_fails_fast_on_missing_api_key",
+          "test_development_mode_generates_ephemeral_dev_key",
+          "test_auth_config_preserves_custom_api_key",
+          "test_worker_identity_binding_rejects_missing_sub",
+          "test_worker_identity_binding_accepts_valid_sub"
+        ]
+      },
+      {
+        "path": "tests/unit/security/test_jwt_auth.py",
+        "sha256": "11b31da2e907840637af006fffc629ed68d033abf21262f994ed2742f323b3e4",
+        "test_functions": [
+          "test_allowed_algorithms_allowlist",
+          "test_disallowed_algorithm_rejected",
+          "test_valid_hs256_token_succeeds",
+          "test_missing_exp_claim_rejected",
+          "test_expired_token_rejected",
+          "test_issuer_verification_mismatch_rejected",
+          "test_audience_verification_mismatch_rejected",
+          "test_rs256_algorithm_is_allowed_in_allowlist",
+          "test_production_mode_requires_jwt_audience",
+          "test_bearer_role_differentiation_admin_via_api_key",
+          "test_bearer_role_differentiation_worker_via_jwt",
+          "test_bearer_role_differentiation_user_via_jwt",
+          "test_worker_identity_binding_rejects_user_role",
+          "test_worker_identity_binding_rejects_missing_sub",
+          "test_worker_identity_binding_accepts_valid_sub"
+        ]
+      },
+      {
+        "path": "tests/unit/services/test_acestep_p3.py",
+        "sha256": "2a21214c0745eb3eb2a11936cbf6f457aff6f546dfaff95f8294e73a91d63afa",
+        "test_functions": [
+          "test_ace_01_text_to_music_mapping_and_execution",
+          "test_ace_02_lyrics_to_music_verse_chorus_structure",
+          "test_ace_03_instrumental_mode",
+          "test_ace_04_prompt_expansion_mapping",
+          "test_ace_05_thinking_mode_mapping",
+          "test_ace_06_musical_controls_validation",
+          "test_ace_07_reference_audio_conditioning",
+          "test_ace_08_cover_audio_mapping",
+          "test_ace_09_repaint_interval_validation",
+          "test_ace_10_remix_style_transfer_composition",
+          "test_ace_11_extract_stem_variant_matrix",
+          "test_ace_12_lego_variant_matrix",
+          "test_ace_13_complete_variant_matrix",
+          "test_ace_14_music_extend",
+          "test_ace_15_multilingual_lyrics_preservation",
+          "test_ace_16_batch_generation_multi_artifact",
+          "test_ace_17_variant_switching_manifest_verification",
+          "test_ace_18_audio_format_export_validation",
+          "test_ace_19_audio_understanding",
+          "test_ace_20_lyrics_timing_lrc_extraction",
+          "test_ace_21_quality_scoring_with_provenance",
+          "test_ace_22_lora_inference_mapping",
+          "test_ace_23_lora_training_workflow_contract",
+          "test_ace_24_cancellation_and_error_classification",
+          "test_music_worker_execute_job_success",
+          "test_music_worker_turbo_rejects_specialized_task"
+        ]
+      },
+      {
+        "path": "tests/unit/services/test_p0_fixes_14_to_20.py",
+        "sha256": "c5c1dbda813b81baf1df6a93af9964d19741bdd3ce9e96d605c1acc1010db61c",
+        "test_functions": [
+          "test_fix_14_enhancement_health_reflects_backend_availability",
+          "test_fix_15_e2e_suite_split_and_labeling",
+          "test_fix_16_kaggle_simulated_report_cannot_carry_live_pass",
+          "test_fix_17_worker_error_taxonomy_and_retry_semantics",
+          "test_fix_18_streaming_inspector_no_unlabeled_fake_telemetry",
+          "test_fix_19_security_checks_and_dependencies",
+          "test_fix_20_deploy_config_trimmed"
+        ]
+      },
+      {
+        "path": "tests/unit/services/test_p0_speech_music_fixes.py",
+        "sha256": "fe903a7266849955f8e512539d7e01e6ec6282a70bb3d992b102bd409b22f4b3",
+        "test_functions": [
+          "test_fix_08_asr_engine_ingests_audio_url_into_bytes",
+          "test_fix_09_native_acestep_launcher_health_check",
+          "test_fix_10_acestep_task_type_and_payload_alignment"
+        ]
+      },
+      {
+        "path": "tests/unit/services/test_phase2_subsystems.py",
+        "sha256": "ca36b1e7de0a864fe0af75cb1a26f0d233f67a37741ca05df5cbec3212550f65",
+        "test_functions": [
+          "test_text_chat_request_valid",
+          "test_text_chat_request_invalid_effort",
+          "test_text_chat_request_empty_or_non_string_effort_rejected",
+          "test_decouple_think_tokens_closed_block",
+          "test_decouple_think_tokens_unclosed_block_with_newline",
+          "test_decouple_think_tokens_empty_tag",
+          "test_streaming_reasoning_filter",
+          "test_vlm_multimodal_extraction_data_url",
+          "test_decision_engine_validates_inputs",
+          "test_embedding_engine_single_and_batch_text",
+          "test_multimodal_embedder_fails_closed_when_backend_unconfigured",
+          "test_asr_engine_requires_backend",
+          "test_tts_engine_empty_input_rejected",
+          "test_tts_engine_voice_cloning_requires_reference_text",
+          "test_voice_cloner_fails_closed_without_fake_hashes",
+          "test_forced_aligner_requires_backend",
+          "test_speed_control_wav_transformation",
+          "test_speech_asset_url_validation_rejects_untrusted",
+          "test_img01_t2i_standard_vs_turbo_selection",
+          "test_img01_turbo_step_ceiling_enforced",
+          "test_img02_image_to_image_denoise_mapping",
+          "test_img04_inpaint_mask_and_blur",
+          "test_img08_img09_controlnet_pose_and_depth",
+          "test_wan_t2v_and_fl2v_parameter_mapping",
+          "test_minimax_h3_resolution_multiples_of_32",
+          "test_minimax_h3_ref2va_binding_to_8_ref",
+          "test_image_sr_processor_validates_inputs",
+          "test_video_sr_processor_validates_inputs",
+          "test_frame_interpolation_processor_validates_inputs",
+          "test_audio_enhancement_processor_validates_inputs"
+        ]
+      },
+      {
+        "path": "tests/unit/services/test_video_extension_helper.py",
+        "sha256": "da1eafa580fbc445a99e3d934c046e4c2d2c2e90bf1ce92a136eb77027bc1407",
+        "test_functions": [
+          "test_extract_anchor_frame_missing_source_raises_runtime_error",
+          "test_extract_anchor_frame_corrupt_or_empty_source_raises_runtime_error",
+          "test_extract_anchor_frame_ffmpeg_failure_raises_runtime_error",
+          "test_extract_anchor_frame_success",
+          "test_concatenate_videos_missing_source_raises_runtime_error",
+          "test_concatenate_videos_missing_extension_raises_runtime_error",
+          "test_concatenate_videos_ffmpeg_failure_raises_runtime_error_no_mock_bytes",
+          "test_concatenate_videos_success"
+        ]
+      },
+      {
+        "path": "tests/unit/services/test_yue2_p4.py",
+        "sha256": "3d531b9ceadb80de36f67c7a38be9e1594017aa527ac4a60a5fd82d65fd28997",
+        "test_functions": [
+          "test_valid_score_parsing_and_header_extraction",
+          "test_extract_headers_helper",
+          "test_extract_chords",
+          "test_reject_empty_or_whitespace_score",
+          "test_reject_missing_key_header",
+          "test_reject_malformed_headers",
+          "test_reject_unclosed_delimiters",
+          "test_reject_score_without_notes_or_rests",
+          "test_score_diffing",
+          "test_score_editing",
+          "test_task_normalization",
+          "test_variant_normalization",
+          "test_duration_validation_guards",
+          "test_seed_validation",
+          "test_prompt_and_lyrics_validation",
+          "test_score_edit_validation",
+          "test_sampling_config_validation",
+          "test_unsupported_task_and_variant",
+          "test_base_url_stripping_and_initialization",
+          "test_headers_with_and_without_api_key",
+          "test_health_success",
+          "test_health_network_failure_translates_error",
+          "test_generate_song_success_with_audio_and_abc_artifacts",
+          "test_generate_song_network_error_translates_error",
+          "test_plan_score_success",
+          "test_edit_score_client",
+          "test_gate_y0_hardware_blocked_when_no_cuda",
+          "test_gate_y0_insufficient_vram_reports_blocked",
+          "test_gate_y0_dual_t4_reports_track_b_only",
+          "test_gate_y0_24gb_bf16_reports_fully_feasible",
+          "test_runtime_lifecycle_transitions",
+          "test_runtime_ensure_loaded_blocked_raises",
+          "test_worker_supported_models_and_tasks",
+          "test_worker_lease_next_job_includes_yue2",
+          "test_worker_routes_yue2_job_to_completion",
+          "test_worker_routes_yue2_plan_only_task",
+          "test_worker_preserves_file_url_safe_staging_and_cleanup",
+          "test_worker_ssrf_blocked_on_unsafe_remote_url"
+        ]
+      },
+      {
+        "path": "tests/unit/storage/test_s3_failfast.py",
+        "sha256": "e7cc9596348f914a8ba5b171aeae3eafd7a0520afdc81beab951ccb5279808ce",
+        "test_functions": [
+          "test_s3_storage_provider_fails_fast_in_production",
+          "test_s3_storage_provider_tolerates_offline_in_development",
+          "test_load_storage_config_s3_production_validation",
+          "test_load_storage_config_unsupported_backend_rejected"
+        ]
+      },
+      {
+        "path": "tests/unit/storage/test_scratch_disk.py",
+        "sha256": "a35a768cebd208aa7086de5ea521f439f90dc13e54a8e5aa54000625c42942be",
+        "test_functions": [
+          "test_save_and_get_artifact_roundtrip",
+          "test_path_traversal_rejection",
+          "test_synchronous_cleanup_unlinks_file_and_directory",
+          "test_sweeper_ttl_eviction",
+          "test_sweeper_lru_quota_eviction",
+          "test_sweeper_lifecycle_start_and_shutdown"
+        ]
+      },
+      {
+        "path": "tests/unit/storage/test_storage_s3.py",
+        "sha256": "ca1aece25eddff20b89c125abc1ab13bc2ed84d6672782e477d598660f4075a0",
+        "test_functions": [
+          "test_default_config",
+          "test_load_storage_config_env",
+          "test_format_artifact_key",
+          "test_format_asset_key",
+          "test_sanitize_filename",
+          "test_format_artifact_key_sanitizes_job_id_traversal",
+          "test_format_artifact_key_sanitizes_job_id_backslashes",
+          "test_format_asset_key_sanitizes_asset_id_traversal",
+          "test_format_artifact_key_all_dots_falls_back",
+          "test_sanitize_id_direct",
+          "test_compute_bytes_and_verify",
+          "test_compute_stream_sha256",
+          "test_small_base64_allowed_with_deprecation",
+          "test_large_base64_rejected_with_413",
+          "test_regular_text_no_deprecation",
+          "test_multi_field_base64_small_first_large_second_rejected",
+          "test_multi_field_base64_large_first_small_second_rejected",
+          "test_multi_field_base64_all_small_deprecation_header",
+          "test_nested_list_base64_oversized_rejected",
+          "test_hmac_signing_and_verification",
+          "test_signature_expiry_and_tampering",
+          "test_crud_and_traversal_protection",
+          "test_local_storage_sibling_directory_traversal_blocked",
+          "test_local_storage_explicit_dot_dot_in_key_blocked",
+          "test_local_storage_base_dir_root_access_blocked",
+          "test_local_storage_valid_nested_key_allowed"
+        ]
+      },
+      {
+        "path": "tests/unit/storage/test_unified_artifact_delivery.py",
+        "sha256": "913cf0f72a41511f2828873c956569b1ef49396d8e83621b8a585902022b6b48",
+        "test_functions": [
+          "test_env",
+          "test_public_control_plane_url_resolution",
+          "test_compute_file_sha256",
+          "test_image_worker_upload_and_client_result_delivery",
+          "test_video_worker_upload_and_client_result_delivery",
+          "test_image_artifact_collector_streaming_upload",
+          "test_video_artifact_collector_streaming_upload"
+        ]
+      },
+      {
+        "path": "tests/unit/streaming/test_streaming.py",
+        "sha256": "7ae3220fdbd8366d64348f4518368feb2d59bbe2a28dc8d851649c09eea42259",
+        "test_functions": [
+          "test_record_and_get_since",
+          "test_format_sse_event",
+          "test_format_multiline_data",
+          "test_publish_and_subscribe",
+          "test_last_event_id_reconnection_replay",
+          "test_reconnection_replay_no_duplicates_on_concurrent_publish",
+          "test_inspector_emits_telemetry_and_ping",
+          "test_stream_chunks",
+          "test_websocket_cancellation_with_type_cancel",
+          "test_websocket_cancellation_with_action_cancel",
+          "test_websocket_cancellation_with_event_cancel"
+        ]
+      },
+      {
+        "path": "tests/unit/telemetry/test_telemetry.py",
+        "sha256": "eb93ed21acda4c8176e82a84b92f38ff27559cf3816f582f9c73e91e1cd28d1c",
+        "test_functions": [
+          "test_set_and_get_5_hop_correlation",
+          "test_build_and_extract_traceparent",
+          "test_extract_traceparent_case_insensitive",
+          "test_extract_fallback_x_trace_id",
+          "test_inject_traceparent",
+          "test_trace_scope_attaches_correlation",
+          "test_traced_span_decorator",
+          "test_json_log_formatting_with_correlation",
+          "test_metrics_collection_and_snapshot"
+        ]
+      },
+      {
+        "path": "tests/unit/telemetry/test_trace_propagation.py",
+        "sha256": "df9ca743b1092cd87471d525ea050a7f0b1ee27579844182f9213b6c07aaf3a3",
+        "test_functions": [
+          "test_job_lifecycle_manager_persists_trace_id",
+          "test_telemetry_tracing_middleware_generates_and_attaches_trace_headers",
+          "test_telemetry_log_formatter_includes_trace_id"
+        ]
+      },
+      {
+        "path": "tests/unit/test_git_hygiene.py",
+        "sha256": "c113644be9e01e22111216c61fe53d6e7ad49d8e78b36c3c281fae504283045b",
+        "test_functions": [
+          "test_zero_media_binaries_and_weights_tracked",
+          "test_gitignore_rule_coverage",
+          "test_submodule_gitignores_exist",
+          "test_test_fixtures_unignored_preservation"
+        ]
+      },
+      {
+        "path": "tests/unit/test_report_builder.py",
+        "sha256": "d8443cd7344b6c83189031a7d20f30c6094189b30f94836ee2fce6c380f10ed0",
+        "test_functions": [
+          "test_builder_load_data_integrity",
+          "test_builder_generates_all_six_reports_in_output_dir",
+          "test_executive_summary_schema_and_math",
+          "test_capability_matrix_truth_model_and_subsystems",
+          "test_model_comparison_prompts_and_rubric",
+          "test_latency_vram_telemetry_and_attestation",
+          "test_failure_analysis_and_historical_fixes",
+          "test_final_report_eleven_sections_and_163_cases",
+          "test_cli_execution_via_python_module",
+          "test_cli_main_function",
+          "test_builder_raises_file_not_found_on_missing_run_dir",
+          "test_builder_raises_file_not_found_on_missing_config_dir"
+        ]
+      },
+      {
+        "path": "tests/unit/workflows/test_p0_workflows_video_fixes.py",
+        "sha256": "a9d29ad6871316a2bc26e4895a9d3fbdc957d2a81892732f7c39609151801fb0",
+        "test_functions": [
+          "test_fix_11_image_variant_checkpoint_selection",
+          "test_fix_12_minimax_ref2va_binds_8_ref",
+          "test_fix_13_video_extension_concatenation_order"
+        ]
+      },
+      {
+        "path": "workflows/image/tests/test_image_registry.py",
+        "sha256": "cd9d65d04ccccb1636175db2e1c548e889691fb7d13580daaa6c51c105d7557f",
+        "test_functions": [
+          "test_image_registry_task_aliases",
+          "test_image_registry_unknown_task_raises_key_error",
+          "test_image_registry_returns_deep_copy"
+        ]
+      },
+      {
+        "path": "workflows/video/tests/test_video_registry.py",
+        "sha256": "2882d4c6542ec582270bb3d46b138c3dac20a7d5a09be34df55b4f8418dc7ee7",
+        "test_functions": [
+          "test_video_registry_task_aliases",
+          "test_video_registry_get_workflow_unified",
+          "test_video_registry_returns_deep_copy"
+        ]
+      }
+    ]
+  },
+  "exit_gate": {
+    "status": "PASS",
+    "meaning": "Every frozen model/capability has explicit audited disposition and evidence rejection reasons. No pair certified. Does not grant Phase 1 or release readiness."
+  }
+}

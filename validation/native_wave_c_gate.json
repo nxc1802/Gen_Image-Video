@@ -1,0 +1,2064 @@
+{
+  "wave": "C",
+  "observed_at_utc": "2026-11-13T11:29:04.841367+00:00",
+  "exit_gate": "PASS",
+  "classification": "NATIVE_V3_SEMANTIC_CANDIDATES_ONLY",
+  "golden_sha256": "01896324e01fe35bda3682d1de0f67278a124cda1d9abca1898e5e509cc67c28",
+  "attempts": [
+    {
+      "kind": "image_t2i",
+      "version": 1,
+      "observation": "validation/native_image_t2i_v1/wave_c.json",
+      "source_bundle_sha256": "0889d6cca4abb4d15499aa2c449ae2dc35c8b92905ed1cd8f838782fdb50b792",
+      "validation_bundle_sha256": "33207d043b38ef4d044efe65884fa8783fb2a0c7529ecea1be5b39910bf4551b"
+    },
+    {
+      "kind": "image_i2i",
+      "version": 2,
+      "observation": "validation/native_image_i2i_v2/wave_c.json",
+      "source_bundle_sha256": "0889d6cca4abb4d15499aa2c449ae2dc35c8b92905ed1cd8f838782fdb50b792",
+      "validation_bundle_sha256": "33207d043b38ef4d044efe65884fa8783fb2a0c7529ecea1be5b39910bf4551b"
+    },
+    {
+      "kind": "image_masked",
+      "version": 1,
+      "observation": "validation/native_image_masked_v1/wave_c.json",
+      "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+      "validation_bundle_sha256": "519e504b507cb42470f1e223c85cf1e5eebbbc53b435abb5eef92962ed92907d"
+    },
+    {
+      "kind": "image_edit",
+      "version": 1,
+      "observation": "validation/native_image_edit_v1/wave_c.json",
+      "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+      "validation_bundle_sha256": "519e504b507cb42470f1e223c85cf1e5eebbbc53b435abb5eef92962ed92907d"
+    },
+    {
+      "kind": "image_multi",
+      "version": 1,
+      "observation": "validation/native_image_multi_v1/wave_c.json",
+      "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+      "validation_bundle_sha256": "1bc8220e9851240b61a7eecf8f80b1cfe93f4dd6065d1125e8eceb8b519b2cf8"
+    }
+  ],
+  "cases": [
+    {
+      "run_id": "kaggle:factory-phase-8-native-image-t2i:v1:image-standard-red-apple",
+      "model": "qwen-image-2.1",
+      "capability": "image.text_to_image",
+      "backend": "comfyui",
+      "checkpoint": "unsloth/Qwen-Image-2.1-GGUF",
+      "revision": "2c31ccd392b367a6637841a143813320a02dff55",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "7e386d01e3a8762b8a12483c0e715b1e538bed238374781930fba205820ce343",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "0889d6cca4abb4d15499aa2c449ae2dc35c8b92905ed1cd8f838782fdb50b792",
+      "runtime_versions": {
+        "torch": "2.11.0+cu130",
+        "torchvision": "0.26.0+cu130",
+        "torchaudio": "2.11.0+cu130",
+        "transformers": "5.19.0",
+        "gguf": "0.19.0",
+        "comfy-aimdo": "0.6.0",
+        "comfy-kitchen": "0.2.41",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_3",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_image_t2i_v1/qwen-image-2.1/observation.json",
+      "latency_ms": {
+        "median": 177861.197919,
+        "min": 177667.684901,
+        "max": 178052.085375
+      },
+      "output_sha256": [
+        "eb4465d602b23713496ab82d61750484eb1f17a5cf8b6977958f87d1f718f87e",
+        "4f838b912c89bbe861aa28c1b9ed15c293d96a9ed3e246be1306f0d1c1c7007a",
+        "f5e57e64e4c67bfa6d5df23a8904eb98b8de6830de173321475b6321f96f6c0e",
+        "8902545fd66b41bd66ae1d0cf5f87778e80c1ddb81846c05a3d593c9b3a47d82"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 14114.0
+      },
+      "peak_total_owned_vram_mb": 14114.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9993619881424249,
+            "pixel_stddev": 0.23095464073088454,
+            "color_fraction": 0.18107223510742188,
+            "positive_text_cosine": 0.3248198284045282,
+            "strongest_negative_cosine": 0.21645431307077245,
+            "text_margin": 0.10836551533375577
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9998143663593367,
+            "pixel_stddev": 0.19621607744119274,
+            "color_fraction": 0.09217453002929688,
+            "positive_text_cosine": 0.3490039523226875,
+            "strongest_negative_cosine": 0.2233804358024235,
+            "text_margin": 0.125623516520264
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9994049521053538,
+            "pixel_stddev": 0.24175083240703532,
+            "color_fraction": 0.19417953491210938,
+            "positive_text_cosine": 0.3358370351736071,
+            "strongest_negative_cosine": 0.21932997540728935,
+            "text_margin": 0.11650705976631773
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9995892842610677,
+            "pixel_stddev": 0.2617145454467413,
+            "color_fraction": 0.18003463745117188,
+            "positive_text_cosine": 0.32456467577025355,
+            "strongest_negative_cosine": 0.2137585637166388,
+            "text_margin": 0.11080611205361476
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-image-t2i:v1:image-turbo-red-apple",
+      "model": "qwen-image-2.1-turbo",
+      "capability": "image.text_to_image",
+      "backend": "comfyui",
+      "checkpoint": "unsloth/Qwen-Image-2.1-Turbo-GGUF",
+      "revision": "bd53e520a64472adaff780da0b2f2d7eb1605e30",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "e2a05bd455c1185df58bbb0b4ab8ea1080ea2892d2669d8eec9f3c74a91acb72",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "0889d6cca4abb4d15499aa2c449ae2dc35c8b92905ed1cd8f838782fdb50b792",
+      "runtime_versions": {
+        "torch": "2.11.0+cu130",
+        "torchvision": "0.26.0+cu130",
+        "torchaudio": "2.11.0+cu130",
+        "transformers": "5.19.0",
+        "gguf": "0.19.0",
+        "comfy-aimdo": "0.6.0",
+        "comfy-kitchen": "0.2.41",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_3",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_image_t2i_v1/qwen-image-2.1-turbo/observation.json",
+      "latency_ms": {
+        "median": 49064.797673,
+        "min": 48401.483201,
+        "max": 49213.478479
+      },
+      "output_sha256": [
+        "47c2232f3dfd714808652c2f2cd3dd61bc68bde5141374e592acafcb2f4f8546",
+        "84532aa326eaccbcb36d7259daf22e1d4d47e5748aeea1a327445a96fc5ca920",
+        "acc3f3ef804da1c2ad13aed88bd4fa40bb7fb306b6dbda766fea1ffd5b71d241",
+        "e2a63393147788bc0b776ec23260b9946c10faeaf31c34e52c20903d5f2ead95"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 14114.0
+      },
+      "peak_total_owned_vram_mb": 14114.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9995714973000919,
+            "pixel_stddev": 0.2405639155029216,
+            "color_fraction": 0.17560577392578125,
+            "positive_text_cosine": 0.3391651621576346,
+            "strongest_negative_cosine": 0.21723233928008923,
+            "text_margin": 0.12193282287754537
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9997479158289292,
+            "pixel_stddev": 0.21372926726740912,
+            "color_fraction": 0.12892532348632812,
+            "positive_text_cosine": 0.34090909638836847,
+            "strongest_negative_cosine": 0.21947215543660656,
+            "text_margin": 0.12143694095176191
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9994373396331189,
+            "pixel_stddev": 0.2393084616503391,
+            "color_fraction": 0.1805877685546875,
+            "positive_text_cosine": 0.3344242942999869,
+            "strongest_negative_cosine": 0.2187335117223974,
+            "text_margin": 0.11569078257758947
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9996156281115962,
+            "pixel_stddev": 0.251650343349061,
+            "color_fraction": 0.1753082275390625,
+            "positive_text_cosine": 0.33199682587992757,
+            "strongest_negative_cosine": 0.21830620279326277,
+            "text_margin": 0.1136906230866648
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-image-i2i:v2:image-i2i-pencil-v2",
+      "model": "qwen-image-2.1",
+      "capability": "image.image_to_image",
+      "backend": "comfyui",
+      "checkpoint": "unsloth/Qwen-Image-2.1-GGUF",
+      "revision": "2c31ccd392b367a6637841a143813320a02dff55",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "8ea9fef839bf1994c6c5276f395b987d394b6a5a2c9e17d7d53632dc7a4b65c6",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "0889d6cca4abb4d15499aa2c449ae2dc35c8b92905ed1cd8f838782fdb50b792",
+      "runtime_versions": {
+        "torch": "2.11.0+cu130",
+        "torchvision": "0.26.0+cu130",
+        "torchaudio": "2.11.0+cu130",
+        "transformers": "5.19.0",
+        "gguf": "0.19.0",
+        "comfy-aimdo": "0.6.0",
+        "comfy-kitchen": "0.2.41",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_3",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_image_i2i_v2/qwen-image-2.1/observation.json",
+      "latency_ms": {
+        "median": 350536.679974,
+        "min": 347682.096382,
+        "max": 350804.021708
+      },
+      "output_sha256": [
+        "490e3d33cb90495bca75323396b8fe3867145b7fd004f7f620886010d65ae2b0",
+        "cec55b4d625643d18d5aad0626e837d8f00a379880fef25ca276c57fc02ab6ae",
+        "12e67de426b54fa24531024b37607d67659c66f8200a51f59925a8058274d49d",
+        "deedce10f6bbe301f3aeaa14099fb2867b66066c9ecb801101d5817414677c05"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 14194.0
+      },
+      "peak_total_owned_vram_mb": 14194.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "requested_monochrome_transformation": true,
+            "exact_reference_astronaut": true,
+            "reference_content_astronaut": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9990873598584942,
+            "pixel_stddev": 0.2512959233827812,
+            "mean_saturation": 0.03425536810183057,
+            "positive_text_cosine": 0.3457814855868718,
+            "strongest_negative_cosine": 0.2673534832186222,
+            "text_margin": 0.0784280023682496,
+            "reference_cosine_astronaut": 0.8583032062256685
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "requested_monochrome_transformation": true,
+            "exact_reference_astronaut": true,
+            "reference_content_astronaut": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9989496866861979,
+            "pixel_stddev": 0.28918638070377195,
+            "mean_saturation": 0.03646379358628217,
+            "positive_text_cosine": 0.340094890892284,
+            "strongest_negative_cosine": 0.2720737988604762,
+            "text_margin": 0.06802109203180778,
+            "reference_cosine_astronaut": 0.8949643522793831
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "requested_monochrome_transformation": true,
+            "exact_reference_astronaut": true,
+            "reference_content_astronaut": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9989574806362975,
+            "pixel_stddev": 0.21812923433961076,
+            "mean_saturation": 0.031241113999310663,
+            "positive_text_cosine": 0.34530477448191416,
+            "strongest_negative_cosine": 0.2621198840200258,
+            "text_margin": 0.08318489046188837,
+            "reference_cosine_astronaut": 0.8595414566723378
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "requested_monochrome_transformation": true,
+            "exact_reference_astronaut": true,
+            "reference_content_astronaut": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9990581138461244,
+            "pixel_stddev": 0.27505116463935114,
+            "mean_saturation": 0.024939967136757047,
+            "positive_text_cosine": 0.3416096876743866,
+            "strongest_negative_cosine": 0.2669961279667096,
+            "text_margin": 0.07461355970767702,
+            "reference_cosine_astronaut": 0.8703376102261444
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-image-masked:v1:image-inpaint-blue-patch",
+      "model": "qwen-image-2.1",
+      "capability": "image.inpaint",
+      "backend": "comfyui",
+      "checkpoint": "unsloth/Qwen-Image-2.1-GGUF",
+      "revision": "2c31ccd392b367a6637841a143813320a02dff55",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "958882a86a0e71158880c888bfb442f323db7b4dbb1da8cbed128b229e50cfc8",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+      "runtime_versions": {
+        "torch": "2.11.0+cu130",
+        "torchvision": "0.26.0+cu130",
+        "torchaudio": "2.11.0+cu130",
+        "transformers": "5.19.0",
+        "gguf": "0.19.0",
+        "comfy-aimdo": "0.6.0",
+        "comfy-kitchen": "0.2.41",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_3",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_image_masked_v1/qwen-image-2.1/observation.json",
+      "latency_ms": {
+        "median": 390070.762854,
+        "min": 389115.940588,
+        "max": 390654.790624
+      },
+      "output_sha256": [
+        "498767e7a51b9a4f0f28f2c51a8a1f3b0adbc281c5d98aa52973e449581c6272",
+        "e0e2c672171a0a9a9bc055191260918821d9417c433bb9c69146e02d92538552",
+        "2d697432f4c098b012ce856a34237b964a2087aacf6df24a1af0243ca1353bfe",
+        "fcd2ff77bbd3edb41ac9cdb0d7d444f47541cfb8458cb55cd4fd9a98388ac105"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 14194.0
+      },
+      "peak_total_owned_vram_mb": 14194.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9983238369810815,
+            "pixel_stddev": 0.3092968552875223,
+            "color_fraction": 0.3709852430555556,
+            "preserved_mean_absolute_error": 0.0125149000009923,
+            "positive_text_cosine": 0.29221784295546965,
+            "strongest_negative_cosine": 0.19313969117604088,
+            "text_margin": 0.09907815177942877
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.998319408940334,
+            "pixel_stddev": 0.3088867829890847,
+            "color_fraction": 0.2725694444444444,
+            "preserved_mean_absolute_error": 0.012574437986226877,
+            "positive_text_cosine": 0.30483679221614884,
+            "strongest_negative_cosine": 0.1998283463561835,
+            "text_margin": 0.10500844585996535
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.998333366244447,
+            "pixel_stddev": 0.3088268414746318,
+            "color_fraction": 0.2730034722222222,
+            "preserved_mean_absolute_error": 0.012290371508758698,
+            "positive_text_cosine": 0.2917458707227899,
+            "strongest_negative_cosine": 0.19307631470846032,
+            "text_margin": 0.09866955601432958
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9983294169108073,
+            "pixel_stddev": 0.3096274504552654,
+            "color_fraction": 0.3582899305555556,
+            "preserved_mean_absolute_error": 0.012515783767960626,
+            "positive_text_cosine": 0.29303966251121466,
+            "strongest_negative_cosine": 0.19435298409232576,
+            "text_margin": 0.0986866784188889
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-image-masked:v1:image-outpaint-background",
+      "model": "qwen-image-2.1",
+      "capability": "image.outpaint",
+      "backend": "comfyui",
+      "checkpoint": "unsloth/Qwen-Image-2.1-GGUF",
+      "revision": "2c31ccd392b367a6637841a143813320a02dff55",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "82a869af7b523f749163d131464d68bd85041fe71d18d511f615589f3fc18715",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+      "runtime_versions": {
+        "torch": "2.11.0+cu130",
+        "torchvision": "0.26.0+cu130",
+        "torchaudio": "2.11.0+cu130",
+        "transformers": "5.19.0",
+        "gguf": "0.19.0",
+        "comfy-aimdo": "0.6.0",
+        "comfy-kitchen": "0.2.41",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_3",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_image_masked_v1/qwen-image-2.1/observation.json",
+      "latency_ms": {
+        "median": 445548.324634,
+        "min": 444601.44834,
+        "max": 445871.148713
+      },
+      "output_sha256": [
+        "165feef66e9900370d44828b053e7852f4d0655499ef39bba29474c249e4fdc7",
+        "e7bdf266946c5ff9b354f043c597533df9fb7297dc0b5b928245daf56303d48b",
+        "9a103dd13efb8e37c335ab96b1bcb2ad5efa3c95829efc4cf735f34fbacf9d27",
+        "15d8e523ab6e23a99cf89b34a3bb1cc424a399e36997ceabd08a85d7728adb3f"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 14338.0
+      },
+      "peak_total_owned_vram_mb": 14338.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 640,
+            "height": 512,
+            "mean_alpha": 0.9982541671453737,
+            "pixel_stddev": 0.3057938224485577,
+            "color_fraction": 0.2109375,
+            "preserved_mean_absolute_error": 0.011853456185534109,
+            "positive_text_cosine": 0.29848530524802624,
+            "strongest_negative_cosine": 0.27304276381894665,
+            "text_margin": 0.02544254142907959
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 640,
+            "height": 512,
+            "mean_alpha": 0.997991979262408,
+            "pixel_stddev": 0.28639559821345406,
+            "color_fraction": 0.837432861328125,
+            "preserved_mean_absolute_error": 0.011925945406645731,
+            "positive_text_cosine": 0.3037382217711859,
+            "strongest_negative_cosine": 0.27473630219814366,
+            "text_margin": 0.029001919573042267
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 640,
+            "height": 512,
+            "mean_alpha": 0.9982476447610293,
+            "pixel_stddev": 0.3061543639358524,
+            "color_fraction": 0.48870849609375,
+            "preserved_mean_absolute_error": 0.011850224912556167,
+            "positive_text_cosine": 0.2970621540993073,
+            "strongest_negative_cosine": 0.2723490667445044,
+            "text_margin": 0.02471308735480293
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 640,
+            "height": 512,
+            "mean_alpha": 0.9982407633463541,
+            "pixel_stddev": 0.3062358257550052,
+            "color_fraction": 0.45465087890625,
+            "preserved_mean_absolute_error": 0.01190237406811683,
+            "positive_text_cosine": 0.3014644022201657,
+            "strongest_negative_cosine": 0.27568798728156135,
+            "text_margin": 0.02577641493860433
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-image-edit:v1:image-edit-blue-suit",
+      "model": "qwen-image-2.1",
+      "capability": "image.instruction_edit",
+      "backend": "comfyui",
+      "checkpoint": "unsloth/Qwen-Image-2.1-GGUF",
+      "revision": "2c31ccd392b367a6637841a143813320a02dff55",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "4c940070d9b411ad3cd350c0bd79503c52bd262ee017cd489bccf55eea58c61e",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+      "runtime_versions": {
+        "torch": "2.11.0+cu130",
+        "torchvision": "0.26.0+cu130",
+        "torchaudio": "2.11.0+cu130",
+        "transformers": "5.19.0",
+        "gguf": "0.19.0",
+        "comfy-aimdo": "0.6.0",
+        "comfy-kitchen": "0.2.41",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_3",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_image_edit_v1/qwen-image-2.1/observation.json",
+      "latency_ms": {
+        "median": 341799.214644,
+        "min": 341544.731781,
+        "max": 342689.873837
+      },
+      "output_sha256": [
+        "36585e54ad873e2369a88e5d9f1928475a032b9e0818f1fc2fdfc4f89f2310cf",
+        "b34cd52d8838bcbcd413a2f84a991ec95ec13c7e7a849ed4b277bce7933e25cf",
+        "d650e45f4f5a6543fe24a06529bc7cba46dfa199a9986295c1cdcf8fd29a4069",
+        "9ed3fa3ce325e3e0cb5d789749c9cc7b54e309d0d37ece55dbc0b036ff058876"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 14194.0
+      },
+      "peak_total_owned_vram_mb": 14194.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9983514972761566,
+            "pixel_stddev": 0.33107113791559944,
+            "color_fraction": 0.5905555555555555,
+            "preserved_mean_absolute_error": 0.033119716775599134,
+            "positive_text_cosine": 0.3152544138280273,
+            "strongest_negative_cosine": 0.28592446362951573,
+            "text_margin": 0.02932995019851159
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9983964658250996,
+            "pixel_stddev": 0.3286990690746536,
+            "color_fraction": 0.5817373737373738,
+            "preserved_mean_absolute_error": 0.023518082788671024,
+            "positive_text_cosine": 0.3114266594565197,
+            "strongest_negative_cosine": 0.2840868185767043,
+            "text_margin": 0.02733984087981539
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.998250160965265,
+            "pixel_stddev": 0.3220390645162779,
+            "color_fraction": 0.5724545454545454,
+            "preserved_mean_absolute_error": 0.028247222222222222,
+            "positive_text_cosine": 0.31212407577529316,
+            "strongest_negative_cosine": 0.28459250904519795,
+            "text_margin": 0.027531566730095214
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "preserve_unedited_content": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9982968947466682,
+            "pixel_stddev": 0.32760758384661814,
+            "color_fraction": 0.5893131313131313,
+            "preserved_mean_absolute_error": 0.028234694989106753,
+            "positive_text_cosine": 0.31343993266003384,
+            "strongest_negative_cosine": 0.28599034467328416,
+            "text_margin": 0.02744958798674968
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-image-edit:v1:image-reference-cat",
+      "model": "qwen-image-2.1",
+      "capability": "image.reference_image",
+      "backend": "comfyui",
+      "checkpoint": "unsloth/Qwen-Image-2.1-GGUF",
+      "revision": "2c31ccd392b367a6637841a143813320a02dff55",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "456638ecf9235f9e9ceea306423751c239cdf02a537d2ac0682414808cb10a5e",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+      "runtime_versions": {
+        "torch": "2.11.0+cu130",
+        "torchvision": "0.26.0+cu130",
+        "torchaudio": "2.11.0+cu130",
+        "transformers": "5.19.0",
+        "gguf": "0.19.0",
+        "comfy-aimdo": "0.6.0",
+        "comfy-kitchen": "0.2.41",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_3",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_image_edit_v1/qwen-image-2.1/observation.json",
+      "latency_ms": {
+        "median": 341235.954174,
+        "min": 340919.533019,
+        "max": 341652.022163
+      },
+      "output_sha256": [
+        "daff7d81b88829edd8483b49c6db61ecc9d0ead64e913f9fee41af544c3a1664",
+        "0eec045052921b3ddb5abcee9c491ef1fdef74e5c06bc66b8813f6d7a18194de",
+        "d1b199f39d56f818c2e8db00833315eaa090c1c5b20c788df3d19d611716e4b1",
+        "03aa387b667b9f59567ae2c8bf8f64719229b6b0bf1def37c58faa873abd6fed"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 14226.0
+      },
+      "peak_total_owned_vram_mb": 14226.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "exact_reference_chelsea": true,
+            "reference_content_chelsea": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9976590624042586,
+            "pixel_stddev": 0.1579170997207982,
+            "color_fraction": 0.59259033203125,
+            "positive_text_cosine": 0.34934881000453416,
+            "strongest_negative_cosine": 0.23877021377455004,
+            "text_margin": 0.11057859622998412,
+            "reference_cosine_chelsea": 0.8844298818959658
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "exact_reference_chelsea": true,
+            "reference_content_chelsea": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9976078856225107,
+            "pixel_stddev": 0.1432584384880665,
+            "color_fraction": 0.6417770385742188,
+            "positive_text_cosine": 0.3505467846067546,
+            "strongest_negative_cosine": 0.238421755041038,
+            "text_margin": 0.1121250295657166,
+            "reference_cosine_chelsea": 0.8865180211241686
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "exact_reference_chelsea": true,
+            "reference_content_chelsea": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9976010790058211,
+            "pixel_stddev": 0.15997909191060422,
+            "color_fraction": 0.579803466796875,
+            "positive_text_cosine": 0.3353034287430477,
+            "strongest_negative_cosine": 0.24111832482624831,
+            "text_margin": 0.09418510391679938,
+            "reference_cosine_chelsea": 0.891863833064859
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "expected_color_in_region": true,
+            "exact_reference_chelsea": true,
+            "reference_content_chelsea": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9974517971861596,
+            "pixel_stddev": 0.14993339798563893,
+            "color_fraction": 0.617279052734375,
+            "positive_text_cosine": 0.3553270965067814,
+            "strongest_negative_cosine": 0.2347300617744398,
+            "text_margin": 0.1205970347323416,
+            "reference_cosine_chelsea": 0.8792313229356472
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "run_id": "kaggle:factory-phase-8-native-image-multi:v1:image-multi-cat-coffee",
+      "model": "qwen-image-2.1",
+      "capability": "image.multi_reference",
+      "backend": "comfyui",
+      "checkpoint": "unsloth/Qwen-Image-2.1-GGUF",
+      "revision": "2c31ccd392b367a6637841a143813320a02dff55",
+      "hardware": "kaggle-dual-t4",
+      "input_sha256": "108755fbb8e411853c03b30f20b21c1a65e13542760d345f1b8f76740f188a8d",
+      "weights_verified": true,
+      "commit": "e74f674fbfb6876b7b5899a7b64458801e3a683d",
+      "commit_scope": "baseline anchor; actual uncommitted code identified by source_bundle_sha256",
+      "source_bundle_sha256": "b5ef30ae44eb538db4651da35b2c793006cc5d7b7606e736307ec41e2389859f",
+      "runtime_versions": {
+        "torch": "2.11.0+cu130",
+        "torchvision": "0.26.0+cu130",
+        "torchaudio": "2.11.0+cu130",
+        "transformers": "5.19.0",
+        "gguf": "0.19.0",
+        "comfy-aimdo": "0.6.0",
+        "comfy-kitchen": "0.2.41",
+        "huggingface-hub": "2.4.0",
+        "psutil": "7.2.2"
+      },
+      "fallback": false,
+      "status": "PASS",
+      "checks": [
+        {
+          "check": "complete_exact_checkpoint_graph",
+          "passed": true
+        },
+        {
+          "check": "manifest_declares_capability",
+          "passed": true
+        },
+        {
+          "check": "owned_backend_runtime",
+          "passed": true
+        },
+        {
+          "check": "clean_owned_process_shutdown",
+          "passed": true
+        },
+        {
+          "check": "exact_golden_input_no_fallback",
+          "passed": true
+        },
+        {
+          "check": "one_warmup_three_measured",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_0",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_0",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_0",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_1",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_1",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_1",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_2",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_2",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_2",
+          "passed": true
+        },
+        {
+          "check": "predeclared_distinct_seed_3",
+          "passed": true
+        },
+        {
+          "check": "assigned_gpu_telemetry_3",
+          "passed": true
+        },
+        {
+          "check": "positive_measured_latency_3",
+          "passed": true
+        },
+        {
+          "check": "semantic_validation_all_runs",
+          "passed": true
+        },
+        {
+          "check": "latency_statistics_from_actual_runs",
+          "passed": true
+        },
+        {
+          "check": "resident_memory_within_selected_hardware_budget",
+          "passed": true
+        }
+      ],
+      "native_inference_verified": true,
+      "production_ready": false,
+      "full_factory_e2e_executed": false,
+      "case_evidence": "validation/native_image_multi_v1/qwen-image-2.1/observation.json",
+      "latency_ms": {
+        "median": 427440.275626,
+        "min": 427285.270644,
+        "max": 429013.063095
+      },
+      "output_sha256": [
+        "5bf29c5433228ec638625f715c20ca519fc17c06ca8026b4730fb41cc63d917f",
+        "c775a9a7602a1d02d5785351d756358f6c5b9834f22ec5b1509a6e08c0b1cb37",
+        "fff10152b449e0924e36d250b7d7bc90e29e73f0c931bde876d155faafecc146",
+        "f3a36d23d647ca9e74d5cc989dd83862df85b2160adce3d735c204c411ffa6bd"
+      ],
+      "peak_vram_mb_by_device": {
+        "0": 13882.0
+      },
+      "peak_total_owned_vram_mb": 13882.0,
+      "semantic_validation": [
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "exact_reference_chelsea": true,
+            "reference_content_chelsea": true,
+            "exact_reference_coffee": true,
+            "reference_content_coffee": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9973172056908701,
+            "pixel_stddev": 0.20274268256229028,
+            "positive_text_cosine": 0.35366697921467144,
+            "strongest_negative_cosine": 0.2952768437175305,
+            "text_margin": 0.05839013549714095,
+            "reference_cosine_chelsea": 0.8017410360810033,
+            "reference_cosine_coffee": 0.8397792461258096
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "exact_reference_chelsea": true,
+            "reference_content_chelsea": true,
+            "exact_reference_coffee": true,
+            "reference_content_coffee": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9981918484556909,
+            "pixel_stddev": 0.18401085118387214,
+            "positive_text_cosine": 0.34438932106355963,
+            "strongest_negative_cosine": 0.28777699266612145,
+            "text_margin": 0.05661232839743818,
+            "reference_cosine_chelsea": 0.8100108583055974,
+            "reference_cosine_coffee": 0.8516153283805996
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "exact_reference_chelsea": true,
+            "reference_content_chelsea": true,
+            "exact_reference_coffee": true,
+            "reference_content_coffee": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9977541156843597,
+            "pixel_stddev": 0.18001161475129115,
+            "positive_text_cosine": 0.34192994010562877,
+            "strongest_negative_cosine": 0.29077333780819,
+            "text_margin": 0.05115660229743879,
+            "reference_cosine_chelsea": 0.7937328787473412,
+            "reference_cosine_coffee": 0.8683300605248341
+          }
+        },
+        {
+          "status": "PASS",
+          "checks": {
+            "explicit_lossless_prefix_cache_policy": true,
+            "actual_native_execution": true,
+            "sampling_not_cached": true,
+            "exact_submitted_graph": true,
+            "declared_sampling_seed": true,
+            "exact_native_image_identity": true,
+            "exact_verifier": true,
+            "exact_text_oracle": true,
+            "requested_canvas": true,
+            "visible_nonconstant_image": true,
+            "expected_visual_content": true,
+            "exact_reference_chelsea": true,
+            "reference_content_chelsea": true,
+            "exact_reference_coffee": true,
+            "reference_content_coffee": true
+          },
+          "metrics": {
+            "width": 512,
+            "height": 512,
+            "mean_alpha": 0.9977243161668965,
+            "pixel_stddev": 0.2017820432331965,
+            "positive_text_cosine": 0.33578718257579726,
+            "strongest_negative_cosine": 0.2920514372450911,
+            "text_margin": 0.04373574533070618,
+            "reference_cosine_chelsea": 0.7816560816231104,
+            "reference_cosine_coffee": 0.8454861072218821
+          }
+        }
+      ],
+      "error": null
+    }
+  ],
+  "findings": [],
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "phase_8_exit_gate": "NOT_MET (remaining native waves require validation)",
+  "excluded": {
+    "qwen-image-2.1-uncensored": "DISABLED; no run or fallback",
+    "controlnet.pose": "Not declared: no pinned auxiliary weights",
+    "controlnet.depth": "Not declared: no pinned auxiliary weights",
+    "controlnet.canny": "Not declared: no pinned auxiliary weights"
+  }
+}

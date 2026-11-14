@@ -8,6 +8,9 @@ Unit tests verifying Phase 3 (Worker & GPU Runtime Simplification):
 from datetime import datetime, timedelta, timezone
 import pytest
 
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
+
 from factory_contracts.jobs.job_contract import JobState, JobSubmissionRequest
 from factory_contracts.jobs.worker_contract import WorkerLeaseRequest, WorkerHeartbeatRequest
 from factory.apps.control_api.src.queue.leasing import LeaseCoordinator

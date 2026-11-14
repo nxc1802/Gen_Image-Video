@@ -1,0 +1,85 @@
+{
+  "kind": "minimax_reference_audio",
+  "version": 2,
+  "kernel_status": {
+    "status": "complete",
+    "failureMessage": "",
+    "hasFailureMessage": false
+  },
+  "kernel_url": "https://www.kaggle.com/code/cuongnguyen1802/factory-phase-8-native-minimax-reference-audio",
+  "run_record_sha256": "72adf7e01f99d81afc98ca2126668c5e9742bf72d2a94b348e8761f382ee1198",
+  "artifacts": [
+    {
+      "file": "validation/native_minimax_reference_audio_v2/setup.json",
+      "sha256": "6318c4498f4d4c331d678b30d53253e15181b044512ce99b89291b823ad1fe5b"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/runtime_packages.json",
+      "sha256": "6310d41c63fb44e6cc5f84d00219b1f3310fd25dac94973bd352c23e7968eb88"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/wave_d.json",
+      "sha256": "31c6956287e0d8ca0bdef4df7ac178601c730101c5691a76109ef15923ae1016"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/installation.log",
+      "sha256": "b53c4415c8b43a7611236b510e0120970539c91daaa45a8c944a8c8208445824"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/driver.log",
+      "sha256": "d11e44721f798105878eb17e319d8d3a507453f1cdedd889b761e15022d31da7"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/minimax-h3-reference/minimax-reference-spoken-audio-native-dialogue-v2-1.json",
+      "sha256": "ecba03a02e2268d9973643a504d184d74f65afc509dc1ab10e1efec70a9b4aa4"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/minimax-h3-reference/observation.json",
+      "sha256": "eacad4cabd9df95ddc3b3a6cf8652b0dcd64285c56640c8cffdc87b6d691f852"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/minimax-h3-reference/minimax-reference-spoken-audio-native-dialogue-v2-0.json",
+      "sha256": "85734191c8fc0295f53900031a3bfd2a5b8c757f54b1e5bf357c4e9acd46f796"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/minimax-h3-reference/minimax-reference-spoken-audio-native-dialogue-v2-2.json",
+      "sha256": "36855b520267946d35c210371765bc4d536f87357a6d04668739fb07a444b73c"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/minimax-h3-reference/minimax-reference-spoken-audio-native-dialogue-v2-3.json",
+      "sha256": "e4a8096861b9d46c8f13ea82d90066c645b6d27c21b35f9c7f992d505e507ba3"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/minimax-h3-reference/native_node_schemas.json",
+      "sha256": "126b0c5c8f0e9ef292f81cc988df30ad592066ad334e5d88af4adac57da442dc"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/minimax-h3-reference/backend.log",
+      "sha256": "612a5ed8889fca27c3e86809348ea4e694a4075aaaf6ca150c0f05ecd3c7d528"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_nodes_minimax_h3.py",
+      "sha256": "217f3b50ede649831c34be347196926211606904610bcb267c8725c18eb62498"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_nodes.py",
+      "sha256": "bc13c5b30448ab9af58491a07c343b21c5300bb952bb22d2552b1c7c8194ac35"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/minimax-h3-reference/adapter_assets/comfy_base/minimax_upstream_supported_models.py",
+      "sha256": "4fdcdc20c50c26c280a4aefad9611c712ab441e577d05864ae67215b45a744d0"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/minimax-h3-reference/adapter_assets/comfy_base/custom_nodes/factory_minimax_loader/__init__.py",
+      "sha256": "b88d2e711f77e68d6de45aee5df7ea61b0e88448521af33bfaf2077269e1c530"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/inputs/astronaut_first/input_identity.json",
+      "sha256": "2aa8e49a6e8780db54d965edc8de37bc549bb72a9ac9e01fb83401836ed664a8"
+    },
+    {
+      "file": "validation/native_minimax_reference_audio_v2/inputs/astronaut_first/source.bin",
+      "sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2"
+    }
+  ]
+}

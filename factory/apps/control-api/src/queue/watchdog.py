@@ -13,7 +13,6 @@ from factory_contracts.errors import ErrorDetail
 from factory_contracts.jobs.job_contract import JobState
 from factory_contracts.jobs.worker_contract import JobFailureRequest
 
-from factory.apps.control_api.src.queue.policy import SUBSYSTEM_GPU_MAP, get_subsystem_gpu
 
 logger = logging.getLogger(__name__)
 
@@ -32,26 +31,8 @@ SERVICE_EXECUTION_TIMEOUTS = {
     "enhancement": 600.0,
 }
 
-TASK_EXECUTION_TIMEOUTS = {
-    "video_extension": 1200.0,
-    "video.extension": 1200.0,
-    "extension": 1200.0,
-    "first_last_frame_to_video": 900.0,
-    "video.fl2v": 900.0,
-    "fl2v": 900.0,
-    "text_to_video": 900.0,
-    "video.t2v": 900.0,
-    "t2v": 900.0,
-    "image_to_video": 900.0,
-    "video.i2v": 900.0,
-    "i2v": 900.0,
-    "cover": 900.0,
-    "repaint": 900.0,
-    "text_to_music": 600.0,
-    "lyrics_to_music": 600.0,
-    "instruction_edit": 450.0,
-    "controlnet": 450.0,
-}
+# Execution policy keyed only by canonical capabilities; aliases are ingress-only.
+TASK_EXECUTION_TIMEOUTS = {'video.video_extension': 1200.0, 'video.first_last_frame_to_video': 900.0, 'video.text_to_video': 900.0, 'video.image_to_video': 900.0, 'music.cover': 900.0, 'music.repaint': 900.0, 'music.text_to_music': 600.0, 'music.lyrics_to_music': 600.0, 'image.instruction_edit': 450.0, 'image.control_pose': 450.0, 'image.control_depth': 450.0}
 
 MODEL_EXECUTION_TIMEOUTS = {
     "wan-2.2": 1200.0,
@@ -100,8 +81,8 @@ async def check_active_jobs_watchdog(
         gpu_device = None
         if job.worker and job.worker.gpu_device is not None:
             gpu_device = job.worker.gpu_device
-        else:
-            gpu_device = SUBSYSTEM_GPU_MAP.get(job.service, 0)
+        elif job.devices:
+            gpu_device = job.devices[0]
 
         # 1. Check worker heartbeat
         worker_id = job.worker.worker_id if job.worker else None

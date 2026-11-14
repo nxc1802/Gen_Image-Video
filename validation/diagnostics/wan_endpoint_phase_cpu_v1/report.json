@@ -1,0 +1,161 @@
+{
+  "classification": "ORIGINAL_CPU_VAE_CAUSAL_ENDPOINT_COMPONENT_STUDY_ONLY",
+  "status": "COMPONENT_STUDY_COMPLETE_NOT_FL2V_CERTIFICATION",
+  "script_sha256": "30e45d7436756ea4de5a73aa70a80b1fd3d7edf77d2a8198faa6f859c9af9e5d",
+  "runtime_versions": {
+    "torch": "2.11.0",
+    "diffusers": "0.43.0",
+    "numpy": "2.5.4"
+  },
+  "input_sequence_scope": "17 explicitly held/changed frames derived from two actual photographed keyframes; not a recorded motion clip or Transformer-generated video.",
+  "native_gpu_inference_executed": false,
+  "full_wan_model_inference_executed": false,
+  "v3_certified": false,
+  "production_ready": false,
+  "full_factory_e2e_executed": false,
+  "inputs": {
+    "astronaut_first": {
+      "source_sha256": "d96e1f4ca953d5e730181cddd6dba4eb1db4aaf1af392eb1c6d1efefe4da4ed2",
+      "derived_tensor_sha256": "a5685c2cb15fc70111a038fc714778eb2e779a3f40400addf43f7f5f78692bb4"
+    },
+    "astronaut_last": {
+      "source_sha256": "675b48d6513dfedb81eb7890b7d4f7ceb8235572b0b1e3fdf2afdb83e8700a6f",
+      "derived_tensor_sha256": "5ed567071f8ab28536a2d7fa58cb8622ab48fab07443932e18f4dda851e26b23"
+    }
+  },
+  "load_info": {
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "mismatched_keys": [],
+    "error_msgs": []
+  },
+  "original_vae_parameter_count": 704688668,
+  "anchor_latents": {
+    "first": {
+      "sha256": "80a808d6ebeda22323f9e98c302af9b8a8ea37c20006aaefd6c690e1769ee428",
+      "shape": [
+        1,
+        48,
+        1,
+        16,
+        24
+      ]
+    },
+    "last_single": {
+      "sha256": "71a775aa12705d0e4778fff9812e0fc6ca921bf9b2b2ea6629cd15ef7d3fd9c7",
+      "shape": [
+        1,
+        48,
+        1,
+        16,
+        24
+      ]
+    },
+    "last_repeated_final": {
+      "sha256": "a9c5cb3b23918621f47c4a4db8330cc4a4aefcf49727531950a1392b6d5f32e5",
+      "shape": [
+        1,
+        48,
+        1,
+        16,
+        24
+      ]
+    }
+  },
+  "cases": [
+    {
+      "name": "real_photo_sequence_roundtrip",
+      "latent_sha256": "d1323fe4eeea85060bc2d979dc21d038152fef5d62964c38f0e76e5c849e330d",
+      "decoded_tensor_sha256": "761544c66cc65f063e51250fefd534fe41670c09f47f13a417df4b031f165924",
+      "first_frame_pixel_mae": 0.014584164135158062,
+      "last_frame_pixel_mae": 0.020712899044156075,
+      "per_frame_pixel_mae": [
+        0.014584164135158062,
+        0.012955461628735065,
+        0.012231252156198025,
+        0.011839883401989937,
+        0.011636007577180862,
+        0.010529300197958946,
+        0.010271689854562283,
+        0.010180971585214138,
+        0.010150078684091568,
+        0.009453599341213703,
+        0.009408017620444298,
+        0.009391567669808865,
+        0.009389299899339676,
+        0.009835431352257729,
+        0.01021647173911333,
+        0.011666882783174515,
+        0.020712899044156075
+      ],
+      "decoded_frames": 17,
+      "all_frame_contact_sheet": {
+        "file": "real_photo_sequence_roundtrip-all-frames.png",
+        "sha256": "433b2c09a1ba81e98e3ef99a44d1a018094f86dfaa6c8ec8a882b8b6d142f11b"
+      }
+    },
+    {
+      "name": "independent_single_frame_last_anchor",
+      "latent_sha256": "e585d03ea17fe719712a9f7c9b7477d391c9e2a6d3b4c4f72359b00e5d70b128",
+      "decoded_tensor_sha256": "a203049797b4b532d1a99fe36d0e68e9819bb131abda127af1418f7947765da0",
+      "first_frame_pixel_mae": 0.014584164135158062,
+      "last_frame_pixel_mae": 0.12871795892715454,
+      "per_frame_pixel_mae": [
+        0.014584164135158062,
+        0.012955461628735065,
+        0.012231252156198025,
+        0.011839883401989937,
+        0.011636007577180862,
+        0.010529300197958946,
+        0.010271689854562283,
+        0.010180971585214138,
+        0.010150078684091568,
+        0.009453599341213703,
+        0.009408017620444298,
+        0.009391567669808865,
+        0.009389299899339676,
+        0.10205210000276566,
+        0.17081744968891144,
+        0.19842123985290527,
+        0.12871795892715454
+      ],
+      "decoded_frames": 17,
+      "all_frame_contact_sheet": {
+        "file": "independent_single_frame_last_anchor-all-frames.png",
+        "sha256": "5d04d2595da7184b0907e627c72d67fb5c1a262cf48c1f9328beab1dda6eecb6"
+      }
+    },
+    {
+      "name": "independent_repeated_five_frame_last_anchor",
+      "latent_sha256": "1923623b0232c52027686a7376f7ff44de907660c18aa7db383276afb8e738de",
+      "decoded_tensor_sha256": "aa7638125b1ebe44a3da3dcfd8bbe51db45c2607c826a130c85397f9ce26c317",
+      "first_frame_pixel_mae": 0.014584164135158062,
+      "last_frame_pixel_mae": 0.06999068707227707,
+      "per_frame_pixel_mae": [
+        0.014584164135158062,
+        0.012955461628735065,
+        0.012231252156198025,
+        0.011839883401989937,
+        0.011636007577180862,
+        0.010529300197958946,
+        0.010271689854562283,
+        0.010180971585214138,
+        0.010150078684091568,
+        0.009453599341213703,
+        0.009408017620444298,
+        0.009391567669808865,
+        0.009389299899339676,
+        0.10620579868555069,
+        0.15192413330078125,
+        0.17399466037750244,
+        0.06999068707227707
+      ],
+      "decoded_frames": 17,
+      "all_frame_contact_sheet": {
+        "file": "independent_repeated_five_frame_last_anchor-all-frames.png",
+        "sha256": "c930207183b4014ad7ad5b959ef6b3d551672736a46dbbc41d077e8e4656efb3"
+      }
+    }
+  ],
+  "elapsed_seconds": 239.7987296669744
+}

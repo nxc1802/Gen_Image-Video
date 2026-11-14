@@ -1,0 +1,25 @@
+{
+  "observed_at_utc": "2026-11-12T04:31:37.926376+00:00",
+  "classification": "UPSTREAM_PROTOCOL_SOURCE_REVIEW_ONLY",
+  "repository": "vllm-project/vllm",
+  "revision": "2a14a5e4778213d538e3cc1875fea432636f32e0",
+  "files": [
+    {
+      "path": "vllm/entrypoints/openai/decisions/protocol.py",
+      "url": "https://raw.githubusercontent.com/vllm-project/vllm/2a14a5e4778213d538e3cc1875fea432636f32e0/vllm/entrypoints/openai/decisions/protocol.py",
+      "sha256": "caa766b40250cbb916728d3ee9dfa996ee757475adf2ea57dd943a180c75bd61",
+      "size_bytes": 5205
+    },
+    {
+      "path": "vllm/entrypoints/openai/decisions/question_types.py",
+      "url": "https://raw.githubusercontent.com/vllm-project/vllm/2a14a5e4778213d538e3cc1875fea432636f32e0/vllm/entrypoints/openai/decisions/question_types.py",
+      "sha256": "29fe2690afc8498c807a53699e0a660b31c062cb5f00c1085e68b22351f02417",
+      "size_bytes": 8601
+    }
+  ],
+  "official_openai_reference": "https://developers.openai.com/api/reference/resources/decisions/methods/create",
+  "findings": "docs/PLAN_FINDINGS.md",
+  "native_inference_executed": false,
+  "production_ready": false,
+  "runtime_version_certified": false
+}

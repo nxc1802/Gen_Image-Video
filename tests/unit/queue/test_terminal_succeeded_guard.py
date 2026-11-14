@@ -11,6 +11,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 import pytest
 
+# v1 lifecycle compatibility fixtures; never native model evidence.
+pytestmark = [pytest.mark.contract_mock, pytest.mark.usefixtures("legacy_catalog")]
+
 from factory_contracts.jobs.job_contract import (
     FactoryJob,
     JobProgress,
